@@ -1,18 +1,18 @@
 export interface Option {
   id: number,
   isCorrect: boolean,
-  itemId: number,           //NOTE: this is the simplest way, but won't allow easy recycling of distractors.
-  text: string,             //e.g. "Riboflavin"
+  questionId: number,           //NOTE: this is the simplest way, but won't allow easy recycling of distractors.
+  text: string,                         //e.g. "Riboflavin"
 }
 
-export interface Item {
+export interface Question {
   id: number,
   options: Option[],
   prompt: string,           //e.g. "Which of the following is not included in the B Vitamin complex?"
-  topicId: number           //NOTE: this approach suggests 1-to-1 item-topic
+  conceptId: number           //NOTE: this approach suggests 1-to-1 question-concept
 }
 
-export interface Topic {
+export interface Concept {
   id: number,
   title: string,            //e.g. "Micronutrients"
 }
@@ -20,14 +20,14 @@ export interface Topic {
 export interface Quiz {
   id: number,
   available: number,         //UTC when this quiz becomes available in the course (NOTE: this is a naive approach)
-  items: Item[],
+  questions: Question[],
   isGraded: boolean,        //i.e. does this quiz return a grade via LTI? Or just a practice quiz?
   title: string,            //e.g. "Micronutrients"
 }
 
-export interface Attempt {
+export interface QuestionAttempt {
   userId: number,
-  itemId: number,
+  questionId: number,
   selectedOption: number,   //option.id
   isCorrect?: boolean       //optional; for convenience
   isConfident: boolean      //i.e. "I'm confident my answer is correct"
@@ -37,18 +37,18 @@ export interface Attempt {
 export interface QuizAttempt {
   userId: number,
   quizId: number,
-  attempts: Attempt[],
+  quizAttempts: QuizAttempt[],
   score: number,                 // (correct/total)
-  topicConfidences: TopicConfidence[],
+  conceptConfidences: ConceptConfidence[],
   totalConfidenceError: number,  // sum of forEach(attempt =>  abs(isConfident - isCorrect)). 0 == perfect estimation accuracy
   totalConfidenceBias: number,   // sum of forEach(attempt => isConfident - isCorrect). Positive == overestimated; 0 == counterbalanced or no bias
   timestamp: number              //UTC
 }
 
-export interface TopicConfidence {
-  topicId: number,
-  topicTitle?: string,        //optional; for convenience
-  confidenceError: number,    //same as above, but filtered to a single topic
+export interface ConceptConfidence {
+  conceptId: number,
+  conceptTitle?: string,        //optional; for convenience
+  confidenceError: number,    //same as above, but filtered to a single concept
   confidenceBias: number,     //ditto
 }
 
@@ -58,6 +58,6 @@ export interface Course {     //LTI login grants access to one course
 }
 
 export interface User {
- id: number,
- role: string                 //"instructor" | "student"
+   id: number,
+   role: string                 //"instructor" | "student"
 }
