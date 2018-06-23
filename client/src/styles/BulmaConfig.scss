@@ -1,0 +1,31 @@
+// NOTE: after editing this file, run `yarn build-css` in the /client directory to compile this to css
+
+// Setup from https://github.com/jgthms/bulma/issues/388#issuecomment-357428129
+
+// Import the initial variables
+@import "bulma/sass/utilities/initial-variables";
+@import "bulma/sass/utilities/functions";
+
+/*
+// Your customisations go here...
+// 2. Set your own initial variables
+// Update blue
+$blue: #72d0eb;
+// Add pink and its invert
+$pink: #ffb3b3;
+$pink-invert: #fff;
+// Add a serif family
+$family-serif: "Merriweather", "Georgia", serif;
+
+// 3. Set the derived variables
+// Use the new pink as the primary color
+$primary: $pink;
+$primary-invert: $pink-invert;
+// Use the existing orange as the danger color
+$danger: $orange;
+// Use the new serif family
+$family-primary: $family-serif;
+*/
+
+// Import the rest of Bulma:
+@import "bulma/bulma.sass";

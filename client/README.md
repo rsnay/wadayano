@@ -1,3 +1,11 @@
+# Knowledge Monitoring Dashboard Client
+- Requirements: recent NPM/Yarn installation
+- Get started by running these commands in this directory:
+  - `yarn`
+  - `yarn build-css`
+  - `yarn start`
+- Open `localhost:3000` (3000 is default port) in a browser
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>

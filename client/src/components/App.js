@@ -1,18 +1,38 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import '../styles/App.css';
+import '../styles/BulmaConfig.css';
+
+import Header from './shared/Header';
+import { Switch, Route } from 'react-router-dom';
+
+import Welcome from './shared/Welcome';
+import Login from './instructor/Login';
+
+import CourseList from './instructor/CourseList';
+import CourseDetails from './instructor/CourseDetails';
+import QuizEditor from './instructor/QuizEditor';
+
+import Dashboard from './student/Dashboard';
+import QuizTaker from './student/QuizTaker';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <Header />
+        <Switch>
+          <Route exact path="/" component={Welcome} />
+          <Route exact path="/login" component={Login} />
+
+          <Route exact path="/instructor" component={CourseList} />
+          <Route exact path="/instructor/courses" component={CourseList} />
+          <Route path="/instructor/course/:course" component={CourseDetails} />
+          <Route path="/instructor/quiz/:quiz" component={QuizEditor} />
+
+          <Route exact path="/student" component={Dashboard} />
+          <Route path="/student/quiz/:quiz" component={QuizTaker} />
+
+        </Switch>
       </div>
     );
   }
