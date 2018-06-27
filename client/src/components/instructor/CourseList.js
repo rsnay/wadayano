@@ -16,31 +16,42 @@ export default class CourseList extends Component {
         <div class="container">
           <h1 class="title">Courses</h1>
           <hr />
-          <table class="table is-striped is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Course Name</th>
-                    <th>Other Info</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Not a real course</td>
-                    <td>Something</td>
-                    <td>
-                    <Link to="/instructor/course/1" className="button is-outlined is-primary">
-                        <span class="icon">
-                        <i class="fas fa-edit"></i>
-                        </span>
-                        <span>Edit/View</span>
-                    </Link>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+          <div class="tile is-ancestor">
+
+            <div class="tile is-4 is-parent">
+                <Link to="/instructor/course/1" className="tile is-child box">
+                    <p class="title">
+                        <span class="icon"><i class="fas fa-flask" aria-hidden="true"></i></span>
+                        &nbsp;
+                        Not a Real Course
+                    </p>
+                    <hr />
+                    <div class="content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+                        <br />
+                        5 Quizzes
+                    </div>
+                </Link>
+            </div>
+
+            <div class="tile is-4 is-parent">
+                <Link to="/instructor/course/1" className="tile is-child box">
+                    <p class="title">
+                        <span class="icon"><i class="fas fa-flask" aria-hidden="true"></i></span>
+                        &nbsp;
+                        Another Fake Course
+                    </p>
+                    <hr />
+                    <div class="content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+                        <br />
+                        7 Quizzes
+                    </div>
+                </Link>
+            </div>
+
+        </div>
+
         </div>
       </section>
     )

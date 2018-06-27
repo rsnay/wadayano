@@ -14,6 +14,12 @@ export default class CourseDetails extends Component {
         <section class="section">
         <AuthCheck />
         <div class="container">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><Link to="/instructor">Course List</Link></li>
+                <li class="is-active"><Link to="/instructor/course/1" aria-current="page">Not a real course</Link></li>
+            </ul>
+        </nav>
           <h1 class="title is-inline-block">Not a real course</h1>
           &nbsp;&nbsp;
             <a class="button">
