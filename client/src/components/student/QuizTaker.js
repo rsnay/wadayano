@@ -19,13 +19,20 @@ export default class QuizTaker extends Component {
 
   constructor(props) {
     super(props);
+
+    // Get quiz based on quizId in url
+    let quiz = mockData.quizzes.find(quiz => quiz.id === props.match.params.quizId) || false;
+
     this.state = {
       phase: phases.QUESTIONS,
       conceptConfidences: [],
       currentQuestionIndex: 0,
       questionAttempts: [],
-      quizAttempt: null
+      quizAttempt: null,
+      quiz: quiz,
+      loadError: !quiz
     };
+
   }
 
   // Called from a QuestionView after its question has been answered, confidence-rated, and reviewed
@@ -42,6 +49,13 @@ export default class QuizTaker extends Component {
   }
 
   render() {
+    if (this.state.loadError) {
+      return <div class="container notification is-danger">
+        There was an error loading this quiz. Please return to the dashboard and try again.
+      </div>
+    }
+    // TODO this will probably come from props with graphql and apollo
+    let quiz = this.state.quiz;
 
     let currentView;
     switch (this.state.phase) {
@@ -50,7 +64,7 @@ export default class QuizTaker extends Component {
         break;
       case phases.QUESTIONS:
         currentView = <QuestionView
-          question={this.props.quiz.questions[this.state.currentQuestionIndex]}
+          question={quiz.questions[this.state.currentQuestionIndex]}
           key={this.state.currentQuestionIndex}
           _onNextQuestion={() => this._onNextQuestion() } />;
         break;
@@ -65,9 +79,9 @@ export default class QuizTaker extends Component {
     return (
         <section class="section">
         <div class="container">
-          <h1 class="title">{this.props.quiz.title}</h1>
-          <i>{this.props.quiz.questions.length} questions</i>
-          <progress className="progress is-link" value={this.state.currentQuestionIndex} max={this.props.quiz.questions.length}></progress>
+          <h1 class="title">{quiz.title}</h1>
+          <i>{quiz.questions.length} questions</i>
+          <progress className="progress is-link" value={this.state.currentQuestionIndex} max={quiz.questions.length}></progress>
           <hr />
 
           {currentView}

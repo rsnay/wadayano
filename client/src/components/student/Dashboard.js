@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import mockData from '../../mockData';
+
 export default class Dashboard extends Component {
-  state = {
-  }
 
   render() {
     return (
@@ -25,19 +25,22 @@ export default class Dashboard extends Component {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Not a real quiz</td>
-                    <td>10 questions</td>
-                    <td>
-                    <Link to="/student/quiz/1" className="button is-outlined is-primary">
-                        <span class="icon">
-                        <i class="fas fa-rocket"></i>
-                        </span>
-                        <span>Take Quiz</span>
-                    </Link>
-                    </td>
-                </tr>
+                {mockData.quizzes.map((quiz, index) => 
+                    <tr key={index}>
+                        <td>{quiz.id}</td>
+                        <td>{quiz.title}</td>
+                        <td>{quiz.questions.length}</td>
+                        <td>
+                        <Link to={"/student/quiz/" + quiz.id}
+                          className="button is-outlined is-primary">
+                            <span class="icon">
+                            <i class="fas fa-rocket"></i>
+                            </span>
+                            <span>Take Quiz</span>
+                        </Link>
+                        </td>
+                    </tr>
+                )}
             </tbody>
         </table>
         </div>

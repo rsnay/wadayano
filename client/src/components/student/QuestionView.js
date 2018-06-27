@@ -17,9 +17,8 @@ export default class QuestionView extends Component {
   render() {
 
     let options = this.props.question.options.map((option, index) =>
-        <div style={{margin: "0.5rem"}}>
+        <div style={{margin: "0.5rem"}} key={option.id}>
         <button className={"is-block button " + (option.isCorrect ? "has-text-success " : " ") + (this.state.selectedOption && this.state.selectedOption.id === option.id ? "is-link" : "")}
-            key={option.id}
             onClick={() => {
                 this.setState({ selectedOption: option })
             }}

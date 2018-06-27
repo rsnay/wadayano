@@ -26,11 +26,11 @@ class App extends Component {
 
           <Route exact path="/instructor" component={CourseList} />
           <Route exact path="/instructor/courses" component={CourseList} />
-          <Route path="/instructor/course/:course" component={CourseDetails} />
-          <Route path="/instructor/quiz/:quiz" component={QuizEditor} />
+          <Route path="/instructor/course/:courseId" component={CourseDetails} />
+          <Route path="/instructor/quiz/:quizId" component={QuizEditor} />
 
           <Route exact path="/student" component={Dashboard} />
-          <Route path="/student/quiz/:quiz" component={QuizTaker} />
+          <Route path="/student/quiz/:quizId" component={QuizTaker} />
 
         </Switch>
       </div>
