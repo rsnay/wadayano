@@ -27,6 +27,7 @@ export default class QuizTaker extends Component {
       phase: phases.QUESTIONS,
       conceptConfidences: [],
       currentQuestionIndex: 0,
+      currentQuestionCompleted: false,
       questionAttempts: [],
       quizAttempt: null,
       quiz: quiz,
@@ -36,15 +37,26 @@ export default class QuizTaker extends Component {
   }
 
   // Called from a QuestionView after its question has been answered, confidence-rated, and reviewed
+  _onQuestionCompleted() {
+    this.setState({currentQuestionCompleted: true});
+  }
+
+  // Called when the next question/continue button is clicked in a question
   _onNextQuestion() {
     // If at the end of the quiz...
     let newIndex = this.state.currentQuestionIndex + 1;
     // ... go to results (still set new currentQuestionIndex so progress bar fills up)
     if (newIndex >= this.props.quiz.questions.length) {
-      this.setState({ phase: phases.RESULTS, currentQuestionIndex: newIndex });
+      this.setState({
+        phase: phases.RESULTS,
+        currentQuestionIndex: newIndex
+      });
     } else {
       // Otherwise go to next question
-      this.setState({ currentQuestionIndex: newIndex });
+      this.setState({
+        currentQuestionIndex: newIndex,
+        currentQuestionCompleted: false
+      });
     }
   }
 
@@ -66,7 +78,9 @@ export default class QuizTaker extends Component {
         currentView = <QuestionView
           question={quiz.questions[this.state.currentQuestionIndex]}
           key={this.state.currentQuestionIndex}
-          _onNextQuestion={() => this._onNextQuestion() } />;
+          onQuestionCompleted={() => this._onQuestionCompleted() }
+          onNextQuestion={() => this._onNextQuestion() }
+        />;
         break;
       case phases.RESULTS:
         currentView = 'Results view';
@@ -81,7 +95,7 @@ export default class QuizTaker extends Component {
         <div class="container">
           <h1 class="title">{quiz.title}</h1>
           <i>{quiz.questions.length} questions</i>
-          <progress className="progress is-link" value={this.state.currentQuestionIndex} max={quiz.questions.length}></progress>
+          <progress className="progress is-link" value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
           <hr />
 
           {currentView}

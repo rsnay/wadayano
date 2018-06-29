@@ -48,7 +48,10 @@ export default class QuestionView extends Component {
     </div>);
 
     let submitButton = (
-        <a className="button is-primary" onClick={() => this.setState({ submitted: true })}>Submit</a>
+        <a className="button is-primary" onClick={() => {
+            this.setState({ submitted: true });
+            this.props.onQuestionCompleted();
+        }}>Submit</a>
     );
 
     let review = (
@@ -60,7 +63,7 @@ export default class QuestionView extends Component {
     );
 
     let continueButton = (
-        <a className="button is-primary " onClick={this.props._onNextQuestion}>Continue</a>
+        <a className="button is-primary " onClick={this.props.onNextQuestion}>Continue</a>
     );
 
     return (
