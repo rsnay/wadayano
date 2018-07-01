@@ -3,11 +3,24 @@ import { Link } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import ErrorBox from '../shared/ErrorBox';
+import LoadingBox from '../shared/LoadingBox';
 import mockData from '../../mockData';
 
-export default class Dashboard extends Component {
+class Dashboard extends Component {
 
   render() {
+
+    if (this.props.quizzesQuery && this.props.quizzesQuery.loading) {
+        return <LoadingBox />;
+    }
+
+    if (this.props.quizzesQuery && this.props.quizzesQuery.error) {
+        return <ErrorBox>Couldn't load quizzes</ErrorBox>;
+    }
+
+    const quizzes = this.props.quizzesQuery.quizzes;
+
     return (
         <section class="section">
         <div class="container">
@@ -20,12 +33,12 @@ export default class Dashboard extends Component {
                 <tr>
                     <th>ID</th>
                     <th>Quiz Name</th>
-                    <th>Other Info</th>
+                    <th># of Questions</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                {mockData.quizzes.map((quiz, index) => 
+                {quizzes.map((quiz, index) => 
                     <tr key={index}>
                         <td>{quiz.id}</td>
                         <td>{quiz.title}</td>
@@ -48,3 +61,18 @@ export default class Dashboard extends Component {
     )
   }
 }
+
+export const QUIZZES_QUERY = gql`
+    query {
+        quizzes {
+            id
+            title
+            questions {
+            id
+            prompt
+            }
+        }
+    }
+`
+
+export default graphql(QUIZZES_QUERY, {name: 'quizzesQuery'}) (Dashboard)
