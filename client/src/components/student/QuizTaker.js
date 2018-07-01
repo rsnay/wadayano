@@ -4,6 +4,8 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import QuestionView from './QuestionView';
+import ErrorBox from '../shared/ErrorBox';
+import LoadingBox from '../shared/LoadingBox';
 
 import mockData from '../../mockData';
 
@@ -15,13 +17,10 @@ let phases = {
   CONCEPT_REVIEW: 'concept_review'
 };
 
-export default class QuizTaker extends Component {
+class QuizTaker extends Component {
 
   constructor(props) {
     super(props);
-
-    // Get quiz based on quizId in url
-    let quiz = mockData.quizzes.find(quiz => quiz.id === props.match.params.quizId) || false;
 
     this.state = {
       phase: phases.QUESTIONS,
@@ -29,9 +28,7 @@ export default class QuizTaker extends Component {
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
       questionAttempts: [],
-      quizAttempt: null,
-      quiz: quiz,
-      loadError: !quiz
+      quizAttempt: null
     };
 
   }
@@ -61,13 +58,19 @@ export default class QuizTaker extends Component {
   }
 
   render() {
-    if (this.state.loadError) {
-      return <div class="container notification is-danger">
-        There was an error loading this quiz. Please return to the dashboard and try again.
-      </div>
+    
+    if (this.props.quizQuery && this.props.quizQuery.loading) {
+      return <LoadingBox />;
     }
-    // TODO this will probably come from props with graphql and apollo
-    let quiz = this.state.quiz;
+
+    if (this.props.quizQuery && this.props.quizQuery.error) {
+      return <ErrorBox>
+        There was an error loading this quiz. Please return to the dashboard and try again.
+      </ErrorBox>
+    }
+
+    // Quiz loaded from apollo/graphql query
+    let quiz = this.props.quizQuery.quiz;
 
     let currentView;
     switch (this.state.phase) {
@@ -117,3 +120,29 @@ export default class QuizTaker extends Component {
 QuizTaker.defaultProps = {
   quiz: mockData.quizzes[0]
 };
+
+export const QUIZ_QUERY = gql`
+  query quizQuery($id: ID!) {
+    quiz (
+      id: $id
+    )
+    {
+      title
+      isGraded
+      available
+      questions {
+        id
+        prompt
+      }
+    }
+  }
+`
+
+export default graphql(QUIZ_QUERY, {
+  name: 'quizQuery',
+  options: (props) => {
+    console.log(props.match.params.quizId);
+    // Pass the quiz ID from the route into the query
+    return { variables: { id: props.match.params.quizId } }
+  }
+}) (QuizTaker)

@@ -15,8 +15,15 @@ export default class QuestionView extends Component {
   }
 
   render() {
+      const questionOptions = this.props.question.options || 
+           [
+              {id: "1", isCorrect: false, text: "Wrong 1"},
+              {id: "2", isCorrect: true, text: "Right 2"},
+              {id: "3", isCorrect: false, text: "Wrong 3"},
+              {id: "4", isCorrect: false, text: "Wrong 4"},
+          ];
 
-    let options = this.props.question.options.map((option, index) =>
+    let options = questionOptions.map((option, index) =>
         <div style={{margin: "0.5rem"}} key={option.id}>
         <button className={"is-block button " + (option.isCorrect ? "has-text-success " : " ") + (this.state.selectedOption && this.state.selectedOption.id === option.id ? "is-link" : "")}
             onClick={() => {
