@@ -15,6 +15,8 @@ import QuizEditor from './instructor/QuizEditor';
 import Dashboard from './student/Dashboard';
 import QuizTaker from './student/QuizTaker';
 
+import PageNotFound from './shared/PageNotFound';
+
 class App extends Component {
   render() {
     return (
@@ -31,6 +33,8 @@ class App extends Component {
 
           <Route exact path="/student" component={Dashboard} />
           <Route path="/student/quiz/:quizId" component={QuizTaker} />
+
+          <Route component={PageNotFound} />
 
         </Switch>
       </div>
