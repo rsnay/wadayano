@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -85,4 +86,10 @@ export default class QuestionView extends Component {
         </div>
     )
   }
+}
+
+QuestionView.propTypes = {
+    question: PropTypes.object.isRequired,
+    onQuestionCompleted: PropTypes.func,
+    onNextQuestion: PropTypes.func.isRequired
 }

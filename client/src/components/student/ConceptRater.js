@@ -75,7 +75,6 @@ ConceptRater.propTypes = {
 };
 
 // Component to display the group of numeric rating buttons, and pass up the current value when the selection changes
-// Required props: integer minRating, and integer maxRating
 class NumericRater extends Component {
     constructor(props) {
         super(props);
@@ -112,3 +111,15 @@ class NumericRater extends Component {
         );
     }
 }
+
+NumericRater.defaultProps = {
+    minRating: 1,
+    maxRating: 5,
+    onChange: (val) => alert(val)
+};
+
+NumericRater.propTypes = {
+    minRating: PropTypes.number,
+    maxRating: PropTypes.number,
+    onChange: PropTypes.func
+};

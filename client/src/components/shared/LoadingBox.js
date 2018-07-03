@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-export default class ErroxBox extends Component {
+export default class LoadingBox extends Component {
     render() {
         return (
             <div className="container section">
@@ -12,3 +13,7 @@ export default class ErroxBox extends Component {
         );
     }
 }
+
+LoadingBox.propTypes = {
+    children: PropTypes.element
+};

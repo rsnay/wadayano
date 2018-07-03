@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export default class ErroxBox extends Component {
     render() {
@@ -15,3 +16,7 @@ export default class ErroxBox extends Component {
         );
     }
 }
+
+ErroxBox.propTypes = {
+    children: PropTypes.element
+};
