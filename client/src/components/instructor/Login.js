@@ -19,30 +19,30 @@ export default class Login extends Component {
 
   render() {
     return (
-        <section class="section">
-        <div class="container">
-          <h1 class="title">Instructor Login</h1>
+        <section className="section">
+        <div className="container">
+          <h1 className="title">Instructor Login</h1>
           <i>Just clicking Log In will mark the session as instructor being logged in</i>
-          <div class="column is-one-third-desktop is-half-tablet">
-          <div class="field">
-            <p class="control has-icons-left has-icons-right">
-                <input class="input" type="email" placeholder="Email" />
-                <span class="icon is-small is-left">
-                <i class="fas fa-envelope"></i>
+          <div className="column is-one-third-desktop is-half-tablet">
+          <div className="field">
+            <p className="control has-icons-left has-icons-right">
+                <input className="input" type="email" placeholder="Email" />
+                <span className="icon is-small is-left">
+                <i className="fas fa-envelope"></i>
                 </span>
             </p>
             </div>
-            <div class="field">
-            <p class="control has-icons-left">
-                <input class="input" type="password" placeholder="Password" />
-                <span class="icon is-small is-left">
-                <i class="fas fa-lock"></i>
+            <div className="field">
+            <p className="control has-icons-left">
+                <input className="input" type="password" placeholder="Password" />
+                <span className="icon is-small is-left">
+                <i className="fas fa-lock"></i>
                 </span>
             </p>
             </div>
-            <div class="field">
-            <p class="control">
-                <button class="button is-success" onClick={() => this._logIn() }>
+            <div className="field">
+            <p className="control">
+                <button className="button is-success" onClick={() => this._logIn() }>
                 Log In
                 </button>
             </p>

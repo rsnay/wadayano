@@ -11,53 +11,53 @@ export default class QuizEditor extends Component {
 
   render() {
     return (
-        <section class="section">
+        <section className="section">
         <AuthCheck location={this.props.location} />
-        <div class="container">
-          <h1 class="title is-inline-block">Not a real quiz</h1>
+        <div className="container">
+          <h1 className="title is-inline-block">Not a real quiz</h1>
           &nbsp;&nbsp;
-            <a class="button">
-                <span class="icon is-small">
-                <i class="fas fa-edit"></i>
+            <a className="button">
+                <span className="icon is-small">
+                <i className="fas fa-edit"></i>
                 </span>
             </a>
 
-        <div class="panel">
-            <p class="panel-heading">
+        <div className="panel">
+            <p className="panel-heading">
                 Question 1
-                <a class="is-pulled-right button is-small">
-                    <span class="icon ">
-                        <i class="fas fa-trash"></i>
+                <a className="is-pulled-right button is-small">
+                    <span className="icon ">
+                        <i className="fas fa-trash"></i>
                     </span>
                 </a>
             </p>
-            <div class="panel-block">
-                <textarea class="textarea is-medium" type="text" placeholder="Not a real question"></textarea>
+            <div className="panel-block">
+                <textarea className="textarea is-medium" type="text" placeholder="Not a real question"></textarea>
             </div>
-            <p class="panel-block">
+            <p className="panel-block">
                 concept selector
             </p>
-            <p class="panel-block">
+            <p className="panel-block">
                 Editable answers
             </p>
-            <p class="panel-block">
+            <p className="panel-block">
                 So forth
             </p>
             </div>
 
-            <div class="field is-grouped">
-                <p class="control">
-                    <a class="button is-danger">
+            <div className="field is-grouped">
+                <p className="control">
+                    <a className="button is-danger">
                     Delete Quiz
                     </a>
                 </p>
-                <p class="control">
-                    <a class="button">
+                <p className="control">
+                    <a className="button">
                     Discard Changes
                     </a>
                 </p>
-                <p class="control">
-                    <a class="button is-link">
+                <p className="control">
+                    <a className="button is-link">
                     Save Quiz
                     </a>
                 </p>

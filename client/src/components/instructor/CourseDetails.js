@@ -11,25 +11,25 @@ export default class CourseDetails extends Component {
 
   render() {
     return (
-        <section class="section">
+        <section className="section">
         <AuthCheck location={this.props.location} />
-        <div class="container">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
+        <div className="container">
+        <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 <li><Link to="/instructor">Course List</Link></li>
-                <li class="is-active"><Link to="/instructor/course/1" aria-current="page">Not a real course</Link></li>
+                <li className="is-active"><Link to="/instructor/course/1" aria-current="page">Not a real course</Link></li>
             </ul>
         </nav>
-          <h1 class="title is-inline-block">Not a real course</h1>
+          <h1 className="title is-inline-block">Not a real course</h1>
           &nbsp;&nbsp;
-            <a class="button">
-                <span class="icon is-small">
-                <i class="fas fa-edit"></i>
+            <a className="button">
+                <span className="icon is-small">
+                <i className="fas fa-edit"></i>
                 </span>
             </a>
           <hr />
 
-          <table class="table is-striped is-hoverable is-fullwidth">
+          <table className="table is-striped is-hoverable is-fullwidth">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -45,8 +45,8 @@ export default class CourseDetails extends Component {
                     <td>10 questions</td>
                     <td>
                     <Link to="/instructor/quiz/1" className="button is-outlined is-primary">
-                        <span class="icon">
-                        <i class="fas fa-edit"></i>
+                        <span className="icon">
+                        <i className="fas fa-edit"></i>
                         </span>
                         <span>Edit/View</span>
                     </Link>

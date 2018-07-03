@@ -109,9 +109,9 @@ class QuizTaker extends Component {
     }
 
     return (
-        <section class="section">
-        <div class="container">
-          <h1 class="title">{quiz.title}</h1>
+        <section className="section">
+        <div className="container">
+          <h1 className="title">{quiz.title}</h1>
           {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
             <i className="is-flex-tablet">Question {this.state.currentQuestionIndex} of {quiz.questions.length}</i>
             <progress className="progress is-link" style={{width: "90%"}} value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
@@ -122,7 +122,7 @@ class QuizTaker extends Component {
 
           <hr />
 
-          <p class="control">
+          <p className="control">
                 <Link to="/student" className="button">
                     Return to Dashboard
                 </Link>

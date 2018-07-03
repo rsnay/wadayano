@@ -23,36 +23,36 @@ export default class CourseList extends Component {
     ];
 
     return (
-        <section class="section">
+        <section className="section">
         <AuthCheck location={this.props.location} />
-        <div class="container">
-          <h1 class="title">Courses</h1>
+        <div className="container">
+          <h1 className="title">Courses</h1>
           <hr />
-          <div class="tile is-ancestor" style={{flexWrap: "wrap"}}>
+          <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
 
-          <div class="tile is-4 is-parent">
+          <div className="tile is-4 is-parent">
                 <span className="tile is-child box">
-                    <p class="title">
-                        <span class="icon"><i class="fas fa-plus-square" aria-hidden="true"></i></span>
+                    <p className="title">
+                        <span className="icon"><i className="fas fa-plus-square" aria-hidden="true"></i></span>
                         &nbsp;
                         Create Course
                     </p>
-                    <div class="content">
+                    <div className="content">
                         <CreateCourseForm />
                     </div>
                 </span>
             </div>
 
             {courses.map((course, index) => 
-                <div class="tile is-4 is-parent">
+                <div className="tile is-4 is-parent" key={index}>
                     <Link to={"/instructor/course/" + course.id} className="tile is-child box">
-                        <p class="title">
-                            <span class="icon"><i class="fas fa-flask" aria-hidden="true"></i></span>
+                        <p className="title">
+                            <span className="icon"><i className="fas fa-flask" aria-hidden="true"></i></span>
                             &nbsp; &nbsp;
                             {course.title}
                         </p>
                         <hr />
-                        <div class="content">
+                        <div className="content">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
                             <br />
                             {course.quizzes.length === 1 ? '1 Quiz' : course.quizzes.length + ' Quizzes'}

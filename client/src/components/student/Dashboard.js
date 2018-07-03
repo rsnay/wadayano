@@ -22,13 +22,13 @@ class Dashboard extends Component {
     const quizzes = this.props.quizzesQuery.quizzes;
 
     return (
-        <section class="section">
-        <div class="container">
-          <h1 class="title is-inline-block">Student Dashboard</h1>
+        <section className="section">
+        <div className="container">
+          <h1 className="title is-inline-block">Student Dashboard</h1>
           <hr />
           <p>For now, take any quiz</p>
 
-          <table class="table is-striped is-hoverable is-fullwidth">
+          <table className="table is-striped is-hoverable is-fullwidth">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -46,8 +46,8 @@ class Dashboard extends Component {
                         <td>
                         <Link to={"/student/quiz/" + quiz.id}
                           className="button is-outlined is-primary">
-                            <span class="icon">
-                            <i class="fas fa-rocket"></i>
+                            <span className="icon">
+                            <i className="fas fa-rocket"></i>
                             </span>
                             <span>Take Quiz</span>
                         </Link>

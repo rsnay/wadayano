@@ -39,16 +39,16 @@ export default class QuestionView extends Component {
     let confidenceSelector = (
         <div>
             <h5 style={{margin: "0.5rem"}}>I'm confident: </h5>
-            <div class="tabs is-toggle is-toggle-rounded">
+            <div className="tabs is-toggle is-toggle-rounded">
                 <ul>
                     <li className={this.state.confident === true ? "is-active" : ""}>
                     <a onClick={() => this.setState({ confident: true })}>
-                        <span class="icon is-small"><i class="fas fa-thumbs-up"></i></span>
+                        <span className="icon is-small"><i className="fas fa-thumbs-up"></i></span>
                     </a>
                     </li>
                     <li className={this.state.confident === false ? "is-active" : ""}>
                     <a onClick={() => this.setState({ confident: false })}>
-                        <span class="icon is-small"><i class="fas fa-thumbs-down"></i></span>
+                        <span className="icon is-small"><i className="fas fa-thumbs-down"></i></span>
                     </a>
                     </li>
                 </ul>

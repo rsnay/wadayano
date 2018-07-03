@@ -8,11 +8,11 @@ export default class Welcome extends Component {
 
   render() {
     return (
-        <section class="section">
-        <div class="container">
-          <h1 class="title">Knowledge Monitoring Dashboard/Quizzes</h1>
-          <h2 class="subtitle">Under Development</h2>
-          <div class="content">
+        <section className="section">
+        <div className="container">
+          <h1 className="title">Knowledge Monitoring Dashboard/Quizzes</h1>
+          <h2 className="subtitle">Under Development</h2>
+          <div className="content">
             <ul>
                 <li>See <a href="https://bulma.io/documentation/">Bulma Documentation</a> for styling information</li>
                 <li>Choose Instructors or Students in the navbar above</li>

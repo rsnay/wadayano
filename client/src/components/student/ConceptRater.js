@@ -60,7 +60,7 @@ export default class ConceptRater extends Component {
 
     return (
         <div>
-            <p class="notification">This quiz includes the following topics.<br />How confident are you in your mastery of each?</p>
+            <p className="notification">This quiz includes the following topics.<br />How confident are you in your mastery of each?</p>
             {concepts}
             <br />
             {this.state.ratings.length === this.props.concepts.length && submitButton}
