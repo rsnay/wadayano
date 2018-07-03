@@ -39,7 +39,7 @@ class Dashboard extends Component {
             </thead>
             <tbody>
                 {quizzes.map((quiz, index) => 
-                    <tr key={index}>
+                    <tr key={quiz.id}>
                         <td>{quiz.id}</td>
                         <td>{quiz.title}</td>
                         <td>{quiz.questions.length}</td>

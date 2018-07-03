@@ -38,7 +38,7 @@ export default class ConceptRater extends Component {
   render() {
 
     let concepts = this.props.concepts.map((concept, index) =>
-        <div className="columns" key={index}>
+        <div className="columns" key={concept.id}>
             <div className="column">
                 {concept.title}
                 <NumericRater
@@ -96,7 +96,7 @@ class NumericRater extends Component {
         // Loop to make buttons
         for (var i = this.props.minRating; i <= this.props.maxRating; i++) {
             ratingButtons.push(
-                <span key={i}
+                <span key={i.toString()}
                     className={"button " + (this.state.selectedValue === i ? "is-selected is-info" : "")}
                     onClick={this._buttonClickHandler(i)} >
                     {i}

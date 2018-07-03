@@ -24,7 +24,7 @@ class QuizTaker extends Component {
     super(props);
 
     this.state = {
-      phase: phases.QUESTIONS,
+      phase: phases.CONCEPTS,
       conceptConfidences: [],
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
@@ -95,7 +95,7 @@ class QuizTaker extends Component {
       case phases.QUESTIONS:
         currentView = <QuestionView
           question={quiz.questions[this.state.currentQuestionIndex]}
-          key={this.state.currentQuestionIndex}
+          key={quiz.questions[this.state.currentQuestionIndex].id}
           onQuestionCompleted={() => this._onQuestionCompleted() }
           onNextQuestion={() => this._onNextQuestion() }
         />;

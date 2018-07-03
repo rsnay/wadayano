@@ -44,7 +44,7 @@ export default class CourseList extends Component {
             </div>
 
             {courses.map((course, index) => 
-                <div className="tile is-4 is-parent" key={index}>
+                <div className="tile is-4 is-parent" key={course.id}>
                     <Link to={"/instructor/course/" + course.id} className="tile is-child box">
                         <p className="title">
                             <span className="icon"><i className="fas fa-flask" aria-hidden="true"></i></span>
