@@ -12,7 +12,7 @@ export default class CourseDetails extends Component {
   render() {
     return (
         <section class="section">
-        <AuthCheck />
+        <AuthCheck location={this.props.location} />
         <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>

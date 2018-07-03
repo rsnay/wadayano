@@ -24,7 +24,7 @@ export default class CourseList extends Component {
 
     return (
         <section class="section">
-        <AuthCheck />
+        <AuthCheck location={this.props.location} />
         <div class="container">
           <h1 class="title">Courses</h1>
           <hr />

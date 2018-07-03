@@ -12,7 +12,7 @@ export default class QuizEditor extends Component {
   render() {
     return (
         <section class="section">
-        <AuthCheck />
+        <AuthCheck location={this.props.location} />
         <div class="container">
           <h1 class="title is-inline-block">Not a real quiz</h1>
           &nbsp;&nbsp;

@@ -11,8 +11,10 @@ export default class Login extends Component {
 
   _logIn() {
     localStorage.setItem(INSTRUCTOR_LOGGED_IN, "true");
-    // If login was successful, redirect to instructor view
-    this.props.history.push('/instructor');
+    // If login was successful, redirect to instructor view, or a 'from' redirect location, if passed in
+    const { from } = this.props.location.state || { from: { pathname: '/instructor' } }
+    console.log(from);
+    this.props.history.push(from.pathname);
   }
 
   render() {
