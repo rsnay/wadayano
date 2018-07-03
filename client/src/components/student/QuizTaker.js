@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import ConceptRater from './ConceptRater';
 import QuestionView from './QuestionView';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
@@ -10,7 +11,7 @@ import LoadingBox from '../shared/LoadingBox';
 import mockData from '../../mockData';
 
 // Different phases or stages of the quiz-taking experience
-let phases = {
+const phases = {
   CONCEPTS: 'concepts',
   QUESTIONS: 'questions',
   RESULTS: 'results',
@@ -33,6 +34,11 @@ class QuizTaker extends Component {
 
   }
 
+  // After concepts are rated, switch to the questions phase
+  _onConceptsRated() {
+    this.setState({ phase: phases.QUESTIONS });
+  }
+
   // Called from a QuestionView after its question has been answered, confidence-rated, and reviewed
   _onQuestionCompleted() {
     this.setState({currentQuestionCompleted: true});
@@ -43,7 +49,7 @@ class QuizTaker extends Component {
     // If at the end of the quiz...
     let newIndex = this.state.currentQuestionIndex + 1;
     // ... go to results (still set new currentQuestionIndex so progress bar fills up)
-    if (newIndex >= this.props.quiz.questions.length) {
+    if (newIndex >= this.props.quizQuery.quiz.questions.length) {
       this.setState({
         phase: phases.RESULTS,
         currentQuestionIndex: newIndex
@@ -71,11 +77,20 @@ class QuizTaker extends Component {
 
     // Quiz loaded from apollo/graphql query
     let quiz = this.props.quizQuery.quiz;
+    // TODO get actual concepts
+    let concepts = [
+      {id: "c1", title: "concept 1"},
+      {id: "c2", title: "concept 2"},
+      {id: "c3", title: "concept 3"},
+    ];
 
     let currentView;
     switch (this.state.phase) {
       case phases.CONCEPTS:
-        currentView = 'Concepts'
+        currentView = <ConceptRater
+          concepts={concepts}
+          onConceptsRated={() => this._onConceptsRated() }
+        />;
         break;
       case phases.QUESTIONS:
         currentView = <QuestionView
@@ -97,8 +112,10 @@ class QuizTaker extends Component {
         <section class="section">
         <div class="container">
           <h1 class="title">{quiz.title}</h1>
-          <i>{quiz.questions.length} questions</i>
-          <progress className="progress is-link" value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
+          {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
+            <i className="is-flex-tablet">Question {this.state.currentQuestionIndex} of {quiz.questions.length}</i>
+            <progress className="progress is-link" style={{width: "90%"}} value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
+          </div>}
           <hr />
 
           {currentView}
@@ -116,10 +133,6 @@ class QuizTaker extends Component {
     )
   }
 }
-
-QuizTaker.defaultProps = {
-  quiz: mockData.quizzes[0]
-};
 
 export const QUIZ_QUERY = gql`
   query quizQuery($id: ID!) {
