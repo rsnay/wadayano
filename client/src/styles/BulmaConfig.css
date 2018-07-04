@@ -148,7 +148,7 @@ $family-primary: $family-serif;
   border-radius: 4px;
   box-shadow: none;
   display: inline-flex;
-  font-size: 1rem;
+  font-size: 1.1rem;
   height: 2.25em;
   justify-content: flex-start;
   line-height: 1.5;
@@ -391,7 +391,7 @@ table th {
   font-size: 1.25rem !important; }
 
 .is-size-6 {
-  font-size: 1rem !important; }
+  font-size: 1.1rem !important; }
 
 .is-size-7 {
   font-size: 0.75rem !important; }
@@ -408,7 +408,7 @@ table th {
   .is-size-5-mobile {
     font-size: 1.25rem !important; }
   .is-size-6-mobile {
-    font-size: 1rem !important; }
+    font-size: 1.1rem !important; }
   .is-size-7-mobile {
     font-size: 0.75rem !important; } }
 
@@ -424,7 +424,7 @@ table th {
   .is-size-5-tablet {
     font-size: 1.25rem !important; }
   .is-size-6-tablet {
-    font-size: 1rem !important; }
+    font-size: 1.1rem !important; }
   .is-size-7-tablet {
     font-size: 0.75rem !important; } }
 
@@ -440,7 +440,7 @@ table th {
   .is-size-5-touch {
     font-size: 1.25rem !important; }
   .is-size-6-touch {
-    font-size: 1rem !important; }
+    font-size: 1.1rem !important; }
   .is-size-7-touch {
     font-size: 0.75rem !important; } }
 
@@ -456,7 +456,7 @@ table th {
   .is-size-5-desktop {
     font-size: 1.25rem !important; }
   .is-size-6-desktop {
-    font-size: 1rem !important; }
+    font-size: 1.1rem !important; }
   .is-size-7-desktop {
     font-size: 0.75rem !important; } }
 
@@ -472,7 +472,7 @@ table th {
   .is-size-5-widescreen {
     font-size: 1.25rem !important; }
   .is-size-6-widescreen {
-    font-size: 1rem !important; }
+    font-size: 1.1rem !important; }
   .is-size-7-widescreen {
     font-size: 0.75rem !important; } }
 
@@ -488,7 +488,7 @@ table th {
   .is-size-5-fullhd {
     font-size: 1.25rem !important; }
   .is-size-6-fullhd {
-    font-size: 1rem !important; }
+    font-size: 1.1rem !important; }
   .is-size-7-fullhd {
     font-size: 0.75rem !important; } }
 
@@ -2659,7 +2659,7 @@ a.box:active {
 .label {
   color: #363636;
   display: block;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700; }
   .label:not(:last-child) {
     margin-bottom: 0.5em; }
@@ -2826,7 +2826,7 @@ a.box:active {
         margin-right: 0.75rem; } }
 
 .control {
-  font-size: 1rem;
+  font-size: 1.1rem;
   position: relative;
   text-align: left; }
   .control.has-icon .icon {
@@ -3039,7 +3039,7 @@ a.box:active {
   border: none;
   border-radius: 290486px;
   display: block;
-  height: 1rem;
+  height: 1.1rem;
   overflow: hidden;
   padding: 0;
   width: 100%; }
@@ -3319,7 +3319,7 @@ a.box:active {
     background-color: #ff3860;
     color: #fff; }
   .tag:not(body).is-medium {
-    font-size: 1rem; }
+    font-size: 1.1rem; }
   .tag:not(body).is-large {
     font-size: 1.25rem; }
   .tag:not(body) .icon:first-child:not(:last-child) {
@@ -3402,7 +3402,7 @@ a.tag:hover {
   .title.is-5 {
     font-size: 1.25rem; }
   .title.is-6 {
-    font-size: 1rem; }
+    font-size: 1.1rem; }
   .title.is-7 {
     font-size: 0.75rem; }
 
@@ -3427,7 +3427,7 @@ a.tag:hover {
   .subtitle.is-5 {
     font-size: 1.25rem; }
   .subtitle.is-6 {
-    font-size: 1rem; }
+    font-size: 1.1rem; }
   .subtitle.is-7 {
     font-size: 0.75rem; }
 
@@ -3462,7 +3462,7 @@ a.tag:hover {
   vertical-align: top; }
 
 .breadcrumb {
-  font-size: 1rem;
+  font-size: 1.1rem;
   white-space: nowrap; }
   .breadcrumb a {
     align-items: center;
@@ -3744,7 +3744,7 @@ a.dropdown-item {
   text-align: left; }
 
 .menu {
-  font-size: 1rem; }
+  font-size: 1.1rem; }
   .menu.is-small {
     font-size: 0.75rem; }
   .menu.is-medium {
@@ -3783,7 +3783,7 @@ a.dropdown-item {
 .message {
   background-color: whitesmoke;
   border-radius: 4px;
-  font-size: 1rem; }
+  font-size: 1.1rem; }
   .message strong {
     color: currentColor; }
   .message a:not(.button):not(.tag) {
@@ -4703,7 +4703,7 @@ a.navbar-item,
     background-color: #fafafa; } }
 
 .pagination {
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin: -0.25rem; }
   .pagination.is-small {
     font-size: 0.75rem; }
@@ -4822,7 +4822,7 @@ a.navbar-item,
       order: 3; } }
 
 .panel {
-  font-size: 1rem; }
+  font-size: 1.1rem; }
   .panel:not(:last-child) {
     margin-bottom: 1.5rem; }
 
@@ -4909,7 +4909,7 @@ label.panel-block {
   -webkit-overflow-scrolling: touch;
   align-items: stretch;
   display: flex;
-  font-size: 1rem;
+  font-size: 1.1rem;
   justify-content: space-between;
   overflow: hidden;
   overflow-x: auto;

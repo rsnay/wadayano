@@ -1,0 +1,35 @@
+/* Quiz Taker
+
+/* QuestionView */
+.question-option-container {
+    cursor: pointer;
+    margin-bottom: 1.5rem!important;
+}
+
+.question-option-container:hover .question-option-letter {
+    border-color: gray;
+}
+
+.question-option-letter {
+    width: 3.5rem!important;
+    height: 3.5rem!important;
+    text-align: center;
+}
+.question-option-letter span {
+    margin: auto;
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+.question-option-text {
+    text-align: left;
+}
+
+.question-confidence-selector {
+    margin-bottom: 1rem;
+}
+
+.question-confidence-selector button {
+    height: 3rem;
+    width: 5rem;
+}

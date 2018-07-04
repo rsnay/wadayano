@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../styles/App.css';
+import '../styles/Student.css';
 import '../styles/BulmaConfig.css';
 
 import Header from './shared/Header';

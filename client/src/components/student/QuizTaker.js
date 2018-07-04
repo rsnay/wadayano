@@ -24,7 +24,7 @@ class QuizTaker extends Component {
     super(props);
 
     this.state = {
-      phase: phases.CONCEPTS,
+      phase: phases.QUESTIONS,
       conceptConfidences: [],
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
@@ -113,8 +113,8 @@ class QuizTaker extends Component {
         <div className="container">
           <h1 className="title">{quiz.title}</h1>
           {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
-            <i className="is-flex-tablet">Question {this.state.currentQuestionIndex} of {quiz.questions.length}</i>
-            <progress className="progress is-link" style={{width: "90%"}} value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
+            <div style={{margin: "-.3rem 1rem .5rem 0", flexShrink: 0}}>Question {this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
+            <progress className="progress is-link" value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
           </div>}
           <hr />
 
