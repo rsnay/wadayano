@@ -1,4 +1,7 @@
-/* Quiz Taker
+/* Quiz Taker */
+progress::-webkit-progress-value {
+    transition: width 0.3s ease-out;
+}
 
 /* QuestionView */
 .question-option-container {
