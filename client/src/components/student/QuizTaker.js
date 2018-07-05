@@ -110,7 +110,18 @@ class QuizTaker extends Component {
         />;
         break;
       case phases.RESULTS:
-        currentView = 'Results view';
+        currentView = (
+          <div>
+            <p>Results view</p>
+            <hr />
+
+            <p className="control">
+                  <Link to="/student" className="button">
+                      Return to Dashboard
+                  </Link>
+            </p>
+          </div>
+        );
         break;
       case phases.CONCEPT_REVIEW:
         currentView = 'Concept review';
@@ -138,14 +149,6 @@ class QuizTaker extends Component {
           </div>
 
           {currentView}
-
-          <hr />
-
-          <p className="control">
-                <Link to="/student" className="button">
-                    Return to Dashboard
-                </Link>
-          </p>
 
         </div>
       </section>

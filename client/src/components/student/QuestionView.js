@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 import ErrorBox from '../shared/ErrorBox';
 
@@ -19,19 +20,38 @@ export default class QuestionView extends Component {
     };
   }
 
+  componentDidMount() {
+    document.addEventListener("keydown", this._handleKeyDown.bind(this));
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this._handleKeyDown.bind(this));
+  }
+
+  // Allow options to be selected by pressing that letter on the keyboard. This is kind of hacky right now
+  _handleKeyDown(e) {
+    // Check that the question is loaded and has options
+    if (this.props.question && this.props.question.options) {
+        let optionIndex = -1;
+        // 65 is a, and the letters are sequential afterwards
+        // TODO get rid of magic number
+        if (e.keyCode >= 65 && e.keyCode <= 90) {
+            optionIndex = e.keyCode - 65;
+            console.log(e.keyCode, optionIndex);
+        }
+        if (optionIndex >= 0 && this.props.question.options.length > optionIndex) {
+            this.setState({ selectedOption: this.props.question.options[optionIndex] });
+            e.preventDefault();
+        }
+    }
+  }
+
   render() {
-      const questionOptions = this.props.question.options || 
-           [
-              {id: "1", isCorrect: false, text: "Wrong 1 \n Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris"},
-              {id: "2", isCorrect: true, text: "Right 2"},
-              {id: "3", isCorrect: false, text: "Wrong 3"},
-              {id: "4", isCorrect: false, text: "Wrong 4"},
-          ];
+    const questionOptions = this.props.question.options;
     
     if (questionOptions.length === 0) {
         return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
     }
-
 
     let prompt = (
         <div className="notification">
@@ -54,35 +74,41 @@ export default class QuestionView extends Component {
     );
 
     let confidenceSelector = (
+        <ScrollIntoViewIfNeeded>
         <div className="question-confidence-selector">
             <h5 style={{margin: "0.5rem"}}>I'm confident: </h5>
             <div className="buttons has-addons">
-                <button className={"button is-rounded " + (this.state.confident === true ? "is-active is-link" : "")} onClick={() => this.setState({ confident: true })}>
+                <button autoFocus className={"button is-rounded " + (this.state.confident === true ? "is-active is-link" : "")} onClick={() => this.setState({ confident: true })}>
                     &nbsp;<span className="icon is-small"><i className="fas fa-thumbs-up"></i></span>&nbsp;
                 </button>
                 <button className={"button is-rounded " + (this.state.confident === false ? "is-active is-link" : "")} onClick={() => this.setState({ confident: false })}>
                     &nbsp;<span className="icon is-small"><i className="fas fa-thumbs-down"></i></span>&nbsp;
                 </button>
             </div>
-    </div>);
+        </div>
+        </ScrollIntoViewIfNeeded>
+    );
 
     let submitButton = (
-        <a className="button is-primary" onClick={() => {
+        <ScrollIntoViewIfNeeded>
+        <hr />
+        <button autoFocus className="button is-primary" onClick={() => {
             this.setState({ submitted: true });
             this.props.onQuestionCompleted();
-        }}>Submit</a>
+        }}>Submit</button>
+        </ScrollIntoViewIfNeeded>
     );
 
     let review = (
         <span>
             Your answer: {this.state.selectedOption &&this.state.selectedOption.text} <br />
             Correct: {this.state.selectedOption && this.state.selectedOption.isCorrect ? "yes" : "no"}
-            <br />
+            <hr />
         </span>
     );
 
     let continueButton = (
-        <a className="button is-primary " onClick={this.props.onNextQuestion}>Continue</a>
+        <button autoFocus className="button is-primary " onClick={this.props.onNextQuestion}>Continue</button>
     );
 
     return (
