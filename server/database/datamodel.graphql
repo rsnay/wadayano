@@ -1,0 +1,18 @@
+type Quiz {
+    id: ID! @unique
+    createdAt: DateTime!
+    questions: [Question!]!
+    title: String!
+}
+
+type Question {
+    id: ID! @unique
+    options: [Option!]!
+    prompt: String!
+}
+
+type Option {
+    id: ID! @unique
+    isCorrect: Boolean
+    text: String!
+}

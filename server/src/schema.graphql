@@ -1,0 +1,15 @@
+#import Quiz,Question from "./generated/prisma.graphql"
+
+type Query {
+  quizzes: [Quiz!]!
+  quiz(id:ID): Quiz!
+  question(id:ID):Question!
+  option(id:ID):Option!
+}
+
+type Mutation {
+  addQuiz(title: String!): Quiz!
+  deleteQuiz(id:ID): Quiz!
+  updateQuiz(id:ID, questions: [QuestionWhereInput!]!, title: String!): Quiz!
+  updateOption(id:ID, text:String!, isCorrect:Boolean):Option!
+}

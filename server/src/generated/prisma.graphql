@@ -1,0 +1,757 @@
+# source: https://us1.prisma.sh/public-twistystorm-654/quiz-node/dev
+# timestamp: Thu Jul 05 2018 11:40:51 GMT-0600 (Mountain Daylight Time)
+
+type AggregateOption {
+  count: Int!
+}
+
+type AggregateQuestion {
+  count: Int!
+}
+
+type AggregateQuiz {
+  count: Int!
+}
+
+type BatchPayload {
+  """The number of nodes that have been affected by the Batch operation."""
+  count: Long!
+}
+
+scalar DateTime
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Mutation {
+  createQuiz(data: QuizCreateInput!): Quiz!
+  createOption(data: OptionCreateInput!): Option!
+  createQuestion(data: QuestionCreateInput!): Question!
+  updateQuiz(data: QuizUpdateInput!, where: QuizWhereUniqueInput!): Quiz
+  updateOption(data: OptionUpdateInput!, where: OptionWhereUniqueInput!): Option
+  updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
+  deleteQuiz(where: QuizWhereUniqueInput!): Quiz
+  deleteOption(where: OptionWhereUniqueInput!): Option
+  deleteQuestion(where: QuestionWhereUniqueInput!): Question
+  upsertQuiz(where: QuizWhereUniqueInput!, create: QuizCreateInput!, update: QuizUpdateInput!): Quiz!
+  upsertOption(where: OptionWhereUniqueInput!, create: OptionCreateInput!, update: OptionUpdateInput!): Option!
+  upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
+  updateManyQuizzes(data: QuizUpdateInput!, where: QuizWhereInput): BatchPayload!
+  updateManyOptions(data: OptionUpdateInput!, where: OptionWhereInput): BatchPayload!
+  updateManyQuestions(data: QuestionUpdateInput!, where: QuestionWhereInput): BatchPayload!
+  deleteManyQuizzes(where: QuizWhereInput): BatchPayload!
+  deleteManyOptions(where: OptionWhereInput): BatchPayload!
+  deleteManyQuestions(where: QuestionWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+type Option implements Node {
+  id: ID!
+  isCorrect: Boolean
+  text: String!
+}
+
+"""A connection to a list of items."""
+type OptionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [OptionEdge]!
+  aggregate: AggregateOption!
+}
+
+input OptionCreateInput {
+  isCorrect: Boolean
+  text: String!
+}
+
+input OptionCreateManyInput {
+  create: [OptionCreateInput!]
+  connect: [OptionWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type OptionEdge {
+  """The item at the end of the edge."""
+  node: Option!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum OptionOrderByInput {
+  id_ASC
+  id_DESC
+  isCorrect_ASC
+  isCorrect_DESC
+  text_ASC
+  text_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type OptionPreviousValues {
+  id: ID!
+  isCorrect: Boolean
+  text: String!
+}
+
+type OptionSubscriptionPayload {
+  mutation: MutationType!
+  node: Option
+  updatedFields: [String!]
+  previousValues: OptionPreviousValues
+}
+
+input OptionSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [OptionSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [OptionSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [OptionSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: OptionWhereInput
+}
+
+input OptionUpdateDataInput {
+  isCorrect: Boolean
+  text: String
+}
+
+input OptionUpdateInput {
+  isCorrect: Boolean
+  text: String
+}
+
+input OptionUpdateManyInput {
+  create: [OptionCreateInput!]
+  connect: [OptionWhereUniqueInput!]
+  disconnect: [OptionWhereUniqueInput!]
+  delete: [OptionWhereUniqueInput!]
+  update: [OptionUpdateWithWhereUniqueNestedInput!]
+  upsert: [OptionUpsertWithWhereUniqueNestedInput!]
+}
+
+input OptionUpdateWithWhereUniqueNestedInput {
+  where: OptionWhereUniqueInput!
+  data: OptionUpdateDataInput!
+}
+
+input OptionUpsertWithWhereUniqueNestedInput {
+  where: OptionWhereUniqueInput!
+  update: OptionUpdateDataInput!
+  create: OptionCreateInput!
+}
+
+input OptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [OptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [OptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [OptionWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  isCorrect: Boolean
+
+  """All values that are not equal to given value."""
+  isCorrect_not: Boolean
+  text: String
+
+  """All values that are not equal to given value."""
+  text_not: String
+
+  """All values that are contained in given list."""
+  text_in: [String!]
+
+  """All values that are not contained in given list."""
+  text_not_in: [String!]
+
+  """All values less than the given value."""
+  text_lt: String
+
+  """All values less than or equal the given value."""
+  text_lte: String
+
+  """All values greater than the given value."""
+  text_gt: String
+
+  """All values greater than or equal the given value."""
+  text_gte: String
+
+  """All values containing the given string."""
+  text_contains: String
+
+  """All values not containing the given string."""
+  text_not_contains: String
+
+  """All values starting with the given string."""
+  text_starts_with: String
+
+  """All values not starting with the given string."""
+  text_not_starts_with: String
+
+  """All values ending with the given string."""
+  text_ends_with: String
+
+  """All values not ending with the given string."""
+  text_not_ends_with: String
+  _MagicalBackRelation_OptionToQuestion_every: QuestionWhereInput
+  _MagicalBackRelation_OptionToQuestion_some: QuestionWhereInput
+  _MagicalBackRelation_OptionToQuestion_none: QuestionWhereInput
+}
+
+input OptionWhereUniqueInput {
+  id: ID
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Query {
+  quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz]!
+  options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option]!
+  questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
+  quiz(where: QuizWhereUniqueInput!): Quiz
+  option(where: OptionWhereUniqueInput!): Option
+  question(where: QuestionWhereUniqueInput!): Question
+  quizzesConnection(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizConnection!
+  optionsConnection(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OptionConnection!
+  questionsConnection(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionConnection!
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+type Question implements Node {
+  id: ID!
+  options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option!]
+  prompt: String!
+}
+
+"""A connection to a list of items."""
+type QuestionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [QuestionEdge]!
+  aggregate: AggregateQuestion!
+}
+
+input QuestionCreateInput {
+  prompt: String!
+  options: OptionCreateManyInput
+}
+
+input QuestionCreateManyInput {
+  create: [QuestionCreateInput!]
+  connect: [QuestionWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type QuestionEdge {
+  """The item at the end of the edge."""
+  node: Question!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum QuestionOrderByInput {
+  id_ASC
+  id_DESC
+  prompt_ASC
+  prompt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type QuestionPreviousValues {
+  id: ID!
+  prompt: String!
+}
+
+type QuestionSubscriptionPayload {
+  mutation: MutationType!
+  node: Question
+  updatedFields: [String!]
+  previousValues: QuestionPreviousValues
+}
+
+input QuestionSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuestionSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuestionSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuestionSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: QuestionWhereInput
+}
+
+input QuestionUpdateDataInput {
+  prompt: String
+  options: OptionUpdateManyInput
+}
+
+input QuestionUpdateInput {
+  prompt: String
+  options: OptionUpdateManyInput
+}
+
+input QuestionUpdateManyInput {
+  create: [QuestionCreateInput!]
+  connect: [QuestionWhereUniqueInput!]
+  disconnect: [QuestionWhereUniqueInput!]
+  delete: [QuestionWhereUniqueInput!]
+  update: [QuestionUpdateWithWhereUniqueNestedInput!]
+  upsert: [QuestionUpsertWithWhereUniqueNestedInput!]
+}
+
+input QuestionUpdateWithWhereUniqueNestedInput {
+  where: QuestionWhereUniqueInput!
+  data: QuestionUpdateDataInput!
+}
+
+input QuestionUpsertWithWhereUniqueNestedInput {
+  where: QuestionWhereUniqueInput!
+  update: QuestionUpdateDataInput!
+  create: QuestionCreateInput!
+}
+
+input QuestionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuestionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuestionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuestionWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  prompt: String
+
+  """All values that are not equal to given value."""
+  prompt_not: String
+
+  """All values that are contained in given list."""
+  prompt_in: [String!]
+
+  """All values that are not contained in given list."""
+  prompt_not_in: [String!]
+
+  """All values less than the given value."""
+  prompt_lt: String
+
+  """All values less than or equal the given value."""
+  prompt_lte: String
+
+  """All values greater than the given value."""
+  prompt_gt: String
+
+  """All values greater than or equal the given value."""
+  prompt_gte: String
+
+  """All values containing the given string."""
+  prompt_contains: String
+
+  """All values not containing the given string."""
+  prompt_not_contains: String
+
+  """All values starting with the given string."""
+  prompt_starts_with: String
+
+  """All values not starting with the given string."""
+  prompt_not_starts_with: String
+
+  """All values ending with the given string."""
+  prompt_ends_with: String
+
+  """All values not ending with the given string."""
+  prompt_not_ends_with: String
+  options_every: OptionWhereInput
+  options_some: OptionWhereInput
+  options_none: OptionWhereInput
+  _MagicalBackRelation_QuestionToQuiz_every: QuizWhereInput
+  _MagicalBackRelation_QuestionToQuiz_some: QuizWhereInput
+  _MagicalBackRelation_QuestionToQuiz_none: QuizWhereInput
+}
+
+input QuestionWhereUniqueInput {
+  id: ID
+}
+
+type Quiz implements Node {
+  id: ID!
+  createdAt: DateTime!
+  questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
+  title: String!
+}
+
+"""A connection to a list of items."""
+type QuizConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [QuizEdge]!
+  aggregate: AggregateQuiz!
+}
+
+input QuizCreateInput {
+  title: String!
+  questions: QuestionCreateManyInput
+}
+
+"""An edge in a connection."""
+type QuizEdge {
+  """The item at the end of the edge."""
+  node: Quiz!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum QuizOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  title_ASC
+  title_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type QuizPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  title: String!
+}
+
+type QuizSubscriptionPayload {
+  mutation: MutationType!
+  node: Quiz
+  updatedFields: [String!]
+  previousValues: QuizPreviousValues
+}
+
+input QuizSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuizSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuizSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuizSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: QuizWhereInput
+}
+
+input QuizUpdateInput {
+  title: String
+  questions: QuestionUpdateManyInput
+}
+
+input QuizWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuizWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuizWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuizWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  questions_every: QuestionWhereInput
+  questions_some: QuestionWhereInput
+  questions_none: QuestionWhereInput
+}
+
+input QuizWhereUniqueInput {
+  id: ID
+}
+
+type Subscription {
+  quiz(where: QuizSubscriptionWhereInput): QuizSubscriptionPayload
+  option(where: OptionSubscriptionWhereInput): OptionSubscriptionPayload
+  question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload
+}
