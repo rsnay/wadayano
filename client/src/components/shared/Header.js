@@ -36,7 +36,7 @@ class Header extends Component {
                 &nbsp;&nbsp;
                 <img src={Logo} alt="Knowledge Monitoring" height="28" />
             </Link>
-            <a role="button" class="navbar-burger" onClick={(e) => this._toggleMenu(e) } data-target="navMenu" aria-label="menu" aria-expanded="false">
+            <a role="button" className="navbar-burger" onClick={(e) => this._toggleMenu(e) } data-target="navMenu" aria-label="menu" aria-expanded="false">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
