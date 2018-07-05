@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import ErrorBox from '../shared/ErrorBox';
+
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export default class QuestionView extends Component {
@@ -25,6 +27,10 @@ export default class QuestionView extends Component {
               {id: "3", isCorrect: false, text: "Wrong 3"},
               {id: "4", isCorrect: false, text: "Wrong 4"},
           ];
+    
+    if (questionOptions.length === 0) {
+        return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
+    }
 
 
     let prompt = (

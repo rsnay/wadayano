@@ -26,6 +26,8 @@ progress::-webkit-progress-value {
 
 .question-option-text {
     text-align: left;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .question-confidence-selector {

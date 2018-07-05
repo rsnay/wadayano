@@ -77,6 +77,15 @@ class QuizTaker extends Component {
 
     // Quiz loaded from apollo/graphql query
     let quiz = this.props.quizQuery.quiz;
+
+    // Make sure there are questions in the quiz
+    if (quiz.questions.length === 0) {
+      return <ErrorBox>
+        <p>There are no questions in this quiz.</p>
+        <Link to="/student">Return to dashboard</Link>
+      </ErrorBox>
+    }
+
     // TODO get actual concepts
     let concepts = [
       {id: "c1", title: "concept 1"},
@@ -111,16 +120,21 @@ class QuizTaker extends Component {
     return (
         <section className="section">
         <div className="container">
-          <div className="columns">
-          <div className="column">
-            <h1 className="title">{quiz.title}</h1>
+          {/* Bigger header with title, and progress bar for tablet and larger */}
+          <div className="columns is-hidden-mobile">
+            <div className="column">
+              <h1 className="title">{quiz.title}</h1>
+            </div>
+            <div className="column" style={{margin: "1rem 0 0 0"}}>
+              {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
+                <div style={{margin: "-.3rem 1rem .5rem 0", flexShrink: 0}}>Question {this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
+                <progress className="progress is-link" value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
+              </div>}
+            </div>
           </div>
-          <div className="column" style={{margin: "1rem 0 0 0"}}>
-            {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
-              <div style={{margin: "-.3rem 1rem .5rem 0", flexShrink: 0}}>Question {this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
-              <progress className="progress is-link" value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
-            </div>}
-          </div>
+          {/* Smaller progress indicator for mobile */}
+          <div className="is-hidden-tablet is-pulled-right" style={{marginTop: "-2rem"}}>
+            <div>{this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
           </div>
 
           {currentView}
