@@ -68,8 +68,7 @@ export const QUIZZES_QUERY = gql`
             id
             title
             questions {
-            id
-            prompt
+                id
             }
         }
     }

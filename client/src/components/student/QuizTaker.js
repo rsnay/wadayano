@@ -71,7 +71,7 @@ class QuizTaker extends Component {
 
     if (this.props.quizQuery && this.props.quizQuery.error) {
       return <ErrorBox>
-        There was an error loading this quiz. Please return to the dashboard and try again.
+        <p>There was an error loading this quiz. Please return to the dashboard and try again.</p>
       </ErrorBox>
     }
 
@@ -111,12 +111,17 @@ class QuizTaker extends Component {
     return (
         <section className="section">
         <div className="container">
-          <h1 className="title">{quiz.title}</h1>
-          {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
-            <div style={{margin: "-.3rem 1rem .5rem 0", flexShrink: 0}}>Question {this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
-            <progress className="progress is-link" value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
-          </div>}
-          <hr />
+          <div className="columns">
+          <div className="column">
+            <h1 className="title">{quiz.title}</h1>
+          </div>
+          <div className="column" style={{margin: "1rem 0 0 0"}}>
+            {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
+              <div style={{margin: "-.3rem 1rem .5rem 0", flexShrink: 0}}>Question {this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
+              <progress className="progress is-link" value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
+            </div>}
+          </div>
+          </div>
 
           {currentView}
 
@@ -141,11 +146,14 @@ export const QUIZ_QUERY = gql`
     )
     {
       title
-      isGraded
-      available
       questions {
         id
         prompt
+        options {
+          id
+          text
+          isCorrect
+        }
       }
     }
   }
