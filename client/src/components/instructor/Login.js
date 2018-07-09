@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
-// This constant is simply used to make sure that the same name is always used for the localStorage key
-import { INSTRUCTOR_LOGGED_IN } from '../../constants';
+import ErrorBox from '../shared/ErrorBox';
 
-export default class Login extends Component {
+// This constant is simply used to make sure that the same name is always used for the localStorage key
+import { INSTRUCTOR_TOKEN } from '../../constants';
+
+class Login extends Component {
 
   constructor(props) {
     super(props);
@@ -16,7 +18,8 @@ export default class Login extends Component {
       email: '',
       password: '',
       passwordConfirm: '',
-      agreement: false
+      error: '',
+      isLoading: false
     };
 
     // Pre-bind this function, to make adding it to input fields easier
@@ -25,6 +28,8 @@ export default class Login extends Component {
 
   // When the log in or sign up button is pressed
   _submit() {
+    // Clear existing error, and set loading
+    this.setState({ error: '', isLoading: true });
     if (this.state.signupMode) {
       this._signUp();
     } else {
@@ -33,17 +38,54 @@ export default class Login extends Component {
   }
 
   // Log in the instructor
-  _logIn() {
-    localStorage.setItem(INSTRUCTOR_LOGGED_IN, 'true');
-    // If login was successful, redirect to instructor view, or a 'from' redirect location, if passed in
-    const { from } = this.props.location.state || { from: { pathname: '/instructor' } }
-    console.log(from);
-    this.props.history.push(from.pathname);
+  async _logIn() {
+    // Send login mutation
+    const { email, password } = this.state;
+    try {
+      const result = await this.props.loginMutation({
+        variables: {
+          email,
+          password
+        }
+      });
+      const { token } = result.data.login;
+      console.log(result);
+      localStorage.setItem(INSTRUCTOR_TOKEN, token);
+    } catch (e) {
+      this.setState({ error: 'Error logging in. Please try again later.', isLoading: false });
+      console.error('Login error: ' + e);
+    }
   }
 
   // Sign up a new instructor
-  _signUp() {
+  async _signUp() {
+    // Check that passwords match
+    if (this.state.password !== this.state.passwordConfirm) {
+      this.setState({ error: 'Passwords do not match.', isLoading: false });
+    }
+    // Check for minimum password length (should also be verified on server)
+    if (this.state.password.length < 6) {
+      this.setState({ error: 'Password must be at least 6 characters', isLoading: false });
+    }
 
+    // Send signup mutation
+    const { email, password } = this.state;
+    const result = await this.props.signupMutation({
+      variables: {
+        email,
+        password
+      }
+    });
+    console.log(result);
+    const { token } = result.data.login;
+    localStorage.setItem(INSTRUCTOR_TOKEN, token);
+  }
+
+
+  // If login or signup was successful, redirect to instructor view, or a 'from' redirect location, if passed in
+  _redirect() {
+    const { from } = this.props.location.state || { from: { pathname: '/instructor' } }
+    this.props.history.push(from.pathname);
   }
 
   // Called when the form fields change
@@ -58,12 +100,27 @@ export default class Login extends Component {
     });
   }
 
+  // Submit on enter press in password fields
+  _handleFormKeyPress(event) {
+      if (event.key === 'Enter') {
+          event.target.blur();
+          this._submit();
+      }
+  }
+
   render() {
+
+    let formCompleted = this.state.email && this.state.password;
+    if (this.state.signupMode) {
+      formCompleted = formCompleted && this.state.passwordConfirm;
+    }
+
     return (
         <section className="section">
         <div className="container">
           <h1 className="title">Instructor {this.state.signupMode ? "Signup" : "Login"}</h1>
           <i>If you are a student using wadayano in a course, simply launch it from your LMS (i.e. Canvas).</i>
+          {this.state.error && <ErrorBox><p>{this.state.error}</p></ErrorBox> }
           <div className="column is-one-third-desktop is-half-tablet">
             <div className="field">
               <p className="control has-icons-left has-icons-right">
@@ -87,6 +144,7 @@ export default class Login extends Component {
                     value={this.state.password}
                     name="password"
                     onChange={this._handleInputChange}
+                    onKeyPress={(e) => this._handleFormKeyPress(e)}
                     className="input"
                     type="password"
                     placeholder="Password"
@@ -102,6 +160,7 @@ export default class Login extends Component {
                     value={this.state.passwordConfirm}
                     name="passwordConfirm"
                     onChange={this._handleInputChange}
+                    onKeyPress={(e) => this._handleFormKeyPress(e)}
                     className="input"
                     type="password"
                     placeholder="Confirm Password"
@@ -113,7 +172,10 @@ export default class Login extends Component {
             </div>}
             <div className="field">
               <p className="control">
-                  <button className="button is-success" onClick={() => this._submit() }>
+                  <button
+                    className={"button is-success" + (this.state.isLoading ? " is-loading" : "")}
+                    disabled={!formCompleted}
+                    onClick={() => this._submit() }>
                   {this.state.signupMode ? "Sign Up" : "Log In"}
                   </button>
               </p>
@@ -130,5 +192,25 @@ export default class Login extends Component {
       </section>
     )
   }
-
 }
+
+const SIGNUP_MUTATION = gql`
+  mutation SignupMutation($email: String!, $password: String!) {
+    signup(email: $email, password: $password, role: "instructor") {
+      token
+    }
+  }
+`
+
+const LOGIN_MUTATION = gql`
+  mutation LoginMutation($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+    }
+  }
+`
+
+export default compose(
+  graphql(SIGNUP_MUTATION, { name: 'signupMutation' }),
+  graphql(LOGIN_MUTATION, { name: 'loginMutation' }),
+)(Login)

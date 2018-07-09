@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import PropTypes from 'prop-types';
 
-import { INSTRUCTOR_LOGGED_IN } from '../../constants';
+import { INSTRUCTOR_TOKEN } from '../../constants';
 
 export default class AuthCheck extends Component {
   render() {
-    let instructorLoggedIn = localStorage.getItem(INSTRUCTOR_LOGGED_IN) === "true";
+    let instructorLoggedIn = localStorage.getItem(INSTRUCTOR_TOKEN) === "true";
 
     if (!instructorLoggedIn) {
         console.log(this.props.location);
