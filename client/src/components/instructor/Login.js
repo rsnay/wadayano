@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-
-import ErrorBox from '../shared/ErrorBox';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
 import { INSTRUCTOR_TOKEN } from '../../constants';
@@ -26,8 +23,11 @@ class Login extends Component {
     this._handleInputChange = this._handleInputChange.bind(this);
   }
 
-  // When the log in or sign up button is pressed
-  _submit() {
+  // When the log in or sign up button is pressed, or form is submitted via enter key
+  _submit(e) {
+    if (e) {
+      e.preventDefault();
+    }
     // Clear existing error, and set loading
     this.setState({ error: '', isLoading: true });
     if (this.state.signupMode) {
@@ -42,18 +42,24 @@ class Login extends Component {
     // Send login mutation
     const { email, password } = this.state;
     try {
-      const result = await this.props.loginMutation({
+      const result = await this.props.instructorLoginMutation({
         variables: {
           email,
           password
         }
       });
-      const { token } = result.data.login;
-      console.log(result);
+      // Get token and save it
+      const { token } = result.data.instructorLogin;
       localStorage.setItem(INSTRUCTOR_TOKEN, token);
+      // Continue
+      this._redirect();
     } catch (e) {
-      this.setState({ error: 'Error logging in. Please try again later.', isLoading: false });
-      console.error('Login error: ' + e);
+      let message = 'Please try again later.';
+      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
+        message = e.graphQLErrors[0].message;
+      }
+      this.setState({ error: 'Error logging in: ' + message, isLoading: false });
+      console.error('Login error: ' + JSON.stringify(e));
     }
   }
 
@@ -62,23 +68,40 @@ class Login extends Component {
     // Check that passwords match
     if (this.state.password !== this.state.passwordConfirm) {
       this.setState({ error: 'Passwords do not match.', isLoading: false });
+      return;
     }
     // Check for minimum password length (should also be verified on server)
     if (this.state.password.length < 6) {
       this.setState({ error: 'Password must be at least 6 characters', isLoading: false });
+      return;
     }
 
     // Send signup mutation
     const { email, password } = this.state;
-    const result = await this.props.signupMutation({
-      variables: {
-        email,
-        password
+    try {
+      const result = await this.props.instructorSignupMutation({
+        variables: {
+          email,
+          password
+        }
+      });
+      // Get token and save it
+      const { token } = result.data.instructorSignup;
+      localStorage.setItem(INSTRUCTOR_TOKEN, token);
+      // Continue
+      this._redirect();
+    } catch (e) {
+      let message = 'Please try again later.';
+      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
+        message = e.graphQLErrors[0].message;
+        // Decode some error messages
+        if (message.indexOf('unique constraint would be violated') >= 0) {
+          message = 'A user with this email address already exists.';
+        }
       }
-    });
-    console.log(result);
-    const { token } = result.data.login;
-    localStorage.setItem(INSTRUCTOR_TOKEN, token);
+      this.setState({ error: 'Error signing up: ' + message, isLoading: false });
+      console.error('Login error: ' + JSON.stringify(e));
+    }
   }
 
 
@@ -120,12 +143,15 @@ class Login extends Component {
         <div className="container">
           <h1 className="title">Instructor {this.state.signupMode ? "Signup" : "Login"}</h1>
           <i>If you are a student using wadayano in a course, simply launch it from your LMS (i.e. Canvas).</i>
-          {this.state.error && <ErrorBox><p>{this.state.error}</p></ErrorBox> }
-          <div className="column is-one-third-desktop is-half-tablet">
+          <form className="column is-one-third-desktop is-half-tablet" onSubmit={(e) => this._submit(e) }>
+
+            {this.state.error && <p className="notification is-danger">{this.state.error}</p> }
+
             <div className="field">
               <p className="control has-icons-left has-icons-right">
                   <input
                     autoFocus
+                    required
                     value={this.state.email}
                     name="email"
                     onChange={this._handleInputChange}
@@ -138,13 +164,14 @@ class Login extends Component {
                   </span>
               </p>
             </div>
+
             <div className="field">
               <p className="control has-icons-left">
                   <input
+                    required
                     value={this.state.password}
                     name="password"
                     onChange={this._handleInputChange}
-                    onKeyPress={(e) => this._handleFormKeyPress(e)}
                     className="input"
                     type="password"
                     placeholder="Password"
@@ -154,13 +181,13 @@ class Login extends Component {
                   </span>
               </p>
             </div>
+
             {this.state.signupMode && <div className="field">
               <p className="control has-icons-left">
                   <input
                     value={this.state.passwordConfirm}
                     name="passwordConfirm"
                     onChange={this._handleInputChange}
-                    onKeyPress={(e) => this._handleFormKeyPress(e)}
                     className="input"
                     type="password"
                     placeholder="Confirm Password"
@@ -170,6 +197,7 @@ class Login extends Component {
                   </span>
               </p>
             </div>}
+
             <div className="field">
               <p className="control">
                   <button
@@ -180,13 +208,14 @@ class Login extends Component {
                   </button>
               </p>
             </div>
-            <div className="field">
-              {this.state.signupMode ? 
-                <button className="button is-text" onClick={() => this.setState({ signupMode: false }) }>Already have an account? Log In</button>
-              :
-                <button className="button is-text" onClick={() => this.setState({ signupMode: true }) }>New to wadayano? Sign Up</button>
-              }
-            </div>
+          </form>
+
+          <div className="field">
+            {this.state.signupMode ? 
+              <button className="button is-text" onClick={() => this.setState({ signupMode: false }) }>Already have an account? Log In</button>
+            :
+              <button className="button is-text" onClick={() => this.setState({ signupMode: true }) }>New to wadayano? Sign Up</button>
+            }
           </div>
         </div>
       </section>
@@ -196,7 +225,7 @@ class Login extends Component {
 
 const SIGNUP_MUTATION = gql`
   mutation SignupMutation($email: String!, $password: String!) {
-    signup(email: $email, password: $password, role: "instructor") {
+    instructorSignup(email: $email, password: $password) {
       token
     }
   }
@@ -204,13 +233,13 @@ const SIGNUP_MUTATION = gql`
 
 const LOGIN_MUTATION = gql`
   mutation LoginMutation($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+    instructorLogin(email: $email, password: $password) {
       token
     }
   }
 `
 
 export default compose(
-  graphql(SIGNUP_MUTATION, { name: 'signupMutation' }),
-  graphql(LOGIN_MUTATION, { name: 'loginMutation' }),
+  graphql(SIGNUP_MUTATION, { name: 'instructorSignupMutation' }),
+  graphql(LOGIN_MUTATION, { name: 'instructorLoginMutation' }),
 )(Login)

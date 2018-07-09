@@ -6,7 +6,7 @@ import { INSTRUCTOR_TOKEN } from '../../constants';
 
 export default class AuthCheck extends Component {
   render() {
-    let instructorLoggedIn = localStorage.getItem(INSTRUCTOR_TOKEN) === "true";
+    let instructorLoggedIn = !!localStorage.getItem(INSTRUCTOR_TOKEN);
 
     if (!instructorLoggedIn) {
         console.log(this.props.location);

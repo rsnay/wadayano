@@ -25,9 +25,9 @@ class Header extends Component {
     }
 
   render() {
-    let instructorLoggedIn = localStorage.getItem(INSTRUCTOR_TOKEN) === "true";
+    let instructorLoggedIn = !!localStorage.getItem(INSTRUCTOR_TOKEN);
     return (
-      <nav className="navbar is-light" role="navigation" aria-label="main navigation">
+      <nav className="navbar is-light" aria-label="main navigation">
         <div className="navbar-brand">
             <Link to="/" className="navbar-item">
                 <span className="icon is-medium">
