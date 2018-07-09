@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/public-twistystorm-654/quiz-node/dev
-# timestamp: Sat Jul 07 2018 10:06:47 GMT-0600 (Mountain Daylight Time)
+# timestamp: Mon Jul 09 2018 13:40:08 GMT-0600 (MDT)
 
 type AggregateCourse {
   count: Int!
@@ -1364,4 +1364,5 @@ input UserWhereInput {
 
 input UserWhereUniqueInput {
   id: ID
+  email: String
 }

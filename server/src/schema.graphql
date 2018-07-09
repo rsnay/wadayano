@@ -21,4 +21,21 @@ type Mutation {
   updateQuestion(id:ID, prompt:String):Question
   deleteQuestion(id:ID):Question!
   updateOption(id:ID, text:String!, isCorrect:Boolean):Option!
+
+  instructorSignup(email:String!, password:String!): AuthPayload
+  instructorLogin(email:String!, password:String!): AuthPayload
+}
+
+# This is being redefined here, rather than imported, so that the password is hidden and can't be queried
+type User {
+    id: ID!
+    email: String!
+    role: String!
+    createdAt: DateTime!
+    courses: [Course!]!
+}
+
+type AuthPayload {
+  token: String
+  user: User
 }
