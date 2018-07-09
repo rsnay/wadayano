@@ -1,3 +1,19 @@
+type User {
+    id: ID! @unique
+    email: String!
+    password: String!
+    role: String!
+    createdAt: DateTime!
+    courses: [Course!]!
+}
+
+type Course {
+    id: ID! @unique
+    title: String!
+    createdAt: DateTime!
+    quizzes: [Quiz!]!
+}
+
 type Quiz {
     id: ID! @unique
     createdAt: DateTime!
