@@ -3,13 +3,22 @@
 type Query {
   quizzes: [Quiz!]!
   quiz(id:ID): Quiz!
+  users: [User!]!
+  user(id:ID): User!
+  courses: [Course!]!
+  course(id:ID): Course!
   question(id:ID):Question!
   option(id:ID):Option!
 }
 
 type Mutation {
-  addQuiz(title: String!): Quiz!
+  addQuiz(id:ID): Quiz!
+  updateQuiz(id:ID,title:String):Quiz!
+  addUser(email:String, password:String, role:String): User!
+  addCourse(id:ID): Course!
   deleteQuiz(id:ID): Quiz!
-  updateQuiz(id:ID, questions: [QuestionWhereInput!]!, title: String!): Quiz!
+  addQuestion(id:ID): Quiz!
+  updateQuestion(id:ID, prompt:String):Question
+  deleteQuestion(id:ID):Question!
   updateOption(id:ID, text:String!, isCorrect:Boolean):Option!
 }
