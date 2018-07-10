@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+import { Prompt } from 'react-router';
 
 import ConceptRater from './ConceptRater';
 import QuestionView from './QuestionView';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-
-import mockData from '../../mockData';
 
 // Different phases or stages of the quiz-taking experience
 const phases = {
@@ -31,7 +30,15 @@ class QuizTaker extends Component {
       questionAttempts: [],
       quizAttempt: null
     };
+  }
 
+  componentDidUpdate() {
+    // If the student isn't to the results screen yet, have the browser confirm before they leave the page
+    if (this.state.phase !== phases.RESULTS) {
+      window.onbeforeunload = () => true
+    } else {
+      window.onbeforeunload = undefined
+    }
   }
 
   // After concepts are rated, switch to the questions phase
@@ -151,6 +158,11 @@ class QuizTaker extends Component {
           {currentView}
 
         </div>
+        {/* If the student isn't to the results screen yet, have react router confirm before they navigate away */}
+        <Prompt
+          when={this.state.phase !== phases.RESULTS}
+          message="Are you sure you want to leave this quiz? Your score will not be saved."
+        />
       </section>
     )
   }
