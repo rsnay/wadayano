@@ -25,8 +25,8 @@ class Dashboard extends Component {
         <section className="section">
         <div className="container">
           <h1 className="title is-inline-block">Student Dashboard</h1>
-          <hr />
           <p>For now, take any quiz</p>
+          <hr />
 
           <table className="table is-striped is-hoverable is-fullwidth">
             <thead>

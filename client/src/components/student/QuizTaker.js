@@ -123,7 +123,7 @@ class QuizTaker extends Component {
             <hr />
 
             <p className="control">
-                  <Link to="/student" className="button">
+                  <Link to="/student" className="button is-medium">
                       Return to Dashboard
                   </Link>
             </p>

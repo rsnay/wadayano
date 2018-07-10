@@ -103,7 +103,7 @@ export default class QuestionView extends Component {
     let submitButton = (
         <ScrollIntoViewIfNeeded>
         <hr />
-        <button autoFocus className="button is-primary" onClick={() => {
+        <button autoFocus className="button is-primary is-medium" onClick={() => {
             this.setState({ submitted: true });
             this.props.onQuestionCompleted();
         }}>Submit</button>
@@ -130,7 +130,7 @@ export default class QuestionView extends Component {
     );
 
     let continueButton = (
-        <button autoFocus className="button is-primary " onClick={this.props.onNextQuestion}>Continue</button>
+        <button autoFocus className="button is-primary is-medium" onClick={this.props.onNextQuestion}>Continue</button>
     );
 
     return (
