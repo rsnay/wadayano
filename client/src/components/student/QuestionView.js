@@ -6,7 +6,13 @@ import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 import ErrorBox from '../shared/ErrorBox';
 
-const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const CORRECT_FEEDBACKS = [
+    'Nice!',
+    'Keep up the great work!',
+    'Exactly right!',
+    'You’ve got this!'
+];
 
 export default class QuestionView extends Component {
 
@@ -46,6 +52,11 @@ export default class QuestionView extends Component {
     }
   }
 
+  _randomCorrectFeedback() {
+      const i = Math.floor(Math.random() * CORRECT_FEEDBACKS.length);
+      return CORRECT_FEEDBACKS[i];
+  }
+
   render() {
     const questionOptions = this.props.question.options;
     
@@ -54,7 +65,7 @@ export default class QuestionView extends Component {
     }
 
     let prompt = (
-        <div className="notification">
+        <div className="notification question-prompt">
             {this.props.question.prompt}
         </div>
     );
@@ -64,7 +75,7 @@ export default class QuestionView extends Component {
             onClick={() => {
                 this.setState({ selectedOption: option })
             }}>
-            <button className={"column is-1 question-option-letter level-left is-rounded button " + (option.isCorrect ? "has-text-success " : " ") + (this.state.selectedOption && this.state.selectedOption.id === option.id ? "is-link" : "")} >
+            <button className={"column is-1 question-option-letter level-left is-rounded button " + (this.state.selectedOption && this.state.selectedOption.id === option.id ? "is-link" : "")} >
                 <span>{LETTERS[index]}</span>
             </button>
             <span className="column question-option-text level-left">
@@ -99,10 +110,21 @@ export default class QuestionView extends Component {
         </ScrollIntoViewIfNeeded>
     );
 
-    let review = (
+    let review = this.state.selectedOption && (
         <span>
-            Your answer: {this.state.selectedOption &&this.state.selectedOption.text} <br />
-            Correct: {this.state.selectedOption && this.state.selectedOption.isCorrect ? "yes" : "no"}
+            <div className="columns is-mobile question-option-container is-review">
+                <span className={"column is-1 question-option-letter level-left is-rounded button " + (this.state.selectedOption.isCorrect ? "is-success" : "is-danger")}>
+                    <span><span className="icon"><i className={this.state.selectedOption.isCorrect ? "fas fa-check" : "fas fa-times"}></i></span></span>
+                </span>
+                <span className="column question-option-text level-left">
+                    {this.state.selectedOption.text}
+                </span>
+            </div>
+            {this.state.selectedOption.isCorrect ?
+                <p>{this._randomCorrectFeedback()}</p>
+            :
+                <p className="question-option-text">Correct answer: {this.props.question.options.filter(q => q.isCorrect)[0].text}</p>
+            }
             <hr />
         </span>
     );

@@ -4,9 +4,16 @@ progress::-webkit-progress-value {
 }
 
 /* QuestionView */
+.question-prompt {
+    font-size: 1.2rem;
+}
+
 .question-option-container {
     cursor: pointer;
     margin-bottom: 1.5rem!important;
+}
+.question-option-container.is-review * {
+    cursor: default;
 }
 
 .question-option-container:hover .question-option-letter {
@@ -28,6 +35,7 @@ progress::-webkit-progress-value {
     text-align: left;
     margin-top: auto;
     margin-bottom: auto;
+    font-size: 1.2rem;
 }
 
 .question-confidence-selector {

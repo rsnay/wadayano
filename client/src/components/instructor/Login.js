@@ -201,7 +201,7 @@ class Login extends Component {
             <div className="field">
               <p className="control">
                   <button
-                    className={"button is-success" + (this.state.isLoading ? " is-loading" : "")}
+                    className={"button is-primary" + (this.state.isLoading ? " is-loading" : "")}
                     disabled={!formCompleted}
                     onClick={() => this._submit() }>
                   {this.state.signupMode ? "Sign Up" : "Log In"}
