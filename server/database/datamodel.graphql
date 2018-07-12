@@ -1,17 +1,32 @@
-type User {
+# Users
+type Instructor {
     id: ID! @unique
     email: String! @unique
     password: String!
-    role: String!
     createdAt: DateTime!
     courses: [Course!]!
 }
 
+type Student {
+    id: ID! @unique
+    ltiId: String! @unique
+    email: String! @unique
+    name: String!
+    quizAttempts: [QuizAttempt!]!
+}
+
+# Course data hierarchy
 type Course {
     id: ID! @unique
     title: String!
     createdAt: DateTime!
     quizzes: [Quiz!]!
+    concepts: [Concept!]!
+}
+
+type Concept {
+    id: ID! @unique
+    title: String!
 }
 
 type Quiz {
@@ -25,10 +40,40 @@ type Question {
     id: ID! @unique
     options: [Option!]!
     prompt: String!
+    concept: Concept
 }
 
 type Option {
     id: ID! @unique
     isCorrect: Boolean
     text: String!
+}
+
+# Student quiz attempt data
+type QuizAttempt {
+    id: ID! @unique
+    student: Student!
+    quiz: Quiz!
+    createdAt: DateTime!
+    questionAttempts: [QuestionAttempt!]!
+    score: Float # (correct/total). No score indicates the attempt was started, but not yet finished
+    conceptConfidences: [ConceptConfidence!]!
+    totalConfidenceError: Float # Sum of forEach(attempt =>  abs(isConfident - isCorrect)). 0 == perfect estimation accuracy
+    totalConfidenceBias: Float # Sum of forEach(attempt => isConfident - isCorrect). Positive == overestimated; 0 == counterbalanced or no bias
+}
+
+type QuestionAttempt {
+    id: ID! @unique
+    createdAt: DateTime!
+    question: Question!
+    option: Option!
+    isCorrect: Boolean! # Yes, this is duplicating isCorrect from Option, but student should be able to review their past attempts without us always having to expose isCorrect on Options
+    isConfident: Boolean!
+}
+
+type ConceptConfidence {
+    id: ID! @unique
+    concept: Concept!
+    confidenceError: Float # Same as above, but filtered to a single concept
+    confidenceBias: Float # Ditto
 }

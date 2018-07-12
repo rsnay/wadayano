@@ -27,11 +27,11 @@ export default class QuestionView extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener("keydown", this._handleKeyDown.bind(this));
+    document.addEventListener('keydown', this._handleKeyDown.bind(this));
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this._handleKeyDown.bind(this));
+    document.removeEventListener('keydown', this._handleKeyDown.bind(this));
   }
 
   // Allow options to be selected by pressing that letter on the keyboard. This is kind of hacky right now
@@ -87,7 +87,7 @@ export default class QuestionView extends Component {
     let confidenceSelector = (
         <ScrollIntoViewIfNeeded>
         <div className="question-confidence-selector">
-            <h5 style={{margin: "0.5rem"}}>I'm confident: </h5>
+            <h5 style={{margin: "0.5rem"}}>I’m confident: </h5>
             <div className="buttons has-addons">
                 <button autoFocus className={"button is-rounded " + (this.state.confident === true ? "is-active is-link" : "")} onClick={() => this.setState({ confident: true })}>
                     &nbsp;<span className="icon is-small"><i className="fas fa-thumbs-up"></i></span>&nbsp;

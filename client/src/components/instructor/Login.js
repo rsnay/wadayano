@@ -96,7 +96,7 @@ class Login extends Component {
         message = e.graphQLErrors[0].message;
         // Decode some error messages
         if (message.indexOf('unique constraint would be violated') >= 0) {
-          message = 'A user with this email address already exists.';
+          message = 'An instructor with this email address already exists.';
         }
       }
       this.setState({ error: 'Error signing up: ' + message, isLoading: false });

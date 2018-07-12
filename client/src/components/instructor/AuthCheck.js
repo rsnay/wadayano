@@ -19,7 +19,7 @@ export default class AuthCheck extends Component {
   }
 }
 
-// If it's desired that the user be redirectedd to the URL being attempted to access, pass in the location prop. Not required.
+// If it's desired that the instructor be redirectedd to the URL being attempted to access, pass in the location prop. Not required.
 AuthCheck.propTypes = {
   location: PropTypes.object
 }

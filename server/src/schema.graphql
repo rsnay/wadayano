@@ -3,39 +3,36 @@
 type Query {
   quizzes: [Quiz!]!
   quiz(id:ID): Quiz!
-  users: [User!]!
-  user(id:ID): User!
+  instructor(id:ID): Instructor!
   courses: [Course!]!
   course(id:ID): Course!
-  question(id:ID):Question!
-  option(id:ID):Option!
+  question(id:ID): Question!
+  option(id:ID): Option!
 }
 
 type Mutation {
   addQuiz(id:ID): Quiz!
-  updateQuiz(id:ID,title:String):Quiz!
-  addUser(email:String, password:String, role:String): User!
+  updateQuiz(id:ID,title:String): Quiz!
   addCourse(id:ID): Course!
   deleteQuiz(id:ID): Quiz!
   addQuestion(id:ID): Quiz!
-  updateQuestion(id:ID, prompt:String):Question
-  deleteQuestion(id:ID):Question!
-  updateOption(id:ID, text:String!, isCorrect:Boolean):Option!
+  updateQuestion(id:ID, prompt:String): Question
+  deleteQuestion(id:ID): Question!
+  updateOption(id:ID, text:String!, isCorrect:Boolean): Option!
 
-  instructorSignup(email:String!, password:String!): AuthPayload
-  instructorLogin(email:String!, password:String!): AuthPayload
+  instructorSignup(email:String!, password:String!): InstructorAuthPayload
+  instructorLogin(email:String!, password:String!): InstructorAuthPayload
 }
 
 # This is being redefined here, rather than imported, so that the password is hidden and can't be queried
-type User {
+type Instructor {
     id: ID!
     email: String!
-    role: String!
     createdAt: DateTime!
     courses: [Course!]!
 }
 
-type AuthPayload {
+type InstructorAuthPayload {
   token: String
-  user: User
+  instructor: Instructor
 }
