@@ -3,7 +3,7 @@ function quizzes(root, args, context, info) {
 }
 
 function course(root, args, context, info){
-    return context.db.query.course({}, info)
+    return context.db.query.course({where:{id:args.id}}, info)
 }
 
 function courses(root, args, context, info){
@@ -11,7 +11,7 @@ function courses(root, args, context, info){
 }
 
 function instructor(root, args, context, info){
-    return context.db.query.user({where:{id:args.id}},info)
+    return context.db.query.instructor({where:{id:args.id}},info)
 }
 
 function quiz(root, args, context, info) {

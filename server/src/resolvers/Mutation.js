@@ -16,7 +16,7 @@ function updateOption (root, args, context, info){
 }
 
 function addCourse (root, args, context, info) {
-    return context.db.mutation.updateUser({
+    return context.db.mutation.updateInstructor({
         data:{
             courses:[{
                 create:[{
@@ -170,7 +170,7 @@ function updateQuestion(root, args, context, info){
 }
 
 async function instructorLogin(root, args, context, info) {
-    // Check that user exists
+    // Check that instructor exists
     console.log(args.email, args.password);
     const email = args.email.toLowerCase();
     const instructor = await context.db.query.instructor({ where: { email: email } }, ` { id, password } `);

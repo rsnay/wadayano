@@ -5,11 +5,25 @@ import gql from 'graphql-tag';
 
 import AuthCheck from './AuthCheck';
 
-export default class CourseDetails extends Component {
+import ErrorBox from '../shared/ErrorBox';
+import LoadingBox from '../shared/LoadingBox';
+
+export class CourseDetails extends Component {
   state = {
   }
 
   render() {
+
+    if (this.props.courseQuery && this.props.courseQuery.loading) {
+        return <LoadingBox />;
+    }
+
+    if (this.props.courseQuery && this.props.courseQuery.error) {
+        return <ErrorBox>Couldn't load courses</ErrorBox>;
+    }
+    console.log(this.props);
+    let course = this.props.courseQuery.course;
+
     return (
         <section className="section">
         <AuthCheck location={this.props.location} />
@@ -17,10 +31,10 @@ export default class CourseDetails extends Component {
         <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 <li><Link to="/instructor">Course List</Link></li>
-                <li className="is-active"><Link to="/instructor/course/1" aria-current="page">Not a real course</Link></li>
+                <li className="is-active"><Link to={"/instructor/course/"+course.id} aria-current="page">{course.title}</Link></li>
             </ul>
         </nav>
-          <h1 className="title is-inline-block">Not a real course</h1>
+          <h1 className="title is-inline-block">{course.id}</h1>
           &nbsp;&nbsp;
             <a className="button">
                 <span className="icon is-small">
@@ -39,12 +53,13 @@ export default class CourseDetails extends Component {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Not a real quiz</td>
-                    <td>10 questions</td>
+                {course.quizzes.map((quiz, index)=>
+                <tr key={quiz.id}>
+                    <td>{quiz.id}</td>
+                    <td>{quiz.title}</td>
+                    <td>{quiz.questions.length}</td>
                     <td>
-                    <Link to="/instructor/quiz/1" className="button is-outlined is-primary">
+                    <Link to={"/instructor/quiz/" + quiz.id} className="button is-outlined is-primary">
                         <span className="icon">
                         <i className="fas fa-edit"></i>
                         </span>
@@ -52,6 +67,7 @@ export default class CourseDetails extends Component {
                     </Link>
                     </td>
                 </tr>
+            )}
             </tbody>
         </table>
         </div>
@@ -60,3 +76,31 @@ export default class CourseDetails extends Component {
   }
 
 }
+
+//all courses for user of id
+//TODO change from hardcoded userId
+export const COURSE_QUERY = gql`
+  query courseQuery($id: ID!) {
+    course(
+        id:$id
+    ){
+        id
+        title
+        quizzes{
+            id
+            title
+            questions{
+                prompt
+            }
+        }
+    }
+  }
+`
+
+export default graphql(COURSE_QUERY, {
+  name: 'courseQuery',
+  options: (props) => {
+    console.log(props.match.params.courseId);
+    return { variables: { id:props.match.params.courseId } }
+  }
+}) (CourseDetails)
