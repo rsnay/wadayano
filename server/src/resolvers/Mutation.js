@@ -15,8 +15,8 @@ function updateOption (root, args, context, info){
     }, info)
 }
 
-function addUser (root, args, context, info) {
-    return context.db.mutation.createUser({
+function addInstructor (root, args, context, info) {
+    return context.db.mutation.createInstructor({
         data: {
             email: args.email,
             role: args.role,
@@ -59,7 +59,7 @@ function addUser (root, args, context, info) {
 }
 
 function addCourse (root, args, context, info) {
-    return context.db.mutation.updateUser({
+    return context.db.mutation.updateInstructor({
         data:{
             courses:[{
                 create:[{
@@ -213,27 +213,27 @@ function updateQuestion(root, args, context, info){
 }
 
 async function instructorLogin(root, args, context, info) {
-    // Check that user exists
+    // Check that instructor exists
     console.log(args.email, args.password);
     const email = args.email.toLowerCase();
-    const user = await context.db.query.user({ where: { email: email } }, ` { id, password } `);
-    if (!user) {
+    const instructor = await context.db.query.instructor({ where: { email: email } }, ` { id, password } `);
+    if (!instructor) {
         throw new Error('Invalid email and/or password');
     }
 
     // Check that password is valid
-    const valid = await bcrypt.compare(args.password, user.password);
+    const valid = await bcrypt.compare(args.password, instructor.password);
     if (!valid) {
         throw new Error('Invalid email and/or password');
     }
 
     // Sign token
-    const token = jwt.sign({ userId: user.id }, APP_SECRET);
+    const token = jwt.sign({ instructorId: instructor.id }, APP_SECRET);
 
     // Return an AuthPayload
     return {
         token,
-        user,
+        instructor,
     };
 }
 
@@ -248,24 +248,24 @@ async function instructorSignup(root, args, context, info) {
     const password = await bcrypt.hash(args.password, 10);
     // Signup is only for instructors (student accounts will be auto-created when launched via LTI)
     const role = "instructor";
-    // Create user
-    const user = await context.db.mutation.createUser({
+    // Create instructor
+    const instructor = await context.db.mutation.createinstructor({
         data: { email, password, role },
     }, `{ id }`);
 
-    // Sign token using id of newly-created user
-    const token = jwt.sign({ userId: user.id }, APP_SECRET);
+    // Sign token using id of newly-created instructor
+    const token = jwt.sign({ instructorId: instructor.id }, APP_SECRET);
 
     // Return an AuthPayload
     return {
         token,
-        user,
+        instructor,
     };
 }
 
 module.exports = {
     addQuiz,
-    addUser,
+    addInstructor,
     addCourse,
     updateQuiz,
     deleteQuiz,

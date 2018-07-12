@@ -6,7 +6,10 @@ import gql from 'graphql-tag';
 import AuthCheck from './AuthCheck';
 import CreateCourseForm from './CreateCourseForm';
 
-export default class CourseList extends Component {
+import ErrorBox from '../shared/ErrorBox';
+import LoadingBox from '../shared/LoadingBox';
+
+export class CourseList extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,11 +19,21 @@ export default class CourseList extends Component {
   render() {
 
     // TODO actually get data from API
-    const courses = [
+    /*const courses = [
         {id: 'course1', title: 'Example Course 1', quizzes: [1,2,3]},
         {id: 'course2', title: 'Example Course 2', quizzes: [1]},
         {id: 'course3', title: 'Example Course 3', quizzes: [1,2,4,5,6,7]}
-    ];
+    ];*/
+
+    if (this.props.instructorQuery && this.props.instructorQuery.loading) {
+        return <LoadingBox />;
+    }
+
+    if (this.props.instructorQuery && this.props.instructorQuery.error) {
+        return <ErrorBox>Couldn't load courses</ErrorBox>;
+    }
+    console.log(this.props);
+    let courses = this.props.instructorQuery.instructor.courses;
 
     return (
         <section className="section">
@@ -69,3 +82,31 @@ export default class CourseList extends Component {
   }
 
 }
+
+//all courses for instructor of id
+//TODO change from hardcoded instructorId
+export const INSTRUCTOR_QUERY = gql`
+  query instructorQuery($id: ID!) {
+    instructor(
+      id: $id
+    )
+    {
+      courses{
+          id
+          title
+          quizzes{
+              id
+          }
+      }
+    }
+  }
+`
+
+export default graphql(INSTRUCTOR_QUERY, {
+  name: 'instructorQuery',
+  options: (props) => {
+    //console.log(props.match.params.instructorId);
+    // Pass the instructor ID from the route into the query //temporarily hardcoded instructor id
+    return { variables: { id:"cjjej0vhi0w5f0b370p49q85c" } }
+  }
+}) (CourseList)

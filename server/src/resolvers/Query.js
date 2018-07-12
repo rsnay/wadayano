@@ -2,20 +2,20 @@ function quizzes(root, args, context, info) {
     return context.db.query.quizzes({}, info)
 }
 
-function users(root, args, context, info){
-    return context.db.query.users({}, info)
+function instructors(root, args, context, info){
+    return context.db.query.instructors({}, info)
 }
 
 function course(root, args, context, info){
-    return context.db.query.course({}, info)
+    return context.db.query.course({where:{id:args.id}}, info)
 }
 
 function courses(root, args, context, info){
     return context.db.query.courses({}, info)
 }
 
-function user(root, args, context, info){
-    return context.db.query.user({where:{id:args.id}},info)
+function instructor(root, args, context, info){
+    return context.db.query.instructor({where:{id:args.id}},info)
 }
 
 function quiz(root, args, context, info) {
@@ -32,9 +32,9 @@ function option(root, args, context, info){
 
 module.exports = {
   quizzes,
-  users,
+  instructors,
   courses,
-  user,
+  instructor,
   course,
   quiz,
   question,

@@ -1,7 +1,19 @@
 # source: https://us1.prisma.sh/public-twistystorm-654/quiz-node/dev
-# timestamp: Mon Jul 09 2018 13:40:08 GMT-0600 (MDT)
+# timestamp: Wed Jul 11 2018 11:33:23 GMT-0600 (Mountain Daylight Time)
+
+type AggregateConcept {
+  count: Int!
+}
+
+type AggregateConceptConfidence {
+  count: Int!
+}
 
 type AggregateCourse {
+  count: Int!
+}
+
+type AggregateInstructor {
   count: Int!
 }
 
@@ -13,11 +25,19 @@ type AggregateQuestion {
   count: Int!
 }
 
+type AggregateQuestionAttempt {
+  count: Int!
+}
+
 type AggregateQuiz {
   count: Int!
 }
 
-type AggregateUser {
+type AggregateQuizAttempt {
+  count: Int!
+}
+
+type AggregateStudent {
   count: Int!
 }
 
@@ -26,11 +46,481 @@ type BatchPayload {
   count: Long!
 }
 
+type Concept implements Node {
+  id: ID!
+  title: String!
+}
+
+type ConceptConfidence implements Node {
+  id: ID!
+  concept(where: ConceptWhereInput): Concept!
+  confidenceError: Float
+  confidenceBias: Float
+}
+
+"""A connection to a list of items."""
+type ConceptConfidenceConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ConceptConfidenceEdge]!
+  aggregate: AggregateConceptConfidence!
+}
+
+input ConceptConfidenceCreateInput {
+  confidenceError: Float
+  confidenceBias: Float
+  concept: ConceptCreateOneInput!
+}
+
+input ConceptConfidenceCreateManyInput {
+  create: [ConceptConfidenceCreateInput!]
+  connect: [ConceptConfidenceWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type ConceptConfidenceEdge {
+  """The item at the end of the edge."""
+  node: ConceptConfidence!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ConceptConfidenceOrderByInput {
+  id_ASC
+  id_DESC
+  confidenceError_ASC
+  confidenceError_DESC
+  confidenceBias_ASC
+  confidenceBias_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ConceptConfidencePreviousValues {
+  id: ID!
+  confidenceError: Float
+  confidenceBias: Float
+}
+
+type ConceptConfidenceSubscriptionPayload {
+  mutation: MutationType!
+  node: ConceptConfidence
+  updatedFields: [String!]
+  previousValues: ConceptConfidencePreviousValues
+}
+
+input ConceptConfidenceSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ConceptConfidenceSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ConceptConfidenceSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ConceptConfidenceSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ConceptConfidenceWhereInput
+}
+
+input ConceptConfidenceUpdateDataInput {
+  confidenceError: Float
+  confidenceBias: Float
+  concept: ConceptUpdateOneInput
+}
+
+input ConceptConfidenceUpdateInput {
+  confidenceError: Float
+  confidenceBias: Float
+  concept: ConceptUpdateOneInput
+}
+
+input ConceptConfidenceUpdateManyInput {
+  create: [ConceptConfidenceCreateInput!]
+  connect: [ConceptConfidenceWhereUniqueInput!]
+  disconnect: [ConceptConfidenceWhereUniqueInput!]
+  delete: [ConceptConfidenceWhereUniqueInput!]
+  update: [ConceptConfidenceUpdateWithWhereUniqueNestedInput!]
+  upsert: [ConceptConfidenceUpsertWithWhereUniqueNestedInput!]
+}
+
+input ConceptConfidenceUpdateWithWhereUniqueNestedInput {
+  where: ConceptConfidenceWhereUniqueInput!
+  data: ConceptConfidenceUpdateDataInput!
+}
+
+input ConceptConfidenceUpsertWithWhereUniqueNestedInput {
+  where: ConceptConfidenceWhereUniqueInput!
+  update: ConceptConfidenceUpdateDataInput!
+  create: ConceptConfidenceCreateInput!
+}
+
+input ConceptConfidenceWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ConceptConfidenceWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ConceptConfidenceWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ConceptConfidenceWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  confidenceError: Float
+
+  """All values that are not equal to given value."""
+  confidenceError_not: Float
+
+  """All values that are contained in given list."""
+  confidenceError_in: [Float!]
+
+  """All values that are not contained in given list."""
+  confidenceError_not_in: [Float!]
+
+  """All values less than the given value."""
+  confidenceError_lt: Float
+
+  """All values less than or equal the given value."""
+  confidenceError_lte: Float
+
+  """All values greater than the given value."""
+  confidenceError_gt: Float
+
+  """All values greater than or equal the given value."""
+  confidenceError_gte: Float
+  confidenceBias: Float
+
+  """All values that are not equal to given value."""
+  confidenceBias_not: Float
+
+  """All values that are contained in given list."""
+  confidenceBias_in: [Float!]
+
+  """All values that are not contained in given list."""
+  confidenceBias_not_in: [Float!]
+
+  """All values less than the given value."""
+  confidenceBias_lt: Float
+
+  """All values less than or equal the given value."""
+  confidenceBias_lte: Float
+
+  """All values greater than the given value."""
+  confidenceBias_gt: Float
+
+  """All values greater than or equal the given value."""
+  confidenceBias_gte: Float
+  concept: ConceptWhereInput
+  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_every: QuizAttemptWhereInput
+  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_some: QuizAttemptWhereInput
+  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_none: QuizAttemptWhereInput
+}
+
+input ConceptConfidenceWhereUniqueInput {
+  id: ID
+}
+
+"""A connection to a list of items."""
+type ConceptConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ConceptEdge]!
+  aggregate: AggregateConcept!
+}
+
+input ConceptCreateInput {
+  title: String!
+}
+
+input ConceptCreateManyInput {
+  create: [ConceptCreateInput!]
+  connect: [ConceptWhereUniqueInput!]
+}
+
+input ConceptCreateOneInput {
+  create: ConceptCreateInput
+  connect: ConceptWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type ConceptEdge {
+  """The item at the end of the edge."""
+  node: Concept!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ConceptOrderByInput {
+  id_ASC
+  id_DESC
+  title_ASC
+  title_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ConceptPreviousValues {
+  id: ID!
+  title: String!
+}
+
+type ConceptSubscriptionPayload {
+  mutation: MutationType!
+  node: Concept
+  updatedFields: [String!]
+  previousValues: ConceptPreviousValues
+}
+
+input ConceptSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ConceptSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ConceptSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ConceptSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ConceptWhereInput
+}
+
+input ConceptUpdateDataInput {
+  title: String
+}
+
+input ConceptUpdateInput {
+  title: String
+}
+
+input ConceptUpdateManyInput {
+  create: [ConceptCreateInput!]
+  connect: [ConceptWhereUniqueInput!]
+  disconnect: [ConceptWhereUniqueInput!]
+  delete: [ConceptWhereUniqueInput!]
+  update: [ConceptUpdateWithWhereUniqueNestedInput!]
+  upsert: [ConceptUpsertWithWhereUniqueNestedInput!]
+}
+
+input ConceptUpdateOneInput {
+  create: ConceptCreateInput
+  connect: ConceptWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ConceptUpdateDataInput
+  upsert: ConceptUpsertNestedInput
+}
+
+input ConceptUpdateWithWhereUniqueNestedInput {
+  where: ConceptWhereUniqueInput!
+  data: ConceptUpdateDataInput!
+}
+
+input ConceptUpsertNestedInput {
+  update: ConceptUpdateDataInput!
+  create: ConceptCreateInput!
+}
+
+input ConceptUpsertWithWhereUniqueNestedInput {
+  where: ConceptWhereUniqueInput!
+  update: ConceptUpdateDataInput!
+  create: ConceptCreateInput!
+}
+
+input ConceptWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ConceptWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ConceptWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ConceptWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  _MagicalBackRelation_ConceptToConceptConfidence_every: ConceptConfidenceWhereInput
+  _MagicalBackRelation_ConceptToConceptConfidence_some: ConceptConfidenceWhereInput
+  _MagicalBackRelation_ConceptToConceptConfidence_none: ConceptConfidenceWhereInput
+  _MagicalBackRelation_ConceptToQuestion_every: QuestionWhereInput
+  _MagicalBackRelation_ConceptToQuestion_some: QuestionWhereInput
+  _MagicalBackRelation_ConceptToQuestion_none: QuestionWhereInput
+  _MagicalBackRelation_ConceptToCourse_every: CourseWhereInput
+  _MagicalBackRelation_ConceptToCourse_some: CourseWhereInput
+  _MagicalBackRelation_ConceptToCourse_none: CourseWhereInput
+}
+
+input ConceptWhereUniqueInput {
+  id: ID
+}
+
 type Course implements Node {
   id: ID!
   title: String!
   createdAt: DateTime!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz!]
+  concepts(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Concept!]
 }
 
 """A connection to a list of items."""
@@ -46,6 +536,7 @@ type CourseConnection {
 input CourseCreateInput {
   title: String!
   quizzes: QuizCreateManyInput
+  concepts: ConceptCreateManyInput
 }
 
 input CourseCreateManyInput {
@@ -121,11 +612,13 @@ input CourseSubscriptionWhereInput {
 input CourseUpdateDataInput {
   title: String
   quizzes: QuizUpdateManyInput
+  concepts: ConceptUpdateManyInput
 }
 
 input CourseUpdateInput {
   title: String
   quizzes: QuizUpdateManyInput
+  concepts: ConceptUpdateManyInput
 }
 
 input CourseUpdateManyInput {
@@ -262,9 +755,12 @@ input CourseWhereInput {
   quizzes_every: QuizWhereInput
   quizzes_some: QuizWhereInput
   quizzes_none: QuizWhereInput
-  _MagicalBackRelation_CourseToUser_every: UserWhereInput
-  _MagicalBackRelation_CourseToUser_some: UserWhereInput
-  _MagicalBackRelation_CourseToUser_none: UserWhereInput
+  concepts_every: ConceptWhereInput
+  concepts_some: ConceptWhereInput
+  concepts_none: ConceptWhereInput
+  _MagicalBackRelation_CourseToInstructor_every: InstructorWhereInput
+  _MagicalBackRelation_CourseToInstructor_some: InstructorWhereInput
+  _MagicalBackRelation_CourseToInstructor_none: InstructorWhereInput
 }
 
 input CourseWhereUniqueInput {
@@ -273,6 +769,265 @@ input CourseWhereUniqueInput {
 
 scalar DateTime
 
+type Instructor implements Node {
+  id: ID!
+  email: String!
+  password: String!
+  createdAt: DateTime!
+  courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course!]
+}
+
+"""A connection to a list of items."""
+type InstructorConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [InstructorEdge]!
+  aggregate: AggregateInstructor!
+}
+
+input InstructorCreateInput {
+  email: String!
+  password: String!
+  courses: CourseCreateManyInput
+}
+
+"""An edge in a connection."""
+type InstructorEdge {
+  """The item at the end of the edge."""
+  node: Instructor!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum InstructorOrderByInput {
+  id_ASC
+  id_DESC
+  email_ASC
+  email_DESC
+  password_ASC
+  password_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type InstructorPreviousValues {
+  id: ID!
+  email: String!
+  password: String!
+  createdAt: DateTime!
+}
+
+type InstructorSubscriptionPayload {
+  mutation: MutationType!
+  node: Instructor
+  updatedFields: [String!]
+  previousValues: InstructorPreviousValues
+}
+
+input InstructorSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InstructorSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InstructorSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InstructorSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: InstructorWhereInput
+}
+
+input InstructorUpdateInput {
+  email: String
+  password: String
+  courses: CourseUpdateManyInput
+}
+
+input InstructorWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InstructorWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InstructorWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InstructorWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  courses_every: CourseWhereInput
+  courses_some: CourseWhereInput
+  courses_none: CourseWhereInput
+}
+
+input InstructorWhereUniqueInput {
+  id: ID
+  email: String
+}
+
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
@@ -280,36 +1035,66 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createUser(data: UserCreateInput!): User!
-  createOption(data: OptionCreateInput!): Option!
-  createQuestion(data: QuestionCreateInput!): Question!
-  createCourse(data: CourseCreateInput!): Course!
+  createInstructor(data: InstructorCreateInput!): Instructor!
+  createStudent(data: StudentCreateInput!): Student!
+  createQuizAttempt(data: QuizAttemptCreateInput!): QuizAttempt!
   createQuiz(data: QuizCreateInput!): Quiz!
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updateOption(data: OptionUpdateInput!, where: OptionWhereUniqueInput!): Option
-  updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
-  updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
+  createCourse(data: CourseCreateInput!): Course!
+  createOption(data: OptionCreateInput!): Option!
+  createConceptConfidence(data: ConceptConfidenceCreateInput!): ConceptConfidence!
+  createQuestionAttempt(data: QuestionAttemptCreateInput!): QuestionAttempt!
+  createQuestion(data: QuestionCreateInput!): Question!
+  createConcept(data: ConceptCreateInput!): Concept!
+  updateInstructor(data: InstructorUpdateInput!, where: InstructorWhereUniqueInput!): Instructor
+  updateStudent(data: StudentUpdateInput!, where: StudentWhereUniqueInput!): Student
+  updateQuizAttempt(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereUniqueInput!): QuizAttempt
   updateQuiz(data: QuizUpdateInput!, where: QuizWhereUniqueInput!): Quiz
-  deleteUser(where: UserWhereUniqueInput!): User
-  deleteOption(where: OptionWhereUniqueInput!): Option
-  deleteQuestion(where: QuestionWhereUniqueInput!): Question
-  deleteCourse(where: CourseWhereUniqueInput!): Course
+  updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
+  updateOption(data: OptionUpdateInput!, where: OptionWhereUniqueInput!): Option
+  updateConceptConfidence(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
+  updateQuestionAttempt(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
+  updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
+  updateConcept(data: ConceptUpdateInput!, where: ConceptWhereUniqueInput!): Concept
+  deleteInstructor(where: InstructorWhereUniqueInput!): Instructor
+  deleteStudent(where: StudentWhereUniqueInput!): Student
+  deleteQuizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   deleteQuiz(where: QuizWhereUniqueInput!): Quiz
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
-  upsertOption(where: OptionWhereUniqueInput!, create: OptionCreateInput!, update: OptionUpdateInput!): Option!
-  upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
-  upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
+  deleteCourse(where: CourseWhereUniqueInput!): Course
+  deleteOption(where: OptionWhereUniqueInput!): Option
+  deleteConceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
+  deleteQuestionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
+  deleteQuestion(where: QuestionWhereUniqueInput!): Question
+  deleteConcept(where: ConceptWhereUniqueInput!): Concept
+  upsertInstructor(where: InstructorWhereUniqueInput!, create: InstructorCreateInput!, update: InstructorUpdateInput!): Instructor!
+  upsertStudent(where: StudentWhereUniqueInput!, create: StudentCreateInput!, update: StudentUpdateInput!): Student!
+  upsertQuizAttempt(where: QuizAttemptWhereUniqueInput!, create: QuizAttemptCreateInput!, update: QuizAttemptUpdateInput!): QuizAttempt!
   upsertQuiz(where: QuizWhereUniqueInput!, create: QuizCreateInput!, update: QuizUpdateInput!): Quiz!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
-  updateManyOptions(data: OptionUpdateInput!, where: OptionWhereInput): BatchPayload!
-  updateManyQuestions(data: QuestionUpdateInput!, where: QuestionWhereInput): BatchPayload!
-  updateManyCourses(data: CourseUpdateInput!, where: CourseWhereInput): BatchPayload!
+  upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
+  upsertOption(where: OptionWhereUniqueInput!, create: OptionCreateInput!, update: OptionUpdateInput!): Option!
+  upsertConceptConfidence(where: ConceptConfidenceWhereUniqueInput!, create: ConceptConfidenceCreateInput!, update: ConceptConfidenceUpdateInput!): ConceptConfidence!
+  upsertQuestionAttempt(where: QuestionAttemptWhereUniqueInput!, create: QuestionAttemptCreateInput!, update: QuestionAttemptUpdateInput!): QuestionAttempt!
+  upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
+  upsertConcept(where: ConceptWhereUniqueInput!, create: ConceptCreateInput!, update: ConceptUpdateInput!): Concept!
+  updateManyInstructors(data: InstructorUpdateInput!, where: InstructorWhereInput): BatchPayload!
+  updateManyStudents(data: StudentUpdateInput!, where: StudentWhereInput): BatchPayload!
+  updateManyQuizAttempts(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereInput): BatchPayload!
   updateManyQuizzes(data: QuizUpdateInput!, where: QuizWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
-  deleteManyOptions(where: OptionWhereInput): BatchPayload!
-  deleteManyQuestions(where: QuestionWhereInput): BatchPayload!
-  deleteManyCourses(where: CourseWhereInput): BatchPayload!
+  updateManyCourses(data: CourseUpdateInput!, where: CourseWhereInput): BatchPayload!
+  updateManyOptions(data: OptionUpdateInput!, where: OptionWhereInput): BatchPayload!
+  updateManyConceptConfidences(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereInput): BatchPayload!
+  updateManyQuestionAttempts(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereInput): BatchPayload!
+  updateManyQuestions(data: QuestionUpdateInput!, where: QuestionWhereInput): BatchPayload!
+  updateManyConcepts(data: ConceptUpdateInput!, where: ConceptWhereInput): BatchPayload!
+  deleteManyInstructors(where: InstructorWhereInput): BatchPayload!
+  deleteManyStudents(where: StudentWhereInput): BatchPayload!
+  deleteManyQuizAttempts(where: QuizAttemptWhereInput): BatchPayload!
   deleteManyQuizzes(where: QuizWhereInput): BatchPayload!
+  deleteManyCourses(where: CourseWhereInput): BatchPayload!
+  deleteManyOptions(where: OptionWhereInput): BatchPayload!
+  deleteManyConceptConfidences(where: ConceptConfidenceWhereInput): BatchPayload!
+  deleteManyQuestionAttempts(where: QuestionAttemptWhereInput): BatchPayload!
+  deleteManyQuestions(where: QuestionWhereInput): BatchPayload!
+  deleteManyConcepts(where: ConceptWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -348,6 +1133,11 @@ input OptionCreateInput {
 input OptionCreateManyInput {
   create: [OptionCreateInput!]
   connect: [OptionWhereUniqueInput!]
+}
+
+input OptionCreateOneInput {
+  create: OptionCreateInput
+  connect: OptionWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -436,9 +1226,22 @@ input OptionUpdateManyInput {
   upsert: [OptionUpsertWithWhereUniqueNestedInput!]
 }
 
+input OptionUpdateOneInput {
+  create: OptionCreateInput
+  connect: OptionWhereUniqueInput
+  delete: Boolean
+  update: OptionUpdateDataInput
+  upsert: OptionUpsertNestedInput
+}
+
 input OptionUpdateWithWhereUniqueNestedInput {
   where: OptionWhereUniqueInput!
   data: OptionUpdateDataInput!
+}
+
+input OptionUpsertNestedInput {
+  update: OptionUpdateDataInput!
+  create: OptionCreateInput!
 }
 
 input OptionUpsertWithWhereUniqueNestedInput {
@@ -543,6 +1346,9 @@ input OptionWhereInput {
   _MagicalBackRelation_OptionToQuestion_every: QuestionWhereInput
   _MagicalBackRelation_OptionToQuestion_some: QuestionWhereInput
   _MagicalBackRelation_OptionToQuestion_none: QuestionWhereInput
+  _MagicalBackRelation_OptionToQuestionAttempt_every: QuestionAttemptWhereInput
+  _MagicalBackRelation_OptionToQuestionAttempt_some: QuestionAttemptWhereInput
+  _MagicalBackRelation_OptionToQuestionAttempt_none: QuestionAttemptWhereInput
 }
 
 input OptionWhereUniqueInput {
@@ -565,21 +1371,36 @@ type PageInfo {
 }
 
 type Query {
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
-  options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option]!
-  questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
-  courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course]!
+  instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor]!
+  students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student]!
+  quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt]!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz]!
-  user(where: UserWhereUniqueInput!): User
-  option(where: OptionWhereUniqueInput!): Option
-  question(where: QuestionWhereUniqueInput!): Question
-  course(where: CourseWhereUniqueInput!): Course
+  courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course]!
+  options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option]!
+  conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence]!
+  questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt]!
+  questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
+  concepts(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Concept]!
+  instructor(where: InstructorWhereUniqueInput!): Instructor
+  student(where: StudentWhereUniqueInput!): Student
+  quizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   quiz(where: QuizWhereUniqueInput!): Quiz
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
-  optionsConnection(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OptionConnection!
-  questionsConnection(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionConnection!
-  coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
+  course(where: CourseWhereUniqueInput!): Course
+  option(where: OptionWhereUniqueInput!): Option
+  conceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
+  questionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
+  question(where: QuestionWhereUniqueInput!): Question
+  concept(where: ConceptWhereUniqueInput!): Concept
+  instructorsConnection(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorConnection!
+  studentsConnection(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StudentConnection!
+  quizAttemptsConnection(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizAttemptConnection!
   quizzesConnection(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizConnection!
+  coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
+  optionsConnection(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OptionConnection!
+  conceptConfidencesConnection(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ConceptConfidenceConnection!
+  questionAttemptsConnection(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionAttemptConnection!
+  questionsConnection(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionConnection!
+  conceptsConnection(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ConceptConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -592,6 +1413,230 @@ type Question implements Node {
   id: ID!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option!]
   prompt: String!
+  concept(where: ConceptWhereInput): Concept
+}
+
+type QuestionAttempt implements Node {
+  id: ID!
+  createdAt: DateTime!
+  question(where: QuestionWhereInput): Question!
+  option(where: OptionWhereInput): Option!
+  isCorrect: Boolean!
+  isConfident: Boolean!
+}
+
+"""A connection to a list of items."""
+type QuestionAttemptConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [QuestionAttemptEdge]!
+  aggregate: AggregateQuestionAttempt!
+}
+
+input QuestionAttemptCreateInput {
+  isCorrect: Boolean!
+  isConfident: Boolean!
+  question: QuestionCreateOneInput!
+  option: OptionCreateOneInput!
+}
+
+input QuestionAttemptCreateManyInput {
+  create: [QuestionAttemptCreateInput!]
+  connect: [QuestionAttemptWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type QuestionAttemptEdge {
+  """The item at the end of the edge."""
+  node: QuestionAttempt!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum QuestionAttemptOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  isCorrect_ASC
+  isCorrect_DESC
+  isConfident_ASC
+  isConfident_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type QuestionAttemptPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  isCorrect: Boolean!
+  isConfident: Boolean!
+}
+
+type QuestionAttemptSubscriptionPayload {
+  mutation: MutationType!
+  node: QuestionAttempt
+  updatedFields: [String!]
+  previousValues: QuestionAttemptPreviousValues
+}
+
+input QuestionAttemptSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuestionAttemptSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuestionAttemptSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuestionAttemptSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: QuestionAttemptWhereInput
+}
+
+input QuestionAttemptUpdateDataInput {
+  isCorrect: Boolean
+  isConfident: Boolean
+  question: QuestionUpdateOneInput
+  option: OptionUpdateOneInput
+}
+
+input QuestionAttemptUpdateInput {
+  isCorrect: Boolean
+  isConfident: Boolean
+  question: QuestionUpdateOneInput
+  option: OptionUpdateOneInput
+}
+
+input QuestionAttemptUpdateManyInput {
+  create: [QuestionAttemptCreateInput!]
+  connect: [QuestionAttemptWhereUniqueInput!]
+  disconnect: [QuestionAttemptWhereUniqueInput!]
+  delete: [QuestionAttemptWhereUniqueInput!]
+  update: [QuestionAttemptUpdateWithWhereUniqueNestedInput!]
+  upsert: [QuestionAttemptUpsertWithWhereUniqueNestedInput!]
+}
+
+input QuestionAttemptUpdateWithWhereUniqueNestedInput {
+  where: QuestionAttemptWhereUniqueInput!
+  data: QuestionAttemptUpdateDataInput!
+}
+
+input QuestionAttemptUpsertWithWhereUniqueNestedInput {
+  where: QuestionAttemptWhereUniqueInput!
+  update: QuestionAttemptUpdateDataInput!
+  create: QuestionAttemptCreateInput!
+}
+
+input QuestionAttemptWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuestionAttemptWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuestionAttemptWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuestionAttemptWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  isCorrect: Boolean
+
+  """All values that are not equal to given value."""
+  isCorrect_not: Boolean
+  isConfident: Boolean
+
+  """All values that are not equal to given value."""
+  isConfident_not: Boolean
+  question: QuestionWhereInput
+  option: OptionWhereInput
+  _MagicalBackRelation_QuestionAttemptToQuizAttempt_every: QuizAttemptWhereInput
+  _MagicalBackRelation_QuestionAttemptToQuizAttempt_some: QuizAttemptWhereInput
+  _MagicalBackRelation_QuestionAttemptToQuizAttempt_none: QuizAttemptWhereInput
+}
+
+input QuestionAttemptWhereUniqueInput {
+  id: ID
 }
 
 """A connection to a list of items."""
@@ -607,11 +1652,17 @@ type QuestionConnection {
 input QuestionCreateInput {
   prompt: String!
   options: OptionCreateManyInput
+  concept: ConceptCreateOneInput
 }
 
 input QuestionCreateManyInput {
   create: [QuestionCreateInput!]
   connect: [QuestionWhereUniqueInput!]
+}
+
+input QuestionCreateOneInput {
+  create: QuestionCreateInput
+  connect: QuestionWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -681,11 +1732,13 @@ input QuestionSubscriptionWhereInput {
 input QuestionUpdateDataInput {
   prompt: String
   options: OptionUpdateManyInput
+  concept: ConceptUpdateOneInput
 }
 
 input QuestionUpdateInput {
   prompt: String
   options: OptionUpdateManyInput
+  concept: ConceptUpdateOneInput
 }
 
 input QuestionUpdateManyInput {
@@ -697,9 +1750,22 @@ input QuestionUpdateManyInput {
   upsert: [QuestionUpsertWithWhereUniqueNestedInput!]
 }
 
+input QuestionUpdateOneInput {
+  create: QuestionCreateInput
+  connect: QuestionWhereUniqueInput
+  delete: Boolean
+  update: QuestionUpdateDataInput
+  upsert: QuestionUpsertNestedInput
+}
+
 input QuestionUpdateWithWhereUniqueNestedInput {
   where: QuestionWhereUniqueInput!
   data: QuestionUpdateDataInput!
+}
+
+input QuestionUpsertNestedInput {
+  update: QuestionUpdateDataInput!
+  create: QuestionCreateInput!
 }
 
 input QuestionUpsertWithWhereUniqueNestedInput {
@@ -800,9 +1866,13 @@ input QuestionWhereInput {
   options_every: OptionWhereInput
   options_some: OptionWhereInput
   options_none: OptionWhereInput
+  concept: ConceptWhereInput
   _MagicalBackRelation_QuestionToQuiz_every: QuizWhereInput
   _MagicalBackRelation_QuestionToQuiz_some: QuizWhereInput
   _MagicalBackRelation_QuestionToQuiz_none: QuizWhereInput
+  _MagicalBackRelation_QuestionToQuestionAttempt_every: QuestionAttemptWhereInput
+  _MagicalBackRelation_QuestionToQuestionAttempt_some: QuestionAttemptWhereInput
+  _MagicalBackRelation_QuestionToQuestionAttempt_none: QuestionAttemptWhereInput
 }
 
 input QuestionWhereUniqueInput {
@@ -814,6 +1884,313 @@ type Quiz implements Node {
   createdAt: DateTime!
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
   title: String!
+}
+
+type QuizAttempt implements Node {
+  id: ID!
+  student(where: StudentWhereInput): Student!
+  quiz(where: QuizWhereInput): Quiz!
+  createdAt: DateTime!
+  questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt!]
+  score: Float
+  conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence!]
+  totalConfidenceError: Float
+  totalConfidenceBias: Float
+}
+
+"""A connection to a list of items."""
+type QuizAttemptConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [QuizAttemptEdge]!
+  aggregate: AggregateQuizAttempt!
+}
+
+input QuizAttemptCreateInput {
+  score: Float
+  totalConfidenceError: Float
+  totalConfidenceBias: Float
+  student: StudentCreateOneWithoutQuizAttemptsInput!
+  quiz: QuizCreateOneInput!
+  questionAttempts: QuestionAttemptCreateManyInput
+  conceptConfidences: ConceptConfidenceCreateManyInput
+}
+
+input QuizAttemptCreateManyWithoutStudentInput {
+  create: [QuizAttemptCreateWithoutStudentInput!]
+  connect: [QuizAttemptWhereUniqueInput!]
+}
+
+input QuizAttemptCreateWithoutStudentInput {
+  score: Float
+  totalConfidenceError: Float
+  totalConfidenceBias: Float
+  quiz: QuizCreateOneInput!
+  questionAttempts: QuestionAttemptCreateManyInput
+  conceptConfidences: ConceptConfidenceCreateManyInput
+}
+
+"""An edge in a connection."""
+type QuizAttemptEdge {
+  """The item at the end of the edge."""
+  node: QuizAttempt!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum QuizAttemptOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  score_ASC
+  score_DESC
+  totalConfidenceError_ASC
+  totalConfidenceError_DESC
+  totalConfidenceBias_ASC
+  totalConfidenceBias_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type QuizAttemptPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  score: Float
+  totalConfidenceError: Float
+  totalConfidenceBias: Float
+}
+
+type QuizAttemptSubscriptionPayload {
+  mutation: MutationType!
+  node: QuizAttempt
+  updatedFields: [String!]
+  previousValues: QuizAttemptPreviousValues
+}
+
+input QuizAttemptSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuizAttemptSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuizAttemptSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuizAttemptSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: QuizAttemptWhereInput
+}
+
+input QuizAttemptUpdateInput {
+  score: Float
+  totalConfidenceError: Float
+  totalConfidenceBias: Float
+  student: StudentUpdateOneWithoutQuizAttemptsInput
+  quiz: QuizUpdateOneInput
+  questionAttempts: QuestionAttemptUpdateManyInput
+  conceptConfidences: ConceptConfidenceUpdateManyInput
+}
+
+input QuizAttemptUpdateManyWithoutStudentInput {
+  create: [QuizAttemptCreateWithoutStudentInput!]
+  connect: [QuizAttemptWhereUniqueInput!]
+  disconnect: [QuizAttemptWhereUniqueInput!]
+  delete: [QuizAttemptWhereUniqueInput!]
+  update: [QuizAttemptUpdateWithWhereUniqueWithoutStudentInput!]
+  upsert: [QuizAttemptUpsertWithWhereUniqueWithoutStudentInput!]
+}
+
+input QuizAttemptUpdateWithoutStudentDataInput {
+  score: Float
+  totalConfidenceError: Float
+  totalConfidenceBias: Float
+  quiz: QuizUpdateOneInput
+  questionAttempts: QuestionAttemptUpdateManyInput
+  conceptConfidences: ConceptConfidenceUpdateManyInput
+}
+
+input QuizAttemptUpdateWithWhereUniqueWithoutStudentInput {
+  where: QuizAttemptWhereUniqueInput!
+  data: QuizAttemptUpdateWithoutStudentDataInput!
+}
+
+input QuizAttemptUpsertWithWhereUniqueWithoutStudentInput {
+  where: QuizAttemptWhereUniqueInput!
+  update: QuizAttemptUpdateWithoutStudentDataInput!
+  create: QuizAttemptCreateWithoutStudentInput!
+}
+
+input QuizAttemptWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuizAttemptWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuizAttemptWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuizAttemptWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  score: Float
+
+  """All values that are not equal to given value."""
+  score_not: Float
+
+  """All values that are contained in given list."""
+  score_in: [Float!]
+
+  """All values that are not contained in given list."""
+  score_not_in: [Float!]
+
+  """All values less than the given value."""
+  score_lt: Float
+
+  """All values less than or equal the given value."""
+  score_lte: Float
+
+  """All values greater than the given value."""
+  score_gt: Float
+
+  """All values greater than or equal the given value."""
+  score_gte: Float
+  totalConfidenceError: Float
+
+  """All values that are not equal to given value."""
+  totalConfidenceError_not: Float
+
+  """All values that are contained in given list."""
+  totalConfidenceError_in: [Float!]
+
+  """All values that are not contained in given list."""
+  totalConfidenceError_not_in: [Float!]
+
+  """All values less than the given value."""
+  totalConfidenceError_lt: Float
+
+  """All values less than or equal the given value."""
+  totalConfidenceError_lte: Float
+
+  """All values greater than the given value."""
+  totalConfidenceError_gt: Float
+
+  """All values greater than or equal the given value."""
+  totalConfidenceError_gte: Float
+  totalConfidenceBias: Float
+
+  """All values that are not equal to given value."""
+  totalConfidenceBias_not: Float
+
+  """All values that are contained in given list."""
+  totalConfidenceBias_in: [Float!]
+
+  """All values that are not contained in given list."""
+  totalConfidenceBias_not_in: [Float!]
+
+  """All values less than the given value."""
+  totalConfidenceBias_lt: Float
+
+  """All values less than or equal the given value."""
+  totalConfidenceBias_lte: Float
+
+  """All values greater than the given value."""
+  totalConfidenceBias_gt: Float
+
+  """All values greater than or equal the given value."""
+  totalConfidenceBias_gte: Float
+  student: StudentWhereInput
+  quiz: QuizWhereInput
+  questionAttempts_every: QuestionAttemptWhereInput
+  questionAttempts_some: QuestionAttemptWhereInput
+  questionAttempts_none: QuestionAttemptWhereInput
+  conceptConfidences_every: ConceptConfidenceWhereInput
+  conceptConfidences_some: ConceptConfidenceWhereInput
+  conceptConfidences_none: ConceptConfidenceWhereInput
+}
+
+input QuizAttemptWhereUniqueInput {
+  id: ID
 }
 
 """A connection to a list of items."""
@@ -834,6 +2211,11 @@ input QuizCreateInput {
 input QuizCreateManyInput {
   create: [QuizCreateInput!]
   connect: [QuizWhereUniqueInput!]
+}
+
+input QuizCreateOneInput {
+  create: QuizCreateInput
+  connect: QuizWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -920,9 +2302,22 @@ input QuizUpdateManyInput {
   upsert: [QuizUpsertWithWhereUniqueNestedInput!]
 }
 
+input QuizUpdateOneInput {
+  create: QuizCreateInput
+  connect: QuizWhereUniqueInput
+  delete: Boolean
+  update: QuizUpdateDataInput
+  upsert: QuizUpsertNestedInput
+}
+
 input QuizUpdateWithWhereUniqueNestedInput {
   where: QuizWhereUniqueInput!
   data: QuizUpdateDataInput!
+}
+
+input QuizUpsertNestedInput {
+  update: QuizUpdateDataInput!
+  create: QuizCreateInput!
 }
 
 input QuizUpsertWithWhereUniqueNestedInput {
@@ -1048,94 +2443,98 @@ input QuizWhereInput {
   _MagicalBackRelation_CourseToQuiz_every: CourseWhereInput
   _MagicalBackRelation_CourseToQuiz_some: CourseWhereInput
   _MagicalBackRelation_CourseToQuiz_none: CourseWhereInput
+  _MagicalBackRelation_QuizToQuizAttempt_every: QuizAttemptWhereInput
+  _MagicalBackRelation_QuizToQuizAttempt_some: QuizAttemptWhereInput
+  _MagicalBackRelation_QuizToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input QuizWhereUniqueInput {
   id: ID
 }
 
-type Subscription {
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
-  option(where: OptionSubscriptionWhereInput): OptionSubscriptionPayload
-  question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload
-  course(where: CourseSubscriptionWhereInput): CourseSubscriptionPayload
-  quiz(where: QuizSubscriptionWhereInput): QuizSubscriptionPayload
-}
-
-type User implements Node {
+type Student implements Node {
   id: ID!
+  ltiId: String!
   email: String!
-  password: String!
-  role: String!
-  createdAt: DateTime!
-  courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course!]
+  name: String!
+  quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt!]
 }
 
 """A connection to a list of items."""
-type UserConnection {
+type StudentConnection {
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """A list of edges."""
-  edges: [UserEdge]!
-  aggregate: AggregateUser!
+  edges: [StudentEdge]!
+  aggregate: AggregateStudent!
 }
 
-input UserCreateInput {
+input StudentCreateInput {
+  ltiId: String!
   email: String!
-  password: String!
-  role: String!
-  courses: CourseCreateManyInput
+  name: String!
+  quizAttempts: QuizAttemptCreateManyWithoutStudentInput
+}
+
+input StudentCreateOneWithoutQuizAttemptsInput {
+  create: StudentCreateWithoutQuizAttemptsInput
+  connect: StudentWhereUniqueInput
+}
+
+input StudentCreateWithoutQuizAttemptsInput {
+  ltiId: String!
+  email: String!
+  name: String!
 }
 
 """An edge in a connection."""
-type UserEdge {
+type StudentEdge {
   """The item at the end of the edge."""
-  node: User!
+  node: Student!
 
   """A cursor for use in pagination."""
   cursor: String!
 }
 
-enum UserOrderByInput {
+enum StudentOrderByInput {
   id_ASC
   id_DESC
+  ltiId_ASC
+  ltiId_DESC
   email_ASC
   email_DESC
-  password_ASC
-  password_DESC
-  role_ASC
-  role_DESC
-  createdAt_ASC
-  createdAt_DESC
+  name_ASC
+  name_DESC
   updatedAt_ASC
   updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
 }
 
-type UserPreviousValues {
+type StudentPreviousValues {
   id: ID!
+  ltiId: String!
   email: String!
-  password: String!
-  role: String!
-  createdAt: DateTime!
+  name: String!
 }
 
-type UserSubscriptionPayload {
+type StudentSubscriptionPayload {
   mutation: MutationType!
-  node: User
+  node: Student
   updatedFields: [String!]
-  previousValues: UserPreviousValues
+  previousValues: StudentPreviousValues
 }
 
-input UserSubscriptionWhereInput {
+input StudentSubscriptionWhereInput {
   """Logical AND on all given filters."""
-  AND: [UserSubscriptionWhereInput!]
+  AND: [StudentSubscriptionWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [UserSubscriptionWhereInput!]
+  OR: [StudentSubscriptionWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [UserSubscriptionWhereInput!]
+  NOT: [StudentSubscriptionWhereInput!]
 
   """
   The subscription event gets dispatched when it's listed in mutation_in
@@ -1156,25 +2555,44 @@ input UserSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-  node: UserWhereInput
+  node: StudentWhereInput
 }
 
-input UserUpdateInput {
+input StudentUpdateInput {
+  ltiId: String
   email: String
-  password: String
-  role: String
-  courses: CourseUpdateManyInput
+  name: String
+  quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
 }
 
-input UserWhereInput {
+input StudentUpdateOneWithoutQuizAttemptsInput {
+  create: StudentCreateWithoutQuizAttemptsInput
+  connect: StudentWhereUniqueInput
+  delete: Boolean
+  update: StudentUpdateWithoutQuizAttemptsDataInput
+  upsert: StudentUpsertWithoutQuizAttemptsInput
+}
+
+input StudentUpdateWithoutQuizAttemptsDataInput {
+  ltiId: String
+  email: String
+  name: String
+}
+
+input StudentUpsertWithoutQuizAttemptsInput {
+  update: StudentUpdateWithoutQuizAttemptsDataInput!
+  create: StudentCreateWithoutQuizAttemptsInput!
+}
+
+input StudentWhereInput {
   """Logical AND on all given filters."""
-  AND: [UserWhereInput!]
+  AND: [StudentWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [UserWhereInput!]
+  OR: [StudentWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [UserWhereInput!]
+  NOT: [StudentWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -1215,6 +2633,46 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  ltiId: String
+
+  """All values that are not equal to given value."""
+  ltiId_not: String
+
+  """All values that are contained in given list."""
+  ltiId_in: [String!]
+
+  """All values that are not contained in given list."""
+  ltiId_not_in: [String!]
+
+  """All values less than the given value."""
+  ltiId_lt: String
+
+  """All values less than or equal the given value."""
+  ltiId_lte: String
+
+  """All values greater than the given value."""
+  ltiId_gt: String
+
+  """All values greater than or equal the given value."""
+  ltiId_gte: String
+
+  """All values containing the given string."""
+  ltiId_contains: String
+
+  """All values not containing the given string."""
+  ltiId_not_contains: String
+
+  """All values starting with the given string."""
+  ltiId_starts_with: String
+
+  """All values not starting with the given string."""
+  ltiId_not_starts_with: String
+
+  """All values ending with the given string."""
+  ltiId_ends_with: String
+
+  """All values not ending with the given string."""
+  ltiId_not_ends_with: String
   email: String
 
   """All values that are not equal to given value."""
@@ -1255,114 +2713,66 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   email_not_ends_with: String
-  password: String
+  name: String
 
   """All values that are not equal to given value."""
-  password_not: String
+  name_not: String
 
   """All values that are contained in given list."""
-  password_in: [String!]
+  name_in: [String!]
 
   """All values that are not contained in given list."""
-  password_not_in: [String!]
+  name_not_in: [String!]
 
   """All values less than the given value."""
-  password_lt: String
+  name_lt: String
 
   """All values less than or equal the given value."""
-  password_lte: String
+  name_lte: String
 
   """All values greater than the given value."""
-  password_gt: String
+  name_gt: String
 
   """All values greater than or equal the given value."""
-  password_gte: String
+  name_gte: String
 
   """All values containing the given string."""
-  password_contains: String
+  name_contains: String
 
   """All values not containing the given string."""
-  password_not_contains: String
+  name_not_contains: String
 
   """All values starting with the given string."""
-  password_starts_with: String
+  name_starts_with: String
 
   """All values not starting with the given string."""
-  password_not_starts_with: String
+  name_not_starts_with: String
 
   """All values ending with the given string."""
-  password_ends_with: String
+  name_ends_with: String
 
   """All values not ending with the given string."""
-  password_not_ends_with: String
-  role: String
-
-  """All values that are not equal to given value."""
-  role_not: String
-
-  """All values that are contained in given list."""
-  role_in: [String!]
-
-  """All values that are not contained in given list."""
-  role_not_in: [String!]
-
-  """All values less than the given value."""
-  role_lt: String
-
-  """All values less than or equal the given value."""
-  role_lte: String
-
-  """All values greater than the given value."""
-  role_gt: String
-
-  """All values greater than or equal the given value."""
-  role_gte: String
-
-  """All values containing the given string."""
-  role_contains: String
-
-  """All values not containing the given string."""
-  role_not_contains: String
-
-  """All values starting with the given string."""
-  role_starts_with: String
-
-  """All values not starting with the given string."""
-  role_not_starts_with: String
-
-  """All values ending with the given string."""
-  role_ends_with: String
-
-  """All values not ending with the given string."""
-  role_not_ends_with: String
-  createdAt: DateTime
-
-  """All values that are not equal to given value."""
-  createdAt_not: DateTime
-
-  """All values that are contained in given list."""
-  createdAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  createdAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  createdAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  createdAt_lte: DateTime
-
-  """All values greater than the given value."""
-  createdAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  createdAt_gte: DateTime
-  courses_every: CourseWhereInput
-  courses_some: CourseWhereInput
-  courses_none: CourseWhereInput
+  name_not_ends_with: String
+  quizAttempts_every: QuizAttemptWhereInput
+  quizAttempts_some: QuizAttemptWhereInput
+  quizAttempts_none: QuizAttemptWhereInput
 }
 
-input UserWhereUniqueInput {
+input StudentWhereUniqueInput {
   id: ID
+  ltiId: String
   email: String
+}
+
+type Subscription {
+  instructor(where: InstructorSubscriptionWhereInput): InstructorSubscriptionPayload
+  student(where: StudentSubscriptionWhereInput): StudentSubscriptionPayload
+  quizAttempt(where: QuizAttemptSubscriptionWhereInput): QuizAttemptSubscriptionPayload
+  quiz(where: QuizSubscriptionWhereInput): QuizSubscriptionPayload
+  course(where: CourseSubscriptionWhereInput): CourseSubscriptionPayload
+  option(where: OptionSubscriptionWhereInput): OptionSubscriptionPayload
+  conceptConfidence(where: ConceptConfidenceSubscriptionWhereInput): ConceptConfidenceSubscriptionPayload
+  questionAttempt(where: QuestionAttemptSubscriptionWhereInput): QuestionAttemptSubscriptionPayload
+  question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload
+  concept(where: ConceptSubscriptionWhereInput): ConceptSubscriptionPayload
 }

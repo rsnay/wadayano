@@ -1,5 +1,5 @@
-function user(root, args, context, info) {
-    return context.db.query.user({ where: { id: root.user.id } }, info)
+function instructor(root, args, context, info) {
+    return context.db.query.instructor({ where: { id: root.instructor.id } }, info)
   }
   
-  module.exports = { user }
+  module.exports = { instructor }
