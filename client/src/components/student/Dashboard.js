@@ -5,7 +5,6 @@ import gql from 'graphql-tag';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-import mockData from '../../mockData';
 
 class Dashboard extends Component {
 

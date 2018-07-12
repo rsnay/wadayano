@@ -6,6 +6,7 @@ import { Prompt } from 'react-router';
 
 import ConceptRater from './ConceptRater';
 import QuestionView from './QuestionView';
+import QuizReview from './QuizReview';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
@@ -23,7 +24,7 @@ class QuizTaker extends Component {
     super(props);
 
     this.state = {
-      phase: phases.QUESTIONS,
+      phase: phases.CONCEPTS,
       conceptConfidences: [],
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
@@ -35,10 +36,15 @@ class QuizTaker extends Component {
   componentDidUpdate() {
     // If the student isn't to the results screen yet, have the browser confirm before they leave the page
     if (this.state.phase !== phases.RESULTS) {
-      window.onbeforeunload = () => true
+      window.onbeforeunload = () => true;
     } else {
-      window.onbeforeunload = undefined
+      window.onbeforeunload = undefined;
     }
+  }
+
+  componentWillUnmount() {
+    // Remove leave confirmation when the user navigates away
+    window.onbeforeunload = undefined;
   }
 
   // After concepts are rated, switch to the questions phase
@@ -108,6 +114,7 @@ class QuizTaker extends Component {
           onConceptsRated={() => this._onConceptsRated() }
         />;
         break;
+        
       case phases.QUESTIONS:
         currentView = <QuestionView
           question={quiz.questions[this.state.currentQuestionIndex]}
@@ -116,12 +123,12 @@ class QuizTaker extends Component {
           onNextQuestion={() => this._onNextQuestion() }
         />;
         break;
+
       case phases.RESULTS:
         currentView = (
           <div>
-            <p>Results view</p>
+            <QuizReview quizAttemptId={"TODO"} />
             <hr />
-
             <p className="control">
                   <Link to="/student" className="button is-medium">
                       Return to Dashboard
@@ -130,6 +137,7 @@ class QuizTaker extends Component {
           </div>
         );
         break;
+
       case phases.CONCEPT_REVIEW:
         currentView = 'Concept review';
         break;
@@ -151,9 +159,9 @@ class QuizTaker extends Component {
             </div>
           </div>
           {/* Smaller progress indicator for mobile */}
-          <div className="is-hidden-tablet is-pulled-right" style={{marginTop: "-2rem"}}>
+          {this.state.phase === phases.QUESTIONS && <div className="is-hidden-tablet is-pulled-right" style={{marginTop: "-2rem"}}>
             <div>{this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
-          </div>
+          </div>}
 
           {currentView}
 
