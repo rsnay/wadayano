@@ -38,29 +38,28 @@ export default class ConceptRater extends Component {
   render() {
 
     let concepts = this.props.concepts.map((concept, index) =>
-        <div className="columns" key={concept.id}>
-            <div className="column">
-                {concept.title}
-                <NumericRater
-                    minRating={MIN_RATING}
-                    maxRating={MAX_RATING}
-                    onChange={(newValue) => this._setRating(concept.id, newValue)}
-                />
-            </div>
+        <div className="" key={concept.id}>
+            <h3 className="subtitle is-4">{concept.title}</h3>
+            <NumericRater
+                minRating={MIN_RATING}
+                maxRating={MAX_RATING}
+                onChange={(newValue) => this._setRating(concept.id, newValue)}
+            />
+            <br />
         </div>
     );
 
     let submitButton = (
-        <a className="button is-primary" onClick={() => {
+        <button autoFocus className="button is-primary" onClick={() => {
             this.setState({ submitted: true });
             // TODO pass actual ratings
             this.props.onConceptsRated();
-        }}>Start Quiz</a>
+        }}>Start Quiz</button>
     );
 
     return (
         <div>
-            <p className="notification">This quiz includes the following topics.<br />How confident are you in your mastery of each?</p>
+            <p className="notification">This quiz includes the following topics.<br />How confident are you in your mastery of each? (1 = least confident; 5 = most confident)</p>
             {concepts}
             <br />
             {this.state.ratings.length === this.props.concepts.length && submitButton}
