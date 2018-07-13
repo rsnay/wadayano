@@ -22,3 +22,4 @@ yarn-error.log*
 
 # Prevent production config from leaking into repository
 config.js
+database/prisma.yml
