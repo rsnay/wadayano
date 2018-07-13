@@ -1,14 +1,25 @@
+// GraphQL
 const { GraphQLServer } = require('graphql-yoga')
 const { Prisma } = require('prisma-binding')
 const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
-// 2
 
+// App server (static and LTI processing)
+const express = require('express');
+const querystring = require('querystring');
+const pathUtils = require('path');
+const lti = require('ims-lti');
+
+// App Config
+const config = require('../config');
+
+// GraphQL queries and mutations
 const resolvers = {
   Query,
   Mutation
 }
-// 3
+
+// Set up graphQL server
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
   resolvers,
@@ -17,13 +28,31 @@ const server = new GraphQLServer({
   },
   context: req => ({
     ...req,
+    // Allow this server's mutations and queries to access prisma server
     db: new Prisma({
       typeDefs: 'src/generated/prisma.graphql',
-      endpoint: 'https://us1.prisma.sh/public-twistystorm-654/quiz-node/dev',
-      secret: 'mysecret123',
+      endpoint: config.PRISMA_ENDPOINT,
+      secret: config.PRISMA_SECRET,
       debug: true,
     }),
   }),
 })
 
-server.start(() => console.log(`Server is running on http://localhost:4000`))
+// Directory to serve static files from
+const appDir = '../client/build';
+
+// Serve static files
+server.use(express.static(appDir));
+
+// TODO These will eventually need to come from the database, and likely be course-specific
+const consumer_key = 'jisc.ac.uk';
+const consumer_secret = 'secret';
+
+server.get('/test', function(req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('hi ');
+})
+
+server.start({
+  port: config.APP_SERVER_PORT || 4000,
+}, () => console.log(`Server is running on port ${config.APP_SERVER_PORT || 4000}`));

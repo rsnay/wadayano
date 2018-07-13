@@ -1,4 +1,4 @@
-#import Quiz,Question from "./generated/prisma.graphql"
+#import Student, Course, Concept, Quiz, Question, Option, QuizAttempt, QuestionAttempt, ConceptConfidence from "./generated/prisma.graphql"
 
 type Query {
   quizzes: [Quiz!]!
@@ -22,6 +22,8 @@ type Mutation {
 
   instructorSignup(email:String!, password:String!): InstructorAuthPayload
   instructorLogin(email:String!, password:String!): InstructorAuthPayload
+
+  startQuizAttempt(quizId: ID!, studentId: ID!): QuizAttempt!
 }
 
 # This is being redefined here, rather than imported, so that the password is hidden and can't be queried
@@ -32,6 +34,7 @@ type Instructor {
     courses: [Course!]!
 }
 
+# Returned from instructor signup or login
 type InstructorAuthPayload {
   token: String
   instructor: Instructor
