@@ -10,9 +10,9 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloLink } from 'apollo-link';
 
-import { INSTRUCTOR_TOKEN } from './constants';
+import { INSTRUCTOR_TOKEN, GRAPHQL_ENDPOINT } from './constants';
 
-const httpLink = new HttpLink({uri: 'http://localhost:4000'});
+const httpLink = new HttpLink({uri: GRAPHQL_ENDPOINT});
 
 const middlewareAuthLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem(INSTRUCTOR_TOKEN);
