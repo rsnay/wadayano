@@ -1,5 +1,5 @@
-# source: https://us1.prisma.sh/public-twistystorm-654/quiz-node/dev
-# timestamp: Wed Jul 11 2018 11:33:23 GMT-0600 (Mountain Daylight Time)
+# source: https://us1.prisma.sh/wadayano/wadayano/dev
+# timestamp: Mon Jul 16 2018 09:35:17 GMT-0600 (MDT)
 
 type AggregateConcept {
   count: Int!
@@ -1891,6 +1891,7 @@ type QuizAttempt implements Node {
   student(where: StudentWhereInput): Student!
   quiz(where: QuizWhereInput): Quiz!
   createdAt: DateTime!
+  completed: DateTime!
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt!]
   score: Float
   conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence!]
@@ -1909,6 +1910,7 @@ type QuizAttemptConnection {
 }
 
 input QuizAttemptCreateInput {
+  completed: DateTime!
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -1924,6 +1926,7 @@ input QuizAttemptCreateManyWithoutStudentInput {
 }
 
 input QuizAttemptCreateWithoutStudentInput {
+  completed: DateTime!
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -1946,6 +1949,8 @@ enum QuizAttemptOrderByInput {
   id_DESC
   createdAt_ASC
   createdAt_DESC
+  completed_ASC
+  completed_DESC
   score_ASC
   score_DESC
   totalConfidenceError_ASC
@@ -1959,6 +1964,7 @@ enum QuizAttemptOrderByInput {
 type QuizAttemptPreviousValues {
   id: ID!
   createdAt: DateTime!
+  completed: DateTime!
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -2004,6 +2010,7 @@ input QuizAttemptSubscriptionWhereInput {
 }
 
 input QuizAttemptUpdateInput {
+  completed: DateTime
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -2023,6 +2030,7 @@ input QuizAttemptUpdateManyWithoutStudentInput {
 }
 
 input QuizAttemptUpdateWithoutStudentDataInput {
+  completed: DateTime
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -2113,6 +2121,28 @@ input QuizAttemptWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  completed: DateTime
+
+  """All values that are not equal to given value."""
+  completed_not: DateTime
+
+  """All values that are contained in given list."""
+  completed_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  completed_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  completed_lt: DateTime
+
+  """All values less than or equal the given value."""
+  completed_lte: DateTime
+
+  """All values greater than the given value."""
+  completed_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  completed_gte: DateTime
   score: Float
 
   """All values that are not equal to given value."""
@@ -2454,7 +2484,7 @@ input QuizWhereUniqueInput {
 
 type Student implements Node {
   id: ID!
-  ltiId: String!
+  ltiUserId: String!
   email: String!
   name: String!
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt!]
@@ -2471,7 +2501,7 @@ type StudentConnection {
 }
 
 input StudentCreateInput {
-  ltiId: String!
+  ltiUserId: String!
   email: String!
   name: String!
   quizAttempts: QuizAttemptCreateManyWithoutStudentInput
@@ -2483,7 +2513,7 @@ input StudentCreateOneWithoutQuizAttemptsInput {
 }
 
 input StudentCreateWithoutQuizAttemptsInput {
-  ltiId: String!
+  ltiUserId: String!
   email: String!
   name: String!
 }
@@ -2500,8 +2530,8 @@ type StudentEdge {
 enum StudentOrderByInput {
   id_ASC
   id_DESC
-  ltiId_ASC
-  ltiId_DESC
+  ltiUserId_ASC
+  ltiUserId_DESC
   email_ASC
   email_DESC
   name_ASC
@@ -2514,7 +2544,7 @@ enum StudentOrderByInput {
 
 type StudentPreviousValues {
   id: ID!
-  ltiId: String!
+  ltiUserId: String!
   email: String!
   name: String!
 }
@@ -2559,7 +2589,7 @@ input StudentSubscriptionWhereInput {
 }
 
 input StudentUpdateInput {
-  ltiId: String
+  ltiUserId: String
   email: String
   name: String
   quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
@@ -2574,7 +2604,7 @@ input StudentUpdateOneWithoutQuizAttemptsInput {
 }
 
 input StudentUpdateWithoutQuizAttemptsDataInput {
-  ltiId: String
+  ltiUserId: String
   email: String
   name: String
 }
@@ -2633,46 +2663,46 @@ input StudentWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  ltiId: String
+  ltiUserId: String
 
   """All values that are not equal to given value."""
-  ltiId_not: String
+  ltiUserId_not: String
 
   """All values that are contained in given list."""
-  ltiId_in: [String!]
+  ltiUserId_in: [String!]
 
   """All values that are not contained in given list."""
-  ltiId_not_in: [String!]
+  ltiUserId_not_in: [String!]
 
   """All values less than the given value."""
-  ltiId_lt: String
+  ltiUserId_lt: String
 
   """All values less than or equal the given value."""
-  ltiId_lte: String
+  ltiUserId_lte: String
 
   """All values greater than the given value."""
-  ltiId_gt: String
+  ltiUserId_gt: String
 
   """All values greater than or equal the given value."""
-  ltiId_gte: String
+  ltiUserId_gte: String
 
   """All values containing the given string."""
-  ltiId_contains: String
+  ltiUserId_contains: String
 
   """All values not containing the given string."""
-  ltiId_not_contains: String
+  ltiUserId_not_contains: String
 
   """All values starting with the given string."""
-  ltiId_starts_with: String
+  ltiUserId_starts_with: String
 
   """All values not starting with the given string."""
-  ltiId_not_starts_with: String
+  ltiUserId_not_starts_with: String
 
   """All values ending with the given string."""
-  ltiId_ends_with: String
+  ltiUserId_ends_with: String
 
   """All values not ending with the given string."""
-  ltiId_not_ends_with: String
+  ltiUserId_not_ends_with: String
   email: String
 
   """All values that are not equal to given value."""
@@ -2760,8 +2790,7 @@ input StudentWhereInput {
 
 input StudentWhereUniqueInput {
   id: ID
-  ltiId: String
-  email: String
+  ltiUserId: String
 }
 
 type Subscription {

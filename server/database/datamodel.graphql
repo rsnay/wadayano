@@ -9,8 +9,10 @@ type Instructor {
 
 type Student {
     id: ID! @unique
-    ltiId: String! @unique
-    email: String! @unique
+    # This is a simplistic approach, where each student has to be created and logged in via LTI.
+    ltiUserId: String! @unique
+    # If one student is in multiple courses that each have a different LTI user ID, they will have multiple 'accounts' on wadayano, so email isn't necessarily unique
+    email: String!
     name: String!
     quizAttempts: [QuizAttempt!]!
 }
