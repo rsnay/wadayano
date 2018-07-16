@@ -9,17 +9,81 @@ import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
 export class QuizEditor extends Component {
-  state = {
-  }
+    constructor(props) {
+        super(props);
+    
+        this.state = {
+          quiz:null,
+          quizTitle:'',
+          questions:[]
+        };
+    
+        // Pre-bind this function, to make adding it to input fields easier
+        this.updateQuiz = this.updateQuiz.bind(this);
+        this.addQuestion = this.addQuestion.bind(this);
+        this.deleteQuestion = this.deleteQuestion.bind(this);
+      }
 
-  /*addQuestion(quizId){
-      console.log(quizId)
+    addQuestion(){
+      console.log(this.props.match.params.quizId)
       this.props.addQuestionMutation({
           variables:{
-              id:quizId
+              id:this.props.match.params.quizId
           }
       });
-  }*/
+      window.location.reload(true);
+    }
+
+    updateQuiz(quiz){
+        console.log(quiz);
+        var i = 0;
+        this.props.quizSaveMutation({
+            variables:{
+                id:quiz.id,
+                title:this.state.quizTitle
+            }
+        })
+        for(i;i<quiz.questions.length;i++){
+            console.log(document.getElementById(quiz.questions[i].id).value);
+            this.props.questionSaveMutation({
+                variables:{
+                    id:quiz.questions[i].id,
+                    prompt:document.getElementById(quiz.questions[i].id).value
+                }
+            });
+            var j=0;
+            console.log(quiz.questions[i].id);
+            for(j;j<quiz.questions[i].options.length;j++){
+                this.props.optionSaveMutation({
+                    variables:{
+                        id:quiz.questions[i].options[j].id,
+                        text:document.getElementById(quiz.questions[i].options[j].id+"text").value,
+                        isCorrect:document.getElementById(quiz.questions[i].options[j].id+"radio").checked
+                    }
+                })
+            }
+        }
+        window.location.reload(true);
+    }
+
+    deleteQuestion(question){
+        console.log(question.id);
+        this.props.questionDeleteMutation({
+            variables:{
+                id:question.id
+            }
+        });
+        window.location.reload(true);
+    }
+
+    deleteQuiz(quiz){
+        console.log(this);
+        this.props.quizDeleteMutation({
+            variables:{
+                id:quiz.id
+            }
+        });
+    }
 
   render() {
 
@@ -49,33 +113,33 @@ export class QuizEditor extends Component {
             <p className="panel-heading">
                 Question {index+1}
                 <a className="is-pulled-right button is-small">
-                    <span className="icon ">
+                    <span className="icon " onClick={this.deleteQuestion.bind(null,(question))}>
                         <i className="fas fa-trash"></i>
                     </span>
                 </a>
             </p>
             <div className="panel-block">
-                <textarea className="textarea is-medium" type="text">{question.prompt}</textarea>
+                <textarea id = {question.id} key = {question.id} className="textarea is-medium" type="text">{question.prompt}</textarea>
             </div>
             <p className="panel-block">
                 concept selector
             </p>
             <form>
                 <p className="panel-block" key={question.options[0].id}>
-                <textarea className="textarea is-small" type="text">{question.options[0].text}</textarea>
-                <input key = {question.options[0].id} name={"question"+index} value= "A" type="radio"/>
+                <textarea id = {question.options[0].id+"text"} key = {question.options[0].id+"text"} className="textarea is-small" type="text">{question.options[0].text}</textarea>
+                <input id = {question.options[0].id+"radio"} key = {question.options[0].id+"radio"} defaultChecked={question.options[0].isCorrect} name={"question"+index} value= "A" type="radio"/>
                 </p>
                 <p className="panel-block" key={question.options[1].id}>
-                <textarea className="textarea is-small" type="text">{question.options[1].text}</textarea>
-                <input key = {question.options[1].id} name={"question"+index} value= "B" type="radio"/>
+                <textarea id = {question.options[1].id+"text"} key = {question.options[1].id+"text"} className="textarea is-small" type="text">{question.options[1].text}</textarea>
+                <input id = {question.options[1].id+"radio"} key = {question.options[1].id+"radio"} defaultChecked={question.options[1].isCorrect} name={"question"+index} value= "B" type="radio"/>
                 </p>
                 <p className="panel-block" key={question.options[2].id}>
-                <textarea className="textarea is-small" type="text">{question.options[2].text}</textarea>
-                <input key = {question.options[2].id} name={"question"+index} value= "C" type="radio"/>
+                <textarea id = {question.options[2].id+"text"} key = {question.options[2].id+"text"} className="textarea is-small" type="text">{question.options[2].text}</textarea>
+                <input id = {question.options[2].id+"radio"} key = {question.options[2].id+"radio"} defaultChecked={question.options[2].isCorrect} name={"question"+index} value= "C" type="radio"/>
                 </p>
                 <p className="panel-block" key={question.options[3].id}>
-                <textarea className="textarea is-small" type="text">{question.options[3].text}</textarea>
-                <input key = {question.options[3].id} name={"question"+index} value= "D" type="radio"/>
+                <textarea id = {question.options[3].id+"text"} key = {question.options[3].id+"text"} className="textarea is-small" type="text">{question.options[3].text}</textarea>
+                <input id = {question.options[3].id+"radio"} key = {question.options[3].id+"radio"} defaultChecked={question.options[3].isCorrect} name={"question"+index} value= "D" type="radio"/>
                 </p>
             </form>
             <p className="panel-block">
@@ -86,9 +150,9 @@ export class QuizEditor extends Component {
 
             <div className="field is-grouped">
                 <p className="control">
-                    <a className="button is-danger">
+                    <button className="button is-danger" onClick={this.deleteQuiz.bind(null, quiz)}>
                     Delete Quiz
-                    </a>
+                    </button>
                 </p>
                 <p className="control">
                     <a className="button">
@@ -96,12 +160,10 @@ export class QuizEditor extends Component {
                     </a>
                 </p>
                 <p className="control">
-                    <a className="button is-link">
-                    Save Quiz
-                    </a>
+                    <button className="button is-link" onClick={this.updateQuiz.bind(null, quiz)}>Save Quiz</button>
                 </p>
                 <p className="control">
-                    
+                    <button onClick={this.addQuestion}>Add Question</button>
                 </p>
             </div>
         </div>
@@ -116,9 +178,13 @@ export class QuizEditor extends Component {
 export const QUIZ_QUERY = gql`
   query quizQuery($id: ID!) {
     quiz(id:$id){
+        id
+        title
         questions{
+            id
             prompt
             options{
+                id
                 text
                 isCorrect
             }
@@ -126,6 +192,20 @@ export const QUIZ_QUERY = gql`
     }
   }
 `
+
+export const QUIZ_DELETE = gql`
+mutation quizDeleteMutation($id:ID!) {
+    deleteQuiz(id:$id){
+        id
+    }
+}`
+
+export const QUESTION_DELETE = gql`
+    mutation questionDeleteMutation($id:ID!) {
+        deleteQuestion(id:$id){
+            id
+        }
+    }`
 
 export const QUIZ_SAVE = gql`
     mutation quizSaveMutation(
@@ -172,14 +252,12 @@ mutation optionSaveMutation(
     }`
 
 export const ADD_QUESTION = gql`
-mutation addQuestionMutation(
-    $id:ID!)
+mutation addQuestionMutation($id:ID!)
     {
         addQuestion(
             id:$id
-        )
-        questions{
-            prompt
+        ){
+            title
         }
     }`
 
@@ -192,5 +270,8 @@ export default compose(
 }),
     graphql(QUESTION_SAVE, {name: 'questionSaveMutation'}),
     graphql(OPTION_SAVE, {name: 'optionSaveMutation'}),
-    graphql(ADD_QUESTION, {name: 'addQuestionMutation'})
+    graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),
+    graphql(QUESTION_DELETE, {name: 'questionDeleteMutation'}),
+    graphql(QUIZ_SAVE, {name: 'quizSaveMutation'}),
+    graphql(QUIZ_DELETE, {name:'quizDeleteMutation'})
  ) (QuizEditor)

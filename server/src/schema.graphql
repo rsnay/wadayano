@@ -13,7 +13,7 @@ type Query {
 type Mutation {
   addQuiz(id:ID): Quiz!
   updateQuiz(id:ID,title:String): Quiz!
-  addCourse(id:ID): Course!
+  addCourse(id:ID, title:String): Course!
   deleteQuiz(id:ID): Quiz!
   addQuestion(id:ID): Quiz!
   updateQuestion(id:ID, prompt:String): Question

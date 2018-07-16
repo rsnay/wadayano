@@ -20,7 +20,7 @@ function addCourse (root, args, context, info) {
         data:{
             courses:[{
                 create:[{
-                    title: "Course Title",
+                    title: args.title,
                     quizzes:{
                         create:[{
                             title:"Quiz Title",

@@ -20,7 +20,7 @@ export default class CreateCourseForm extends Component {
     }
 
     _createNewCourse() {
-        alert('Would create course: ' + this.state.newTitle);
+        
     }
 
     render() {

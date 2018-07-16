@@ -102,6 +102,17 @@ export const INSTRUCTOR_QUERY = gql`
   }
 `
 
+export const ADD_COURSE = gql`
+mutation addCourseMutation($id:ID!, $title:String!)
+    {
+        addCourse(
+            id:$id
+            title:$title
+        ){
+            title
+        }
+    }`
+
 export default graphql(INSTRUCTOR_QUERY, {
   name: 'instructorQuery',
   options: (props) => {
