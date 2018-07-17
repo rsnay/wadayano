@@ -40,7 +40,8 @@ export class QuizEditor extends Component {
         this.props.quizSaveMutation({
             variables:{
                 id:quiz.id,
-                title:this.state.quizTitle
+                //title:document.getElementById("quizTitle").value
+                title:quiz.title
             }
         })
         for(i;i<quiz.questions.length;i++){
@@ -77,7 +78,7 @@ export class QuizEditor extends Component {
     }
 
     deleteQuiz(quiz){
-        console.log(this);
+        console.log(quiz);
         this.props.quizDeleteMutation({
             variables:{
                 id:quiz.id
@@ -101,7 +102,7 @@ export class QuizEditor extends Component {
         <section className="section">
         <AuthCheck location={this.props.location} />
         <div className="container">
-          <h1 className="title is-inline-block">{quiz.title}</h1>
+          <h1 className="title is-inline-block" type="input" id="quizTitle">{quiz.title}</h1>
           &nbsp;&nbsp;
             <a className="button">
                 <span className="icon is-small">
@@ -150,7 +151,7 @@ export class QuizEditor extends Component {
 
             <div className="field is-grouped">
                 <p className="control">
-                    <button className="button is-danger" onClick={this.deleteQuiz.bind(null, quiz)}>
+                    <button className="button is-danger" onClick={() => this.deleteQuiz(quiz)}>
                     Delete Quiz
                     </button>
                 </p>

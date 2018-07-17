@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { graphql, compose } from 'react-apollo';
+import gql from 'graphql-tag';
 
-export default class CreateCourseForm extends Component {
+export class CreateCourseForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,7 +22,13 @@ export default class CreateCourseForm extends Component {
     }
 
     _createNewCourse() {
-        
+        this.props.addCourseMutation({
+            variables: {
+                id:"cjjej0vhi0w5f0b370p49q85c",
+                title:document.getElementById("newCourseTitle").value
+            }
+        });
+        //window.location.reload(true);
     }
 
     render() {
@@ -28,6 +36,7 @@ export default class CreateCourseForm extends Component {
             <div>
                 <div className="field control">
                     <input type="text"
+                        id="newCourseTitle"
                         ref="newCourseTitle"
                         value={this.state.newTitle}
                         onChange={(e) => this._handleNewTitleChange(e)}
@@ -42,3 +51,16 @@ export default class CreateCourseForm extends Component {
         );
     }
 }
+
+export const ADD_COURSE = gql`
+mutation addCourseMutation($id:ID!, $title:String!)
+    {
+        addCourse(
+            id:$id
+            title:$title
+        ){
+            title
+        }
+    }`
+
+export default graphql(ADD_COURSE, {name: 'addCourseMutation'}) (CreateCourseForm)

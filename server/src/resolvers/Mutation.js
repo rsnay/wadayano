@@ -18,9 +18,14 @@ function updateOption (root, args, context, info){
 function addCourse (root, args, context, info) {
     return context.db.mutation.updateInstructor({
         data:{
-            courses:[{
+            courses:{
                 create:[{
                     title: args.title,
+                    concepts:{
+                        create:[{
+                            title:"concept"
+                        }]
+                    },
                     quizzes:{
                         create:[{
                             title:"Quiz Title",
@@ -51,7 +56,7 @@ function addCourse (root, args, context, info) {
                     }
                     
                 }]
-            }]
+            }
         },
         where:{
             id:args.id

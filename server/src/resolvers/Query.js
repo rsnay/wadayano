@@ -1,3 +1,5 @@
+import getUserId from '../utils.js'
+
 function quizzes(root, args, context, info) {
     return context.db.query.quizzes({}, info)
 }
@@ -7,7 +9,7 @@ function course(root, args, context, info){
 }
 
 function courses(root, args, context, info){
-    return context.db.query.courses({}, info)
+    return context.db.query.courses({where:{id:getUserId(context)}}, info)
 }
 
 function instructor(root, args, context, info){
