@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "graphql": "^0.13.2",
     "graphql-cli": "^2.16.3",

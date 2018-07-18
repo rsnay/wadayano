@@ -190,7 +190,7 @@ async function instructorLogin(root, args, context, info) {
     }
 
     // Sign token
-    const token = jwt.sign({ instructorId: instructor.id }, APP_SECRET);
+    const token = jwt.sign({ userId: instructor.id, isInstructor: true }, APP_SECRET);
 
     // Return an InstructorAuthPayload
     return {
@@ -214,7 +214,7 @@ async function instructorSignup(root, args, context, info) {
     }, `{ id }`);
 
     // Sign token using id of newly-created user
-    const token = jwt.sign({ instructorId: instructor.id }, APP_SECRET);
+    const token = jwt.sign({ userId: instructor.id, isInstructor: true }, APP_SECRET);
 
     // Return an InstructorAuthPayload
     return {
@@ -223,6 +223,21 @@ async function instructorSignup(root, args, context, info) {
     };
 }
 
+async function startQuizAttempt(root, args, context, info) {
+    // TODO quizId: ID!, studentId: ID!): QuizAttempt!
+
+    // Check for valid student login
+    // Check that student has access to the course that owns this quiz
+    // Check availability date of quiz
+    // If attempt(s) exists for this student and quiz
+        // If most recent attempt is unfinished, should we return the existing attempt to client to finish??? (Could be weird with LTI vs. non-LTI launches)
+        // Otherwise, check retake rules for this quiz
+            // Return a new quiz attempt if allowed
+            // Otherwise return an error that the quiz can't be retaken
+    // If no existing attempts, return a new attempt
+
+}
+    
 module.exports = {
     addQuiz,
     addCourse,
