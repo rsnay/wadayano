@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import Logo from '../../logo.svg';
 
-import { INSTRUCTOR_TOKEN } from '../../constants';
+import { AUTH_TOKEN } from '../../constants';
 
 class Header extends Component {
 
@@ -11,7 +11,7 @@ class Header extends Component {
     }
 
     _logOut() {
-        localStorage.removeItem(INSTRUCTOR_TOKEN);
+        localStorage.removeItem(AUTH_TOKEN);
         this.props.history.push('/');
     }
 
@@ -25,7 +25,7 @@ class Header extends Component {
     }
 
   render() {
-    let instructorLoggedIn = !!localStorage.getItem(INSTRUCTOR_TOKEN);
+    let instructorLoggedIn = !!localStorage.getItem(AUTH_TOKEN);
     return (
       <nav className="navbar is-light" aria-label="main navigation">
         <div className="navbar-brand">

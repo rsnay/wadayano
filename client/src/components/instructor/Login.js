@@ -3,7 +3,7 @@ import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
-import { INSTRUCTOR_TOKEN } from '../../constants';
+import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR } from '../../constants';
 
 class Login extends Component {
 
@@ -50,7 +50,8 @@ class Login extends Component {
       });
       // Get token and save it
       const { token } = result.data.instructorLogin;
-      localStorage.setItem(INSTRUCTOR_TOKEN, token);
+      localStorage.setItem(AUTH_TOKEN, token);
+      localStorage.setItem(AUTH_ROLE, AUTH_ROLE_INSTRUCTOR);
       // Continue
       this._redirect();
     } catch (e) {
@@ -87,7 +88,8 @@ class Login extends Component {
       });
       // Get token and save it
       const { token } = result.data.instructorSignup;
-      localStorage.setItem(INSTRUCTOR_TOKEN, token);
+      localStorage.setItem(AUTH_TOKEN, token);
+      localStorage.setItem(AUTH_ROLE, AUTH_ROLE_INSTRUCTOR);
       // Continue
       this._redirect();
     } catch (e) {

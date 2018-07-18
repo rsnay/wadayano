@@ -26,7 +26,7 @@ export class CourseDetails extends Component {
 
     return (
         <section className="section">
-        <AuthCheck location={this.props.location} />
+        <AuthCheck instructor location={this.props.location} />
         <div className="container">
         <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>

@@ -10,12 +10,12 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloLink } from 'apollo-link';
 
-import { INSTRUCTOR_TOKEN, GRAPHQL_ENDPOINT } from './constants';
+import { AUTH_TOKEN, GRAPHQL_ENDPOINT } from './constants';
 
 const httpLink = new HttpLink({uri: GRAPHQL_ENDPOINT});
 
 const middlewareAuthLink = new ApolloLink((operation, forward) => {
-  const token = localStorage.getItem(INSTRUCTOR_TOKEN);
+  const token = localStorage.getItem(AUTH_TOKEN);
   const authorizationHeader = token ? `Bearer ${token}` : null;
   operation.setContext({
     headers: {

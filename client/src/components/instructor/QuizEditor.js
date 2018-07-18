@@ -100,7 +100,7 @@ export class QuizEditor extends Component {
 
     return (
         <section className="section">
-        <AuthCheck location={this.props.location} />
+        <AuthCheck instructor location={this.props.location} />
         <div className="container">
           <h1 className="title is-inline-block" type="input" id="quizTitle">{quiz.title}</h1>
           &nbsp;&nbsp;
