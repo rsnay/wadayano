@@ -13,6 +13,7 @@ import CourseList from './instructor/CourseList';
 import CourseDetails from './instructor/CourseDetails';
 import QuizEditor from './instructor/QuizEditor';
 
+import LTILaunch from './student/LTILaunch';
 import Dashboard from './student/Dashboard';
 import QuizTaker from './student/QuizTaker';
 
@@ -32,6 +33,8 @@ class App extends Component {
           <Route path="/instructor/course/:courseId" component={CourseDetails} />
           <Route path="/instructor/quiz/:quizId" component={QuizEditor} />
 
+          {/* Allow flexibility in redirecting to another route when launching via LTI. Route /student/launch/fakeToken/quiz/id1 would redirect to /student/quiz/id1 */}
+          <Route path="/student/launch/:token/:action/:parameter1" component={LTILaunch} />
           <Route exact path="/student" component={Dashboard} />
           <Route path="/student/quiz/:quizId" component={QuizTaker} />
 
