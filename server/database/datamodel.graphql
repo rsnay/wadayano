@@ -57,7 +57,7 @@ type QuizAttempt {
     student: Student!
     quiz: Quiz!
     createdAt: DateTime!
-    completed: DateTime!
+    completed: DateTime
     questionAttempts: [QuestionAttempt!]!
     score: Float # (correct/total). No score indicates the attempt was started, but not yet finished
     conceptConfidences: [ConceptConfidence!]!

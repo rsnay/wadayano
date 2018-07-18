@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/wadayano/wadayano/dev
-# timestamp: Mon Jul 16 2018 09:35:17 GMT-0600 (MDT)
+# timestamp: Tue Jul 17 2018 13:51:18 GMT-0600 (MDT)
 
 type AggregateConcept {
   count: Int!
@@ -1891,7 +1891,7 @@ type QuizAttempt implements Node {
   student(where: StudentWhereInput): Student!
   quiz(where: QuizWhereInput): Quiz!
   createdAt: DateTime!
-  completed: DateTime!
+  completed: DateTime
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt!]
   score: Float
   conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence!]
@@ -1910,7 +1910,7 @@ type QuizAttemptConnection {
 }
 
 input QuizAttemptCreateInput {
-  completed: DateTime!
+  completed: DateTime
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -1926,7 +1926,7 @@ input QuizAttemptCreateManyWithoutStudentInput {
 }
 
 input QuizAttemptCreateWithoutStudentInput {
-  completed: DateTime!
+  completed: DateTime
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -1964,7 +1964,7 @@ enum QuizAttemptOrderByInput {
 type QuizAttemptPreviousValues {
   id: ID!
   createdAt: DateTime!
-  completed: DateTime!
+  completed: DateTime
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
