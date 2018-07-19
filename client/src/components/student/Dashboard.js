@@ -27,34 +27,36 @@ class Dashboard extends Component {
           <p>For now, take any quiz</p>
           <hr />
 
-          <table className="table is-striped is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Quiz Name</th>
-                    <th># of Questions</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {quizzes.map((quiz, index) => 
-                    <tr key={quiz.id}>
-                        <td>{quiz.id}</td>
-                        <td>{quiz.title}</td>
-                        <td>{quiz.questions.length}</td>
-                        <td>
-                        <Link to={"/student/quiz/" + quiz.id}
-                          className="button is-outlined is-primary">
-                            <span className="icon">
-                            <i className="fas fa-rocket"></i>
-                            </span>
-                            <span>Take Quiz</span>
-                        </Link>
-                        </td>
+          <div style={{overflowX: "auto"}}>
+            <table className="table is-striped is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Quiz Name</th>
+                        <th># of Questions</th>
+                        <th>Actions</th>
                     </tr>
-                )}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {quizzes.map((quiz, index) => 
+                        <tr key={quiz.id}>
+                            <td>{quiz.id}</td>
+                            <td>{quiz.title}</td>
+                            <td>{quiz.questions.length}</td>
+                            <td>
+                            <Link to={"/student/quiz/" + quiz.id}
+                            className="button is-outlined is-primary">
+                                <span className="icon">
+                                <i className="fas fa-rocket"></i>
+                                </span>
+                                <span>Take Quiz</span>
+                            </Link>
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
         </div>
       </section>
     )

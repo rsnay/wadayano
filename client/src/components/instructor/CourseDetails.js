@@ -43,6 +43,7 @@ export class CourseDetails extends Component {
             </a>
           <hr />
 
+          <div style={{overflowX: "auto"}}>
           <table className="table is-striped is-hoverable is-fullwidth">
             <thead>
                 <tr>
@@ -69,7 +70,8 @@ export class CourseDetails extends Component {
                 </tr>
             )}
             </tbody>
-        </table>
+          </table>
+          </div>
         </div>
       </section>
     )
