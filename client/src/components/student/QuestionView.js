@@ -24,14 +24,15 @@ export default class QuestionView extends Component {
         submitted: false,
         correctOption: null
     };
+    this._handleKeyDown = this._handleKeyDown.bind(this);
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this._handleKeyDown.bind(this));
+    document.addEventListener('keydown', this._handleKeyDown);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this._handleKeyDown.bind(this));
+    document.removeEventListener('keydown', this._handleKeyDown);
   }
 
   // Allow options to be selected by pressing that letter on the keyboard. This is kind of hacky right now
