@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import AuthCheck from './AuthCheck';
@@ -33,7 +33,9 @@ export class CourseList extends Component {
         return <ErrorBox>Couldn't load courses</ErrorBox>;
     }
     console.log(this.props);
-    let courses = this.props.instructorQuery.instructor.courses;
+    //let courses = this.props.instructorQuery.instructor.courses;
+    let courses = this.props.coursesQuery;
+    console.log(courses);
 
     return (
         <section className="section">
@@ -102,12 +104,26 @@ export const INSTRUCTOR_QUERY = gql`
   }
 `
 
+export const COURSE_QUERY = gql`
+query coursesQuery{
+    courses{
+        id
+        title
+        quizzes{
+            id
+        }
+    }
+}`
 
-export default graphql(INSTRUCTOR_QUERY, {
+
+export default compose(
+graphql(INSTRUCTOR_QUERY, {
   name: 'instructorQuery',
   options: (props) => {
     //console.log(props.match.params.instructorId);
     // Pass the instructor ID from the route into the query //temporarily hardcoded instructor id
     return { variables: { id:"cjjej0vhi0w5f0b370p49q85c" } }
   }
-}) (CourseList)
+}),
+graphql(COURSE_QUERY, {name:"coursesQuery"})
+ ) (CourseList)
