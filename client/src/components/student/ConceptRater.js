@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 const MIN_RATING = 1;
 const MAX_RATING = 5;
@@ -50,11 +51,13 @@ export default class ConceptRater extends Component {
     );
 
     let submitButton = (
-        <button autoFocus className="button is-primary" onClick={() => {
-            this.setState({ submitted: true });
-            // TODO pass actual ratings
-            this.props.onConceptsRated();
-        }}>Start Quiz</button>
+        <ScrollIntoViewIfNeeded>
+            <button autoFocus className="button is-primary" onClick={() => {
+                this.setState({ submitted: true });
+                // TODO pass actual ratings
+                this.props.onConceptsRated();
+            }}>Start Quiz</button>
+        </ScrollIntoViewIfNeeded>
     );
 
     return (

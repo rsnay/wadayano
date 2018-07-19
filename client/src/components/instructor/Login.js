@@ -141,7 +141,7 @@ class Login extends Component {
     }
 
     return (
-        <section className="section">
+        <section className="section no-select">
         <div className="container">
           <h1 className="title">Instructor {this.state.signupMode ? "Signup" : "Login"}</h1>
           <i>If you are a student using wadayano in a course, simply launch it from your LMS (i.e. Canvas).</i>
