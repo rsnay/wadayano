@@ -1,5 +1,5 @@
-// The Application GraphQL Server endpoint to use
-export const GRAPHQL_ENDPOINT = 'http://localhost:4000/';
+// The Application GraphQL Server endpoint to use (and auto-switch for production)
+export const GRAPHQL_ENDPOINT = (process.env.NODE_ENV !== 'production') ? 'http://localhost:4000/' : 'http://ec2-18-191-201-36.us-east-2.compute.amazonaws.com/api/';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
 export const AUTH_TOKEN = 'authToken';
