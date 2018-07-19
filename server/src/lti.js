@@ -8,7 +8,7 @@ const consumer_key = 'jisc.ac.uk';
 const consumer_secret = 'secret';
 
 // This shouldn't be necessary in production, if it's on the same server. In that case, this would be empty '' (no trailing slash)
-const CLIENT_BASE_URL = 'http://localhost:3001';
+const CLIENT_BASE_URL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:3001/' : '';
 
 function handleLaunch(config, db, req, res) {
     // Get body and params
