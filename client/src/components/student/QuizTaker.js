@@ -151,7 +151,7 @@ class QuizTaker extends Component {
             <div className="column">
               <h1 className="title">{quiz.title}</h1>
             </div>
-            <div className="column" style={{margin: "1rem 0 0 0"}}>
+            <div className="column no-select" style={{margin: "1rem 0 0 0"}}>
               {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
                 <div style={{margin: "-.3rem 1rem .5rem 0", flexShrink: 0}}>Question {this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
                 <progress className="progress is-link" value={this.state.currentQuestionIndex + (this.state.currentQuestionCompleted ? 1 : 0)} max={quiz.questions.length}></progress>
@@ -159,7 +159,7 @@ class QuizTaker extends Component {
             </div>
           </div>
           {/* Smaller progress indicator for mobile */}
-          {this.state.phase === phases.QUESTIONS && <div className="is-hidden-tablet is-pulled-right" style={{marginTop: "-2rem"}}>
+          {this.state.phase === phases.QUESTIONS && <div className="is-hidden-tablet is-pulled-right no-select" style={{marginTop: "-2rem"}}>
             <div>{this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
           </div>}
 

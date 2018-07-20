@@ -37,6 +37,12 @@ export default class QuestionView extends Component {
 
   // Allow options to be selected by pressing that letter on the keyboard. This is kind of hacky right now
   _handleKeyDown(e) {
+    // If the question has already been answered, don't let the selected answer change (without this, it's kind of entertaining!)
+    if (this.state.submitted) { return; }
+
+    // If a modifier key is pressed, ignore (otherwise they can't ctrl+c to copy, etc.)
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) { return; }
+
     // Check that the question is loaded and has options
     if (this.props.question && this.props.question.options) {
         let optionIndex = -1;
@@ -122,7 +128,7 @@ export default class QuestionView extends Component {
                 </span>
             </div>
             {this.state.selectedOption.isCorrect ?
-                <p>{this._randomCorrectFeedback()}</p>
+                <p className="question-option-text">{this._randomCorrectFeedback()}</p>
             :
                 <p className="question-option-text">Correct answer: {this.props.question.options.filter(q => q.isCorrect)[0].text}</p>
             }
