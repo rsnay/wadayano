@@ -41,7 +41,7 @@ export class QuizEditor extends Component {
             variables:{
                 id:quiz.id,
                 //title:document.getElementById("quizTitle").value
-                title:quiz.title
+                title:document.getElementById(quiz.id).value
             }
         })
         for(i;i<quiz.questions.length;i++){
@@ -84,6 +84,13 @@ export class QuizEditor extends Component {
                 id:quiz.id
             }
         });
+        window.location.href = "javascript:history.back()";
+    }
+
+    editQuizTitle(){
+        var title = document.getElementById('quizTitle');
+        title.type = "input";
+        title.value = "TEST";
     }
 
   render() {
@@ -102,9 +109,8 @@ export class QuizEditor extends Component {
         <section className="section">
         <AuthCheck instructor location={this.props.location} />
         <div className="container">
-          <h1 className="title is-inline-block" type="input" id="quizTitle">{quiz.title}</h1>
-          &nbsp;&nbsp;
-            <a className="button">
+        <textarea id = {quiz.id} key = {quiz.id} className="textarea is-large" type="text">{quiz.title}</textarea>
+            <a className="button" >
                 <span className="icon is-small">
                 <i className="fas fa-edit"></i>
                 </span>

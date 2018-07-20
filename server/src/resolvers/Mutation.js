@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { APP_SECRET } = require('../../config');
 const { validateEmail } = require('../utils');
+const { getUserInfo } = require('../utils.js');
 
 function updateOption (root, args, context, info){
     return context.db.mutation.updateOption({
@@ -9,6 +10,14 @@ function updateOption (root, args, context, info){
             isCorrect: args.isCorrect,
             text: args.text
         },
+        where:{
+            id:args.id
+        }
+    }, info)
+}
+
+function deleteCourse (root, args, context, info){
+    return context.db.mutation.deleteCourse({
         where:{
             id:args.id
         }
@@ -59,7 +68,7 @@ function addCourse (root, args, context, info) {
             }
         },
         where:{
-            id:args.id
+            id:getUserInfo(context).userId
         }
     }, info)
 }
@@ -241,6 +250,7 @@ async function startQuizAttempt(root, args, context, info) {
 module.exports = {
     addQuiz,
     addCourse,
+    deleteCourse,
     updateQuiz,
     deleteQuiz,
     addQuestion,

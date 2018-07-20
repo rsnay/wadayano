@@ -24,11 +24,10 @@ export class CreateCourseForm extends Component {
     _createNewCourse() {
         this.props.addCourseMutation({
             variables: {
-                id:"cjjej0vhi0w5f0b370p49q85c",
                 title:document.getElementById("newCourseTitle").value
             }
         });
-        //window.location.reload(true);
+        window.location.reload(true);
     }
 
     render() {
@@ -53,10 +52,9 @@ export class CreateCourseForm extends Component {
 }
 
 export const ADD_COURSE = gql`
-mutation addCourseMutation($id:ID!, $title:String!)
+mutation addCourseMutation($title:String!)
     {
         addCourse(
-            id:$id
             title:$title
         ){
             title

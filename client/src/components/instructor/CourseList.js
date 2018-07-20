@@ -16,6 +16,15 @@ export class CourseList extends Component {
         };
     }
 
+    deleteCourse(course){
+        this.props.courseDelete({
+            variables:{
+                id:course.id
+            }
+        });
+        window.location.reload(true);
+    }
+
   render() {
 
     // TODO actually get data from API
@@ -30,11 +39,11 @@ export class CourseList extends Component {
     }
 
     if (this.props.instructorQuery && this.props.instructorQuery.error) {
-        return <ErrorBox>Couldn't load courses</ErrorBox>;
+        return <ErrorBox/>;
     }
     console.log(this.props);
     //let courses = this.props.instructorQuery.instructor.courses;
-    let courses = this.props.coursesQuery;
+    let courses = this.props.instructorQuery.instructor.courses;
     console.log(courses);
 
     return (
@@ -73,6 +82,7 @@ export class CourseList extends Component {
                             {course.quizzes.length === 1 ? '1 Quiz' : course.quizzes.length + ' Quizzes'}
                         </div>
                     </Link>
+                    <button id={course.id} onClick={() => this.deleteCourse(course)}>X</button>
                 </div>
             )}
 
@@ -88,11 +98,9 @@ export class CourseList extends Component {
 //all courses for instructor of id
 //TODO change from hardcoded instructorId
 export const INSTRUCTOR_QUERY = gql`
-  query instructorQuery($id: ID!) {
-    instructor(
-      id: $id
-    )
-    {
+  query instructorQuery {
+    instructor{
+        id
       courses{
           id
           title
@@ -115,15 +123,15 @@ query coursesQuery{
     }
 }`
 
+export const COURSE_DELETE = gql`
+mutation courseDelete($id:ID!) {
+    deleteCourse(id:$id){
+        id
+    }
+}`
 
 export default compose(
-graphql(INSTRUCTOR_QUERY, {
-  name: 'instructorQuery',
-  options: (props) => {
-    //console.log(props.match.params.instructorId);
-    // Pass the instructor ID from the route into the query //temporarily hardcoded instructor id
-    return { variables: { id:"cjjej0vhi0w5f0b370p49q85c" } }
-  }
-}),
-graphql(COURSE_QUERY, {name:"coursesQuery"})
+graphql(INSTRUCTOR_QUERY, {name: 'instructorQuery'}),
+graphql(COURSE_QUERY, {name:"coursesQuery"}),
+graphql(COURSE_DELETE, {name:"courseDelete"})
  ) (CourseList)

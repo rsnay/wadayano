@@ -9,11 +9,12 @@ function course(root, args, context, info){
 }
 
 function courses(root, args, context, info){
-  return context.db.query.courses({where:{id:getUserId(context)}}, info)
+  console.log(getUserInfo(context).userId);
+  return context.db.query.courses({}, info)
 }
 
 function instructor(root, args, context, info){
-  return context.db.query.instructor({where:{id:args.id}},info)
+  return context.db.query.instructor({where:{id:getUserInfo(context).userId}},info)
 }
 
 function quiz(root, args, context, info) {

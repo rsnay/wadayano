@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import AuthCheck from './AuthCheck';
@@ -10,6 +10,16 @@ import LoadingBox from '../shared/LoadingBox';
 
 export class CourseDetails extends Component {
   state = {
+  }
+
+  addQuiz(){
+    console.log(this.props.match.params.courseId)
+    this.props.addQuizMutation({
+        variables:{
+            id:this.props.match.params.courseId
+        }
+    });
+    window.location.reload(true);
   }
 
   render() {
@@ -70,6 +80,7 @@ export class CourseDetails extends Component {
             )}
             </tbody>
         </table>
+        <button onClick = {() => this.addQuiz()}>Add Quiz</button>
         </div>
       </section>
     )
@@ -97,10 +108,23 @@ export const COURSE_QUERY = gql`
   }
 `
 
-export default graphql(COURSE_QUERY, {
+export const ADD_QUIZ = gql`
+mutation addQuizMutation($id:ID!)
+    {
+        addQuiz(
+            id:$id
+        ){
+            title
+        }
+    }`
+
+export default compose(
+graphql(COURSE_QUERY, {
   name: 'courseQuery',
   options: (props) => {
     console.log(props.match.params.courseId);
     return { variables: { id:props.match.params.courseId } }
   }
-}) (CourseDetails)
+}),
+graphql(ADD_QUIZ, {name:"addQuizMutation"})
+) (CourseDetails)

@@ -3,7 +3,7 @@
 type Query {
   quizzes: [Quiz!]!
   quiz(id:ID): Quiz!
-  instructor(id:ID): Instructor!
+  instructor: Instructor!
   courses: [Course!]!
   course(id:ID): Course!
   question(id:ID): Question!
@@ -13,7 +13,8 @@ type Query {
 type Mutation {
   addQuiz(id:ID): Quiz!
   updateQuiz(id:ID,title:String): Quiz!
-  addCourse(id:ID, title:String): Course!
+  addCourse(title:String): Course!
+  deleteCourse(id:ID):Course!
   deleteQuiz(id:ID): Quiz!
   addQuestion(id:ID): Quiz!
   updateQuestion(id:ID, prompt:String): Question
