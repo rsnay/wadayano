@@ -80,13 +80,9 @@ export class CourseDetails extends Component {
                 </tr>
             )}
             </tbody>
-<<<<<<< HEAD
         </table>
         <button onClick = {() => this.addQuiz()}>Add Quiz</button>
-=======
-          </table>
-          </div>
->>>>>>> 176582fba893f162f368b6221aae5c1177f934cc
+        </div>
         </div>
       </section>
     )

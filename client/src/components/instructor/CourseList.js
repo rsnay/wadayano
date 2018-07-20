@@ -131,7 +131,7 @@ mutation courseDelete($id:ID!) {
 }`
 
 export default compose(
-graphql(INSTRUCTOR_QUERY, {name: 'instructorQuery'}),
+graphql(INSTRUCTOR_QUERY, {name: "instructorQuery"}),
 graphql(COURSE_QUERY, {name:"coursesQuery"}),
 graphql(COURSE_DELETE, {name:"courseDelete"})
- ) (CourseList)
+) (CourseList)
