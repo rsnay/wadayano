@@ -8,7 +8,7 @@ const consumer_key = 'jisc.ac.uk';
 const consumer_secret = 'secret';
 
 // This shouldn't be necessary in production, if it's on the same server. In that case, this would be empty '' (no trailing slash)
-const CLIENT_BASE_URL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:3001/' : '';
+const CLIENT_BASE_URL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:3001' : '';
 
 function handleLaunch(config, db, req, res) {
     // Get body and params
@@ -43,20 +43,22 @@ function handleLaunch(config, db, req, res) {
             // If request is valid, generate an auth token to pass to the client to use
             const token = jwt.sign({ userId: studentId, isInstructor: false }, config.APP_SECRET);
 
+            // Enroll the student in the course that this launch belongs to, if necessary
+            // TODO
+
             // If this is a quiz 
             if (action === 'quiz') {
-                // Enroll the student in the course that belongs to this quiz, if necessary
-                // TODO
                 let quizId = parameter1;
                 // Start a quiz attempt and stick the LTI passback info in it
-                // TODO
+                // Pass provider.body instead of body, since the provider will take out the oauth info, which we don't want to store
+                _upsertQuizAttempt(db, studentId, quizId, provider.body);
             }
             
             let redirectURL = `${CLIENT_BASE_URL}/student/launch/${token}/${action}/${parameter1}`;
             // For some reason, immediately redirecting (either via http, meta tag, or javascript) will fail if it's launched in an iframe. So just give them a link to continue in a new window if we detect it's in an iframe.
             //res.redirect(redirectURL); // Won't work in an iframe
             res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(`<html><body><script>function inIframe(){try{return window.self!==window.top}catch(n){return!0}} !inIframe() && window.location.replace('${redirectURL}');</script><h3><a href="${redirectURL}" target="_blank">Continue ></a></h3></body></html>`);
+            res.end(`<html><body><script>function inIframe(){try{return window.self!==window.top}catch(n){return!0}} !inIframe() && window.location.replace('${redirectURL}');</script><h3><a href="${redirectURL}" target="_blank">Continue &gt;</a></h3></body></html>`);
         }
     });
 }
@@ -69,6 +71,43 @@ async function _upsertStudentOnLaunch(db, ltiUserId, name, email) {
         update: { name, email }
     }, `{ id }`);
     return student.id;
+}
+
+async function _upsertQuizAttempt(db, studentId, quizId, ltiSessionInfo) {
+    // Since the quiz attempt is unique on the combination of two fields (quizId and studentId), prisma's built-in upsert won't work
+    // Find existing uncompleted attempt(s) for this student and quiz
+    const existingAttempts = await db.query.quizAttempts({
+        where: {
+            quiz: { id: quizId },
+            student: { id: studentId },
+            completed: null
+       }
+    }, `{ id }`);
+
+    // If there's an existing attempt, update the LTI session info
+    if (existingAttempts.length > 0) {
+        try {
+            await db.mutation.updateQuizAttempt({
+                where: { id: existingAttempts[0].id},
+                data: { ltiSessionInfo }
+            }, `{ id }`);
+            console.log('Updated existing quiz attempt');
+            
+        } catch (error) {
+            console.log(error);
+            
+        }
+    } else {
+        // Otherwise create a new attempt
+        await db.mutation.createQuizAttempt({
+            data: {
+                quiz: { connect: { id: quizId } },
+                student: { connect: { id: studentId } },
+                ltiSessionInfo
+            }
+        });
+        console.log('Created new quiz attempt');
+    }
 }
 
 

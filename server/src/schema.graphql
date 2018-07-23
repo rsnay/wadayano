@@ -24,7 +24,8 @@ type Mutation {
   instructorSignup(email:String!, password:String!): InstructorAuthPayload
   instructorLogin(email:String!, password:String!): InstructorAuthPayload
 
-  startQuizAttempt(quizId: ID!, studentId: ID!): QuizAttempt!
+  startOrResumeQuizAttempt(quizId: ID!): QuizAttempt!
+  attemptQuestion(quizAttemptId: ID!, questionId: ID!, optionId: ID!, isConfident: Boolean!): QuestionAttempt!
 }
 
 # This is being redefined here, rather than imported, so that the password is hidden and can't be queried

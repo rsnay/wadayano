@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Prompt } from 'react-router';
 
@@ -24,6 +24,8 @@ class QuizTaker extends Component {
     super(props);
 
     this.state = {
+      isLoading: true,
+      error: '',
       phase: phases.CONCEPTS,
       conceptConfidences: [],
       currentQuestionIndex: 0,
@@ -31,6 +33,31 @@ class QuizTaker extends Component {
       questionAttempts: [],
       quizAttempt: null
     };
+  }
+
+  async componentDidMount() {
+    // When component is mounted, automatically start or resume the quiz attempt
+    try {
+      // Pass the quiz ID from the route into the query
+      const result = await this.props.startMutation({
+        variables: {
+          quizId: this.props.match.params.quizId
+        }
+      });
+        
+      // Store quiz attempt and quiz data in state
+      const quizAttempt = result.data.startOrResumeQuizAttempt;
+      const quiz = quizAttempt.quiz;
+      this.setState({ quizAttempt, quiz, isLoading: false });
+    } catch (e) {
+      // Catch errors
+      let message = 'Please try again later.';
+      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
+        message = e.graphQLErrors[0].message;
+      }
+      this.setState({ error: message, isLoading: false });
+      console.error('Quiz attempt load error: ' + JSON.stringify(e));
+    }
   }
 
   componentDidUpdate() {
@@ -53,7 +80,9 @@ class QuizTaker extends Component {
   }
 
   // Called from a QuestionView after its question has been answered, confidence-rated, and reviewed
-  _onQuestionCompleted() {
+  _onQuestionCompleted(questionAttempt) {
+    // Add this questionAttempt to our quizAttempt
+    // TODO
     this.setState({currentQuestionCompleted: true});
   }
 
@@ -62,7 +91,7 @@ class QuizTaker extends Component {
     // If at the end of the quiz...
     let newIndex = this.state.currentQuestionIndex + 1;
     // ... go to results (still set new currentQuestionIndex so progress bar fills up)
-    if (newIndex >= this.props.quizQuery.quiz.questions.length) {
+    if (newIndex >= this.state.quiz.questions.length) {
       this.setState({
         phase: phases.RESULTS,
         currentQuestionIndex: newIndex
@@ -78,18 +107,18 @@ class QuizTaker extends Component {
 
   render() {
     
-    if (this.props.quizQuery && this.props.quizQuery.loading) {
+    if (this.state.isLoading) {
       return <LoadingBox />;
     }
 
-    if (this.props.quizQuery && this.props.quizQuery.error) {
+    if (this.state.error) {
       return <ErrorBox>
-        <p>There was an error loading this quiz. Please return to the dashboard and try again.</p>
+        <p>There was an error loading this quiz. {this.state.error}</p>
       </ErrorBox>
     }
 
-    // Quiz loaded from apollo/graphql query
-    let quiz = this.props.quizQuery.quiz;
+    // Quiz loaded from apollo/graphql mutation
+    let { quiz } = this.state;
 
     // Make sure there are questions in the quiz
     if (quiz.questions.length === 0) {
@@ -117,6 +146,7 @@ class QuizTaker extends Component {
         
       case phases.QUESTIONS:
         currentView = <QuestionView
+          quizAttemptId={this.state.quizAttempt.id}
           question={quiz.questions[this.state.currentQuestionIndex]}
           key={quiz.questions[this.state.currentQuestionIndex].id}
           onQuestionCompleted={() => this._onQuestionCompleted() }
@@ -176,31 +206,46 @@ class QuizTaker extends Component {
   }
 }
 
-export const QUIZ_QUERY = gql`
-  query quizQuery($id: ID!) {
-    quiz (
-      id: $id
-    )
-    {
-      title
-      questions {
-        id
-        prompt
-        options {
+const START_MUTATION = gql`
+  mutation StartMutation($quizId: ID!) {
+    startOrResumeQuizAttempt(quizId: $quizId) {
+      id
+      quiz {
+        title
+        questions {
           id
-          text
-          isCorrect
+          prompt
+          options {
+            id
+            text
+            isCorrect
+          }
         }
+      }
+      questionAttempts {
+        id
+        question {
+          id
+        }
+        option {
+          id
+        }
+        isCorrect
+        isConfident
+      }
+      conceptConfidences {
+        id
+        concept {
+          id
+          title
+        }
+
       }
     }
   }
-`
+`;
 
-export default graphql(QUIZ_QUERY, {
-  name: 'quizQuery',
-  options: (props) => {
-    console.log(props.match.params.quizId);
-    // Pass the quiz ID from the route into the query
-    return { variables: { id: props.match.params.quizId } }
-  }
-}) (QuizTaker)
+export default compose(
+  graphql(START_MUTATION, { name: 'startMutation' }),
+  //graphql(START_MUTATION, { name: 'startMutation' })
+)(QuizTaker)

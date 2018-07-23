@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/wadayano/wadayano/dev
-# timestamp: Tue Jul 17 2018 13:51:18 GMT-0600 (MDT)
+# timestamp: Thu Jul 19 2018 11:08:52 GMT-0600 (MDT)
 
 type AggregateConcept {
   count: Int!
@@ -1028,6 +1028,9 @@ input InstructorWhereUniqueInput {
   email: String
 }
 
+"""Raw JSON value"""
+scalar Json
+
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
@@ -1891,6 +1894,7 @@ type QuizAttempt implements Node {
   student(where: StudentWhereInput): Student!
   quiz(where: QuizWhereInput): Quiz!
   createdAt: DateTime!
+  ltiSessionInfo: Json
   completed: DateTime
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt!]
   score: Float
@@ -1910,6 +1914,7 @@ type QuizAttemptConnection {
 }
 
 input QuizAttemptCreateInput {
+  ltiSessionInfo: Json
   completed: DateTime
   score: Float
   totalConfidenceError: Float
@@ -1926,6 +1931,7 @@ input QuizAttemptCreateManyWithoutStudentInput {
 }
 
 input QuizAttemptCreateWithoutStudentInput {
+  ltiSessionInfo: Json
   completed: DateTime
   score: Float
   totalConfidenceError: Float
@@ -1949,6 +1955,8 @@ enum QuizAttemptOrderByInput {
   id_DESC
   createdAt_ASC
   createdAt_DESC
+  ltiSessionInfo_ASC
+  ltiSessionInfo_DESC
   completed_ASC
   completed_DESC
   score_ASC
@@ -1964,6 +1972,7 @@ enum QuizAttemptOrderByInput {
 type QuizAttemptPreviousValues {
   id: ID!
   createdAt: DateTime!
+  ltiSessionInfo: Json
   completed: DateTime
   score: Float
   totalConfidenceError: Float
@@ -2010,6 +2019,7 @@ input QuizAttemptSubscriptionWhereInput {
 }
 
 input QuizAttemptUpdateInput {
+  ltiSessionInfo: Json
   completed: DateTime
   score: Float
   totalConfidenceError: Float
@@ -2030,6 +2040,7 @@ input QuizAttemptUpdateManyWithoutStudentInput {
 }
 
 input QuizAttemptUpdateWithoutStudentDataInput {
+  ltiSessionInfo: Json
   completed: DateTime
   score: Float
   totalConfidenceError: Float

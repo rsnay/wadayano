@@ -1,8 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { APP_SECRET } = require('../../config');
-const { validateEmail } = require('../utils');
-const { getUserInfo } = require('../utils.js');
+const { getUserInfo, validateEmail } = require('../utils');
 
 function updateOption (root, args, context, info){
     return context.db.mutation.updateOption({
@@ -232,20 +231,78 @@ async function instructorSignup(root, args, context, info) {
     };
 }
 
-async function startQuizAttempt(root, args, context, info) {
+async function startOrResumeQuizAttempt(root, args, context, info) {
     // TODO quizId: ID!, studentId: ID!): QuizAttempt!
 
     // Check for valid student login
-    // Check that student has access to the course that owns this quiz
-    // Check availability date of quiz
-    // If attempt(s) exists for this student and quiz
-        // If most recent attempt is unfinished, should we return the existing attempt to client to finish??? (Could be weird with LTI vs. non-LTI launches)
-        // Otherwise, check retake rules for this quiz
-            // Return a new quiz attempt if allowed
-            // Otherwise return an error that the quiz can't be retaken
-    // If no existing attempts, return a new attempt
+    const studentId = getUserInfo(context).userId;
+    const quizId = args.quizId;
 
+    // Check that student has access to the course that owns this quiz
+    // TODO
+
+    // Check availability date of quiz
+    // TODO
+
+    // Since the quiz attempt is unique on the combination of two fields (quizId and studentId), prisma's built-in upsert won't work
+    // Find existing uncompleted attempt(s) for this student and quiz
+    const existingAttempts = await context.db.query.quizAttempts({
+        where: {
+            quiz: { id: quizId },
+            student: { id: studentId },
+            completed: null
+       }
+    }, `{ id }`);
+
+    // If there's an existing attempt, return it
+    if (existingAttempts.length > 0) {
+        console.log('Returning existing quiz attempt');
+        return context.db.query.quizAttempt({ where: { id: existingAttempts[0].id } }, info);
+    } else {
+        // Otherwise create a new attempt and return it
+        // This will only be practice launches. LTI launches are handled in lti.js
+        return context.db.mutation.createQuizAttempt({
+            data: {
+                quiz: { connect: { id: quizId } },
+                student: { connect: { id: studentId } }
+            }
+        }, info);
+        console.log('Created new quiz attempt');
+    }
 }
+
+async function attemptQuestion(root, args, context, info) {
+    // Check for valid student login
+    const studentId = getUserInfo(context).userId;
+
+    // Check that student owns the given QuizAttempt
+    // TODO
+
+    // Check availability date of quiz hasn't expired since starting
+    // TODO
+
+    // Check that this question hasn't already been attempted in this QuizAttempt
+    // TODO
+    //const existingQuestionAttempts = context.db.query.questionAttempt({
+        //where: {}
+    //})
+
+    return context.db.mutation.updateQuizAttempt({
+        where: {id: args.quizAttemptId},
+        data: {
+            questionAttempts: {
+                create: {
+                    question: {connect: {id: args.questionId}},
+                    option: {connect: {id: args.optionId}},
+                    // TODO check if it's correct
+                    isCorrect: true,
+                    isConfident: args.isConfident,
+                }
+            }
+        }
+    }, info);
+}
+
     
 module.exports = {
     addQuiz,
@@ -258,5 +315,7 @@ module.exports = {
     deleteQuestion,
     updateOption,
     instructorLogin,
-    instructorSignup
+    instructorSignup,
+    startOrResumeQuizAttempt,
+    attemptQuestion
 }

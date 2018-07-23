@@ -57,6 +57,7 @@ type QuizAttempt {
     student: Student!
     quiz: Quiz!
     createdAt: DateTime!
+    ltiSessionInfo: Json
     completed: DateTime
     questionAttempts: [QuestionAttempt!]!
     score: Float # (correct/total). No score indicates the attempt was started, but not yet finished
@@ -76,7 +77,8 @@ type QuestionAttempt {
 
 type ConceptConfidence {
     id: ID! @unique
-    concept: Concept!
+    concept: Concept
+    confidence: Int
     confidenceError: Float # Same as above, but filtered to a single concept. Not required, since it will be added once the quiz is done
     confidenceBias: Float # Ditto
 }

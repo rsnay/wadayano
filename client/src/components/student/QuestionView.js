@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
@@ -14,7 +14,7 @@ const CORRECT_FEEDBACKS = [
     'You’ve got this!'
 ];
 
-export default class QuestionView extends Component {
+class QuestionView extends Component {
 
   constructor(props) {
     super(props);
@@ -57,6 +57,13 @@ export default class QuestionView extends Component {
             e.preventDefault();
         }
     }
+  }
+
+  _submit() {
+        this.setState({ isLoading: true });
+        this.props.attemptQuestionMutation(this.props.quizAttemptId, this.props.question.id, this.state.selectedOption.id, this.state.confident);
+        this.setState({ submitted: true });
+        this.props.onQuestionCompleted();
   }
 
   _randomCorrectFeedback() {
@@ -110,10 +117,7 @@ export default class QuestionView extends Component {
     let submitButton = (
         <ScrollIntoViewIfNeeded>
         <hr />
-        <button autoFocus className="button is-primary is-medium" onClick={() => {
-            this.setState({ submitted: true });
-            this.props.onQuestionCompleted();
-        }}>Submit</button>
+        <button autoFocus className="button is-primary is-medium" onClick={() => this._submit()}>Submit</button>
         </ScrollIntoViewIfNeeded>
     );
 
@@ -155,7 +159,22 @@ export default class QuestionView extends Component {
 }
 
 QuestionView.propTypes = {
+    quizAttemptId: PropTypes.string.isRequired,
     question: PropTypes.object.isRequired,
     onQuestionCompleted: PropTypes.func,
     onNextQuestion: PropTypes.func.isRequired
 };
+
+const ATTEMPT_QUESTION_MUTATION = gql`
+  mutation AttemptQuestion($quizAttemptId: ID!, $questionId: ID!, $optionId: ID!, $isConfident: Boolean!) {
+    attemptQuestion(quizAttemptId: $quizAttemptId, questionId: $questionId, optionId: $optionId, isConfident: $isConfident) {
+      id
+      isCorrect
+    }
+  }
+`;
+
+export default compose(
+  graphql(ATTEMPT_QUESTION_MUTATION, { name: 'attemptQuestionMutation' }),
+  //graphql(START_MUTATION, { name: 'startMutation' })
+)(QuestionView)
