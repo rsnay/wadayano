@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/wadayano/wadayano/dev
-# timestamp: Thu Jul 19 2018 11:08:52 GMT-0600 (MDT)
+# timestamp: Mon Jul 23 2018 11:34:58 GMT-0600 (MDT)
 
 type AggregateConcept {
   count: Int!
@@ -53,7 +53,8 @@ type Concept implements Node {
 
 type ConceptConfidence implements Node {
   id: ID!
-  concept(where: ConceptWhereInput): Concept!
+  concept(where: ConceptWhereInput): Concept
+  confidence: Int
   confidenceError: Float
   confidenceBias: Float
 }
@@ -69,9 +70,10 @@ type ConceptConfidenceConnection {
 }
 
 input ConceptConfidenceCreateInput {
+  confidence: Int
   confidenceError: Float
   confidenceBias: Float
-  concept: ConceptCreateOneInput!
+  concept: ConceptCreateOneInput
 }
 
 input ConceptConfidenceCreateManyInput {
@@ -91,6 +93,8 @@ type ConceptConfidenceEdge {
 enum ConceptConfidenceOrderByInput {
   id_ASC
   id_DESC
+  confidence_ASC
+  confidence_DESC
   confidenceError_ASC
   confidenceError_DESC
   confidenceBias_ASC
@@ -103,6 +107,7 @@ enum ConceptConfidenceOrderByInput {
 
 type ConceptConfidencePreviousValues {
   id: ID!
+  confidence: Int
   confidenceError: Float
   confidenceBias: Float
 }
@@ -147,12 +152,14 @@ input ConceptConfidenceSubscriptionWhereInput {
 }
 
 input ConceptConfidenceUpdateDataInput {
+  confidence: Int
   confidenceError: Float
   confidenceBias: Float
   concept: ConceptUpdateOneInput
 }
 
 input ConceptConfidenceUpdateInput {
+  confidence: Int
   confidenceError: Float
   confidenceBias: Float
   concept: ConceptUpdateOneInput
@@ -227,6 +234,28 @@ input ConceptConfidenceWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  confidence: Int
+
+  """All values that are not equal to given value."""
+  confidence_not: Int
+
+  """All values that are contained in given list."""
+  confidence_in: [Int!]
+
+  """All values that are not contained in given list."""
+  confidence_not_in: [Int!]
+
+  """All values less than the given value."""
+  confidence_lt: Int
+
+  """All values less than or equal the given value."""
+  confidence_lte: Int
+
+  """All values greater than the given value."""
+  confidence_gt: Int
+
+  """All values greater than or equal the given value."""
+  confidence_gte: Int
   confidenceError: Float
 
   """All values that are not equal to given value."""
@@ -1114,6 +1143,7 @@ interface Node {
 
 type Option implements Node {
   id: ID!
+  question(where: QuestionWhereInput): Question!
   isCorrect: Boolean
   text: String!
 }
@@ -1131,16 +1161,22 @@ type OptionConnection {
 input OptionCreateInput {
   isCorrect: Boolean
   text: String!
+  question: QuestionCreateOneWithoutOptionsInput!
 }
 
-input OptionCreateManyInput {
-  create: [OptionCreateInput!]
+input OptionCreateManyWithoutQuestionInput {
+  create: [OptionCreateWithoutQuestionInput!]
   connect: [OptionWhereUniqueInput!]
 }
 
 input OptionCreateOneInput {
   create: OptionCreateInput
   connect: OptionWhereUniqueInput
+}
+
+input OptionCreateWithoutQuestionInput {
+  isCorrect: Boolean
+  text: String!
 }
 
 """An edge in a connection."""
@@ -1213,20 +1249,22 @@ input OptionSubscriptionWhereInput {
 input OptionUpdateDataInput {
   isCorrect: Boolean
   text: String
+  question: QuestionUpdateOneWithoutOptionsInput
 }
 
 input OptionUpdateInput {
   isCorrect: Boolean
   text: String
+  question: QuestionUpdateOneWithoutOptionsInput
 }
 
-input OptionUpdateManyInput {
-  create: [OptionCreateInput!]
+input OptionUpdateManyWithoutQuestionInput {
+  create: [OptionCreateWithoutQuestionInput!]
   connect: [OptionWhereUniqueInput!]
   disconnect: [OptionWhereUniqueInput!]
   delete: [OptionWhereUniqueInput!]
-  update: [OptionUpdateWithWhereUniqueNestedInput!]
-  upsert: [OptionUpsertWithWhereUniqueNestedInput!]
+  update: [OptionUpdateWithWhereUniqueWithoutQuestionInput!]
+  upsert: [OptionUpsertWithWhereUniqueWithoutQuestionInput!]
 }
 
 input OptionUpdateOneInput {
@@ -1237,9 +1275,14 @@ input OptionUpdateOneInput {
   upsert: OptionUpsertNestedInput
 }
 
-input OptionUpdateWithWhereUniqueNestedInput {
+input OptionUpdateWithoutQuestionDataInput {
+  isCorrect: Boolean
+  text: String
+}
+
+input OptionUpdateWithWhereUniqueWithoutQuestionInput {
   where: OptionWhereUniqueInput!
-  data: OptionUpdateDataInput!
+  data: OptionUpdateWithoutQuestionDataInput!
 }
 
 input OptionUpsertNestedInput {
@@ -1247,10 +1290,10 @@ input OptionUpsertNestedInput {
   create: OptionCreateInput!
 }
 
-input OptionUpsertWithWhereUniqueNestedInput {
+input OptionUpsertWithWhereUniqueWithoutQuestionInput {
   where: OptionWhereUniqueInput!
-  update: OptionUpdateDataInput!
-  create: OptionCreateInput!
+  update: OptionUpdateWithoutQuestionDataInput!
+  create: OptionCreateWithoutQuestionInput!
 }
 
 input OptionWhereInput {
@@ -1346,12 +1389,13 @@ input OptionWhereInput {
 
   """All values not ending with the given string."""
   text_not_ends_with: String
-  _MagicalBackRelation_OptionToQuestion_every: QuestionWhereInput
-  _MagicalBackRelation_OptionToQuestion_some: QuestionWhereInput
-  _MagicalBackRelation_OptionToQuestion_none: QuestionWhereInput
-  _MagicalBackRelation_OptionToQuestionAttempt_every: QuestionAttemptWhereInput
-  _MagicalBackRelation_OptionToQuestionAttempt_some: QuestionAttemptWhereInput
-  _MagicalBackRelation_OptionToQuestionAttempt_none: QuestionAttemptWhereInput
+  question: QuestionWhereInput
+  _MagicalBackRelation_CorrectAnswerAttemptRelation_every: QuestionAttemptWhereInput
+  _MagicalBackRelation_CorrectAnswerAttemptRelation_some: QuestionAttemptWhereInput
+  _MagicalBackRelation_CorrectAnswerAttemptRelation_none: QuestionAttemptWhereInput
+  _MagicalBackRelation_SelectedAnswerAttemptRelation_every: QuestionAttemptWhereInput
+  _MagicalBackRelation_SelectedAnswerAttemptRelation_some: QuestionAttemptWhereInput
+  _MagicalBackRelation_SelectedAnswerAttemptRelation_none: QuestionAttemptWhereInput
 }
 
 input OptionWhereUniqueInput {
@@ -1425,6 +1469,7 @@ type QuestionAttempt implements Node {
   question(where: QuestionWhereInput): Question!
   option(where: OptionWhereInput): Option!
   isCorrect: Boolean!
+  correctOption(where: OptionWhereInput): Option!
   isConfident: Boolean!
 }
 
@@ -1443,6 +1488,7 @@ input QuestionAttemptCreateInput {
   isConfident: Boolean!
   question: QuestionCreateOneInput!
   option: OptionCreateOneInput!
+  correctOption: OptionCreateOneInput!
 }
 
 input QuestionAttemptCreateManyInput {
@@ -1523,6 +1569,7 @@ input QuestionAttemptUpdateDataInput {
   isConfident: Boolean
   question: QuestionUpdateOneInput
   option: OptionUpdateOneInput
+  correctOption: OptionUpdateOneInput
 }
 
 input QuestionAttemptUpdateInput {
@@ -1530,6 +1577,7 @@ input QuestionAttemptUpdateInput {
   isConfident: Boolean
   question: QuestionUpdateOneInput
   option: OptionUpdateOneInput
+  correctOption: OptionUpdateOneInput
 }
 
 input QuestionAttemptUpdateManyInput {
@@ -1633,6 +1681,7 @@ input QuestionAttemptWhereInput {
   isConfident_not: Boolean
   question: QuestionWhereInput
   option: OptionWhereInput
+  correctOption: OptionWhereInput
   _MagicalBackRelation_QuestionAttemptToQuizAttempt_every: QuizAttemptWhereInput
   _MagicalBackRelation_QuestionAttemptToQuizAttempt_some: QuizAttemptWhereInput
   _MagicalBackRelation_QuestionAttemptToQuizAttempt_none: QuizAttemptWhereInput
@@ -1654,7 +1703,7 @@ type QuestionConnection {
 
 input QuestionCreateInput {
   prompt: String!
-  options: OptionCreateManyInput
+  options: OptionCreateManyWithoutQuestionInput
   concept: ConceptCreateOneInput
 }
 
@@ -1666,6 +1715,16 @@ input QuestionCreateManyInput {
 input QuestionCreateOneInput {
   create: QuestionCreateInput
   connect: QuestionWhereUniqueInput
+}
+
+input QuestionCreateOneWithoutOptionsInput {
+  create: QuestionCreateWithoutOptionsInput
+  connect: QuestionWhereUniqueInput
+}
+
+input QuestionCreateWithoutOptionsInput {
+  prompt: String!
+  concept: ConceptCreateOneInput
 }
 
 """An edge in a connection."""
@@ -1734,13 +1793,13 @@ input QuestionSubscriptionWhereInput {
 
 input QuestionUpdateDataInput {
   prompt: String
-  options: OptionUpdateManyInput
+  options: OptionUpdateManyWithoutQuestionInput
   concept: ConceptUpdateOneInput
 }
 
 input QuestionUpdateInput {
   prompt: String
-  options: OptionUpdateManyInput
+  options: OptionUpdateManyWithoutQuestionInput
   concept: ConceptUpdateOneInput
 }
 
@@ -1761,6 +1820,19 @@ input QuestionUpdateOneInput {
   upsert: QuestionUpsertNestedInput
 }
 
+input QuestionUpdateOneWithoutOptionsInput {
+  create: QuestionCreateWithoutOptionsInput
+  connect: QuestionWhereUniqueInput
+  delete: Boolean
+  update: QuestionUpdateWithoutOptionsDataInput
+  upsert: QuestionUpsertWithoutOptionsInput
+}
+
+input QuestionUpdateWithoutOptionsDataInput {
+  prompt: String
+  concept: ConceptUpdateOneInput
+}
+
 input QuestionUpdateWithWhereUniqueNestedInput {
   where: QuestionWhereUniqueInput!
   data: QuestionUpdateDataInput!
@@ -1769,6 +1841,11 @@ input QuestionUpdateWithWhereUniqueNestedInput {
 input QuestionUpsertNestedInput {
   update: QuestionUpdateDataInput!
   create: QuestionCreateInput!
+}
+
+input QuestionUpsertWithoutOptionsInput {
+  update: QuestionUpdateWithoutOptionsDataInput!
+  create: QuestionCreateWithoutOptionsInput!
 }
 
 input QuestionUpsertWithWhereUniqueNestedInput {

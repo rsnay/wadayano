@@ -275,6 +275,8 @@ async function attemptQuestion(root, args, context, info) {
     // Check for valid student login
     const studentId = getUserInfo(context).userId;
 
+    console.log('Attempt question', args);
+
     // Check that student owns the given QuizAttempt
     // TODO
 
@@ -282,25 +284,60 @@ async function attemptQuestion(root, args, context, info) {
     // TODO
 
     // Check that this question hasn't already been attempted in this QuizAttempt
-    // TODO
-    //const existingQuestionAttempts = context.db.query.questionAttempt({
-        //where: {}
-    //})
+    const existingQuizAttempt = await context.db.query.quizAttempt({
+        where: {
+           id: args.quizAttemptId
+        }
+    }, `{ questionAttempts { id, question { id } } }`);
+    
+    // If it has been attempted, return the previous attempt (to help avoid cheating)
+    if (existingQuizAttempt.questionAttempts && existingQuizAttempt.questionAttempts.length > 0) {
+        for (let i = 0; i < existingQuizAttempt.questionAttempts.length; i++) {
+            let attempt = existingQuizAttempt.questionAttempts[i];
+            if (attempt.question.id === args.questionId) {
+                console.log('Question already attempted. Attempt id: ' + attempt.id);
+                return context.db.query.questionAttempt({
+                    where: { id: attempt.id }
+                }, info);
+            }
+        }
+    }
 
-    return context.db.mutation.updateQuizAttempt({
+    // Get the correct option for this question
+    const correctOption = (await context.db.query.options({
+        where: {
+            question: { id: args.questionId },
+            isCorrect:true
+        }
+    }, `{ id }`))[0];
+    console.log(correctOption);
+
+    // Find out if this option was correct
+    const isCorrect = args.optionId === correctOption.id;
+
+    // Create a new question attempt (do this separately so it uses the correct selection set from the client)
+    const result = await context.db.mutation.createQuestionAttempt({
+        data: {
+            question: {connect: {id: args.questionId}},
+            option: {connect: {id: args.optionId}},
+            correctOption: {connect: {id: correctOption.id}},
+            isCorrect: isCorrect,
+            isConfident: args.isConfident,
+        }
+    }, info);
+    console.log(result);
+
+    // Connect this question attempt to the quiz attempt (ideally, this would be done with a nested creation, but the client needs to send a selection set for QuestionAttempt, and the nested create would use that selection set on a QuizAttempt, which is no good)
+    await context.db.mutation.updateQuizAttempt({
         where: {id: args.quizAttemptId},
         data: {
             questionAttempts: {
-                create: {
-                    question: {connect: {id: args.questionId}},
-                    option: {connect: {id: args.optionId}},
-                    // TODO check if it's correct
-                    isCorrect: true,
-                    isConfident: args.isConfident,
-                }
+                connect: { id: result.id }
             }
         }
-    }, info);
+    }, `{ id }`);
+
+    return result;
 }
 
     

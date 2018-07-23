@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 import ErrorBox from '../shared/ErrorBox';
+import LoadingBox from '../shared/LoadingBox';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const CORRECT_FEEDBACKS = [
@@ -19,10 +20,13 @@ class QuestionView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        isLoading: false,
         selectedOption: null,
         confident: null,
         submitted: false,
-        correctOption: null
+        correctOption: null,
+        // Will get sent from the server after attempting the question
+        questionAttempt: null
     };
     this._handleKeyDown = this._handleKeyDown.bind(this);
   }
@@ -59,10 +63,19 @@ class QuestionView extends Component {
     }
   }
 
-  _submit() {
+  async _submit() {
         this.setState({ isLoading: true });
-        this.props.attemptQuestionMutation(this.props.quizAttemptId, this.props.question.id, this.state.selectedOption.id, this.state.confident);
-        this.setState({ submitted: true });
+        const result = await this.props.attemptQuestionMutation({
+            variables: {
+                quizAttemptId: this.props.quizAttemptId,
+                questionId: this.props.question.id,
+                optionId: this.state.selectedOption.id,
+                isConfident: this.state.confident
+            }
+        });
+        // TODO catch errors
+        console.log("question attempt", result.data.attemptQuestion);
+        this.setState({ questionAttempt: result.data.attemptQuestion, submitted: true });
         this.props.onQuestionCompleted();
   }
 
@@ -117,24 +130,24 @@ class QuestionView extends Component {
     let submitButton = (
         <ScrollIntoViewIfNeeded>
         <hr />
-        <button autoFocus className="button is-primary is-medium" onClick={() => this._submit()}>Submit</button>
+        <button autoFocus className={"button is-primary is-medium" + (this.state.isLoading ? " is-loading" : "")} onClick={() => this._submit()}>Submit</button>
         </ScrollIntoViewIfNeeded>
     );
 
-    let review = this.state.selectedOption && (
+    let review = this.state.questionAttempt && (
         <span>
             <div className="columns is-mobile question-option-container is-review">
-                <span className={"column is-1 question-option-letter level-left is-rounded button " + (this.state.selectedOption.isCorrect ? "is-success" : "is-danger")}>
-                    <span><span className="icon"><i className={this.state.selectedOption.isCorrect ? "fas fa-check" : "fas fa-times"}></i></span></span>
+                <span className={"column is-1 question-option-letter level-left is-rounded button " + (this.state.questionAttempt.isCorrect ? "is-success" : "is-danger")}>
+                    <span><span className="icon"><i className={this.state.questionAttempt.isCorrect ? "fas fa-check" : "fas fa-times"}></i></span></span>
                 </span>
                 <span className="column question-option-text level-left">
-                    {this.state.selectedOption.text}
+                    {this.state.questionAttempt.option.text}
                 </span>
             </div>
-            {this.state.selectedOption.isCorrect ?
+            {this.state.questionAttempt.isCorrect ?
                 <p className="question-option-text">{this._randomCorrectFeedback()}</p>
             :
-                <p className="question-option-text">Correct answer: {this.props.question.options.filter(q => q.isCorrect)[0].text}</p>
+                <p className="question-option-text">Correct answer: {this.state.questionAttempt.correctOption.text}</p>
             }
             <hr />
         </span>
@@ -170,11 +183,17 @@ const ATTEMPT_QUESTION_MUTATION = gql`
     attemptQuestion(quizAttemptId: $quizAttemptId, questionId: $questionId, optionId: $optionId, isConfident: $isConfident) {
       id
       isCorrect
+      isConfident
+      option {
+          id
+          text
+      }
+      correctOption {
+          id
+          text
+      }
     }
   }
 `;
 
-export default compose(
-  graphql(ATTEMPT_QUESTION_MUTATION, { name: 'attemptQuestionMutation' }),
-  //graphql(START_MUTATION, { name: 'startMutation' })
-)(QuestionView)
+export default graphql(ATTEMPT_QUESTION_MUTATION, { name: 'attemptQuestionMutation' })(QuestionView)
