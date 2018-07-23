@@ -26,7 +26,7 @@ class QuizTaker extends Component {
     this.state = {
       isLoading: true,
       error: '',
-      phase: phases.CONCEPTS,
+      phase: phases.QUESTIONS,
       conceptConfidences: [],
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
@@ -49,6 +49,7 @@ class QuizTaker extends Component {
       const quizAttempt = result.data.startOrResumeQuizAttempt;
       const quiz = quizAttempt.quiz;
       this.setState({ quizAttempt, quiz, isLoading: false });
+      console.log('Quiz attempt: ', quizAttempt);
     } catch (e) {
       // Catch errors
       let message = 'Please try again later.';
@@ -96,12 +97,39 @@ class QuizTaker extends Component {
         phase: phases.RESULTS,
         currentQuestionIndex: newIndex
       });
+      this._completeQuiz();
     } else {
       // Otherwise go to next question
       this.setState({
         currentQuestionIndex: newIndex,
         currentQuestionCompleted: false
       });
+    }
+  }
+
+  // Sends the completeQuiz mutation. The resulting data gets used in the QuizReview component
+  async _completeQuiz() {
+    this.setState({ isLoading: true });
+    try {
+      // Pass the quiz attempt ID to be completed
+      const result = await this.props.completeMutation({
+        variables: {
+          quizAttemptId: this.state.quizAttempt.id
+        }
+      });
+        
+      // Store quiz attempt result info in state
+      const quizAttempt = result.data.completeQuizAttempt;
+      console.log(quizAttempt);
+      this.setState({ quizAttempt, isLoading: false });
+    } catch (e) {
+      // Catch errors
+      let message = 'Error completing quiz. ';
+      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
+        message += e.graphQLErrors[0].message;
+      }
+      this.setState({ error: message, isLoading: false });
+      console.error('Error completing quiz: ' + JSON.stringify(e));
     }
   }
 
@@ -157,7 +185,7 @@ class QuizTaker extends Component {
       case phases.RESULTS:
         currentView = (
           <div>
-            <QuizReview quizAttemptId={"TODO"} />
+            <QuizReview quizAttempt={this.state.quizAttempt} />
             <hr />
             <p className="control">
                   <Link to="/student" className="button is-medium">
@@ -179,7 +207,7 @@ class QuizTaker extends Component {
           {/* Bigger header with title, and progress bar for tablet and larger */}
           <div className="columns is-hidden-mobile">
             <div className="column">
-              <h1 className="title">{quiz.title}</h1>
+              <h1 className="title is-1">{quiz.title}</h1>
             </div>
             <div className="column no-select" style={{margin: "1rem 0 0 0"}}>
               {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
@@ -218,7 +246,6 @@ const START_MUTATION = gql`
           options {
             id
             text
-            isCorrect
           }
         }
       }
@@ -245,7 +272,58 @@ const START_MUTATION = gql`
   }
 `;
 
+const COMPLETE_MUTATION = gql`
+  mutation CompleteMutation($quizAttemptId: ID!) {
+    completeQuizAttempt(quizAttemptId: $quizAttemptId) {
+      id
+      completed
+      score
+      totalConfidenceError
+      totalConfidenceBias
+      quiz {
+        title
+        questions {
+          id
+          prompt
+          options {
+            id
+            text
+            isCorrect
+          }
+        }
+      }
+      questionAttempts {
+        id
+        question {
+          id
+          prompt
+        }
+        option {
+          id
+          text
+        }
+        correctOption {
+          id
+          text
+        }
+        isCorrect
+        isConfident
+      }
+      conceptConfidences {
+        id
+        concept {
+          id
+          title
+        }
+        confidence
+        confidenceError
+        confidenceBias
+      }
+    }
+  }
+`;
+
 export default compose(
   graphql(START_MUTATION, { name: 'startMutation' }),
-  //graphql(START_MUTATION, { name: 'startMutation' })
+  graphql(COMPLETE_MUTATION, { name: 'completeMutation' }),
 )(QuizTaker)

@@ -10,6 +10,13 @@ const consumer_secret = 'secret';
 // This shouldn't be necessary in production, if it's on the same server. In that case, this would be empty '' (no trailing slash)
 const CLIENT_BASE_URL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:3001' : '';
 
+/**
+ * Called from the main server functions to handle an incoming LTI launch request.
+ * @param {*} config - config file from /server/config.js
+ * @param {*} db - Prisma DB isntance
+ * @param {*} req - request object from express server
+ * @param {*} res - response object from express server
+ */
 function handleLaunch(config, db, req, res) {
     // Get body and params
     const body = req.body;
@@ -36,6 +43,7 @@ function handleLaunch(config, db, req, res) {
             res.end('Error validating request: ' + error);
         } else {
             console.log(`LTI request is valid for LTI user ${body.user_id}!`);
+
             // Create or update the user (upsert in Prisma lingo)
             const studentId = await _upsertStudentOnLaunch(db, body.user_id, body.lis_person_name_full, body.lis_person_contact_email_primary);
             console.log(`Upserted student ID ${studentId}`);
@@ -50,7 +58,7 @@ function handleLaunch(config, db, req, res) {
             if (action === 'quiz') {
                 let quizId = parameter1;
                 // Start a quiz attempt and stick the LTI passback info in it
-                // Pass provider.body instead of body, since the provider will take out the oauth info, which we don't want to store
+                // Use provider.body instead of body, since the provider will take out the oauth info, which we don't want to store
                 _upsertQuizAttempt(db, studentId, quizId, provider.body);
             }
             
@@ -63,7 +71,40 @@ function handleLaunch(config, db, req, res) {
     });
 }
 
-// Upserts a student with the given params. Will return the ID of the student
+
+/**
+ * Called from the resolver for the completeQuizAttemptMutation, to send a grade to the LMS via grade passback
+ * @param {*} ltiSessionInfo - JSON object
+ * @param {*} score - float in range 0 - 1.0 to post to tool consumer
+ * @returns {Promise<void>} - promise will resolve if grade post succeeded
+ */
+function postGrade(ltiSessionInfo, score) {
+    const outcomeService = new lti.OutcomeService({
+        consumer_key,
+        consumer_secret,
+        service_url: ltiSessionInfo.lis_outcome_service_url,
+        source_did: ltiSessionInfo.lis_result_sourcedid
+    });
+    return new Promise((resolve, reject) => {
+        outcomeService.send_replace_result(score, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+
+/**
+ * Upserts a student with the given params. Will return the ID of the student
+ * @param {*} db - Prisma DB instance
+ * @param {*} ltiUserId - student's user_id in the LTI launch request
+ * @param {*} name - display name for the student
+ * @param {*} email - student's email
+ * @returns student's internal user ID
+ */
 async function _upsertStudentOnLaunch(db, ltiUserId, name, email) {
     const student = await db.mutation.upsertStudent({
         where: { ltiUserId },
@@ -73,6 +114,13 @@ async function _upsertStudentOnLaunch(db, ltiUserId, name, email) {
     return student.id;
 }
 
+/**
+ * Creates or updates an LTI-launched quiz attempt
+ * @param {*} db - Prisma DB instance
+ * @param {*} studentId - student's internal user ID (NOT LTI user_id)
+ * @param {*} quizId - interal Quiz ID
+ * @param {*} ltiSessionInfo - non-serialized object containing the body of the  LTI launch request
+ */
 async function _upsertQuizAttempt(db, studentId, quizId, ltiSessionInfo) {
     // Since the quiz attempt is unique on the combination of two fields (quizId and studentId), prisma's built-in upsert won't work
     // Find existing uncompleted attempt(s) for this student and quiz
@@ -112,5 +160,6 @@ async function _upsertQuizAttempt(db, studentId, quizId, ltiSessionInfo) {
 
 
 module.exports = {
-    handleLaunch
+    handleLaunch,
+    postGrade
 }

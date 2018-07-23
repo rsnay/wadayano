@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { APP_SECRET } = require('../../config');
 const { getUserInfo, validateEmail } = require('../utils');
+const { postGrade } = require('../lti');
 
 function updateOption (root, args, context, info){
     return context.db.mutation.updateOption({
@@ -197,7 +198,6 @@ function updateQuestion(root, args, context, info){
 
 async function instructorLogin(root, args, context, info) {
     // Check that instructor exists
-    console.log(args.email, args.password);
     const email = args.email.toLowerCase();
     const instructor = await context.db.query.instructor({ where: { email: email } }, ` { id, password } `);
     if (!instructor) {
@@ -323,7 +323,6 @@ async function attemptQuestion(root, args, context, info) {
             isCorrect:true
         }
     }, `{ id }`))[0];
-    console.log(correctOption);
 
     // Find out if this option was correct
     const isCorrect = args.optionId === correctOption.id;
@@ -338,7 +337,6 @@ async function attemptQuestion(root, args, context, info) {
             isConfident: args.isConfident,
         }
     }, info);
-    console.log(result);
 
     // Connect this question attempt to the quiz attempt (ideally, this would be done with a nested creation, but the client needs to send a selection set for QuestionAttempt, and the nested create would use that selection set on a QuizAttempt, which is no good)
     await context.db.mutation.updateQuizAttempt({
@@ -351,6 +349,91 @@ async function attemptQuestion(root, args, context, info) {
     }, `{ id }`);
 
     return result;
+}
+
+async function completeQuizAttempt(root, args, context, info) {
+    // Check for valid student login
+    const studentId = getUserInfo(context).userId;
+
+    // Get info from this quiz attempt
+    const attempt = await context.db.query.quizAttempt({
+        where: { id: args.quizAttemptId }
+    }, `{ id
+        completed
+        student { id }
+        ltiSessionInfo
+        quiz {
+            questions {
+                concept {
+                    id
+                }
+            }
+        }
+        questionAttempts {
+            isCorrect
+            isConfident
+            question {
+                concept {
+                    id
+                }
+            }
+        }
+     }`);
+
+    // Check that quizAttemptId is valid, not completed, and belongs to student
+    if (!(attempt && (attempt.completed === null) && (attempt.student.id === studentId))) {
+        //throw new Error('Could not complete this quiz attempt.');
+    }
+
+    // Check that all questions were attempted
+    // TODO is this necessary?
+
+    // Set completed to current timestamp
+    const completed = new Date().toISOString();
+    console.log(attempt);
+    console.log(attempt.questionAttempts.filter(attempt => attempt.isCorrect).length);
+
+    // Calculate score
+    const correctCount = attempt.questionAttempts.filter(attempt => attempt.isCorrect).length || 0;
+    const score = correctCount / attempt.quiz.questions.length;
+
+    // Calculate totalConfidenceError
+    // TODO use a not-random number
+    const totalConfidenceError = Math.round(Math.random() * 10 ) / 10;
+
+    // Calculate totalConfidenceBias
+    // TODO use a not-random number
+    const totalConfidenceBias = Math.round(Math.random() * 10 ) / 10;
+
+    // For each ConceptConfidence in conceptConfidences
+        // Calculate confidenceError
+        // TODO
+
+        // Calculate confidenceBias
+        // TODO
+    
+    // Post the score back to LMS via LTI grade passback, if applicable
+    if (attempt.ltiSessionInfo && attempt.ltiSessionInfo.lis_outcome_service_url) {
+        try {
+            let result = await postGrade(attempt.ltiSessionInfo, score);
+            console.log('LTI grade passback successful!');
+        } catch (error) {
+            console.log('LTI grade passback failed', error);
+        }
+        // TODO have a separate entity type to wrap up the quiz attempt as well as info if the LTI grade passback was successful, etc.
+    }
+
+
+    // Update the QuizAttempt
+    return context.db.mutation.updateQuizAttempt({
+        where: { id: args.quizAttemptId },
+        data: {
+            completed,
+            score,
+            totalConfidenceError,
+            totalConfidenceBias
+        }
+    }, info);
 }
 
     
@@ -367,5 +450,6 @@ module.exports = {
     instructorLogin,
     instructorSignup,
     startOrResumeQuizAttempt,
+    completeQuizAttempt,
     attemptQuestion
 }
