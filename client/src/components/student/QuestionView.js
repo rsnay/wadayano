@@ -7,6 +7,8 @@ import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
+import ConfidenceSelector from './ConfidenceSelector';
+
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const CORRECT_FEEDBACKS = [
     'Nice!',
@@ -24,10 +26,10 @@ class QuestionView extends Component {
         selectedOption: null,
         confident: null,
         submitted: false,
-        correctOption: null,
         // Will get sent from the server after attempting the question
         questionAttempt: null
     };
+    this._submitted = false;
     this._handleKeyDown = this._handleKeyDown.bind(this);
   }
 
@@ -64,6 +66,9 @@ class QuestionView extends Component {
   }
 
   async _submit() {
+        // If the enter button is pressed really quickly in succession, this could get fired twice before the
+        if (this._submitted) { return; }
+        this._submitted = true;
         this.setState({ isLoading: true });
         const result = await this.props.attemptQuestionMutation({
             variables: {
@@ -113,17 +118,10 @@ class QuestionView extends Component {
 
     let confidenceSelector = (
         <ScrollIntoViewIfNeeded>
-        <div className="question-confidence-selector">
-            <h5 style={{margin: "0.5rem"}}>I’m confident: </h5>
-            <div className="buttons has-addons">
-                <button autoFocus className={"button is-rounded " + (this.state.confident === true ? "is-active is-link" : "")} onClick={() => this.setState({ confident: true })}>
-                    &nbsp;<span className="icon is-small"><i className="fas fa-thumbs-up"></i></span>&nbsp;
-                </button>
-                <button className={"button is-rounded " + (this.state.confident === false ? "is-active is-link" : "")} onClick={() => this.setState({ confident: false })}>
-                    &nbsp;<span className="icon is-small"><i className="fas fa-thumbs-down"></i></span>&nbsp;
-                </button>
-            </div>
-        </div>
+            <ConfidenceSelector
+                autoFocus
+                onChange={(confident) => { this.setState({ confident }) }}
+                confident={this.state.confident} />
         </ScrollIntoViewIfNeeded>
     );
 
@@ -144,8 +142,9 @@ class QuestionView extends Component {
                     {this.state.questionAttempt.option.text}
                 </span>
             </div>
+            <ConfidenceSelector confident={this.state.questionAttempt.isConfident} disabled />
             {this.state.questionAttempt.isCorrect ?
-                <p className="question-option-text">{this._randomCorrectFeedback()}</p>
+                this.state.questionAttempt.isConfident && <p className="question-option-text">{this._randomCorrectFeedback()}</p>
             :
                 <p className="question-option-text">Correct answer: {this.state.questionAttempt.correctOption.text}</p>
             }
