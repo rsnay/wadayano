@@ -10,15 +10,16 @@ class QuizReview extends Component {
 
   render() {
 
-    /*if (this.props.query && this.props.query.loading) {
+    if (this.props.query && this.props.query.loading) {
         return <LoadingBox />;
     }
 
     if (this.props.query && this.props.query.error) {
         return <ErrorBox><p>Couldn't load the quiz review</p></ErrorBox>;
-    }*/
+    }
 
-    //const quizReview = this.props.query.quizReview;
+    const quizReview = this.props.query.quizReview;
+    console.log(quizReview);
 
     const quizAttempt = {
         conceptConfidences: [

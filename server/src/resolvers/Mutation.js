@@ -78,6 +78,7 @@ function addQuiz (root, args, context, info) {
         quizzes:{
             create:[{
                 title: "Quiz Title",
+                id:args.id,
                 questions: {
                 create: [{
                     prompt: "Enter Prompt Here",
@@ -109,6 +110,18 @@ function addQuiz (root, args, context, info) {
     }
     },info)
 }
+
+/*function addConcept (root, args, context, info) {
+    return context.db.mutation.updateQuiz({
+        data: {
+            concepts:{
+                create:[{
+
+                }]
+            }
+        }
+    })
+}*/
 
 function addQuestion (root, args, context, info) {
     return context.db.mutation.updateQuiz({

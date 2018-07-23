@@ -42,7 +42,6 @@ export class CourseList extends Component {
         return <ErrorBox/>;
     }
     console.log(this.props);
-    //let courses = this.props.instructorQuery.instructor.courses;
     let courses = this.props.instructorQuery.instructor.courses;
     console.log(courses);
 
@@ -131,7 +130,7 @@ mutation courseDelete($id:ID!) {
 }`
 
 export default compose(
-graphql(INSTRUCTOR_QUERY, {name: "instructorQuery"}),
+graphql(INSTRUCTOR_QUERY, {name:"instructorQuery"}),
 graphql(COURSE_QUERY, {name:"coursesQuery"}),
 graphql(COURSE_DELETE, {name:"courseDelete"})
 ) (CourseList)
