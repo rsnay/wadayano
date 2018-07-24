@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import Logo from '../../logo.svg';
 
-import { AUTH_TOKEN } from '../../constants';
+import { AUTH_TOKEN, AUTH_ROLE } from '../../constants';
 
 class Header extends Component {
 
@@ -12,6 +12,7 @@ class Header extends Component {
 
     _logOut() {
         localStorage.removeItem(AUTH_TOKEN);
+        localStorage.removeItem(AUTH_ROLE);
         this.props.history.push('/');
     }
 

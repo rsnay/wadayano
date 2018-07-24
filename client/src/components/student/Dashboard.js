@@ -24,7 +24,12 @@ class Dashboard extends Component {
         <section className="section">
         <div className="container">
           <h1 className="title is-inline-block">Student Dashboard</h1>
-          <p>For now, take any quiz</p>
+          <p>To take a quiz, you will need to log in as a Student via LTI.</p>
+          <p><button className="button" onClick={() => {localStorage.setItem("authRole", "student"); localStorage.setItem("authToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjampvZml0M3Roc2VzMGIzN3d4aGx0eGh3IiwiaXNJbnN0cnVjdG9yIjpmYWxzZSwiaWF0IjoxNTMyNDY3NDgzfQ.IF0UO4QG_Gl-9eA3R_Jy68j-ptxc9LIVN3XHdQvOKOc"); window.location.reload();}}>
+          <span class="icon">
+            <i class="fas fa-user-graduate"></i>
+          </span>
+           &nbsp; Or perform a fake login</button></p>
           <hr />
 
           <div style={{overflowX: "auto"}}>
