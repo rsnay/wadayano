@@ -45,11 +45,35 @@ class QuizTaker extends Component {
         }
       });
         
-      // Store quiz attempt and quiz data in state
+      // Quiz attempt and quiz data to store in state
       const quizAttempt = result.data.startOrResumeQuizAttempt;
       const quiz = quizAttempt.quiz;
-      this.setState({ quizAttempt, quiz, isLoading: false });
+
+      // Get current location of quiz attempt, and resume at that point
+      // It looks like the list order is guaranteed from prisma, so this should be fine: https://www.prisma.io/forum/t/list-array-order-guaranteed/2235
+      const currentQuestionIndex = quizAttempt.questionAttempts.length;
+
+      // Edge case—if a student answered all questions but didn't continue to the results (where the grade is actually submitted), submit it now
+      if (currentQuestionIndex === quiz.questions.length) {
+        this.setState({
+          quizAttempt,
+          quiz,
+          currentQuestionIndex,
+          phase: phases.RESULTS
+        });
+        this._completeQuiz();
+        return;
+      }
+
+      // Otherwise store the data, and go to current question
+      this.setState({
+        quizAttempt,
+        quiz,
+        currentQuestionIndex,
+        isLoading: false
+      });
       console.log('Quiz attempt: ', quizAttempt);
+
     } catch (e) {
       // Catch errors
       let message = 'Please try again later.';
