@@ -55,6 +55,9 @@ const server = new GraphQLServer({
   }),
 });
 
+// Nginx proxy_passes to this server, and we want to trust its forwarded https headers, so that oauth signatures match
+server.express.enable('trust proxy');
+
 // Handle LTI launch requests
 // create application/x-www-form-urlencoded parser
 const urlencodedParser = bodyParser.urlencoded({ extended: false })

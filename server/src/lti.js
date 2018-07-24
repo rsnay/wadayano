@@ -61,6 +61,13 @@ function handleLaunch(config, db, req, res) {
                 // Use provider.body instead of body, since the provider will take out the oauth info, which we don't want to store
                 _upsertQuizAttempt(db, studentId, quizId, provider.body);
             }
+
+            let redirectURL = `${CLIENT_BASE_URL}/student/launch/${token}/${action}/${parameter1}`;
+
+            // CLIENT_BASE_URL should be '' on production
+            if (req.hostname.indexOf('wadayano.com') >= 0) {
+                redirectURL.replace(CLIENT_BASE_URL, '');
+            }
             
             let redirectURL = `${CLIENT_BASE_URL}/student/launch/${token}/${action}/${parameter1}`;
             // For some reason, immediately redirecting (either via http, meta tag, or javascript) will fail if it's launched in an iframe. So just give them a link to continue in a new window if we detect it's in an iframe.
