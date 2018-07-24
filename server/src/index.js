@@ -1,8 +1,9 @@
 // GraphQL
-const { GraphQLServer } = require('graphql-yoga')
-const { Prisma } = require('prisma-binding')
-const Query = require('./resolvers/Query')
-const Mutation = require('./resolvers/Mutation')
+const { GraphQLServer } = require('graphql-yoga');
+const { Prisma } = require('prisma-binding');
+const Query = require('./resolvers/Query');
+const Mutation = require('./resolvers/Mutation');
+const QuizGradePayload = require('./resolvers/QuizGradePayload');
 
 // App server (for static and LTI processing)
 const express = require('express');
@@ -28,8 +29,9 @@ const appDir = '../client/build';
 // GraphQL queries and mutations
 const resolvers = {
   Query,
-  Mutation
-}
+  Mutation,
+  QuizGradePayload
+};
 
 // Set up prisma DB
 const db = new Prisma({
@@ -51,7 +53,7 @@ const server = new GraphQLServer({
     // Allow this server's mutations and queries to access prisma server
     db
   }),
-})
+});
 
 // Handle LTI launch requests
 // create application/x-www-form-urlencoded parser

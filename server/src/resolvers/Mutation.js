@@ -413,19 +413,24 @@ async function completeQuizAttempt(root, args, context, info) {
         // TODO
     
     // Post the score back to LMS via LTI grade passback, if applicable
+    let isGraded = false;
+    let postSucceeded = false;
+    let error = null;
     if (attempt.ltiSessionInfo && attempt.ltiSessionInfo.lis_outcome_service_url) {
+        isGraded = true;
         try {
             let result = await postGrade(attempt.ltiSessionInfo, score);
+            postSucceeded = true;
             console.log('LTI grade passback successful!');
-        } catch (error) {
-            console.log('LTI grade passback failed', error);
+        } catch (err) {
+            postSucceeded = false;
+            error = JSON.stringify(err) || 'Error sending score';
+            console.log('LTI grade passback failed', err);
         }
-        // TODO have a separate entity type to wrap up the quiz attempt as well as info if the LTI grade passback was successful, etc.
     }
 
-
     // Update the QuizAttempt
-    return context.db.mutation.updateQuizAttempt({
+    let updatedAttempt = await context.db.mutation.updateQuizAttempt({
         where: { id: args.quizAttemptId },
         data: {
             completed,
@@ -433,9 +438,17 @@ async function completeQuizAttempt(root, args, context, info) {
             totalConfidenceError,
             totalConfidenceBias
         }
-    }, info);
-}
+    }, `{ id }`);
 
+    // Return a QuizGradePayload (a separate entity type to wrap up the quiz attempt as well as info if the LTI grade passback was successful, etc.)
+    console.log(isGraded, postSucceeded, error);
+    return {
+        isGraded,
+        postSucceeded,
+        quizAttempt: updatedAttempt,
+        error
+    };
+}
     
 module.exports = {
     addQuiz,

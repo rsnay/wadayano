@@ -31,7 +31,8 @@ class QuizTaker extends Component {
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
       questionAttempts: [],
-      quizAttempt: null
+      quizAttempt: null,
+      quizGradePayload: null
     };
   }
 
@@ -141,11 +142,18 @@ class QuizTaker extends Component {
           quizAttemptId: this.state.quizAttempt.id
         }
       });
+      console.log(result);
+
+      // A QuizGradePayload contains isGraded (bool!), postSucceeded (bool), error (string), and quizAttempt (quizAttempt!)
+      const quizGradePayload = result.data.completeQuizAttempt;
+
+      // If it was graded, check if the LTI grade passback was successful or not
+      if (quizGradePayload.isGraded && !quizGradePayload.postSucceeded) {
+        alert('There was an error posting your score to your learning management system.');
+      }
         
-      // Store quiz attempt result info in state
-      const quizAttempt = result.data.completeQuizAttempt;
-      console.log(quizAttempt);
-      this.setState({ quizAttempt, isLoading: false });
+      // Store quizGradePayload info in state
+      this.setState({ quizGradePayload, isLoading: false });
     } catch (e) {
       // Catch errors
       let message = 'Error completing quiz. ';
@@ -209,7 +217,9 @@ class QuizTaker extends Component {
       case phases.RESULTS:
         currentView = (
           <div>
-            <QuizReview quizAttempt={this.state.quizAttempt} />
+            <QuizReview quizAttempt={this.state.quizGradePayload.quizAttempt}
+              isGraded={this.state.quizGradePayload.isGraded}
+              gradePostSucceeded={this.state.quizGradePayload.postSucceeded} />
             <hr />
             <p className="control">
                   <Link to="/student" className="button is-medium">
@@ -299,49 +309,54 @@ const START_MUTATION = gql`
 const COMPLETE_MUTATION = gql`
   mutation CompleteMutation($quizAttemptId: ID!) {
     completeQuizAttempt(quizAttemptId: $quizAttemptId) {
-      id
-      completed
-      score
-      totalConfidenceError
-      totalConfidenceBias
-      quiz {
-        title
-        questions {
-          id
-          prompt
-          options {
+      isGraded
+      postSucceeded
+      error
+      quizAttempt {
+        id
+        completed
+        score
+        totalConfidenceError
+        totalConfidenceBias
+        quiz {
+          title
+          questions {
             id
-            text
-            isCorrect
+            prompt
+            options {
+              id
+              text
+              isCorrect
+            }
           }
         }
-      }
-      questionAttempts {
-        id
-        question {
+        questionAttempts {
           id
-          prompt
+          question {
+            id
+            prompt
+          }
+          option {
+            id
+            text
+          }
+          correctOption {
+            id
+            text
+          }
+          isCorrect
+          isConfident
         }
-        option {
+        conceptConfidences {
           id
-          text
+          concept {
+            id
+            title
+          }
+          confidence
+          confidenceError
+          confidenceBias
         }
-        correctOption {
-          id
-          text
-        }
-        isCorrect
-        isConfident
-      }
-      conceptConfidences {
-        id
-        concept {
-          id
-          title
-        }
-        confidence
-        confidenceError
-        confidenceBias
       }
     }
   }

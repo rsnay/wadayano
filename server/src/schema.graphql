@@ -25,7 +25,7 @@ type Mutation {
   instructorLogin(email:String!, password:String!): InstructorAuthPayload
 
   startOrResumeQuizAttempt(quizId: ID!): QuizAttempt!
-  completeQuizAttempt(quizAttemptId: ID!): QuizAttempt!
+  completeQuizAttempt(quizAttemptId: ID!): QuizGradePayload!
   attemptQuestion(quizAttemptId: ID!, questionId: ID!, optionId: ID!, isConfident: Boolean!): QuestionAttempt!
 }
 
@@ -43,4 +43,10 @@ type InstructorAuthPayload {
   instructor: Instructor
 }
 
-# Returned from 
+# Returned from posting a grade via LTI
+type QuizGradePayload {
+  quizAttempt: QuizAttempt!
+  isGraded: Boolean!
+  postSucceeded: Boolean
+  error: String
+}

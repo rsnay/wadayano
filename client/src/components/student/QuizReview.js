@@ -34,9 +34,24 @@ class QuizReview extends Component {
     // Score format of 33.3%
     const formattedScore = `${Math.round(quizAttempt.score * 1000) / 10}%`;
 
+    const gradePostMessage = this.props.isGraded && (this.props.gradePostSucceeded ?
+            <span class="notification is-success is-pulled-right">Score posted successfully.</span>
+        :
+            <span className="notification is-danger is-pulled-right">There was an error posting your score to your learning management system.</span>
+        );
+
     return (
         <div>
-            <h2 className="title is-2">{formattedScore}</h2>
+
+            <div className="columns">
+                <div className="column">
+                    <h2 className="subtitle is-2">Score: {formattedScore}</h2>
+                </div>
+                <div className="column">
+                    {gradePostMessage}
+                </div>
+            </div>
+
             <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
             {conceptConfidences.map((conceptConfidence, index) => 
                 <div className="tile is-4 is-parent" key={conceptConfidence.id}>
@@ -63,7 +78,9 @@ class QuizReview extends Component {
 }
 
 QuizReview.propTypes = {
-    quizAttempt: PropTypes.object.isRequired
+    quizAttempt: PropTypes.object.isRequired,
+    isGraded: PropTypes.bool.isRequired,
+    gradePostSucceeded: PropTypes.bool
 };
 
 export const QUIZ_ATTEMPT_QUERY = gql`
