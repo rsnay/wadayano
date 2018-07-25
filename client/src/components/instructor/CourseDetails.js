@@ -13,10 +13,21 @@ export class CourseDetails extends Component {
   }
 
   addQuiz(){
-    console.log(this.props.match.params.courseId)
+    //console.log(this.props.match.params.courseId)
     this.props.addQuizMutation({
         variables:{
             id:this.props.match.params.courseId
+        }
+    });
+    window.location.reload(true);
+  }
+
+  updateCourse(){
+    //console.log(this.props.match.params.courseId)
+    this.props.courseUpdate({
+        variables:{
+            id:this.props.match.params.courseId,
+            title:document.getElementById(this.props.match.params.courseId).value
         }
     });
     window.location.reload(true);
@@ -44,10 +55,10 @@ export class CourseDetails extends Component {
                 <li className="is-active"><Link to={"/instructor/course/"+course.id} aria-current="page">{course.title}</Link></li>
             </ul>
         </nav>
-          <h1 className="title is-inline-block">{course.id}</h1>
+          <textarea type="input" id={course.id} className="title is-inline-block">{course.title}</textarea>
           &nbsp;&nbsp;
             <a className="button">
-                <span className="icon is-small">
+                <span className="icon is-small" onClick = {() => this.updateCourse()}>
                 <i className="fas fa-edit"></i>
                 </span>
             </a>
@@ -93,7 +104,7 @@ export class CourseDetails extends Component {
 //all courses for user of id
 //TODO change from hardcoded userId
 export const COURSE_QUERY = gql`
-  query courseQuery($id: ID!) {
+  query courseQuery($id:ID!) {
     course(
         id:$id
     ){
@@ -120,6 +131,14 @@ mutation addQuizMutation($id:ID!)
         }
     }`
 
+export const COURSE_UPDATE = gql`
+mutation courseUpdate($id:ID!, $title:String!) {
+    updateCourse(id:$id, title:$title){
+        id
+        title
+    }
+}`
+
 export default compose(
 graphql(COURSE_QUERY, {
   name: 'courseQuery',
@@ -128,5 +147,6 @@ graphql(COURSE_QUERY, {
     return { variables: { id:props.match.params.courseId } }
   }
 }),
-graphql(ADD_QUIZ, {name:"addQuizMutation"})
+graphql(ADD_QUIZ, {name:"addQuizMutation"}),
+graphql(COURSE_UPDATE, {name:"courseUpdate"})
 ) (CourseDetails)

@@ -35,6 +35,8 @@ type Quiz {
     id: ID! @unique
     createdAt: DateTime!
     questions: [Question!]!
+    concepts:[Concept!]!
+    courseId:ID
     title: String!
 }
 

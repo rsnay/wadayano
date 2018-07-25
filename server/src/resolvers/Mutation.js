@@ -73,6 +73,17 @@ function addCourse (root, args, context, info) {
     }, info)
 }
 
+function updateCourse (root, args, context, info) {
+    return context.db.mutation.updateCourse({
+        data: {
+            title:args.title
+        },
+        where: {
+            id:args.id
+        }
+    }, info)
+}
+
 function addQuiz (root, args, context, info) {
     return context.db.mutation.updateCourse({
       data: {
@@ -453,6 +464,7 @@ async function completeQuizAttempt(root, args, context, info) {
 module.exports = {
     addQuiz,
     addCourse,
+    updateCourse,
     deleteCourse,
     updateQuiz,
     deleteQuiz,
