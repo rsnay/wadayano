@@ -69,7 +69,6 @@ function handleLaunch(config, db, req, res) {
                 redirectURL.replace(CLIENT_BASE_URL, '');
             }
             
-            let redirectURL = `${CLIENT_BASE_URL}/student/launch/${token}/${action}/${parameter1}`;
             // For some reason, immediately redirecting (either via http, meta tag, or javascript) will fail if it's launched in an iframe. So just give them a link to continue in a new window if we detect it's in an iframe.
             //res.redirect(redirectURL); // Won't work in an iframe
             res.writeHead(200, {'Content-Type': 'text/html'});
