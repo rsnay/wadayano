@@ -8,16 +8,11 @@ import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
 import ConfidenceSelector from './ConfidenceSelector';
+import QuestionReview from './QuestionReview';
 
-const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const CORRECT_FEEDBACKS = [
-    'Nice!',
-    'Keep up the great work!',
-    'Exactly right!',
-    'You’ve got this!'
-];
+import { ALPHABET } from '../../constants';
 
-class QuestionView extends Component {
+class QuestionTaker extends Component {
 
   constructor(props) {
     super(props);
@@ -81,12 +76,9 @@ class QuestionView extends Component {
         // TODO catch errors
         console.log("question attempt", result.data.attemptQuestion);
         this.setState({ questionAttempt: result.data.attemptQuestion, submitted: true });
-        this.props.onQuestionCompleted();
-  }
-
-  _randomCorrectFeedback() {
-      const i = Math.floor(Math.random() * CORRECT_FEEDBACKS.length);
-      return CORRECT_FEEDBACKS[i];
+        if (this.props.onQuestionCompleted) {
+            this.props.onQuestionCompleted();
+        }
   }
 
   render() {
@@ -108,7 +100,7 @@ class QuestionView extends Component {
                 this.setState({ selectedOption: option })
             }}>
             <button className={"column is-1 question-option-letter level-left is-rounded button " + (this.state.selectedOption && this.state.selectedOption.id === option.id ? "is-link" : "")} >
-                <span>{LETTERS[index]}</span>
+                <span>{ALPHABET[index]}</span>
             </button>
             <span className="column question-option-text level-left">
                 {option.text}
@@ -132,45 +124,36 @@ class QuestionView extends Component {
         </ScrollIntoViewIfNeeded>
     );
 
-    let review = this.state.questionAttempt && (
-        <span>
-            <div className="columns is-mobile question-option-container is-review">
-                <span className={"column is-1 question-option-letter level-left is-rounded button " + (this.state.questionAttempt.isCorrect ? "is-success" : "is-danger")}>
-                    <span><span className="icon"><i className={this.state.questionAttempt.isCorrect ? "fas fa-check" : "fas fa-times"}></i></span></span>
-                </span>
-                <span className="column question-option-text level-left">
-                    {this.state.questionAttempt.option.text}
-                </span>
-            </div>
-            <ConfidenceSelector confident={this.state.questionAttempt.isConfident} disabled />
-            {this.state.questionAttempt.isCorrect ?
-                this.state.questionAttempt.isConfident && <p className="question-option-text">{this._randomCorrectFeedback()}</p>
-            :
-                <p className="question-option-text">Correct answer: {this.state.questionAttempt.correctOption.text}</p>
-            }
-            <hr />
-        </span>
-    );
+    let review = this.state.questionAttempt && <QuestionReview questionAttempt={this.state.questionAttempt} question={this.props.question} />;
 
     let continueButton = (
         <button autoFocus className="button is-primary is-medium" onClick={this.props.onNextQuestion}>Continue</button>
     );
 
-    return (
-        <div>
-            {prompt}
-            <br />
-            {!this.state.submitted && options}
-            {!this.state.submitted && this.state.selectedOption && confidenceSelector}
-            {!this.state.submitted && this.state.confident !== null && submitButton}
-            {this.state.submitted === true && review}
-            {this.state.submitted === true && continueButton}
-        </div>
-    )
+    // Question answer view
+    if (!this.state.submitted) {
+        return (
+            <div>
+                {prompt}
+                {<br />}
+                {options}
+                {this.state.selectedOption && confidenceSelector}
+                {this.state.confident !== null && submitButton}
+            </div>
+        );
+    } else {
+        // Question review view
+        return (
+            <div>
+                {review}
+                {continueButton}
+            </div>
+        );
+    }
   }
 }
 
-QuestionView.propTypes = {
+QuestionTaker.propTypes = {
     quizAttemptId: PropTypes.string.isRequired,
     question: PropTypes.object.isRequired,
     onQuestionCompleted: PropTypes.func,
@@ -195,4 +178,4 @@ const ATTEMPT_QUESTION_MUTATION = gql`
   }
 `;
 
-export default graphql(ATTEMPT_QUESTION_MUTATION, { name: 'attemptQuestionMutation' })(QuestionView)
+export default graphql(ATTEMPT_QUESTION_MUTATION, { name: 'attemptQuestionMutation' })(QuestionTaker)

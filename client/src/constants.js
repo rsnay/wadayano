@@ -8,3 +8,5 @@ export const AUTH_TOKEN = 'authToken';
 export const AUTH_ROLE = 'authRole';
 export const AUTH_ROLE_STUDENT = 'student';
 export const AUTH_ROLE_INSTRUCTOR = 'instructor';
+
+export const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

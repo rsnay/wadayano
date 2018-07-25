@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import { Prompt } from 'react-router';
 
 import ConceptRater from './ConceptRater';
-import QuestionView from './QuestionView';
+import QuestionTaker from './QuestionTaker';
 import QuizReview from './QuizReview';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
@@ -105,7 +105,7 @@ class QuizTaker extends Component {
     this.setState({ phase: phases.QUESTIONS });
   }
 
-  // Called from a QuestionView after its question has been answered, confidence-rated, and reviewed
+  // Called from a QuestionTaker after its question has been answered, confidence-rated, and reviewed
   _onQuestionCompleted(questionAttempt) {
     // Add this questionAttempt to our quizAttempt
     // TODO
@@ -205,7 +205,7 @@ class QuizTaker extends Component {
         break;
         
       case phases.QUESTIONS:
-        currentView = <QuestionView
+        currentView = <QuestionTaker
           quizAttemptId={this.state.quizAttempt.id}
           question={quiz.questions[this.state.currentQuestionIndex]}
           key={quiz.questions[this.state.currentQuestionIndex].id}
