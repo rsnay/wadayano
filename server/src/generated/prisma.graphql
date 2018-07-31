@@ -1,5 +1,5 @@
-# source: https://us1.prisma.sh/wadayano/wadayano/dev
-# timestamp: Wed Jul 25 2018 15:33:50 GMT-0600 (Mountain Daylight Time)
+# source: http://wadayano.com:4466/wadayano/dev
+# timestamp: Tue Jul 31 2018 15:42:55 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConcept {
   count: Int!
@@ -553,6 +553,8 @@ type Course implements Node {
   createdAt: DateTime!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz!]
   concepts(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Concept!]
+  instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor!]
+  students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student!]
 }
 
 """A connection to a list of items."""
@@ -569,10 +571,17 @@ input CourseCreateInput {
   title: String!
   quizzes: QuizCreateManyWithoutCourseInput
   concepts: ConceptCreateManyInput
+  instructors: InstructorCreateManyWithoutCoursesInput
+  students: StudentCreateManyWithoutCoursesInput
 }
 
-input CourseCreateManyInput {
-  create: [CourseCreateInput!]
+input CourseCreateManyWithoutInstructorsInput {
+  create: [CourseCreateWithoutInstructorsInput!]
+  connect: [CourseWhereUniqueInput!]
+}
+
+input CourseCreateManyWithoutStudentsInput {
+  create: [CourseCreateWithoutStudentsInput!]
   connect: [CourseWhereUniqueInput!]
 }
 
@@ -581,9 +590,25 @@ input CourseCreateOneWithoutQuizzesInput {
   connect: CourseWhereUniqueInput
 }
 
+input CourseCreateWithoutInstructorsInput {
+  title: String!
+  quizzes: QuizCreateManyWithoutCourseInput
+  concepts: ConceptCreateManyInput
+  students: StudentCreateManyWithoutCoursesInput
+}
+
 input CourseCreateWithoutQuizzesInput {
   title: String!
   concepts: ConceptCreateManyInput
+  instructors: InstructorCreateManyWithoutCoursesInput
+  students: StudentCreateManyWithoutCoursesInput
+}
+
+input CourseCreateWithoutStudentsInput {
+  title: String!
+  quizzes: QuizCreateManyWithoutCourseInput
+  concepts: ConceptCreateManyInput
+  instructors: InstructorCreateManyWithoutCoursesInput
 }
 
 """An edge in a connection."""
@@ -651,25 +676,30 @@ input CourseSubscriptionWhereInput {
   node: CourseWhereInput
 }
 
-input CourseUpdateDataInput {
-  title: String
-  quizzes: QuizUpdateManyWithoutCourseInput
-  concepts: ConceptUpdateManyInput
-}
-
 input CourseUpdateInput {
   title: String
   quizzes: QuizUpdateManyWithoutCourseInput
   concepts: ConceptUpdateManyInput
+  instructors: InstructorUpdateManyWithoutCoursesInput
+  students: StudentUpdateManyWithoutCoursesInput
 }
 
-input CourseUpdateManyInput {
-  create: [CourseCreateInput!]
+input CourseUpdateManyWithoutInstructorsInput {
+  create: [CourseCreateWithoutInstructorsInput!]
   connect: [CourseWhereUniqueInput!]
   disconnect: [CourseWhereUniqueInput!]
   delete: [CourseWhereUniqueInput!]
-  update: [CourseUpdateWithWhereUniqueNestedInput!]
-  upsert: [CourseUpsertWithWhereUniqueNestedInput!]
+  update: [CourseUpdateWithWhereUniqueWithoutInstructorsInput!]
+  upsert: [CourseUpsertWithWhereUniqueWithoutInstructorsInput!]
+}
+
+input CourseUpdateManyWithoutStudentsInput {
+  create: [CourseCreateWithoutStudentsInput!]
+  connect: [CourseWhereUniqueInput!]
+  disconnect: [CourseWhereUniqueInput!]
+  delete: [CourseWhereUniqueInput!]
+  update: [CourseUpdateWithWhereUniqueWithoutStudentsInput!]
+  upsert: [CourseUpsertWithWhereUniqueWithoutStudentsInput!]
 }
 
 input CourseUpdateOneWithoutQuizzesInput {
@@ -680,14 +710,35 @@ input CourseUpdateOneWithoutQuizzesInput {
   upsert: CourseUpsertWithoutQuizzesInput
 }
 
+input CourseUpdateWithoutInstructorsDataInput {
+  title: String
+  quizzes: QuizUpdateManyWithoutCourseInput
+  concepts: ConceptUpdateManyInput
+  students: StudentUpdateManyWithoutCoursesInput
+}
+
 input CourseUpdateWithoutQuizzesDataInput {
   title: String
   concepts: ConceptUpdateManyInput
+  instructors: InstructorUpdateManyWithoutCoursesInput
+  students: StudentUpdateManyWithoutCoursesInput
 }
 
-input CourseUpdateWithWhereUniqueNestedInput {
+input CourseUpdateWithoutStudentsDataInput {
+  title: String
+  quizzes: QuizUpdateManyWithoutCourseInput
+  concepts: ConceptUpdateManyInput
+  instructors: InstructorUpdateManyWithoutCoursesInput
+}
+
+input CourseUpdateWithWhereUniqueWithoutInstructorsInput {
   where: CourseWhereUniqueInput!
-  data: CourseUpdateDataInput!
+  data: CourseUpdateWithoutInstructorsDataInput!
+}
+
+input CourseUpdateWithWhereUniqueWithoutStudentsInput {
+  where: CourseWhereUniqueInput!
+  data: CourseUpdateWithoutStudentsDataInput!
 }
 
 input CourseUpsertWithoutQuizzesInput {
@@ -695,10 +746,16 @@ input CourseUpsertWithoutQuizzesInput {
   create: CourseCreateWithoutQuizzesInput!
 }
 
-input CourseUpsertWithWhereUniqueNestedInput {
+input CourseUpsertWithWhereUniqueWithoutInstructorsInput {
   where: CourseWhereUniqueInput!
-  update: CourseUpdateDataInput!
-  create: CourseCreateInput!
+  update: CourseUpdateWithoutInstructorsDataInput!
+  create: CourseCreateWithoutInstructorsInput!
+}
+
+input CourseUpsertWithWhereUniqueWithoutStudentsInput {
+  where: CourseWhereUniqueInput!
+  update: CourseUpdateWithoutStudentsDataInput!
+  create: CourseCreateWithoutStudentsInput!
 }
 
 input CourseWhereInput {
@@ -818,9 +875,12 @@ input CourseWhereInput {
   concepts_every: ConceptWhereInput
   concepts_some: ConceptWhereInput
   concepts_none: ConceptWhereInput
-  _MagicalBackRelation_CourseToInstructor_every: InstructorWhereInput
-  _MagicalBackRelation_CourseToInstructor_some: InstructorWhereInput
-  _MagicalBackRelation_CourseToInstructor_none: InstructorWhereInput
+  instructors_every: InstructorWhereInput
+  instructors_some: InstructorWhereInput
+  instructors_none: InstructorWhereInput
+  students_every: StudentWhereInput
+  students_some: StudentWhereInput
+  students_none: StudentWhereInput
 }
 
 input CourseWhereUniqueInput {
@@ -850,7 +910,17 @@ type InstructorConnection {
 input InstructorCreateInput {
   email: String!
   password: String!
-  courses: CourseCreateManyInput
+  courses: CourseCreateManyWithoutInstructorsInput
+}
+
+input InstructorCreateManyWithoutCoursesInput {
+  create: [InstructorCreateWithoutCoursesInput!]
+  connect: [InstructorWhereUniqueInput!]
+}
+
+input InstructorCreateWithoutCoursesInput {
+  email: String!
+  password: String!
 }
 
 """An edge in a connection."""
@@ -924,7 +994,32 @@ input InstructorSubscriptionWhereInput {
 input InstructorUpdateInput {
   email: String
   password: String
-  courses: CourseUpdateManyInput
+  courses: CourseUpdateManyWithoutInstructorsInput
+}
+
+input InstructorUpdateManyWithoutCoursesInput {
+  create: [InstructorCreateWithoutCoursesInput!]
+  connect: [InstructorWhereUniqueInput!]
+  disconnect: [InstructorWhereUniqueInput!]
+  delete: [InstructorWhereUniqueInput!]
+  update: [InstructorUpdateWithWhereUniqueWithoutCoursesInput!]
+  upsert: [InstructorUpsertWithWhereUniqueWithoutCoursesInput!]
+}
+
+input InstructorUpdateWithoutCoursesDataInput {
+  email: String
+  password: String
+}
+
+input InstructorUpdateWithWhereUniqueWithoutCoursesInput {
+  where: InstructorWhereUniqueInput!
+  data: InstructorUpdateWithoutCoursesDataInput!
+}
+
+input InstructorUpsertWithWhereUniqueWithoutCoursesInput {
+  where: InstructorWhereUniqueInput!
+  update: InstructorUpdateWithoutCoursesDataInput!
+  create: InstructorCreateWithoutCoursesInput!
 }
 
 input InstructorWhereInput {
@@ -1100,9 +1195,9 @@ scalar Long
 type Mutation {
   createInstructor(data: InstructorCreateInput!): Instructor!
   createStudent(data: StudentCreateInput!): Student!
+  createCourse(data: CourseCreateInput!): Course!
   createQuizAttempt(data: QuizAttemptCreateInput!): QuizAttempt!
   createQuiz(data: QuizCreateInput!): Quiz!
-  createCourse(data: CourseCreateInput!): Course!
   createOption(data: OptionCreateInput!): Option!
   createConceptConfidence(data: ConceptConfidenceCreateInput!): ConceptConfidence!
   createQuestionAttempt(data: QuestionAttemptCreateInput!): QuestionAttempt!
@@ -1110,9 +1205,9 @@ type Mutation {
   createConcept(data: ConceptCreateInput!): Concept!
   updateInstructor(data: InstructorUpdateInput!, where: InstructorWhereUniqueInput!): Instructor
   updateStudent(data: StudentUpdateInput!, where: StudentWhereUniqueInput!): Student
+  updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
   updateQuizAttempt(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereUniqueInput!): QuizAttempt
   updateQuiz(data: QuizUpdateInput!, where: QuizWhereUniqueInput!): Quiz
-  updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
   updateOption(data: OptionUpdateInput!, where: OptionWhereUniqueInput!): Option
   updateConceptConfidence(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   updateQuestionAttempt(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
@@ -1120,9 +1215,9 @@ type Mutation {
   updateConcept(data: ConceptUpdateInput!, where: ConceptWhereUniqueInput!): Concept
   deleteInstructor(where: InstructorWhereUniqueInput!): Instructor
   deleteStudent(where: StudentWhereUniqueInput!): Student
+  deleteCourse(where: CourseWhereUniqueInput!): Course
   deleteQuizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   deleteQuiz(where: QuizWhereUniqueInput!): Quiz
-  deleteCourse(where: CourseWhereUniqueInput!): Course
   deleteOption(where: OptionWhereUniqueInput!): Option
   deleteConceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   deleteQuestionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
@@ -1130,9 +1225,9 @@ type Mutation {
   deleteConcept(where: ConceptWhereUniqueInput!): Concept
   upsertInstructor(where: InstructorWhereUniqueInput!, create: InstructorCreateInput!, update: InstructorUpdateInput!): Instructor!
   upsertStudent(where: StudentWhereUniqueInput!, create: StudentCreateInput!, update: StudentUpdateInput!): Student!
+  upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
   upsertQuizAttempt(where: QuizAttemptWhereUniqueInput!, create: QuizAttemptCreateInput!, update: QuizAttemptUpdateInput!): QuizAttempt!
   upsertQuiz(where: QuizWhereUniqueInput!, create: QuizCreateInput!, update: QuizUpdateInput!): Quiz!
-  upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
   upsertOption(where: OptionWhereUniqueInput!, create: OptionCreateInput!, update: OptionUpdateInput!): Option!
   upsertConceptConfidence(where: ConceptConfidenceWhereUniqueInput!, create: ConceptConfidenceCreateInput!, update: ConceptConfidenceUpdateInput!): ConceptConfidence!
   upsertQuestionAttempt(where: QuestionAttemptWhereUniqueInput!, create: QuestionAttemptCreateInput!, update: QuestionAttemptUpdateInput!): QuestionAttempt!
@@ -1140,9 +1235,9 @@ type Mutation {
   upsertConcept(where: ConceptWhereUniqueInput!, create: ConceptCreateInput!, update: ConceptUpdateInput!): Concept!
   updateManyInstructors(data: InstructorUpdateInput!, where: InstructorWhereInput): BatchPayload!
   updateManyStudents(data: StudentUpdateInput!, where: StudentWhereInput): BatchPayload!
+  updateManyCourses(data: CourseUpdateInput!, where: CourseWhereInput): BatchPayload!
   updateManyQuizAttempts(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereInput): BatchPayload!
   updateManyQuizzes(data: QuizUpdateInput!, where: QuizWhereInput): BatchPayload!
-  updateManyCourses(data: CourseUpdateInput!, where: CourseWhereInput): BatchPayload!
   updateManyOptions(data: OptionUpdateInput!, where: OptionWhereInput): BatchPayload!
   updateManyConceptConfidences(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereInput): BatchPayload!
   updateManyQuestionAttempts(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereInput): BatchPayload!
@@ -1150,9 +1245,9 @@ type Mutation {
   updateManyConcepts(data: ConceptUpdateInput!, where: ConceptWhereInput): BatchPayload!
   deleteManyInstructors(where: InstructorWhereInput): BatchPayload!
   deleteManyStudents(where: StudentWhereInput): BatchPayload!
+  deleteManyCourses(where: CourseWhereInput): BatchPayload!
   deleteManyQuizAttempts(where: QuizAttemptWhereInput): BatchPayload!
   deleteManyQuizzes(where: QuizWhereInput): BatchPayload!
-  deleteManyCourses(where: CourseWhereInput): BatchPayload!
   deleteManyOptions(where: OptionWhereInput): BatchPayload!
   deleteManyConceptConfidences(where: ConceptConfidenceWhereInput): BatchPayload!
   deleteManyQuestionAttempts(where: QuestionAttemptWhereInput): BatchPayload!
@@ -1451,9 +1546,9 @@ type PageInfo {
 type Query {
   instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor]!
   students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student]!
+  courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course]!
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt]!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz]!
-  courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course]!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option]!
   conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence]!
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt]!
@@ -1461,9 +1556,9 @@ type Query {
   concepts(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Concept]!
   instructor(where: InstructorWhereUniqueInput!): Instructor
   student(where: StudentWhereUniqueInput!): Student
+  course(where: CourseWhereUniqueInput!): Course
   quizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   quiz(where: QuizWhereUniqueInput!): Quiz
-  course(where: CourseWhereUniqueInput!): Course
   option(where: OptionWhereUniqueInput!): Option
   conceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   questionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
@@ -1471,9 +1566,9 @@ type Query {
   concept(where: ConceptWhereUniqueInput!): Concept
   instructorsConnection(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorConnection!
   studentsConnection(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StudentConnection!
+  coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
   quizAttemptsConnection(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizAttemptConnection!
   quizzesConnection(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizConnection!
-  coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
   optionsConnection(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OptionConnection!
   conceptConfidencesConnection(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ConceptConfidenceConnection!
   questionAttemptsConnection(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionAttemptConnection!
@@ -2006,6 +2101,7 @@ type QuizAttempt implements Node {
   createdAt: DateTime!
   ltiSessionInfo: Json
   completed: DateTime
+  postSucceeded: Boolean
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt!]
   score: Float
   conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence!]
@@ -2026,6 +2122,7 @@ type QuizAttemptConnection {
 input QuizAttemptCreateInput {
   ltiSessionInfo: Json
   completed: DateTime
+  postSucceeded: Boolean
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -2043,6 +2140,7 @@ input QuizAttemptCreateManyWithoutStudentInput {
 input QuizAttemptCreateWithoutStudentInput {
   ltiSessionInfo: Json
   completed: DateTime
+  postSucceeded: Boolean
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -2069,6 +2167,8 @@ enum QuizAttemptOrderByInput {
   ltiSessionInfo_DESC
   completed_ASC
   completed_DESC
+  postSucceeded_ASC
+  postSucceeded_DESC
   score_ASC
   score_DESC
   totalConfidenceError_ASC
@@ -2084,6 +2184,7 @@ type QuizAttemptPreviousValues {
   createdAt: DateTime!
   ltiSessionInfo: Json
   completed: DateTime
+  postSucceeded: Boolean
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -2131,6 +2232,7 @@ input QuizAttemptSubscriptionWhereInput {
 input QuizAttemptUpdateInput {
   ltiSessionInfo: Json
   completed: DateTime
+  postSucceeded: Boolean
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -2152,6 +2254,7 @@ input QuizAttemptUpdateManyWithoutStudentInput {
 input QuizAttemptUpdateWithoutStudentDataInput {
   ltiSessionInfo: Json
   completed: DateTime
+  postSucceeded: Boolean
   score: Float
   totalConfidenceError: Float
   totalConfidenceBias: Float
@@ -2264,6 +2367,10 @@ input QuizAttemptWhereInput {
 
   """All values greater than or equal the given value."""
   completed_gte: DateTime
+  postSucceeded: Boolean
+
+  """All values that are not equal to given value."""
+  postSucceeded_not: Boolean
   score: Float
 
   """All values that are not equal to given value."""
@@ -2627,6 +2734,7 @@ type Student implements Node {
   ltiUserId: String!
   email: String!
   name: String!
+  courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course!]
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt!]
 }
 
@@ -2644,7 +2752,13 @@ input StudentCreateInput {
   ltiUserId: String!
   email: String!
   name: String!
+  courses: CourseCreateManyWithoutStudentsInput
   quizAttempts: QuizAttemptCreateManyWithoutStudentInput
+}
+
+input StudentCreateManyWithoutCoursesInput {
+  create: [StudentCreateWithoutCoursesInput!]
+  connect: [StudentWhereUniqueInput!]
 }
 
 input StudentCreateOneWithoutQuizAttemptsInput {
@@ -2652,10 +2766,18 @@ input StudentCreateOneWithoutQuizAttemptsInput {
   connect: StudentWhereUniqueInput
 }
 
+input StudentCreateWithoutCoursesInput {
+  ltiUserId: String!
+  email: String!
+  name: String!
+  quizAttempts: QuizAttemptCreateManyWithoutStudentInput
+}
+
 input StudentCreateWithoutQuizAttemptsInput {
   ltiUserId: String!
   email: String!
   name: String!
+  courses: CourseCreateManyWithoutStudentsInput
 }
 
 """An edge in a connection."""
@@ -2732,7 +2854,17 @@ input StudentUpdateInput {
   ltiUserId: String
   email: String
   name: String
+  courses: CourseUpdateManyWithoutStudentsInput
   quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
+}
+
+input StudentUpdateManyWithoutCoursesInput {
+  create: [StudentCreateWithoutCoursesInput!]
+  connect: [StudentWhereUniqueInput!]
+  disconnect: [StudentWhereUniqueInput!]
+  delete: [StudentWhereUniqueInput!]
+  update: [StudentUpdateWithWhereUniqueWithoutCoursesInput!]
+  upsert: [StudentUpsertWithWhereUniqueWithoutCoursesInput!]
 }
 
 input StudentUpdateOneWithoutQuizAttemptsInput {
@@ -2743,15 +2875,34 @@ input StudentUpdateOneWithoutQuizAttemptsInput {
   upsert: StudentUpsertWithoutQuizAttemptsInput
 }
 
+input StudentUpdateWithoutCoursesDataInput {
+  ltiUserId: String
+  email: String
+  name: String
+  quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
+}
+
 input StudentUpdateWithoutQuizAttemptsDataInput {
   ltiUserId: String
   email: String
   name: String
+  courses: CourseUpdateManyWithoutStudentsInput
+}
+
+input StudentUpdateWithWhereUniqueWithoutCoursesInput {
+  where: StudentWhereUniqueInput!
+  data: StudentUpdateWithoutCoursesDataInput!
 }
 
 input StudentUpsertWithoutQuizAttemptsInput {
   update: StudentUpdateWithoutQuizAttemptsDataInput!
   create: StudentCreateWithoutQuizAttemptsInput!
+}
+
+input StudentUpsertWithWhereUniqueWithoutCoursesInput {
+  where: StudentWhereUniqueInput!
+  update: StudentUpdateWithoutCoursesDataInput!
+  create: StudentCreateWithoutCoursesInput!
 }
 
 input StudentWhereInput {
@@ -2923,6 +3074,9 @@ input StudentWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  courses_every: CourseWhereInput
+  courses_some: CourseWhereInput
+  courses_none: CourseWhereInput
   quizAttempts_every: QuizAttemptWhereInput
   quizAttempts_some: QuizAttemptWhereInput
   quizAttempts_none: QuizAttemptWhereInput
@@ -2936,9 +3090,9 @@ input StudentWhereUniqueInput {
 type Subscription {
   instructor(where: InstructorSubscriptionWhereInput): InstructorSubscriptionPayload
   student(where: StudentSubscriptionWhereInput): StudentSubscriptionPayload
+  course(where: CourseSubscriptionWhereInput): CourseSubscriptionPayload
   quizAttempt(where: QuizAttemptSubscriptionWhereInput): QuizAttemptSubscriptionPayload
   quiz(where: QuizSubscriptionWhereInput): QuizSubscriptionPayload
-  course(where: CourseSubscriptionWhereInput): CourseSubscriptionPayload
   option(where: OptionSubscriptionWhereInput): OptionSubscriptionPayload
   conceptConfidence(where: ConceptConfidenceSubscriptionWhereInput): ConceptConfidenceSubscriptionPayload
   questionAttempt(where: QuestionAttemptSubscriptionWhereInput): QuestionAttemptSubscriptionPayload

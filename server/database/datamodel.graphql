@@ -14,6 +14,7 @@ type Student {
     # If one student is in multiple courses that each have a different LTI user ID, they will have multiple 'accounts' on wadayano, so email isn't necessarily unique
     email: String!
     name: String!
+    courses: [Course!]!
     quizAttempts: [QuizAttempt!]!
 }
 
@@ -24,6 +25,8 @@ type Course {
     createdAt: DateTime!
     quizzes: [Quiz!]!
     concepts: [Concept!]!
+    instructors: [Instructor!]!
+    students: [Student!]!
 }
 
 type Concept {
@@ -62,6 +65,7 @@ type QuizAttempt {
     createdAt: DateTime!
     ltiSessionInfo: Json
     completed: DateTime
+    postSucceeded: Boolean
     questionAttempts: [QuestionAttempt!]!
     score: Float # (correct/total). No score indicates the attempt was started, but not yet finished
     conceptConfidences: [ConceptConfidence!]!
