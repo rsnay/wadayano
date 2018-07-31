@@ -16,23 +16,23 @@ export class CourseList extends Component {
         };
     }
 
-    deleteCourse(course){
-        this.props.courseDelete({
-            variables:{
-                id:course.id
-            }
-        });
-        window.location.reload(true);
+    async deleteCourse(course){
+        if (!window.confirm('Are you sure you want to delete this course?')) {
+            return;
+        }
+        try {
+            await this.props.courseDelete({
+                variables:{
+                    id:course.id
+                }
+            });
+            this.props.instructorQuery.refetch();
+        } catch (error) {
+            alert('There was an error deleting this course.');
+        }
     }
 
   render() {
-
-    // TODO actually get data from API
-    /*const courses = [
-        {id: 'course1', title: 'Example Course 1', quizzes: [1,2,3]},
-        {id: 'course2', title: 'Example Course 2', quizzes: [1]},
-        {id: 'course3', title: 'Example Course 3', quizzes: [1,2,4,5,6,7]}
-    ];*/
 
     if (this.props.instructorQuery && this.props.instructorQuery.loading) {
         return <LoadingBox />;
