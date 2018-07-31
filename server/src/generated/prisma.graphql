@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/wadayano/wadayano/dev
-# timestamp: Mon Jul 23 2018 11:34:58 GMT-0600 (MDT)
+# timestamp: Wed Jul 25 2018 15:33:50 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConcept {
   count: Int!
@@ -532,6 +532,9 @@ input ConceptWhereInput {
   _MagicalBackRelation_ConceptToConceptConfidence_every: ConceptConfidenceWhereInput
   _MagicalBackRelation_ConceptToConceptConfidence_some: ConceptConfidenceWhereInput
   _MagicalBackRelation_ConceptToConceptConfidence_none: ConceptConfidenceWhereInput
+  _MagicalBackRelation_ConceptToQuiz_every: QuizWhereInput
+  _MagicalBackRelation_ConceptToQuiz_some: QuizWhereInput
+  _MagicalBackRelation_ConceptToQuiz_none: QuizWhereInput
   _MagicalBackRelation_ConceptToQuestion_every: QuestionWhereInput
   _MagicalBackRelation_ConceptToQuestion_some: QuestionWhereInput
   _MagicalBackRelation_ConceptToQuestion_none: QuestionWhereInput
@@ -564,13 +567,23 @@ type CourseConnection {
 
 input CourseCreateInput {
   title: String!
-  quizzes: QuizCreateManyInput
+  quizzes: QuizCreateManyWithoutCourseInput
   concepts: ConceptCreateManyInput
 }
 
 input CourseCreateManyInput {
   create: [CourseCreateInput!]
   connect: [CourseWhereUniqueInput!]
+}
+
+input CourseCreateOneWithoutQuizzesInput {
+  create: CourseCreateWithoutQuizzesInput
+  connect: CourseWhereUniqueInput
+}
+
+input CourseCreateWithoutQuizzesInput {
+  title: String!
+  concepts: ConceptCreateManyInput
 }
 
 """An edge in a connection."""
@@ -640,13 +653,13 @@ input CourseSubscriptionWhereInput {
 
 input CourseUpdateDataInput {
   title: String
-  quizzes: QuizUpdateManyInput
+  quizzes: QuizUpdateManyWithoutCourseInput
   concepts: ConceptUpdateManyInput
 }
 
 input CourseUpdateInput {
   title: String
-  quizzes: QuizUpdateManyInput
+  quizzes: QuizUpdateManyWithoutCourseInput
   concepts: ConceptUpdateManyInput
 }
 
@@ -659,9 +672,27 @@ input CourseUpdateManyInput {
   upsert: [CourseUpsertWithWhereUniqueNestedInput!]
 }
 
+input CourseUpdateOneWithoutQuizzesInput {
+  create: CourseCreateWithoutQuizzesInput
+  connect: CourseWhereUniqueInput
+  delete: Boolean
+  update: CourseUpdateWithoutQuizzesDataInput
+  upsert: CourseUpsertWithoutQuizzesInput
+}
+
+input CourseUpdateWithoutQuizzesDataInput {
+  title: String
+  concepts: ConceptUpdateManyInput
+}
+
 input CourseUpdateWithWhereUniqueNestedInput {
   where: CourseWhereUniqueInput!
   data: CourseUpdateDataInput!
+}
+
+input CourseUpsertWithoutQuizzesInput {
+  update: CourseUpdateWithoutQuizzesDataInput!
+  create: CourseCreateWithoutQuizzesInput!
 }
 
 input CourseUpsertWithWhereUniqueNestedInput {
@@ -1963,6 +1994,8 @@ type Quiz implements Node {
   id: ID!
   createdAt: DateTime!
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
+  concepts(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Concept!]
+  course(where: CourseWhereInput): Course!
   title: String!
 }
 
@@ -2324,16 +2357,24 @@ type QuizConnection {
 input QuizCreateInput {
   title: String!
   questions: QuestionCreateManyInput
+  concepts: ConceptCreateManyInput
+  course: CourseCreateOneWithoutQuizzesInput!
 }
 
-input QuizCreateManyInput {
-  create: [QuizCreateInput!]
+input QuizCreateManyWithoutCourseInput {
+  create: [QuizCreateWithoutCourseInput!]
   connect: [QuizWhereUniqueInput!]
 }
 
 input QuizCreateOneInput {
   create: QuizCreateInput
   connect: QuizWhereUniqueInput
+}
+
+input QuizCreateWithoutCourseInput {
+  title: String!
+  questions: QuestionCreateManyInput
+  concepts: ConceptCreateManyInput
 }
 
 """An edge in a connection."""
@@ -2404,20 +2445,24 @@ input QuizSubscriptionWhereInput {
 input QuizUpdateDataInput {
   title: String
   questions: QuestionUpdateManyInput
+  concepts: ConceptUpdateManyInput
+  course: CourseUpdateOneWithoutQuizzesInput
 }
 
 input QuizUpdateInput {
   title: String
   questions: QuestionUpdateManyInput
+  concepts: ConceptUpdateManyInput
+  course: CourseUpdateOneWithoutQuizzesInput
 }
 
-input QuizUpdateManyInput {
-  create: [QuizCreateInput!]
+input QuizUpdateManyWithoutCourseInput {
+  create: [QuizCreateWithoutCourseInput!]
   connect: [QuizWhereUniqueInput!]
   disconnect: [QuizWhereUniqueInput!]
   delete: [QuizWhereUniqueInput!]
-  update: [QuizUpdateWithWhereUniqueNestedInput!]
-  upsert: [QuizUpsertWithWhereUniqueNestedInput!]
+  update: [QuizUpdateWithWhereUniqueWithoutCourseInput!]
+  upsert: [QuizUpsertWithWhereUniqueWithoutCourseInput!]
 }
 
 input QuizUpdateOneInput {
@@ -2428,9 +2473,15 @@ input QuizUpdateOneInput {
   upsert: QuizUpsertNestedInput
 }
 
-input QuizUpdateWithWhereUniqueNestedInput {
+input QuizUpdateWithoutCourseDataInput {
+  title: String
+  questions: QuestionUpdateManyInput
+  concepts: ConceptUpdateManyInput
+}
+
+input QuizUpdateWithWhereUniqueWithoutCourseInput {
   where: QuizWhereUniqueInput!
-  data: QuizUpdateDataInput!
+  data: QuizUpdateWithoutCourseDataInput!
 }
 
 input QuizUpsertNestedInput {
@@ -2438,10 +2489,10 @@ input QuizUpsertNestedInput {
   create: QuizCreateInput!
 }
 
-input QuizUpsertWithWhereUniqueNestedInput {
+input QuizUpsertWithWhereUniqueWithoutCourseInput {
   where: QuizWhereUniqueInput!
-  update: QuizUpdateDataInput!
-  create: QuizCreateInput!
+  update: QuizUpdateWithoutCourseDataInput!
+  create: QuizCreateWithoutCourseInput!
 }
 
 input QuizWhereInput {
@@ -2558,9 +2609,10 @@ input QuizWhereInput {
   questions_every: QuestionWhereInput
   questions_some: QuestionWhereInput
   questions_none: QuestionWhereInput
-  _MagicalBackRelation_CourseToQuiz_every: CourseWhereInput
-  _MagicalBackRelation_CourseToQuiz_some: CourseWhereInput
-  _MagicalBackRelation_CourseToQuiz_none: CourseWhereInput
+  concepts_every: ConceptWhereInput
+  concepts_some: ConceptWhereInput
+  concepts_none: ConceptWhereInput
+  course: CourseWhereInput
   _MagicalBackRelation_QuizToQuizAttempt_every: QuizAttemptWhereInput
   _MagicalBackRelation_QuizToQuizAttempt_some: QuizAttemptWhereInput
   _MagicalBackRelation_QuizToQuizAttempt_none: QuizAttemptWhereInput

@@ -7,19 +7,21 @@ type Query {
   courses: [Course!]!
   course(id:ID): Course!
   question(id:ID): Question!
+  concept(id:ID): Concept!
   option(id:ID): Option!
 }
 
 type Mutation {
-  addQuiz(id:ID): Quiz!
+  addQuiz(id:ID): Course!
   updateQuiz(id:ID,title:String): Quiz!
   addCourse(title:String): Course!
   updateCourse(id:ID, title:String): Course!
   deleteCourse(id:ID):Course!
   deleteQuiz(id:ID): Quiz!
   addQuestion(id:ID): Quiz!
-  updateQuestion(id:ID, prompt:String): Question
+  updateQuestion(id:ID, prompt:String): Question!
   deleteQuestion(id:ID): Question!
+  conceptQuestion(id:ID, title:String): Question!
   updateOption(id:ID, text:String!, isCorrect:Boolean): Option!
 
   instructorSignup(email:String!, password:String!): InstructorAuthPayload

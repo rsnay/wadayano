@@ -9,6 +9,21 @@ import LoadingBox from '../shared/LoadingBox';
 
 class QuizReview extends Component {
 
+    wadayanoScore(quizAttempt)
+    {
+        var i = 0;
+        var wadayano = 0;
+        var confidence = 0;
+        var correct = 0;
+        console.log("confidence:"+quizAttempt.conceptConfidence);
+        console.log("correct:"+quizAttempt.correct);
+
+        //for(i; i < quizAttempt.questionAttempts.length; i++){
+            //confidence += quizAttempt.questionAttempts[i].con
+        //}
+        return null;
+    }
+
   render() {
 
     /*if (this.props.query && this.props.query.loading) {
@@ -20,7 +35,15 @@ class QuizReview extends Component {
     }*/
 
     const quizAttempt = this.props.quizAttempt;
+    console.log(quizAttempt);
+    console.log(quizAttempt.questionAttempts[0].question.title);
 
+
+    this.wadayanoScore(quizAttempt);
+
+    //getConceptConfidences(){
+
+   // }
     // TOOD once concept confidences are stored on the server, use conceptConfidences from the quizAttempt prop
     //const conceptConfidences = quizAttempt.conceptConfidences
     const conceptConfidences = [

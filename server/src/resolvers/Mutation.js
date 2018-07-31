@@ -90,7 +90,6 @@ function addQuiz (root, args, context, info) {
         quizzes:{
             create:[{
                 title: "Quiz Title",
-                id:args.id,
                 questions: {
                 create: [{
                     prompt: "Enter Prompt Here",
@@ -122,18 +121,6 @@ function addQuiz (root, args, context, info) {
     }
     },info)
 }
-
-/*function addConcept (root, args, context, info) {
-    return context.db.mutation.updateQuiz({
-        data: {
-            concepts:{
-                create:[{
-
-                }]
-            }
-        }
-    })
-}*/
 
 function addQuestion (root, args, context, info) {
     return context.db.mutation.updateQuiz({
@@ -205,6 +192,21 @@ function updateQuestion(root, args, context, info){
             id:args.id
         }
     }, info)
+}
+
+function conceptQuestion (root, args, context, info) {
+    return context.db.mutation.updateQuestion({
+        data: {
+            concept:{
+                create:{
+                    title: args.title
+                }
+            }
+        },
+        where:{
+            id:args.id
+        }
+    })
 }
 
 async function instructorLogin(root, args, context, info) {
@@ -471,10 +473,12 @@ module.exports = {
     addQuestion,
     updateQuestion,
     deleteQuestion,
+    conceptQuestion,
     updateOption,
     instructorLogin,
     instructorSignup,
     startOrResumeQuizAttempt,
     completeQuizAttempt,
-    attemptQuestion
+    attemptQuestion,
+    
 }

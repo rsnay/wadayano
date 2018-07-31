@@ -25,8 +25,12 @@ function question(root, args, context, info){
   return context.db.query.question({where:{id:args.id}}, info)
 }
 
+function concept(root, args, context, info){
+  return context.db.query.concept({where:{id:args.id}}, info)
+}
+
 function option(root, args, context, info){
-  return context.db.query.option({where:{id:args.id}})
+  return context.db.query.option({where:{id:args.id}}, info)
 }
 
 function studentQuizAttempts(root, args, context, info) {
@@ -44,6 +48,7 @@ module.exports = {
   instructor,
   quiz,
   question,
+  concept,
   option,
   //studentQuizAttempts
 }

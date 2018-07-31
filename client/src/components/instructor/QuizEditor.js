@@ -85,6 +85,7 @@ export class QuizEditor extends Component {
             }
         });
         window.location.href = "javascript:history.back()";
+        
     }
 
     editQuizTitle(){
@@ -129,7 +130,7 @@ export class QuizEditor extends Component {
                 <textarea id = {question.id} key = {question.id} className="textarea is-medium" type="text">{question.prompt}</textarea>
             </div>
             <p className="panel-block">
-                concept selector
+                <input type="text" id="concept" placeholder="concept" onChange = {() => this.conceptFilter(quiz)}></input>
             </p>
             <form>
                 <p className="panel-block" key={question.options[0].id}>
@@ -180,6 +181,14 @@ export class QuizEditor extends Component {
 
 }
 
+export const CONCEPT_QUERY = gql`
+  query conceptQuery($id:ID!) {
+      concept(id:$id){
+          title
+          id
+      }
+  }`
+
 //all courses for user of id
 //TODO change from hardcoded userId
 export const QUIZ_QUERY = gql`
@@ -187,6 +196,10 @@ export const QUIZ_QUERY = gql`
     quiz(id:$id){
         id
         title
+        course{
+            title
+            id
+        }
         questions{
             id
             prompt
@@ -275,6 +288,7 @@ export default compose(
     return { variables: { id:props.match.params.quizId } }
   }
 }),
+    //graphql(CONCEPT_QUERY, {name: 'conceptQuery'}),
     graphql(QUESTION_SAVE, {name: 'questionSaveMutation'}),
     graphql(OPTION_SAVE, {name: 'optionSaveMutation'}),
     graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),

@@ -36,7 +36,7 @@ type Quiz {
     createdAt: DateTime!
     questions: [Question!]!
     concepts:[Concept!]!
-    courseId:ID
+    course: Course!
     title: String!
 }
 
