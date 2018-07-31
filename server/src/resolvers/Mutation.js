@@ -25,51 +25,59 @@ function deleteCourse (root, args, context, info){
 }
 
 function addCourse (root, args, context, info) {
-    return context.db.mutation.updateInstructor({
+    // Make sure user is logged in and an instructor
+    const { isInstructor, userId } = getUserInfo(context);
+    if (!isInstructor) {
+        throw new Error('Not authenticated as an instructor');
+    }
+
+    // Generate the LTI/oauth secret for this course.
+    const ltiSecret = require('crypto').randomBytes(16).toString('hex');
+
+    // Create the new course, connected to the current instructor
+    return context.db.mutation.createCourse({
         data:{
-            courses:{
+            title: args.title,
+            ltiSecret,
+            instructors: {
+                connect: {
+                    id: userId
+                }
+            },
+            concepts:{
                 create:[{
-                    title: args.title,
-                    concepts:{
+                    title:"concept"
+                }]
+            },
+            quizzes:{
+                create:[{
+                    title:"Example Quiz",
+                    questions:{
                         create:[{
-                            title:"concept"
-                        }]
-                    },
-                    quizzes:{
-                        create:[{
-                            title:"Quiz Title",
-                            questions:{
+                            prompt: "Enter Prompt Here",
+                            options: {
                                 create:[{
-                                    prompt: "Enter Prompt Here",
-                                    options: {
-                                        create:[{
-                                            isCorrect: true,
-                                            text: "OptionA"
-                                        },
-                                        {
-                                            isCorrect: false,
-                                            text: "OptionB"
-                                        },
-                                        {
-                                            isCorrect: false,
-                                            text: "OptionC"
-                                        },
-                                        {
-                                            isCorrect: false,
-                                            text: "OptionD"
-                                        }]
-                                    }
+                                    isCorrect: true,
+                                    text: "OptionA"
+                                },
+                                {
+                                    isCorrect: false,
+                                    text: "OptionB"
+                                },
+                                {
+                                    isCorrect: false,
+                                    text: "OptionC"
+                                },
+                                {
+                                    isCorrect: false,
+                                    text: "OptionD"
                                 }]
                             }
                         }]
                     }
-                    
                 }]
             }
         },
-        where:{
-            id:getUserInfo(context).userId
-        }
     }, info)
 }
 

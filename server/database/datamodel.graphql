@@ -27,6 +27,7 @@ type Course {
     concepts: [Concept!]!
     instructors: [Instructor!]!
     students: [Student!]!
+    ltiSecret: String!
 }
 
 type Concept {

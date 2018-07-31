@@ -1,5 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Tue Jul 31 2018 15:42:55 GMT-0600 (Mountain Daylight Time)
+# timestamp: Tue Jul 31 2018 16:44:25 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConcept {
   count: Int!
@@ -555,6 +555,7 @@ type Course implements Node {
   concepts(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Concept!]
   instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor!]
   students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student!]
+  ltiSecret: String!
 }
 
 """A connection to a list of items."""
@@ -569,6 +570,7 @@ type CourseConnection {
 
 input CourseCreateInput {
   title: String!
+  ltiSecret: String!
   quizzes: QuizCreateManyWithoutCourseInput
   concepts: ConceptCreateManyInput
   instructors: InstructorCreateManyWithoutCoursesInput
@@ -592,6 +594,7 @@ input CourseCreateOneWithoutQuizzesInput {
 
 input CourseCreateWithoutInstructorsInput {
   title: String!
+  ltiSecret: String!
   quizzes: QuizCreateManyWithoutCourseInput
   concepts: ConceptCreateManyInput
   students: StudentCreateManyWithoutCoursesInput
@@ -599,6 +602,7 @@ input CourseCreateWithoutInstructorsInput {
 
 input CourseCreateWithoutQuizzesInput {
   title: String!
+  ltiSecret: String!
   concepts: ConceptCreateManyInput
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
@@ -606,6 +610,7 @@ input CourseCreateWithoutQuizzesInput {
 
 input CourseCreateWithoutStudentsInput {
   title: String!
+  ltiSecret: String!
   quizzes: QuizCreateManyWithoutCourseInput
   concepts: ConceptCreateManyInput
   instructors: InstructorCreateManyWithoutCoursesInput
@@ -627,6 +632,8 @@ enum CourseOrderByInput {
   title_DESC
   createdAt_ASC
   createdAt_DESC
+  ltiSecret_ASC
+  ltiSecret_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
@@ -635,6 +642,7 @@ type CoursePreviousValues {
   id: ID!
   title: String!
   createdAt: DateTime!
+  ltiSecret: String!
 }
 
 type CourseSubscriptionPayload {
@@ -678,6 +686,7 @@ input CourseSubscriptionWhereInput {
 
 input CourseUpdateInput {
   title: String
+  ltiSecret: String
   quizzes: QuizUpdateManyWithoutCourseInput
   concepts: ConceptUpdateManyInput
   instructors: InstructorUpdateManyWithoutCoursesInput
@@ -712,6 +721,7 @@ input CourseUpdateOneWithoutQuizzesInput {
 
 input CourseUpdateWithoutInstructorsDataInput {
   title: String
+  ltiSecret: String
   quizzes: QuizUpdateManyWithoutCourseInput
   concepts: ConceptUpdateManyInput
   students: StudentUpdateManyWithoutCoursesInput
@@ -719,6 +729,7 @@ input CourseUpdateWithoutInstructorsDataInput {
 
 input CourseUpdateWithoutQuizzesDataInput {
   title: String
+  ltiSecret: String
   concepts: ConceptUpdateManyInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
@@ -726,6 +737,7 @@ input CourseUpdateWithoutQuizzesDataInput {
 
 input CourseUpdateWithoutStudentsDataInput {
   title: String
+  ltiSecret: String
   quizzes: QuizUpdateManyWithoutCourseInput
   concepts: ConceptUpdateManyInput
   instructors: InstructorUpdateManyWithoutCoursesInput
@@ -869,6 +881,46 @@ input CourseWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  ltiSecret: String
+
+  """All values that are not equal to given value."""
+  ltiSecret_not: String
+
+  """All values that are contained in given list."""
+  ltiSecret_in: [String!]
+
+  """All values that are not contained in given list."""
+  ltiSecret_not_in: [String!]
+
+  """All values less than the given value."""
+  ltiSecret_lt: String
+
+  """All values less than or equal the given value."""
+  ltiSecret_lte: String
+
+  """All values greater than the given value."""
+  ltiSecret_gt: String
+
+  """All values greater than or equal the given value."""
+  ltiSecret_gte: String
+
+  """All values containing the given string."""
+  ltiSecret_contains: String
+
+  """All values not containing the given string."""
+  ltiSecret_not_contains: String
+
+  """All values starting with the given string."""
+  ltiSecret_starts_with: String
+
+  """All values not starting with the given string."""
+  ltiSecret_not_starts_with: String
+
+  """All values ending with the given string."""
+  ltiSecret_ends_with: String
+
+  """All values not ending with the given string."""
+  ltiSecret_not_ends_with: String
   quizzes_every: QuizWhereInput
   quizzes_some: QuizWhereInput
   quizzes_none: QuizWhereInput
