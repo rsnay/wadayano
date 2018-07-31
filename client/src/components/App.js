@@ -36,6 +36,7 @@ class App extends Component {
           {/* Allow flexibility in redirecting to another route when launching via LTI. Route /student/launch/fakeToken/quiz/id1 would redirect to /student/quiz/id1 */}
           <Route path="/student/launch/:token/:action/:parameter1" component={LTILaunch} />
           <Route exact path="/student" component={Dashboard} />
+          <Route exact path="/student/:courseId" component={Dashboard} />
           <Route path="/student/quiz/:quizId" component={QuizTaker} />
 
           <Route component={PageNotFound} />

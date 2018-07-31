@@ -5,6 +5,8 @@ import gql from 'graphql-tag';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+import AuthCheck from '../instructor/AuthCheck';
+import Modal from '../shared/Modal';
 
 class Dashboard extends Component {
 
@@ -22,14 +24,11 @@ class Dashboard extends Component {
 
     return (
         <section className="section">
+        <AuthCheck student location={this.props.location} />
         <div className="container">
-          <h1 className="title is-inline-block">Student Dashboard</h1>
-          <p>To take a quiz, you will need to log in as a Student via LTI.</p>
-          <p><button className="button" onClick={() => {localStorage.setItem("authRole", "student"); localStorage.setItem("authToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjampvZml0M3Roc2VzMGIzN3d4aGx0eGh3IiwiaXNJbnN0cnVjdG9yIjpmYWxzZSwiaWF0IjoxNTMyNDY3NDgzfQ.IF0UO4QG_Gl-9eA3R_Jy68j-ptxc9LIVN3XHdQvOKOc"); window.location.reload();}}>
-          <span className="icon">
-            <i className="fas fa-user-graduate"></i>
-          </span>
-           &nbsp; Or perform a fake login</button></p>
+          <h1 className="title">My Dashboard</h1>
+          <h3 className="subtitle">Course Title</h3>
+          <p>Take a practice quiz below. To take a quiz that is graded for this course, please launch it from your learning management system (i.e. Canvas or Learning Suite)</p>
           <hr />
 
           <div style={{overflowX: "auto"}}>
@@ -54,7 +53,7 @@ class Dashboard extends Component {
                                 <span className="icon">
                                 <i className="fas fa-rocket"></i>
                                 </span>
-                                <span>Take Quiz</span>
+                                <span>Practice Quiz</span>
                             </Link>
                             </td>
                         </tr>

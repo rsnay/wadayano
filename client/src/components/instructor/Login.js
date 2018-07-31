@@ -145,6 +145,11 @@ class Login extends Component {
         <div className="container">
           <h1 className="title">Instructor {this.state.signupMode ? "Signup" : "Login"}</h1>
           <i>If you are a student using wadayano in a course, simply launch it from your LMS (i.e. Canvas).</i>
+          <button className="button is-text" onClick={() => {localStorage.setItem("authRole", "student"); localStorage.setItem("authToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjampvZml0M3Roc2VzMGIzN3d4aGx0eGh3IiwiaXNJbnN0cnVjdG9yIjpmYWxzZSwiaWF0IjoxNTMyNDY3NDgzfQ.IF0UO4QG_Gl-9eA3R_Jy68j-ptxc9LIVN3XHdQvOKOc"); this.props.history.push("/student");}}>
+          <span className="icon">
+            <i className="fas fa-user-graduate"></i>
+          </span>
+           &nbsp; Or perform a fake student login</button>
           <form className="column is-one-third-desktop is-half-tablet" onSubmit={(e) => this._submit(e) }>
 
             {this.state.error && <p className="notification is-danger">{this.state.error}</p> }
