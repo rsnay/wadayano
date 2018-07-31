@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { Redirect } from 'react-router';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 export class CreateCourseForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            newTitle: ''
+            newTitle: '',
+            redirectCourseId: null
         };
     }
 
@@ -21,22 +23,34 @@ export class CreateCourseForm extends Component {
         }
     }
 
-    _createNewCourse() {
-        this.props.addCourseMutation({
+    async _createNewCourse() {
+        // Make sure there is a non-empty course title
+        if (this.state.newTitle.trim() === '') {
+            alert('Please enter a title for the course.');
+            return;
+        }
+        // Create the course
+        let result = await this.props.addCourseMutation({
             variables: {
-                title:document.getElementById("newCourseTitle").value
+                title: this.state.newTitle
             }
         });
-        window.location.reload(true);
+        // Redirect to the new course
+        this.setState({ redirectCourseId: result.data.addCourse.id });
     }
 
     render() {
+        // If the new course has been created, redirect to it
+        if (this.state.redirectCourseId) {
+            return (<Redirect to={{
+                pathname: `/instructor/course/${this.state.redirectCourseId}`
+            }} />);
+        }
+
         return (
             <div>
                 <div className="field control">
                     <input type="text"
-                        id="newCourseTitle"
-                        ref="newCourseTitle"
                         value={this.state.newTitle}
                         onChange={(e) => this._handleNewTitleChange(e)}
                         onKeyPress={(e) => this._handleNewTitleKeyPress(e)}
@@ -57,7 +71,7 @@ mutation addCourseMutation($title:String!)
         addCourse(
             title:$title
         ){
-            title
+            id
         }
     }`
 
