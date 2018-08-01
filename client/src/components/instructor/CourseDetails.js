@@ -188,7 +188,6 @@ mutation courseUpdate($id:ID!, $title:String!) {
     }
 }`
 
-<<<<<<< Updated upstream
 export const COURSE_DELETE = gql`
 mutation courseDelete($id:ID!) {
     deleteCourse(id:$id){
@@ -196,8 +195,6 @@ mutation courseDelete($id:ID!) {
     }
 }`
 
-=======
->>>>>>> Stashed changes
 export default compose(
 graphql(COURSE_QUERY, {
   name: 'courseQuery',
@@ -207,10 +204,6 @@ graphql(COURSE_QUERY, {
   }
 }),
 graphql(ADD_QUIZ, {name:"addQuizMutation"}),
-<<<<<<< Updated upstream
 graphql(COURSE_UPDATE, {name:"courseUpdate"}),
 graphql(COURSE_DELETE, {name:"courseDelete"}),
-=======
-graphql(COURSE_UPDATE, {name:"courseUpdate"})
->>>>>>> Stashed changes
 ) (CourseDetails)
