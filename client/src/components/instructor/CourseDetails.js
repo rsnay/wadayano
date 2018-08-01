@@ -41,8 +41,6 @@ export class CourseDetails extends Component {
     window.location.reload(true);
   }
 
-<<<<<<< Updated upstream
-<<<<<<< HEAD
   deleteCourse(course){
       console.log(course)
     this.props.courseDelete({
@@ -52,15 +50,7 @@ export class CourseDetails extends Component {
     });
     window.location.href = "javascript:history.back()";
 }
-=======
-  _showLTISetup(action, id) {
-      console.log(LTI_LAUNCH_URL + action + '/' + id);
-    this.setState({ displayLtiSetupUrl: LTI_LAUNCH_URL + action + '/' + id });
-  }
->>>>>>> 82804f71c0980d9eaa41b1d9f22e20e9cbfd8c34
 
-=======
->>>>>>> Stashed changes
   render() {
 
     if (this.props.courseQuery && this.props.courseQuery.loading) {
@@ -129,17 +119,19 @@ export class CourseDetails extends Component {
             )}
             </tbody>
         </table>
-<<<<<<< HEAD
-        <button onClick = {() => this.addQuiz()}>Add Quiz</button>  
-        <button id={course.id} onClick={() => this.deleteCourse(course)}>Delete Course</button>
-=======
         <button className="button is-primary" onClick = {() => this.addQuiz()}>
             <span className="icon">
             <i className="fas fa-plus"></i>
             </span>
             <span>Add Quiz</span>
         </button>
->>>>>>> 82804f71c0980d9eaa41b1d9f22e20e9cbfd8c34
+
+        <button className="button is-primary" onClick = {() => this.deleteCourse(course)}>
+            <span className="icon">
+            <i className="fas fa-plus"></i>
+            </span>
+            <span>Delete Course</span>
+        </button>
         </div>
         </div>
         {this.state.displayLtiSetupUrl &&
