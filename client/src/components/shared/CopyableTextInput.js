@@ -27,7 +27,7 @@ class CopyableTextInput extends Component {
                 <label className="label">{this.props.label}</label> 
             }
             <div className="field has-addons">
-                <div className="control">
+                <div className="control is-expanded">
                     <input className="input"
                         type="text"
                         ref={this.textInput}

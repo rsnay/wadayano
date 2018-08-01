@@ -3,14 +3,22 @@ import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import { LTI_LAUNCH_URL } from '../../constants';
+
 import AuthCheck from './AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+import LTISetupModal from './LTISetupModal';
 
 export class CourseDetails extends Component {
-  state = {
-  }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            displayLtiSetupUrl: null
+        };
+    }
 
   addQuiz(){
     //console.log(this.props.match.params.courseId)
@@ -31,6 +39,11 @@ export class CourseDetails extends Component {
         }
     });
     window.location.reload(true);
+  }
+
+  _showLTISetup(action, id) {
+      console.log(LTI_LAUNCH_URL + action + '/' + id);
+    this.setState({ displayLtiSetupUrl: LTI_LAUNCH_URL + action + '/' + id });
   }
 
   render() {
@@ -81,20 +94,43 @@ export class CourseDetails extends Component {
                     <td>{quiz.title}</td>
                     <td>{quiz.questions.length}</td>
                     <td>
-                    <Link to={"/instructor/quiz/" + quiz.id} className="button is-outlined is-primary">
+                    <Link to={"/instructor/quiz/" + quiz.id}
+                      className="button is-outlined is-primary">
                         <span className="icon">
                         <i className="fas fa-edit"></i>
                         </span>
                         <span>Edit/View</span>
                     </Link>
+                    &nbsp;
+                    <button className="button is-outlined is-primary"
+                      onClick={() => this._showLTISetup('quiz', quiz.id)}>
+                        <span className="icon">
+                        <i className="fas fa-link"></i>
+                        </span>
+                        <span>Add to LMS</span>
+                    </button>
                     </td>
                 </tr>
             )}
             </tbody>
         </table>
-        <button onClick = {() => this.addQuiz()}>Add Quiz</button>
+        <button className="button is-primary" onClick = {() => this.addQuiz()}>
+            <span className="icon">
+            <i className="fas fa-plus"></i>
+            </span>
+            <span>Add Quiz</span>
+        </button>
         </div>
         </div>
+        {this.state.displayLtiSetupUrl &&
+            <LTISetupModal
+                launchUrl={this.state.displayLtiSetupUrl}
+                consumerKey={course.id}
+                sharedSecret={course.ltiSecret}
+                closeModal={() => this.setState({ displayLtiSetupUrl: null })}
+                modalState={true}
+            />
+        }
       </section>
     )
   }
@@ -110,6 +146,7 @@ export const COURSE_QUERY = gql`
     ){
         id
         title
+        ltiSecret
         quizzes{
             id
             title
