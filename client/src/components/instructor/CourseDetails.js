@@ -41,6 +41,7 @@ export class CourseDetails extends Component {
     window.location.reload(true);
   }
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
   deleteCourse(course){
       console.log(course)
@@ -58,6 +59,8 @@ export class CourseDetails extends Component {
   }
 >>>>>>> 82804f71c0980d9eaa41b1d9f22e20e9cbfd8c34
 
+=======
+>>>>>>> Stashed changes
   render() {
 
     if (this.props.courseQuery && this.props.courseQuery.loading) {
@@ -193,6 +196,7 @@ mutation courseUpdate($id:ID!, $title:String!) {
     }
 }`
 
+<<<<<<< Updated upstream
 export const COURSE_DELETE = gql`
 mutation courseDelete($id:ID!) {
     deleteCourse(id:$id){
@@ -200,6 +204,8 @@ mutation courseDelete($id:ID!) {
     }
 }`
 
+=======
+>>>>>>> Stashed changes
 export default compose(
 graphql(COURSE_QUERY, {
   name: 'courseQuery',
@@ -209,6 +215,10 @@ graphql(COURSE_QUERY, {
   }
 }),
 graphql(ADD_QUIZ, {name:"addQuizMutation"}),
+<<<<<<< Updated upstream
 graphql(COURSE_UPDATE, {name:"courseUpdate"}),
 graphql(COURSE_DELETE, {name:"courseDelete"}),
+=======
+graphql(COURSE_UPDATE, {name:"courseUpdate"})
+>>>>>>> Stashed changes
 ) (CourseDetails)

@@ -16,25 +16,7 @@ export class CourseList extends Component {
         };
     }
 
-<<<<<<< HEAD
     
-=======
-    async deleteCourse(course){
-        if (!window.confirm('Are you sure you want to delete this course?')) {
-            return;
-        }
-        try {
-            await this.props.courseDelete({
-                variables:{
-                    id:course.id
-                }
-            });
-            this.props.instructorQuery.refetch();
-        } catch (error) {
-            alert('There was an error deleting this course.');
-        }
-    }
->>>>>>> 82804f71c0980d9eaa41b1d9f22e20e9cbfd8c34
 
   render() {
 
