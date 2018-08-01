@@ -1,4 +1,4 @@
-const { getUserId, getUserInfo } = require('../utils.js');
+const { getUserInfo } = require('../utils.js');
 
 function quizzes(root, args, context, info) {
   return context.db.query.quizzes({}, info)

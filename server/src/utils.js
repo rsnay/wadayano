@@ -6,17 +6,6 @@ function validateEmail(email) {
     return re.test(String(email).toLowerCase());
 }
 
-function getUserId(context) {
-    const Authorization = context.request.get('Authorization')
-    if (Authorization) {
-      const token = Authorization.replace('Bearer ', '')
-      const { userId } = jwt.verify(token, APP_SECRET)
-      return userId
-    }
-  
-    throw new Error('Not authenticated')
-}
-
 // Extracts user ID and role (instructor or not) from the JWT. Returns { userId: "string", isInstructor: true/false }
 function getUserInfo(context) {
     const Authorization = context.request.get('Authorization');
@@ -38,6 +27,5 @@ function getUserInfo(context) {
 
 module.exports = {
     validateEmail,
-    getUserId,
     getUserInfo
 };
