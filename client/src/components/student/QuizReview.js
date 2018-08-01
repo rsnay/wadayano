@@ -18,10 +18,17 @@ class QuizReview extends Component {
         console.log("confidence:"+quizAttempt.conceptConfidence);
         console.log("correct:"+quizAttempt.correct);
 
-        //for(i; i < quizAttempt.questionAttempts.length; i++){
-            //confidence += quizAttempt.questionAttempts[i].con
-        //}
-        return null;
+        for(i; i < quizAttempt.questionAttempts.length; i++){
+            if(quizAttempt.questionAttempts[i].confidence){
+                confidence += 1;
+            }
+            if(quizAttempt.questionAttempts[i].isCorrect){
+                correct += 1;
+            }
+        }
+        wadayano = confidence - correct;
+        console.log(wadayano);
+        return wadayano;
     }
 
   render() {
@@ -41,9 +48,6 @@ class QuizReview extends Component {
 
     this.wadayanoScore(quizAttempt);
 
-    //getConceptConfidences(){
-
-   // }
     // TOOD once concept confidences are stored on the server, use conceptConfidences from the quizAttempt prop
     //const conceptConfidences = quizAttempt.conceptConfidences
     const conceptConfidences = [
@@ -65,7 +69,6 @@ class QuizReview extends Component {
 
     return (
         <div>
-
             <div className="columns">
                 <div className="column">
                     <h2 className="subtitle is-2">Score: {formattedScore}</h2>
@@ -74,7 +77,6 @@ class QuizReview extends Component {
                     {gradePostMessage}
                 </div>
             </div>
-
             <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
             {conceptConfidences.map((conceptConfidence, index) => 
                 <div className="tile is-4 is-parent" key={conceptConfidence.id}>

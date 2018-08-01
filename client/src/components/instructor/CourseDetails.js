@@ -33,6 +33,16 @@ export class CourseDetails extends Component {
     window.location.reload(true);
   }
 
+  deleteCourse(course){
+      console.log(course)
+    this.props.courseDelete({
+        variables:{
+            id:course.id
+        }
+    });
+    window.location.href = "javascript:history.back()";
+}
+
   render() {
 
     if (this.props.courseQuery && this.props.courseQuery.loading) {
@@ -92,7 +102,8 @@ export class CourseDetails extends Component {
             )}
             </tbody>
         </table>
-        <button onClick = {() => this.addQuiz()}>Add Quiz</button>
+        <button onClick = {() => this.addQuiz()}>Add Quiz</button>  
+        <button id={course.id} onClick={() => this.deleteCourse(course)}>Delete Course</button>
         </div>
         </div>
       </section>
@@ -139,6 +150,13 @@ mutation courseUpdate($id:ID!, $title:String!) {
     }
 }`
 
+export const COURSE_DELETE = gql`
+mutation courseDelete($id:ID!) {
+    deleteCourse(id:$id){
+        id
+    }
+}`
+
 export default compose(
 graphql(COURSE_QUERY, {
   name: 'courseQuery',
@@ -148,5 +166,6 @@ graphql(COURSE_QUERY, {
   }
 }),
 graphql(ADD_QUIZ, {name:"addQuizMutation"}),
-graphql(COURSE_UPDATE, {name:"courseUpdate"})
+graphql(COURSE_UPDATE, {name:"courseUpdate"}),
+graphql(COURSE_DELETE, {name:"courseDelete"}),
 ) (CourseDetails)

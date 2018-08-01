@@ -36,7 +36,7 @@ type Quiz {
     createdAt: DateTime!
     questions: [Question!]!
     concepts:[Concept!]!
-    course: Course!
+    course: Course
     title: String!
 }
 
@@ -86,3 +86,4 @@ type ConceptConfidence {
     confidenceError: Float # Same as above, but filtered to a single concept. Not required, since it will be added once the quiz is done
     confidenceBias: Float # Ditto
 }
+ 

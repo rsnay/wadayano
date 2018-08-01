@@ -4,11 +4,12 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "graphql": "^0.13.2",
-    "graphql-cli": "^2.16.3",
+    "graphql-cli": "^2.16.5",
     "graphql-yoga": "^1.14.10",
     "ims-lti": "^3.0.2",
     "jsonwebtoken": "^8.3.0",
-    "prisma-binding": "^2.1.0"
+    "prisma-binding": "^2.1.0",
+    "react-show-more": "^2.0.0"
   },
   "name": "Server",
   "version": "1.0.0",

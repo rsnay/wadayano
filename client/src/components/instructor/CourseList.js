@@ -16,14 +16,7 @@ export class CourseList extends Component {
         };
     }
 
-    deleteCourse(course){
-        this.props.courseDelete({
-            variables:{
-                id:course.id
-            }
-        });
-        window.location.reload(true);
-    }
+    
 
   render() {
 
@@ -81,7 +74,6 @@ export class CourseList extends Component {
                             {course.quizzes.length === 1 ? '1 Quiz' : course.quizzes.length + ' Quizzes'}
                         </div>
                     </Link>
-                    <button id={course.id} onClick={() => this.deleteCourse(course)}>X</button>
                 </div>
             )}
 
@@ -122,15 +114,8 @@ query coursesQuery{
     }
 }`
 
-export const COURSE_DELETE = gql`
-mutation courseDelete($id:ID!) {
-    deleteCourse(id:$id){
-        id
-    }
-}`
 
 export default compose(
 graphql(INSTRUCTOR_QUERY, {name:"instructorQuery"}),
 graphql(COURSE_QUERY, {name:"coursesQuery"}),
-graphql(COURSE_DELETE, {name:"courseDelete"}),
 ) (CourseList)
