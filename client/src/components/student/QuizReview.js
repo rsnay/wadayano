@@ -64,7 +64,7 @@ class QuizReview extends Component {
     const gradePostMessage = this.props.isGraded && (this.props.gradePostSucceeded ?
             <span class="notification is-success is-pulled-right">Score posted successfully.</span>
         :
-            <span className="notification is-danger is-pulled-right">There was an error posting your score to your learning management system.</span>
+            <span className="notification is-danger is-pulled-right">There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.</span>
         );
 
     return (

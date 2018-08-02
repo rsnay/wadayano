@@ -40,7 +40,7 @@ type Quiz {
     createdAt: DateTime!
     questions: [Question!]!
     concepts:[Concept!]!
-    courseId:ID
+    course: Course!
     title: String!
 }
 
@@ -66,7 +66,7 @@ type QuizAttempt {
     createdAt: DateTime!
     ltiSessionInfo: Json
     completed: DateTime
-    postSucceeded: Boolean
+    postSucceeded: Boolean # True/false if it was a graded attempt. Null if practice attempt
     questionAttempts: [QuestionAttempt!]!
     score: Float # (correct/total). No score indicates the attempt was started, but not yet finished
     conceptConfidences: [ConceptConfidence!]!

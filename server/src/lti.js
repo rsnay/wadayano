@@ -94,18 +94,20 @@ async function handleLaunch(config, db, req, res) {
 
 /**
  * Called from the resolver for the completeQuizAttemptMutation, to send a grade to the LMS via grade passback
- * @param {*} ltiSessionInfo - JSON object
- * @param {*} score - float in range 0 - 1.0 to post to tool consumer
+ * @param {object} ltiSessionInfo - JSON object containing LTI session info stored in QuizAttempt
+ * @param {string} courseId - internal ID of the course that the quiz belongs to
+ * @param {string} ltiSecret - the LTI secret of the course that the quiz belongs to
+ * @param {float} score - float in range 0 - 1.0 to post to tool consumer
  * @returns {Promise<void>} - promise will resolve if grade post succeeded
  */
-function postGrade(ltiSessionInfo, score) {
-    const outcomeService = new lti.OutcomeService({
-        consumer_key,
-        consumer_secret,
-        service_url: ltiSessionInfo.lis_outcome_service_url,
-        source_did: ltiSessionInfo.lis_result_sourcedid
-    });
+function postGrade(ltiSessionInfo, courseId, ltiSecret, score) {
     return new Promise((resolve, reject) => {
+        const outcomeService = new lti.OutcomeService({
+            consumer_key: courseId,
+            consumer_secret: ltiSecret,
+            service_url: ltiSessionInfo.lis_outcome_service_url,
+            source_did: ltiSessionInfo.lis_result_sourcedid
+        });
         outcomeService.send_replace_result(score, (error, result) => {
             if (error) {
                 reject(error);

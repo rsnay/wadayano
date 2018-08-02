@@ -150,7 +150,7 @@ class QuizTaker extends Component {
 
       // If it was graded, check if the LTI grade passback was successful or not
       if (quizGradePayload.isGraded && !quizGradePayload.postSucceeded) {
-        alert('There was an error posting your score to your learning management system.');
+        alert('There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.');
       }
         
       // Store quizGradePayload info in state
