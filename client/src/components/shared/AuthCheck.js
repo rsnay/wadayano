@@ -22,30 +22,23 @@ export function withAuthCheck(WrappedComponent, authRoles) {
       let role = localStorage.getItem(AUTH_ROLE);
       let roles = authRoles || {};
   
-      console.log(role, roles);
       let valid = true;
       // Determine if it’s valid, based on current role and what this check is valid for (student and/or instructor)
       if (!loggedIn) { // If not logged in, invalid
         valid = false;
-        console.log(19);
       } else if (!(roles.instructor || roles.student)) { // If no restrictions for student/instructor specified, leave it valid
-        console.log(22);
       } else if (role !== AUTH_ROLE_INSTRUCTOR && role !== AUTH_ROLE_STUDENT) { // If role somehow doesn’t match either instructor or student, invalid
         valid = false;
-        console.log(25);
       } else if (role === AUTH_ROLE_INSTRUCTOR && !roles.instructor) { // If instructor, but not checking for instructor, invalid
         valid = false;
-        console.log(28);
       } else if (role === AUTH_ROLE_STUDENT && !roles.student) { // If student, but not checking for student, invalid
         valid = false;
-        console.log(31);
       }
       this.valid = valid;
     }
 
     render() {
       // Wraps the input component in a container, without mutating it.
-      console.log(this.valid);
       if (!this.valid) {
           return <Redirect to={{
             pathname: '/login',
