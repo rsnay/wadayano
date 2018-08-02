@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -107,6 +108,13 @@ export class QuizEditor extends Component {
     return (
         <section className="section">
         <div className="container">
+        <nav className="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><Link to="/instructor">Course List</Link></li>
+                <li><Link to={"/instructor/course/" + quiz.course.id}>{quiz.course.title}</Link></li>
+                <li className="is-active"><Link to={"/instructor/quiz/" + quiz.id} aria-current="page">{quiz.title}</Link></li>
+            </ul>
+        </nav>
         <textarea id = {quiz.id} key = {quiz.id} className="textarea is-large" type="text">{quiz.title}</textarea>
             <a className="button" >
                 <span className="icon is-small">
@@ -186,8 +194,7 @@ export const CONCEPT_QUERY = gql`
       }
   }`
 
-//all courses for user of id
-//TODO change from hardcoded userId
+// Get the quiz
 export const QUIZ_QUERY = gql`
   query quizQuery($id: ID!) {
     quiz(id:$id){

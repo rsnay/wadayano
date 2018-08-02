@@ -78,8 +78,7 @@ export class CourseList extends Component {
 
 }
 
-//all courses for instructor of id
-//TODO change from hardcoded instructorId
+// Get all courses for current instructor
 export const INSTRUCTOR_QUERY = gql`
   query instructorQuery {
     instructor{
