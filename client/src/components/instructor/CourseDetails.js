@@ -51,6 +51,11 @@ export class CourseDetails extends Component {
     window.location.href = "javascript:history.back()";
 }
 
+  // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
+  _showLTISetup(action, id) {
+    this.setState({ displayLtiSetupUrl: LTI_LAUNCH_URL + action + '/' + id });
+  }
+
   render() {
 
     if (this.props.courseQuery && this.props.courseQuery.loading) {
