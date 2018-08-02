@@ -48,8 +48,8 @@ export class CourseDetails extends Component {
             id:course.id
         }
     });
-    window.location.href = "javascript:history.back()";
-}
+    window.history.back();
+  }
 
   // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
   _showLTISetup(action, id) {
@@ -86,13 +86,68 @@ export class CourseDetails extends Component {
             </a>
           <hr />
 
+          <section>
+            <h4 className="title is-4">Student Dashboard</h4>
+            <div className="is-flex-tablet">
+                <span>Students in your course can access the Student Dashboard to practice quizzes and review past quiz performance. Simply place an LTI link on a content page or somewhere accessible in your LMS.<br /></span>
+                <button style={{marginLeft: "1rem"}} className="button is-light"
+                    onClick={() => this._showLTISetup('dashboard', course.id)}>
+                    <span className="icon">
+                    <i className="fas fa-rocket"></i>
+                    </span>
+                    <span>Add Dashboard Link to LMS</span>
+                </button>
+            </div>
+            <hr />
+          </section>
+
+          <section>
+            <h4 className="title is-4">Course Survey</h4>
+            <div className="is-flex-tablet">
+                <span>Set up a non-graded survey with multiple-choice questions for students to participate in. Place an LTI link in your LMS, and view the survey results here.<br /></span>
+                <span className="is-flex-desktop" style={{marginLeft: "0.5rem"}}>
+                    <button style={{marginLeft: "0.5rem", marginBottom: "0.5rem"}} className="button is-light"
+                        onClick={() => alert('Not yet implemented')}>
+                        <span className="icon">
+                        <i className="fas fa-edit"></i>
+                        </span>
+                        <span>Edit Survey</span>
+                    </button>
+                    <br />
+                    <button style={{marginLeft: "0.5rem", marginBottom: "0.5rem"}} className="button is-light"
+                        onClick={() => this._showLTISetup('survey', course.id)}>
+                        <span className="icon">
+                        <i className="fas fa-clipboard-list"></i>
+                        </span>
+                        <span>Add Survey Link to LMS</span>
+                    </button>
+                    <br />
+                    <button style={{marginLeft: "0.5rem"}} className="button is-light"
+                        onClick={() => alert('Not yet implemented')}>
+                        <span className="icon">
+                        <i className="fas fa-chart-bar"></i>
+                        </span>
+                        <span>View Survey Results</span>
+                    </button>
+                </span>
+            </div>
+            <hr />
+          </section>
+
+            <h4 className="title is-4 is-inline-block">Quizzes</h4>
+            <button className="button is-primary is-pulled-right" onClick = {() => this.addQuiz()}>
+                <span className="icon">
+                <i className="fas fa-plus"></i>
+                </span>
+                <span>New Quiz</span>
+            </button>
           <div style={{overflowX: "auto"}}>
           <table className="table is-striped is-hoverable is-fullwidth">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Quiz Name</th>
-                    <th>Other Info</th>
+                    <th>Title</th>
+                    <th>Question Count</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -102,16 +157,15 @@ export class CourseDetails extends Component {
                     <td>{quiz.id}</td>
                     <td>{quiz.title}</td>
                     <td>{quiz.questions.length}</td>
-                    <td>
+                    <td className="buttons">
                     <Link to={"/instructor/quiz/" + quiz.id}
-                      className="button is-outlined is-primary">
+                      className="button is-light">
                         <span className="icon">
                         <i className="fas fa-edit"></i>
                         </span>
                         <span>Edit/View</span>
                     </Link>
-                    &nbsp;
-                    <button className="button is-outlined is-primary"
+                    <button className="button is-light"
                       onClick={() => this._showLTISetup('quiz', quiz.id)}>
                         <span className="icon">
                         <i className="fas fa-link"></i>
@@ -123,12 +177,6 @@ export class CourseDetails extends Component {
             )}
             </tbody>
         </table>
-        <button className="button is-primary" onClick = {() => this.addQuiz()}>
-            <span className="icon">
-            <i className="fas fa-plus"></i>
-            </span>
-            <span>Add Quiz</span>
-        </button>
 
         <button className="button is-primary" onClick = {() => this.deleteCourse(course)}>
             <span className="icon">
