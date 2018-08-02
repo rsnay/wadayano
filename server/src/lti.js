@@ -1,11 +1,7 @@
 const querystring = require('querystring');
 const pathUtils = require('path');
-const lti = require('ims-lti');
+const lti = require('ims-lti/lib/ims-lti');
 const jwt = require('jsonwebtoken');
-
-// TODO These will eventually need to come from the database, and likely be course-specific
-const consumer_key = 'jisc.ac.uk';
-const consumer_secret = 'secret';
 
 // This shouldn't be necessary in production, if it's on the same server. In that case, this would be empty '' (no trailing slash)
 const CLIENT_BASE_URL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:3001' : '';
@@ -17,24 +13,40 @@ const CLIENT_BASE_URL = (process.env.NODE_ENV !== 'production') ? 'http://localh
  * @param {*} req - request object from express server
  * @param {*} res - response object from express server
  */
-function handleLaunch(config, db, req, res) {
+async function handleLaunch(config, db, req, res) {
     // Get body and params
     const body = req.body;
 	const action = req.params.action;
-	const parameter1 = req.params.parameter1;
+    const parameter1 = req.params.parameter1;
+    // Oauth consumer key will be course ID
+    const courseId = body.oauth_consumer_key;
 
 	// Log info
-	console.log(`We got an LTI request for ${action} ${parameter1}!! ${req.method} ${req.url}`);
-
-    // Set up LTI provider
-    let provider = new lti.Provider(consumer_key, consumer_secret);
+    console.log(`We got an LTI request for ${action} ${parameter1}!! ${req.method} ${req.url}`);
     
     // Check for user_id, lis_person_name_full, and lis_person_contact_email_primary
     if (!(body.user_id && body.lis_person_name_full && body.lis_person_contact_email_primary)) {
         res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end('Error validating request: missing required parameters');
+        res.end('Error validating request: missing required parameters. user_id, lis_person_name_full, and lis_person_contact_email_primary are required.');
+        return;
     }
 
+    // Get the consumer_secret from the database
+    const courseInfo = await db.query.course({
+        where: {
+            id: courseId
+       }
+    }, `{ ltiSecret }`);
+    console.log(courseInfo);
+    if (!courseInfo || !courseInfo.ltiSecret) {
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end('Error validating request: invalid consumer key (course id)');
+        return;
+    }
+
+    // Set up LTI provider. courseId is key, and secret is from database
+    let provider = new lti.Provider(courseId, courseInfo.ltiSecret);
+    
     // Validate request
     provider.valid_request(req, body, async (error, isValid) => {
         if (!isValid) {
@@ -52,6 +64,8 @@ function handleLaunch(config, db, req, res) {
             const token = jwt.sign({ userId: studentId, isInstructor: false }, config.APP_SECRET);
 
             // Enroll the student in the course that this launch belongs to, if necessary
+            _enrollStudentInCourse(db, studentId, courseId);
+
             // TODO
 
             // If this is a quiz 
@@ -121,10 +135,25 @@ async function _upsertStudentOnLaunch(db, ltiUserId, name, email) {
 }
 
 /**
+ * Enrolls the student with the given studentId in a given course
+ * @param {*} db - Prisma DB instance
+ * @param {*} studentId - student's internal user ID (NOT LTI user_id)
+ * @param {*} courseId - internal Course ID
+ * @returns void
+ */
+async function _enrollStudentInCourse(db, studentId, courseId) {
+    const student = await db.mutation.updateStudent({
+        where: { id: studentId },
+        data: { courses: { connect: { id: courseId } } }
+    }, `{ id }`);
+    return student.id;
+}
+
+/**
  * Creates or updates an LTI-launched quiz attempt
  * @param {*} db - Prisma DB instance
  * @param {*} studentId - student's internal user ID (NOT LTI user_id)
- * @param {*} quizId - interal Quiz ID
+ * @param {*} quizId - internal Quiz ID
  * @param {*} ltiSessionInfo - non-serialized object containing the body of the  LTI launch request
  */
 async function _upsertQuizAttempt(db, studentId, quizId, ltiSessionInfo) {
