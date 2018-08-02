@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import AuthCheck from './AuthCheck';
+import { withAuthCheck } from '../shared/AuthCheck';
 import CreateCourseForm from './CreateCourseForm';
 
 import ErrorBox from '../shared/ErrorBox';
@@ -33,7 +33,6 @@ export class CourseList extends Component {
 
     return (
         <section className="section">
-        <AuthCheck instructor location={this.props.location} />
         <div className="container">
           <h1 className="title">Courses</h1>
           <hr />
@@ -108,7 +107,7 @@ query coursesQuery{
 }`
 
 
-export default compose(
+export default withAuthCheck(compose(
 graphql(INSTRUCTOR_QUERY, {name:"instructorQuery"}),
 graphql(COURSE_QUERY, {name:"coursesQuery"}),
-) (CourseList)
+) (CourseList), { instructor: true});

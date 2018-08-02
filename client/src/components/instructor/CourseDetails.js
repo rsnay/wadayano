@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 
 import { LTI_LAUNCH_URL } from '../../constants';
 
-import AuthCheck from './AuthCheck';
+import { withAuthCheck } from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
@@ -63,14 +63,13 @@ export class CourseDetails extends Component {
     }
 
     if (this.props.courseQuery && this.props.courseQuery.error) {
-        return <ErrorBox>Couldn't load courses</ErrorBox>;
+        return <ErrorBox>Couldn’t load courses</ErrorBox>;
     }
     console.log(this.props);
     let course = this.props.courseQuery.course;
 
     return (
         <section className="section">
-        <AuthCheck instructor location={this.props.location} />
         <div className="container">
         <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
@@ -200,7 +199,7 @@ mutation courseDelete($id:ID!) {
     }
 }`
 
-export default compose(
+export default withAuthCheck(compose(
 graphql(COURSE_QUERY, {
   name: 'courseQuery',
   options: (props) => {
@@ -211,4 +210,4 @@ graphql(COURSE_QUERY, {
 graphql(ADD_QUIZ, {name:"addQuizMutation"}),
 graphql(COURSE_UPDATE, {name:"courseUpdate"}),
 graphql(COURSE_DELETE, {name:"courseDelete"}),
-) (CourseDetails)
+) (CourseDetails), { instructor: true});

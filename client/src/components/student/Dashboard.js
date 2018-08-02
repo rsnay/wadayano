@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-import AuthCheck from '../instructor/AuthCheck';
+import { withAuthCheck } from '../shared/AuthCheck';
 import Modal from '../shared/Modal';
 
 class Dashboard extends Component {
@@ -17,14 +17,13 @@ class Dashboard extends Component {
     }
 
     if (this.props.quizzesQuery && this.props.quizzesQuery.error) {
-        return <ErrorBox>Couldn't load quizzes</ErrorBox>;
+        return <ErrorBox>Couldn’t load quizzes</ErrorBox>;
     }
 
     const quizzes = this.props.quizzesQuery.quizzes;
 
     return (
         <section className="section">
-        <AuthCheck student location={this.props.location} />
         <div className="container">
           <h1 className="title">My Dashboard</h1>
           <h3 className="subtitle">Course Title</h3>
@@ -79,4 +78,4 @@ export const QUIZZES_QUERY = gql`
     }
 `
 
-export default graphql(QUIZZES_QUERY, {name: 'quizzesQuery'}) (Dashboard)
+export default withAuthCheck(graphql(QUIZZES_QUERY, {name: 'quizzesQuery'}) (Dashboard), { student: true });

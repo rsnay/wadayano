@@ -4,6 +4,7 @@ import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Prompt } from 'react-router';
 
+import { withAuthCheck } from '../shared/AuthCheck';
 import ConceptRater from './ConceptRater';
 import QuestionTaker from './QuestionTaker';
 import QuizReview from './QuizReview';
@@ -362,7 +363,7 @@ const COMPLETE_MUTATION = gql`
   }
 `;
 
-export default compose(
+export default withAuthCheck(compose(
   graphql(START_MUTATION, { name: 'startMutation' }),
   graphql(COMPLETE_MUTATION, { name: 'completeMutation' }),
-)(QuizTaker)
+)(QuizTaker), {student: true});

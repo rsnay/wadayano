@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import AuthCheck from './AuthCheck';
+import { withAuthCheck } from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
@@ -101,14 +101,13 @@ export class QuizEditor extends Component {
     }
 
     if (this.props.quizQuery && this.props.quizQuery.error) {
-        return <ErrorBox>Couldn't load courses</ErrorBox>;
+        return <ErrorBox>Couldn’t load courses</ErrorBox>;
     }
     console.log(this.props);
     let quiz = this.props.quizQuery.quiz;
 
     return (
         <section className="section">
-        <AuthCheck instructor location={this.props.location} />
         <div className="container">
         <textarea id = {quiz.id} key = {quiz.id} className="textarea is-large" type="text">{quiz.title}</textarea>
             <a className="button" >
@@ -281,7 +280,7 @@ mutation addQuestionMutation($id:ID!)
         }
     }`
 
-export default compose(
+export default withAuthCheck(compose(
     graphql(QUIZ_QUERY, {name: 'quizQuery',
   options: (props) => {
     console.log(props.match.params.quizId);
@@ -295,4 +294,4 @@ export default compose(
     graphql(QUESTION_DELETE, {name: 'questionDeleteMutation'}),
     graphql(QUIZ_SAVE, {name: 'quizSaveMutation'}),
     graphql(QUIZ_DELETE, {name:'quizDeleteMutation'})
- ) (QuizEditor)
+ ) (QuizEditor), { instructor: true });

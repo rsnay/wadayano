@@ -38,7 +38,7 @@ class QuizReview extends Component {
     }
 
     if (this.props.query && this.props.query.error) {
-        return <ErrorBox><p>Couldn't load the quiz review</p></ErrorBox>;
+        return <ErrorBox><p>Couldn’t load the quiz review</p></ErrorBox>;
     }*/
 
     const quizAttempt = this.props.quizAttempt;
