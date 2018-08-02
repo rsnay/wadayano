@@ -234,6 +234,9 @@ class QuizTaker extends Component {
       case phases.CONCEPT_REVIEW:
         currentView = 'Concept review';
         break;
+      
+      default:
+        currentView = null;
     }
 
     return (

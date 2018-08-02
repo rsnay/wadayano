@@ -33,7 +33,7 @@ class CopyableTextInput extends Component {
                         ref={this.textInput}
                         readOnly={this.props.readOnly}
                         value={this.props.value}
-                        onClick={() => this._copyText()} />
+                        onClick={() => this.textInput.current.select()} />
                 </div>
                 <div className="control">
                     <button className={this.state.copied ? "button is-success" : "button is-info"} onClick={() => {this._copyText()}}>

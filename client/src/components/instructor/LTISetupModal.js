@@ -23,6 +23,7 @@ class LTISetupModal extends Component {
                 <br />
                 <a 
                 target="_blank"
+                rel="noopener noreferrer"
                 href="https://lsinfo.byu.edu/create-lti-learning-module-assignment" 
                 className="button is-text">
                     <span className="icon is-small"><i className="fa fa-question-circle"></i></span>

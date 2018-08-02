@@ -6,7 +6,6 @@ import gql from 'graphql-tag';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import { withAuthCheck } from '../shared/AuthCheck';
-import Modal from '../shared/Modal';
 
 class Dashboard extends Component {
 

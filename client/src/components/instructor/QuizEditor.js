@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -84,8 +83,7 @@ export class QuizEditor extends Component {
                 id:quiz.id
             }
         });
-        window.location.href = "javascript:history.back()";
-        
+        window.history.back();
     }
 
     editQuizTitle(){
@@ -101,7 +99,7 @@ export class QuizEditor extends Component {
     }
 
     if (this.props.quizQuery && this.props.quizQuery.error) {
-        return <ErrorBox>Couldn’t load courses</ErrorBox>;
+        return <ErrorBox>Couldn’t load quiz</ErrorBox>;
     }
     console.log(this.props);
     let quiz = this.props.quizQuery.quiz;
