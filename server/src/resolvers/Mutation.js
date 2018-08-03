@@ -420,6 +420,11 @@ async function completeQuizAttempt(root, args, context, info) {
         student { id }
         ltiSessionInfo
         quiz {
+            id
+            course {
+                id
+                ltiSecret
+            }
             questions {
                 concept {
                     id
@@ -435,11 +440,11 @@ async function completeQuizAttempt(root, args, context, info) {
                 }
             }
         }
-     }`);
+    }`);
 
     // Check that quizAttemptId is valid, not completed, and belongs to student
     if (!(attempt && (attempt.completed === null) && (attempt.student.id === studentId))) {
-        //throw new Error('Could not complete this quiz attempt.');
+        throw new Error('Could not complete this quiz attempt.');
     }
 
     // Check that all questions were attempted
@@ -471,12 +476,13 @@ async function completeQuizAttempt(root, args, context, info) {
     
     // Post the score back to LMS via LTI grade passback, if applicable
     let isGraded = false;
-    let postSucceeded = false;
+    let postSucceeded = null;
     let error = null;
     if (attempt.ltiSessionInfo && attempt.ltiSessionInfo.lis_outcome_service_url) {
         isGraded = true;
+        postSucceeded = false;
         try {
-            let result = await postGrade(attempt.ltiSessionInfo, score);
+            let result = await postGrade(attempt.ltiSessionInfo, attempt.quiz.course.id, attempt.quiz.course.ltiSecret, score);
             postSucceeded = true;
             console.log('LTI grade passback successful!');
         } catch (err) {
@@ -492,6 +498,7 @@ async function completeQuizAttempt(root, args, context, info) {
         data: {
             completed,
             score,
+            postSucceeded,
             totalConfidenceError,
             totalConfidenceBias
         }

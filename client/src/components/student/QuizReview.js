@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
-
-import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
 
 class QuizReview extends Component {
 
@@ -38,7 +34,7 @@ class QuizReview extends Component {
     }
 
     if (this.props.query && this.props.query.error) {
-        return <ErrorBox><p>Couldn't load the quiz review</p></ErrorBox>;
+        return <ErrorBox><p>Couldn’t load the quiz review</p></ErrorBox>;
     }*/
 
     const quizAttempt = this.props.quizAttempt;
@@ -64,7 +60,7 @@ class QuizReview extends Component {
     const gradePostMessage = this.props.isGraded && (this.props.gradePostSucceeded ?
             <span class="notification is-success is-pulled-right">Score posted successfully.</span>
         :
-            <span className="notification is-danger is-pulled-right">There was an error posting your score to your learning management system.</span>
+            <span className="notification is-danger is-pulled-right">There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.</span>
         );
 
     return (

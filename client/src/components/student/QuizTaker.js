@@ -4,6 +4,7 @@ import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Prompt } from 'react-router';
 
+import { withAuthCheck } from '../shared/AuthCheck';
 import ConceptRater from './ConceptRater';
 import QuestionTaker from './QuestionTaker';
 import QuizReview from './QuizReview';
@@ -149,7 +150,7 @@ class QuizTaker extends Component {
 
       // If it was graded, check if the LTI grade passback was successful or not
       if (quizGradePayload.isGraded && !quizGradePayload.postSucceeded) {
-        alert('There was an error posting your score to your learning management system.');
+        alert('There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.');
       }
         
       // Store quizGradePayload info in state
@@ -233,6 +234,9 @@ class QuizTaker extends Component {
       case phases.CONCEPT_REVIEW:
         currentView = 'Concept review';
         break;
+      
+      default:
+        currentView = null;
     }
 
     return (
@@ -362,7 +366,7 @@ const COMPLETE_MUTATION = gql`
   }
 `;
 
-export default compose(
+export default withAuthCheck(compose(
   graphql(START_MUTATION, { name: 'startMutation' }),
   graphql(COMPLETE_MUTATION, { name: 'completeMutation' }),
-)(QuizTaker)
+)(QuizTaker), {student: true});

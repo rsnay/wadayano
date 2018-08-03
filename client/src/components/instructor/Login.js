@@ -10,8 +10,10 @@ class Login extends Component {
   constructor(props) {
     super(props);
 
+    // Determine from URL to start in login or signup mode
+    let signupMode = this.props.match.path.match('signup');
     this.state = {
-      signupMode: false, // Determines if log in or sign up form will be shown
+      signupMode, // Determines if log in or sign up form will be shown
       email: '',
       password: '',
       passwordConfirm: '',

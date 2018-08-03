@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
 
 import ConfidenceSelector from './ConfidenceSelector';
 import QuestionReview from './QuestionReview';
