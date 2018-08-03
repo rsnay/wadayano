@@ -381,13 +381,8 @@ export default withAuthCheck(compose(
     graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),
     graphql(QUESTION_DELETE, {name: 'questionDeleteMutation'}),
     graphql(QUIZ_SAVE, {name: 'quizSaveMutation'}),
-<<<<<<< HEAD
     graphql(QUIZ_DELETE, {name:'quizDeleteMutation'}),
     graphql(CONCEPT_QUESTION, {name: 'conceptQuestion'}),
     graphql(CONCEPT_QUIZ, {name: 'conceptQuiz'}),
     graphql(CONCEPT_COURSE, {name:'conceptCourse'})
- ) (QuizEditor)
-=======
-    graphql(QUIZ_DELETE, {name:'quizDeleteMutation'})
- ) (QuizEditor), { instructor: true });
->>>>>>> 51a53980239772dd8e4acfc37c5ca1cdaed2d7ba
+) (QuizEditor), { instructor: true });
