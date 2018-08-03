@@ -27,7 +27,7 @@ class QuizTaker extends Component {
     this.state = {
       isLoading: true,
       error: '',
-      phase: phases.QUESTIONS,
+      phase: phases.CONCEPTS,
       conceptConfidences: [],
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
@@ -55,6 +55,11 @@ class QuizTaker extends Component {
       // It looks like the list order is guaranteed from prisma, so this should be fine: https://www.prisma.io/forum/t/list-array-order-guaranteed/2235
       const currentQuestionIndex = quizAttempt.questionAttempts.length;
 
+      // If concepts have been rated, jump to the questions
+      let phase = phases.CONCEPTS;
+      if (quizAttempt.conceptConfidences.length > 0) {
+        phase = phases.QUESTIONS;
+      }
       // Edge case—if a student answered all questions but didn't continue to the results (where the grade is actually submitted), submit it now
       if (currentQuestionIndex === quiz.questions.length) {
         this.setState({
@@ -71,6 +76,7 @@ class QuizTaker extends Component {
       this.setState({
         quizAttempt,
         quiz,
+        phase,
         currentQuestionIndex,
         isLoading: false
       });
@@ -190,16 +196,13 @@ class QuizTaker extends Component {
     }
 
     // TODO get actual concepts
-    let concepts = [
-      {id: "c1", title: "concept 1"},
-      {id: "c2", title: "concept 2"},
-      {id: "c3", title: "concept 3"},
-    ];
+    let concepts = [ 'Gene Expression', 'Genomics', 'Epigenetics', 'Gene Therapy' ];
 
     let currentView;
     switch (this.state.phase) {
       case phases.CONCEPTS:
         currentView = <ConceptRater
+          quizAttemptId={this.state.quizAttempt.id}
           concepts={concepts}
           onConceptsRated={() => this._onConceptsRated() }
         />;
