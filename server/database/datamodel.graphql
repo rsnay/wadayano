@@ -39,13 +39,8 @@ type Quiz {
     id: ID! @unique
     createdAt: DateTime!
     questions: [Question!]!
-<<<<<<< HEAD
     concepts:[String!]!
     course:Course
-=======
-    concepts:[Concept!]!
-    course: Course!
->>>>>>> 51a53980239772dd8e4acfc37c5ca1cdaed2d7ba
     title: String!
 }
 

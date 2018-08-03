@@ -109,4 +109,9 @@ query coursesQuery{
 export default withAuthCheck(compose(
 graphql(INSTRUCTOR_QUERY, {name:"instructorQuery"}),
 graphql(COURSE_QUERY, {name:"coursesQuery"}),
+<<<<<<< Updated upstream
 ) (CourseList), { instructor: true});
+=======
+graphql(COURSE_DELETE, {name:"courseDelete"}),
+) (CourseList)
+>>>>>>> Stashed changes
