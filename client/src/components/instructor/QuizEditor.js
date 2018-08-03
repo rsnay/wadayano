@@ -229,20 +229,14 @@ export const QUIZ_QUERY = gql`
     quiz(id:$id){
         id
         title
-        concepts{
-            title
-        }
+        concepts
         course{
             title
-            concepts{
-                title
-            }
+            concepts
             id
         }
         questions{
-            concept{
-                title
-            }
+            concept
             id
             prompt
             options{
@@ -322,9 +316,7 @@ mutation conceptQuestion(
             title:$title
         ){
             id
-            concept{
-                title
-            }
+            concept
             prompt
         }
     }`
@@ -336,9 +328,7 @@ mutation conceptQuiz{
             title:$title
         ){
             id
-            concept{
-                title
-            }
+            concept
             prompt
         }
     }`
@@ -351,9 +341,7 @@ mutation conceptCourse{
             title:$title
         ){
             id
-            concept{
-                title
-            }
+            concept
             prompt
         }
     }`

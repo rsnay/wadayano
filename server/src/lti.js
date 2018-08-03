@@ -1,6 +1,6 @@
 const querystring = require('querystring');
 const pathUtils = require('path');
-const lti = require('ims-lti/lib/ims-lti');
+const lti = require('ims-lti');
 const jwt = require('jsonwebtoken');
 
 // This shouldn't be necessary in production, if it's on the same server. In that case, this would be empty '' (no trailing slash)
