@@ -37,10 +37,15 @@ class ConceptRater extends Component {
 
     // Sends the concept confidences/ratings to the server
     async _submitConceptRatings() {
-        this.props.rateConceptsMutation(this.props.quizAttemptId, this.state.ratings);
         this.setState({ isLoading: true });
+        await this.props.rateConceptsMutation({
+            variables: {
+                quizAttemptId: this.props.quizAttemptId,
+                conceptConfidences: this.state.ratings
+            }
+        });
         // TODO pass actual ratings
-        await this.props.onConceptsRated();
+        this.props.onConceptsRated();
         this.props.onConceptsRated();
     }
 
@@ -84,7 +89,7 @@ ConceptRater.propTypes = {
 };
 
 const RATE_CONCEPTS_MUTATION = gql`
-  mutation RateConcepts($quizAttemptId: ID!, $conceptConfidences: [ConceptConfidence!]!) {
+  mutation RateConcepts($quizAttemptId: ID!, $conceptConfidences: [ConceptConfidenceCreateInput!]!) {
     rateConcepts(quizAttemptId: $quizAttemptId, conceptConfidences: $conceptConfidences) {
       id
     }

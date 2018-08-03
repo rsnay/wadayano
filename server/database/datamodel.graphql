@@ -30,11 +30,6 @@ type Course {
     ltiSecret: String
 }
 
-type Concept {
-    id: ID! @unique
-    title: String!
-}
-
 type Quiz {
     id: ID! @unique
     createdAt: DateTime!

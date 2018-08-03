@@ -44,17 +44,14 @@ function addCourse (root, args, context, info) {
                     id: userId
                 }
             },
-            concepts:{
-                create:[{
-                    title:"concept"
-                }]
-            },
+            concepts:["Example Concept"],
             quizzes:{
                 create:[{
                     title:"Example Quiz",
                     questions:{
                         create:[{
                             prompt: "Enter Prompt Here",
+                            concept: "Example Concept",
                             options: {
                                 create:[{
                                     isCorrect: true,
@@ -352,6 +349,24 @@ async function startOrResumeQuizAttempt(root, args, context, info) {
     }
 }
 
+async function rateConcepts(root, args, context, info) {
+    // Get any existing conceptConfidences on the attempt to delete them (so concepts aren't duplicated)
+    const attempt = await context.db.query.quizAttempt({
+        where: { id: args.quizAttemptId }
+    }, `{ conceptConfidences { id } }`);
+
+    // Update the quiz attempt, deleting old conceptConfidences and adding new ones
+    return context.db.mutation.updateQuizAttempt({
+        where: { id: args.quizAttemptId },
+        data: {
+            conceptConfidences: {
+                delete: attempt.conceptConfidences,
+                create: args.conceptConfidences
+            }
+        }
+    }, info);
+}
+
 async function attemptQuestion(root, args, context, info) {
     // Check for valid student login
     const studentId = getUserInfo(context).userId;
@@ -437,18 +452,14 @@ async function completeQuizAttempt(root, args, context, info) {
                 ltiSecret
             }
             questions {
-                concept {
-                    id
-                }
+                concept
             }
         }
         questionAttempts {
             isCorrect
             isConfident
             question {
-                concept {
-                    id
-                }
+                concept
             }
         }
     }`);
@@ -544,5 +555,5 @@ module.exports = {
     startOrResumeQuizAttempt,
     completeQuizAttempt,
     attemptQuestion,
-    
+    rateConcepts,
 }

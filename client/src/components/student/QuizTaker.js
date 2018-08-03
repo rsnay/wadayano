@@ -303,11 +303,7 @@ const START_MUTATION = gql`
       }
       conceptConfidences {
         id
-        concept {
-          id
-          title
-        }
-
+        concept
       }
     }
   }
@@ -356,10 +352,7 @@ const COMPLETE_MUTATION = gql`
         }
         conceptConfidences {
           id
-          concept {
-            id
-            title
-          }
+          concept
           confidence
           confidenceError
           confidenceBias

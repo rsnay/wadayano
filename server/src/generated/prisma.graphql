@@ -1,9 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Thu Aug 02 2018 15:22:39 GMT-0600 (Mountain Daylight Time)
-
-type AggregateConcept {
-  count: Int!
-}
+# timestamp: Thu Aug 02 2018 18:31:47 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -46,14 +42,9 @@ type BatchPayload {
   count: Long!
 }
 
-type Concept implements Node {
-  id: ID!
-  title: String!
-}
-
 type ConceptConfidence implements Node {
   id: ID!
-  concept(where: ConceptWhereInput): Concept
+  concept: String
   confidence: Int
   confidenceError: Float
   confidenceBias: Float
@@ -70,10 +61,10 @@ type ConceptConfidenceConnection {
 }
 
 input ConceptConfidenceCreateInput {
+  concept: String
   confidence: Int
   confidenceError: Float
   confidenceBias: Float
-  concept: ConceptCreateOneInput
 }
 
 input ConceptConfidenceCreateManyInput {
@@ -93,6 +84,8 @@ type ConceptConfidenceEdge {
 enum ConceptConfidenceOrderByInput {
   id_ASC
   id_DESC
+  concept_ASC
+  concept_DESC
   confidence_ASC
   confidence_DESC
   confidenceError_ASC
@@ -107,6 +100,7 @@ enum ConceptConfidenceOrderByInput {
 
 type ConceptConfidencePreviousValues {
   id: ID!
+  concept: String
   confidence: Int
   confidenceError: Float
   confidenceBias: Float
@@ -152,17 +146,17 @@ input ConceptConfidenceSubscriptionWhereInput {
 }
 
 input ConceptConfidenceUpdateDataInput {
+  concept: String
   confidence: Int
   confidenceError: Float
   confidenceBias: Float
-  concept: ConceptUpdateOneInput
 }
 
 input ConceptConfidenceUpdateInput {
+  concept: String
   confidence: Int
   confidenceError: Float
   confidenceBias: Float
-  concept: ConceptUpdateOneInput
 }
 
 input ConceptConfidenceUpdateManyInput {
@@ -234,6 +228,46 @@ input ConceptConfidenceWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  concept: String
+
+  """All values that are not equal to given value."""
+  concept_not: String
+
+  """All values that are contained in given list."""
+  concept_in: [String!]
+
+  """All values that are not contained in given list."""
+  concept_not_in: [String!]
+
+  """All values less than the given value."""
+  concept_lt: String
+
+  """All values less than or equal the given value."""
+  concept_lte: String
+
+  """All values greater than the given value."""
+  concept_gt: String
+
+  """All values greater than or equal the given value."""
+  concept_gte: String
+
+  """All values containing the given string."""
+  concept_contains: String
+
+  """All values not containing the given string."""
+  concept_not_contains: String
+
+  """All values starting with the given string."""
+  concept_starts_with: String
+
+  """All values not starting with the given string."""
+  concept_not_starts_with: String
+
+  """All values ending with the given string."""
+  concept_ends_with: String
+
+  """All values not ending with the given string."""
+  concept_not_ends_with: String
   confidence: Int
 
   """All values that are not equal to given value."""
@@ -300,7 +334,6 @@ input ConceptConfidenceWhereInput {
 
   """All values greater than or equal the given value."""
   confidenceBias_gte: Float
-  concept: ConceptWhereInput
   _MagicalBackRelation_ConceptConfidenceToQuizAttempt_every: QuizAttemptWhereInput
   _MagicalBackRelation_ConceptConfidenceToQuizAttempt_some: QuizAttemptWhereInput
   _MagicalBackRelation_ConceptConfidenceToQuizAttempt_none: QuizAttemptWhereInput
@@ -310,252 +343,15 @@ input ConceptConfidenceWhereUniqueInput {
   id: ID
 }
 
-"""A connection to a list of items."""
-type ConceptConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [ConceptEdge]!
-  aggregate: AggregateConcept!
-}
-
-input ConceptCreateInput {
-  title: String!
-}
-
-input ConceptCreateManyInput {
-  create: [ConceptCreateInput!]
-  connect: [ConceptWhereUniqueInput!]
-}
-
-input ConceptCreateOneInput {
-  create: ConceptCreateInput
-  connect: ConceptWhereUniqueInput
-}
-
-"""An edge in a connection."""
-type ConceptEdge {
-  """The item at the end of the edge."""
-  node: Concept!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum ConceptOrderByInput {
-  id_ASC
-  id_DESC
-  title_ASC
-  title_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
-}
-
-type ConceptPreviousValues {
-  id: ID!
-  title: String!
-}
-
-type ConceptSubscriptionPayload {
-  mutation: MutationType!
-  node: Concept
-  updatedFields: [String!]
-  previousValues: ConceptPreviousValues
-}
-
-input ConceptSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ConceptSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ConceptSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ConceptSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: ConceptWhereInput
-}
-
-input ConceptUpdateDataInput {
-  title: String
-}
-
-input ConceptUpdateInput {
-  title: String
-}
-
-input ConceptUpdateManyInput {
-  create: [ConceptCreateInput!]
-  connect: [ConceptWhereUniqueInput!]
-  disconnect: [ConceptWhereUniqueInput!]
-  delete: [ConceptWhereUniqueInput!]
-  update: [ConceptUpdateWithWhereUniqueNestedInput!]
-  upsert: [ConceptUpsertWithWhereUniqueNestedInput!]
-}
-
-input ConceptUpdateOneInput {
-  create: ConceptCreateInput
-  connect: ConceptWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: ConceptUpdateDataInput
-  upsert: ConceptUpsertNestedInput
-}
-
-input ConceptUpdateWithWhereUniqueNestedInput {
-  where: ConceptWhereUniqueInput!
-  data: ConceptUpdateDataInput!
-}
-
-input ConceptUpsertNestedInput {
-  update: ConceptUpdateDataInput!
-  create: ConceptCreateInput!
-}
-
-input ConceptUpsertWithWhereUniqueNestedInput {
-  where: ConceptWhereUniqueInput!
-  update: ConceptUpdateDataInput!
-  create: ConceptCreateInput!
-}
-
-input ConceptWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ConceptWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ConceptWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ConceptWhereInput!]
-  id: ID
-
-  """All values that are not equal to given value."""
-  id_not: ID
-
-  """All values that are contained in given list."""
-  id_in: [ID!]
-
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
-
-  """All values less than the given value."""
-  id_lt: ID
-
-  """All values less than or equal the given value."""
-  id_lte: ID
-
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  title: String
-
-  """All values that are not equal to given value."""
-  title_not: String
-
-  """All values that are contained in given list."""
-  title_in: [String!]
-
-  """All values that are not contained in given list."""
-  title_not_in: [String!]
-
-  """All values less than the given value."""
-  title_lt: String
-
-  """All values less than or equal the given value."""
-  title_lte: String
-
-  """All values greater than the given value."""
-  title_gt: String
-
-  """All values greater than or equal the given value."""
-  title_gte: String
-
-  """All values containing the given string."""
-  title_contains: String
-
-  """All values not containing the given string."""
-  title_not_contains: String
-
-  """All values starting with the given string."""
-  title_starts_with: String
-
-  """All values not starting with the given string."""
-  title_not_starts_with: String
-
-  """All values ending with the given string."""
-  title_ends_with: String
-
-  """All values not ending with the given string."""
-  title_not_ends_with: String
-  _MagicalBackRelation_ConceptToConceptConfidence_every: ConceptConfidenceWhereInput
-  _MagicalBackRelation_ConceptToConceptConfidence_some: ConceptConfidenceWhereInput
-  _MagicalBackRelation_ConceptToConceptConfidence_none: ConceptConfidenceWhereInput
-  _MagicalBackRelation_ConceptToQuiz_every: QuizWhereInput
-  _MagicalBackRelation_ConceptToQuiz_some: QuizWhereInput
-  _MagicalBackRelation_ConceptToQuiz_none: QuizWhereInput
-  _MagicalBackRelation_ConceptToQuestion_every: QuestionWhereInput
-  _MagicalBackRelation_ConceptToQuestion_some: QuestionWhereInput
-  _MagicalBackRelation_ConceptToQuestion_none: QuestionWhereInput
-  _MagicalBackRelation_ConceptToCourse_every: CourseWhereInput
-  _MagicalBackRelation_ConceptToCourse_some: CourseWhereInput
-  _MagicalBackRelation_ConceptToCourse_none: CourseWhereInput
-}
-
-input ConceptWhereUniqueInput {
-  id: ID
-}
-
 type Course implements Node {
   id: ID!
   title: String!
   createdAt: DateTime!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz!]
-  concepts(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Concept!]
+  concepts: [String!]!
   instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor!]
   students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student!]
-  ltiSecret: String!
+  ltiSecret: String
 }
 
 """A connection to a list of items."""
@@ -568,11 +364,15 @@ type CourseConnection {
   aggregate: AggregateCourse!
 }
 
+input CourseCreateconceptsInput {
+  set: [String!]
+}
+
 input CourseCreateInput {
   title: String!
-  ltiSecret: String!
+  ltiSecret: String
+  concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
-  concepts: ConceptCreateManyInput
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
 }
@@ -594,25 +394,25 @@ input CourseCreateOneWithoutQuizzesInput {
 
 input CourseCreateWithoutInstructorsInput {
   title: String!
-  ltiSecret: String!
+  ltiSecret: String
+  concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
-  concepts: ConceptCreateManyInput
   students: StudentCreateManyWithoutCoursesInput
 }
 
 input CourseCreateWithoutQuizzesInput {
   title: String!
-  ltiSecret: String!
-  concepts: ConceptCreateManyInput
+  ltiSecret: String
+  concepts: CourseCreateconceptsInput
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
 }
 
 input CourseCreateWithoutStudentsInput {
   title: String!
-  ltiSecret: String!
+  ltiSecret: String
+  concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
-  concepts: ConceptCreateManyInput
   instructors: InstructorCreateManyWithoutCoursesInput
 }
 
@@ -642,7 +442,8 @@ type CoursePreviousValues {
   id: ID!
   title: String!
   createdAt: DateTime!
-  ltiSecret: String!
+  concepts: [String!]!
+  ltiSecret: String
 }
 
 type CourseSubscriptionPayload {
@@ -684,11 +485,15 @@ input CourseSubscriptionWhereInput {
   node: CourseWhereInput
 }
 
+input CourseUpdateconceptsInput {
+  set: [String!]
+}
+
 input CourseUpdateInput {
   title: String
   ltiSecret: String
+  concepts: CourseUpdateconceptsInput
   quizzes: QuizUpdateManyWithoutCourseInput
-  concepts: ConceptUpdateManyInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
 }
@@ -714,6 +519,7 @@ input CourseUpdateManyWithoutStudentsInput {
 input CourseUpdateOneWithoutQuizzesInput {
   create: CourseCreateWithoutQuizzesInput
   connect: CourseWhereUniqueInput
+  disconnect: Boolean
   delete: Boolean
   update: CourseUpdateWithoutQuizzesDataInput
   upsert: CourseUpsertWithoutQuizzesInput
@@ -722,15 +528,15 @@ input CourseUpdateOneWithoutQuizzesInput {
 input CourseUpdateWithoutInstructorsDataInput {
   title: String
   ltiSecret: String
+  concepts: CourseUpdateconceptsInput
   quizzes: QuizUpdateManyWithoutCourseInput
-  concepts: ConceptUpdateManyInput
   students: StudentUpdateManyWithoutCoursesInput
 }
 
 input CourseUpdateWithoutQuizzesDataInput {
   title: String
   ltiSecret: String
-  concepts: ConceptUpdateManyInput
+  concepts: CourseUpdateconceptsInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
 }
@@ -738,8 +544,8 @@ input CourseUpdateWithoutQuizzesDataInput {
 input CourseUpdateWithoutStudentsDataInput {
   title: String
   ltiSecret: String
+  concepts: CourseUpdateconceptsInput
   quizzes: QuizUpdateManyWithoutCourseInput
-  concepts: ConceptUpdateManyInput
   instructors: InstructorUpdateManyWithoutCoursesInput
 }
 
@@ -924,9 +730,6 @@ input CourseWhereInput {
   quizzes_every: QuizWhereInput
   quizzes_some: QuizWhereInput
   quizzes_none: QuizWhereInput
-  concepts_every: ConceptWhereInput
-  concepts_some: ConceptWhereInput
-  concepts_none: ConceptWhereInput
   instructors_every: InstructorWhereInput
   instructors_some: InstructorWhereInput
   instructors_none: InstructorWhereInput
@@ -1254,7 +1057,6 @@ type Mutation {
   createConceptConfidence(data: ConceptConfidenceCreateInput!): ConceptConfidence!
   createQuestionAttempt(data: QuestionAttemptCreateInput!): QuestionAttempt!
   createQuestion(data: QuestionCreateInput!): Question!
-  createConcept(data: ConceptCreateInput!): Concept!
   updateInstructor(data: InstructorUpdateInput!, where: InstructorWhereUniqueInput!): Instructor
   updateStudent(data: StudentUpdateInput!, where: StudentWhereUniqueInput!): Student
   updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
@@ -1264,7 +1066,6 @@ type Mutation {
   updateConceptConfidence(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   updateQuestionAttempt(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
   updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
-  updateConcept(data: ConceptUpdateInput!, where: ConceptWhereUniqueInput!): Concept
   deleteInstructor(where: InstructorWhereUniqueInput!): Instructor
   deleteStudent(where: StudentWhereUniqueInput!): Student
   deleteCourse(where: CourseWhereUniqueInput!): Course
@@ -1274,7 +1075,6 @@ type Mutation {
   deleteConceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   deleteQuestionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
   deleteQuestion(where: QuestionWhereUniqueInput!): Question
-  deleteConcept(where: ConceptWhereUniqueInput!): Concept
   upsertInstructor(where: InstructorWhereUniqueInput!, create: InstructorCreateInput!, update: InstructorUpdateInput!): Instructor!
   upsertStudent(where: StudentWhereUniqueInput!, create: StudentCreateInput!, update: StudentUpdateInput!): Student!
   upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
@@ -1284,7 +1084,6 @@ type Mutation {
   upsertConceptConfidence(where: ConceptConfidenceWhereUniqueInput!, create: ConceptConfidenceCreateInput!, update: ConceptConfidenceUpdateInput!): ConceptConfidence!
   upsertQuestionAttempt(where: QuestionAttemptWhereUniqueInput!, create: QuestionAttemptCreateInput!, update: QuestionAttemptUpdateInput!): QuestionAttempt!
   upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
-  upsertConcept(where: ConceptWhereUniqueInput!, create: ConceptCreateInput!, update: ConceptUpdateInput!): Concept!
   updateManyInstructors(data: InstructorUpdateInput!, where: InstructorWhereInput): BatchPayload!
   updateManyStudents(data: StudentUpdateInput!, where: StudentWhereInput): BatchPayload!
   updateManyCourses(data: CourseUpdateInput!, where: CourseWhereInput): BatchPayload!
@@ -1294,7 +1093,6 @@ type Mutation {
   updateManyConceptConfidences(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereInput): BatchPayload!
   updateManyQuestionAttempts(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereInput): BatchPayload!
   updateManyQuestions(data: QuestionUpdateInput!, where: QuestionWhereInput): BatchPayload!
-  updateManyConcepts(data: ConceptUpdateInput!, where: ConceptWhereInput): BatchPayload!
   deleteManyInstructors(where: InstructorWhereInput): BatchPayload!
   deleteManyStudents(where: StudentWhereInput): BatchPayload!
   deleteManyCourses(where: CourseWhereInput): BatchPayload!
@@ -1304,7 +1102,6 @@ type Mutation {
   deleteManyConceptConfidences(where: ConceptConfidenceWhereInput): BatchPayload!
   deleteManyQuestionAttempts(where: QuestionAttemptWhereInput): BatchPayload!
   deleteManyQuestions(where: QuestionWhereInput): BatchPayload!
-  deleteManyConcepts(where: ConceptWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -1605,7 +1402,6 @@ type Query {
   conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence]!
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt]!
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
-  concepts(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Concept]!
   instructor(where: InstructorWhereUniqueInput!): Instructor
   student(where: StudentWhereUniqueInput!): Student
   course(where: CourseWhereUniqueInput!): Course
@@ -1615,7 +1411,6 @@ type Query {
   conceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   questionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
   question(where: QuestionWhereUniqueInput!): Question
-  concept(where: ConceptWhereUniqueInput!): Concept
   instructorsConnection(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorConnection!
   studentsConnection(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StudentConnection!
   coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
@@ -1625,7 +1420,6 @@ type Query {
   conceptConfidencesConnection(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ConceptConfidenceConnection!
   questionAttemptsConnection(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionAttemptConnection!
   questionsConnection(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionConnection!
-  conceptsConnection(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ConceptConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -1638,7 +1432,7 @@ type Question implements Node {
   id: ID!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option!]
   prompt: String!
-  concept(where: ConceptWhereInput): Concept
+  concept: String
 }
 
 type QuestionAttempt implements Node {
@@ -1881,8 +1675,8 @@ type QuestionConnection {
 
 input QuestionCreateInput {
   prompt: String!
+  concept: String
   options: OptionCreateManyWithoutQuestionInput
-  concept: ConceptCreateOneInput
 }
 
 input QuestionCreateManyInput {
@@ -1902,7 +1696,7 @@ input QuestionCreateOneWithoutOptionsInput {
 
 input QuestionCreateWithoutOptionsInput {
   prompt: String!
-  concept: ConceptCreateOneInput
+  concept: String
 }
 
 """An edge in a connection."""
@@ -1919,6 +1713,8 @@ enum QuestionOrderByInput {
   id_DESC
   prompt_ASC
   prompt_DESC
+  concept_ASC
+  concept_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -1928,6 +1724,7 @@ enum QuestionOrderByInput {
 type QuestionPreviousValues {
   id: ID!
   prompt: String!
+  concept: String
 }
 
 type QuestionSubscriptionPayload {
@@ -1971,14 +1768,14 @@ input QuestionSubscriptionWhereInput {
 
 input QuestionUpdateDataInput {
   prompt: String
+  concept: String
   options: OptionUpdateManyWithoutQuestionInput
-  concept: ConceptUpdateOneInput
 }
 
 input QuestionUpdateInput {
   prompt: String
+  concept: String
   options: OptionUpdateManyWithoutQuestionInput
-  concept: ConceptUpdateOneInput
 }
 
 input QuestionUpdateManyInput {
@@ -2008,7 +1805,7 @@ input QuestionUpdateOneWithoutOptionsInput {
 
 input QuestionUpdateWithoutOptionsDataInput {
   prompt: String
-  concept: ConceptUpdateOneInput
+  concept: String
 }
 
 input QuestionUpdateWithWhereUniqueNestedInput {
@@ -2121,10 +1918,49 @@ input QuestionWhereInput {
 
   """All values not ending with the given string."""
   prompt_not_ends_with: String
+  concept: String
+
+  """All values that are not equal to given value."""
+  concept_not: String
+
+  """All values that are contained in given list."""
+  concept_in: [String!]
+
+  """All values that are not contained in given list."""
+  concept_not_in: [String!]
+
+  """All values less than the given value."""
+  concept_lt: String
+
+  """All values less than or equal the given value."""
+  concept_lte: String
+
+  """All values greater than the given value."""
+  concept_gt: String
+
+  """All values greater than or equal the given value."""
+  concept_gte: String
+
+  """All values containing the given string."""
+  concept_contains: String
+
+  """All values not containing the given string."""
+  concept_not_contains: String
+
+  """All values starting with the given string."""
+  concept_starts_with: String
+
+  """All values not starting with the given string."""
+  concept_not_starts_with: String
+
+  """All values ending with the given string."""
+  concept_ends_with: String
+
+  """All values not ending with the given string."""
+  concept_not_ends_with: String
   options_every: OptionWhereInput
   options_some: OptionWhereInput
   options_none: OptionWhereInput
-  concept: ConceptWhereInput
   _MagicalBackRelation_QuestionToQuiz_every: QuizWhereInput
   _MagicalBackRelation_QuestionToQuiz_some: QuizWhereInput
   _MagicalBackRelation_QuestionToQuiz_none: QuizWhereInput
@@ -2141,8 +1977,8 @@ type Quiz implements Node {
   id: ID!
   createdAt: DateTime!
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
-  concepts(where: ConceptWhereInput, orderBy: ConceptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Concept!]
-  course(where: CourseWhereInput): Course!
+  concepts: [String!]!
+  course(where: CourseWhereInput): Course
   title: String!
 }
 
@@ -2513,11 +2349,15 @@ type QuizConnection {
   aggregate: AggregateQuiz!
 }
 
+input QuizCreateconceptsInput {
+  set: [String!]
+}
+
 input QuizCreateInput {
   title: String!
+  concepts: QuizCreateconceptsInput
   questions: QuestionCreateManyInput
-  concepts: ConceptCreateManyInput
-  course: CourseCreateOneWithoutQuizzesInput!
+  course: CourseCreateOneWithoutQuizzesInput
 }
 
 input QuizCreateManyWithoutCourseInput {
@@ -2532,8 +2372,8 @@ input QuizCreateOneInput {
 
 input QuizCreateWithoutCourseInput {
   title: String!
+  concepts: QuizCreateconceptsInput
   questions: QuestionCreateManyInput
-  concepts: ConceptCreateManyInput
 }
 
 """An edge in a connection."""
@@ -2559,6 +2399,7 @@ enum QuizOrderByInput {
 type QuizPreviousValues {
   id: ID!
   createdAt: DateTime!
+  concepts: [String!]!
   title: String!
 }
 
@@ -2601,17 +2442,21 @@ input QuizSubscriptionWhereInput {
   node: QuizWhereInput
 }
 
+input QuizUpdateconceptsInput {
+  set: [String!]
+}
+
 input QuizUpdateDataInput {
   title: String
+  concepts: QuizUpdateconceptsInput
   questions: QuestionUpdateManyInput
-  concepts: ConceptUpdateManyInput
   course: CourseUpdateOneWithoutQuizzesInput
 }
 
 input QuizUpdateInput {
   title: String
+  concepts: QuizUpdateconceptsInput
   questions: QuestionUpdateManyInput
-  concepts: ConceptUpdateManyInput
   course: CourseUpdateOneWithoutQuizzesInput
 }
 
@@ -2634,8 +2479,8 @@ input QuizUpdateOneInput {
 
 input QuizUpdateWithoutCourseDataInput {
   title: String
+  concepts: QuizUpdateconceptsInput
   questions: QuestionUpdateManyInput
-  concepts: ConceptUpdateManyInput
 }
 
 input QuizUpdateWithWhereUniqueWithoutCourseInput {
@@ -2768,9 +2613,6 @@ input QuizWhereInput {
   questions_every: QuestionWhereInput
   questions_some: QuestionWhereInput
   questions_none: QuestionWhereInput
-  concepts_every: ConceptWhereInput
-  concepts_some: ConceptWhereInput
-  concepts_none: ConceptWhereInput
   course: CourseWhereInput
   _MagicalBackRelation_QuizToQuizAttempt_every: QuizAttemptWhereInput
   _MagicalBackRelation_QuizToQuizAttempt_some: QuizAttemptWhereInput
@@ -3149,5 +2991,4 @@ type Subscription {
   conceptConfidence(where: ConceptConfidenceSubscriptionWhereInput): ConceptConfidenceSubscriptionPayload
   questionAttempt(where: QuestionAttemptSubscriptionWhereInput): QuestionAttemptSubscriptionPayload
   question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload
-  concept(where: ConceptSubscriptionWhereInput): ConceptSubscriptionPayload
 }
