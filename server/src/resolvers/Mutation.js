@@ -216,10 +216,35 @@ function updateQuestion(root, args, context, info){
 function conceptQuestion (root, args, context, info) {
     return context.db.mutation.updateQuestion({
         data: {
-            concept:{
-                create:{
-                    title: args.title
-                }
+            concept:args.title
+        },
+        where:{
+            id:args.id
+        }
+    })
+}
+
+function conceptQuiz (root, args, context, info) {
+    return context.db.mutation.updateQuiz({
+        data: {
+            concepts:{
+                create:[{
+                    title:args.title
+                }]
+            }
+        },
+        where:{
+            id:args.id
+        }
+    })
+}
+function conceptCourse (root, args, context, info){
+    return context.db.mutation.updateCourse({
+        data: {
+            concepts:{
+                create:[{
+                    title:args.title
+                }]
             }
         },
         where:{
@@ -493,6 +518,8 @@ module.exports = {
     updateQuestion,
     deleteQuestion,
     conceptQuestion,
+    conceptQuiz, 
+    conceptCourse,
     updateOption,
     instructorLogin,
     instructorSignup,

@@ -22,6 +22,8 @@ type Mutation {
   updateQuestion(id:ID, prompt:String): Question!
   deleteQuestion(id:ID): Question!
   conceptQuestion(id:ID, title:String): Question!
+  conceptQuiz(id:ID, title:String): Quiz!
+  conceptCourse(id:ID, title:String): Course!
   updateOption(id:ID, text:String!, isCorrect:Boolean): Option!
 
   instructorSignup(email:String!, password:String!): InstructorAuthPayload

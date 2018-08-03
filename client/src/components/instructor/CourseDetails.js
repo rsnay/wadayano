@@ -128,7 +128,7 @@ export class CourseDetails extends Component {
 
         <button className="button is-primary" onClick = {() => this.deleteCourse(course)}>
             <span className="icon">
-            <i className="fas fa-plus"></i>
+            <i className="fas fa-trash-alt"></i>
             </span>
             <span>Delete Course</span>
         </button>

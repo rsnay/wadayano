@@ -24,10 +24,10 @@ type Course {
     title: String!
     createdAt: DateTime!
     quizzes: [Quiz!]!
-    concepts: [Concept!]!
+    concepts: [String!]!
     instructors: [Instructor!]!
     students: [Student!]!
-    ltiSecret: String!
+    ltiSecret: String
 }
 
 type Concept {
@@ -39,8 +39,8 @@ type Quiz {
     id: ID! @unique
     createdAt: DateTime!
     questions: [Question!]!
-    concepts:[Concept!]!
-    courseId:ID
+    concepts:[String!]!
+    course:Course
     title: String!
 }
 
@@ -48,7 +48,7 @@ type Question {
     id: ID! @unique
     options: [Option!]!
     prompt: String!
-    concept: Concept
+    concept: String
 }
 
 type Option {
@@ -86,7 +86,7 @@ type QuestionAttempt {
 
 type ConceptConfidence {
     id: ID! @unique
-    concept: Concept
+    concept: String
     confidence: Int
     confidenceError: Float # Same as above, but filtered to a single concept. Not required, since it will be added once the quiz is done
     confidenceBias: Float # Ditto

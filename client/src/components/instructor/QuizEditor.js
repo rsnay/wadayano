@@ -94,6 +94,34 @@ export class QuizEditor extends Component {
         title.value = "TEST";
     }
 
+    checkConcepts(quiz, question){
+        var inQuiz = false;
+        var input = document.getElementById("concept"+question.id).value;
+        for(var i = 0; i < quiz.concepts.length; i++){
+            if(input == quiz.concepts[i]){
+                inQuiz = true;
+            }
+        }
+        if(!inQuiz){
+
+        }
+    }
+
+    conceptFilter(quiz, question){
+        var search = document.getElementById("concept"+question.id).value;
+        console.log(search);
+    }
+
+    saveConcept(question){
+        this.props.conceptQuestion({
+            variables:{
+                id:question.id,
+                title:document.getElementById("concept"+question.id).value
+            }
+        })
+        //window.location.reload(true);
+    }
+
   render() {
 
     if (this.props.quizQuery && this.props.quizQuery.loading) {
@@ -130,7 +158,8 @@ export class QuizEditor extends Component {
                 <textarea id = {question.id} key = {question.id} className="textarea is-medium" type="text">{question.prompt}</textarea>
             </div>
             <p className="panel-block">
-                <input type="text" id="concept" placeholder="concept" onChange = {() => this.conceptFilter(quiz)}></input>
+                <input type="text" id={"concept"+question.id} placeholder="concept" onChange = {() => this.conceptFilter(quiz, question)}></input>
+                <button onClick = {() => this.saveConcept(question)}>+</button>
             </p>
             <form>
                 <p className="panel-block" key={question.options[0].id}>
@@ -196,11 +225,20 @@ export const QUIZ_QUERY = gql`
     quiz(id:$id){
         id
         title
+        concepts{
+            title
+        }
         course{
             title
+            concepts{
+                title
+            }
             id
         }
         questions{
+            concept{
+                title
+            }
             id
             prompt
             options{
@@ -271,6 +309,51 @@ mutation optionSaveMutation(
         }
     }`
 
+export const CONCEPT_QUESTION = gql`
+mutation conceptQuestion(
+    $id:ID!
+    $title:String!){
+        conceptQuestion(
+            id:$id
+            title:$title
+        ){
+            id
+            concept{
+                title
+            }
+            prompt
+        }
+    }`
+
+export const CONCEPT_QUIZ = gql`
+mutation conceptQuiz{
+        conceptQuiz(
+            id:$id
+            title:$title
+        ){
+            id
+            concept{
+                title
+            }
+            prompt
+        }
+    }`
+
+
+export const CONCEPT_COURSE = gql`
+mutation conceptCourse{
+        conceptQuiz(
+            id:$id
+            title:$title
+        ){
+            id
+            concept{
+                title
+            }
+            prompt
+        }
+    }`
+
 export const ADD_QUESTION = gql`
 mutation addQuestionMutation($id:ID!)
     {
@@ -294,5 +377,8 @@ export default compose(
     graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),
     graphql(QUESTION_DELETE, {name: 'questionDeleteMutation'}),
     graphql(QUIZ_SAVE, {name: 'quizSaveMutation'}),
-    graphql(QUIZ_DELETE, {name:'quizDeleteMutation'})
+    graphql(QUIZ_DELETE, {name:'quizDeleteMutation'}),
+    graphql(CONCEPT_QUESTION, {name: 'conceptQuestion'}),
+    graphql(CONCEPT_QUIZ, {name: 'conceptQuiz'}),
+    graphql(CONCEPT_COURSE, {name:'conceptCourse'})
  ) (QuizEditor)
