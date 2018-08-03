@@ -44,7 +44,6 @@ export class QuizEditor extends Component {
             }
         }
         console.log(quiz);
-        var i = 0;
         this.props.quizSaveMutation({
             variables:{
                 id:quiz.id,
@@ -75,6 +74,25 @@ export class QuizEditor extends Component {
             console.log(i);
             this.saveConcept(quiz, (quiz.questions[i]));
         }
+        var concepts = [];
+        for(var i = 0; i < quiz.questions.length; i++){
+            var newConcept = true;
+            for(var j = 0; j< concepts.length; j++){
+                if(quiz.questions[i].concept === concepts[j]){
+                    newConcept = false;
+                }
+            }
+            if(newConcept){
+                concepts.push(quiz.questions[i].concept);
+            }
+        }
+        console.log("here");
+        this.props.conceptQuiz({
+            variables:{
+                id:quiz.id,
+                concepts:concepts
+            }
+        })
         window.location.reload(true);
     }
 
@@ -138,21 +156,6 @@ export class QuizEditor extends Component {
                 title:document.getElementById("concept"+question.id).value
             }
         })
-        //window.location.reload(true);
-        var inQuiz = false;
-        for(var i=0;i < quiz.concepts.length;i++){
-            if(quiz.concepts[i]===document.getElementById("concept"+question.id).value){
-                inQuiz = true;
-            }
-        }
-        if(!inQuiz){
-            this.props.conceptQuiz({
-                variables:{
-                    id:quiz.id,
-                    title:document.getElementById("concept"+question.id).value
-                }
-            })
-        }
     }
 
   render() {

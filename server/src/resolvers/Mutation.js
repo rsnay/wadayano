@@ -217,7 +217,7 @@ function conceptQuiz (root, args, context, info) {
     return context.db.mutation.updateQuiz({
         data: {
             concepts:{
-                set:args.concepts
+                set:args.concepts//?
             }
         },
         where:{

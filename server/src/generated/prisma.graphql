@@ -1,5 +1,5 @@
-# source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Thu Aug 02 2018 18:31:47 GMT-0600 (Mountain Daylight Time)
+# source: https://us1.prisma.sh/wadayano/wadayano/dev
+# timestamp: Fri Aug 03 2018 16:34:54 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -334,9 +334,6 @@ input ConceptConfidenceWhereInput {
 
   """All values greater than or equal the given value."""
   confidenceBias_gte: Float
-  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_every: QuizAttemptWhereInput
-  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_some: QuizAttemptWhereInput
-  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input ConceptConfidenceWhereUniqueInput {
@@ -1365,12 +1362,6 @@ input OptionWhereInput {
   """All values not ending with the given string."""
   text_not_ends_with: String
   question: QuestionWhereInput
-  _MagicalBackRelation_CorrectAnswerAttemptRelation_every: QuestionAttemptWhereInput
-  _MagicalBackRelation_CorrectAnswerAttemptRelation_some: QuestionAttemptWhereInput
-  _MagicalBackRelation_CorrectAnswerAttemptRelation_none: QuestionAttemptWhereInput
-  _MagicalBackRelation_SelectedAnswerAttemptRelation_every: QuestionAttemptWhereInput
-  _MagicalBackRelation_SelectedAnswerAttemptRelation_some: QuestionAttemptWhereInput
-  _MagicalBackRelation_SelectedAnswerAttemptRelation_none: QuestionAttemptWhereInput
 }
 
 input OptionWhereUniqueInput {
@@ -1654,9 +1645,6 @@ input QuestionAttemptWhereInput {
   question: QuestionWhereInput
   option: OptionWhereInput
   correctOption: OptionWhereInput
-  _MagicalBackRelation_QuestionAttemptToQuizAttempt_every: QuizAttemptWhereInput
-  _MagicalBackRelation_QuestionAttemptToQuizAttempt_some: QuizAttemptWhereInput
-  _MagicalBackRelation_QuestionAttemptToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input QuestionAttemptWhereUniqueInput {
@@ -1961,12 +1949,6 @@ input QuestionWhereInput {
   options_every: OptionWhereInput
   options_some: OptionWhereInput
   options_none: OptionWhereInput
-  _MagicalBackRelation_QuestionToQuiz_every: QuizWhereInput
-  _MagicalBackRelation_QuestionToQuiz_some: QuizWhereInput
-  _MagicalBackRelation_QuestionToQuiz_none: QuizWhereInput
-  _MagicalBackRelation_QuestionToQuestionAttempt_every: QuestionAttemptWhereInput
-  _MagicalBackRelation_QuestionToQuestionAttempt_some: QuestionAttemptWhereInput
-  _MagicalBackRelation_QuestionToQuestionAttempt_none: QuestionAttemptWhereInput
 }
 
 input QuestionWhereUniqueInput {
@@ -2614,9 +2596,6 @@ input QuizWhereInput {
   questions_some: QuestionWhereInput
   questions_none: QuestionWhereInput
   course: CourseWhereInput
-  _MagicalBackRelation_QuizToQuizAttempt_every: QuizAttemptWhereInput
-  _MagicalBackRelation_QuizToQuizAttempt_some: QuizAttemptWhereInput
-  _MagicalBackRelation_QuizToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input QuizWhereUniqueInput {

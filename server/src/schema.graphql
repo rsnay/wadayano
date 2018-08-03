@@ -20,9 +20,9 @@ type Mutation {
   addQuestion(id:ID): Quiz!
   updateQuestion(id:ID, prompt:String): Question!
   deleteQuestion(id:ID): Question!
-  conceptQuestion(id:ID, title:String): Question!
-  conceptQuiz(id:ID, title:String): Quiz!
-  conceptCourse(id:ID, title:String): Course!
+  conceptQuestion(id:ID, concept:String): Question!
+  conceptQuiz(id:ID, concepts:[String!]!): Quiz!
+  conceptCourse(id:ID, concept:String): Course!
   updateOption(id:ID, text:String!, isCorrect:Boolean): Option!
 
   instructorSignup(email:String!, password:String!): InstructorAuthPayload
