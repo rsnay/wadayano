@@ -22,6 +22,8 @@ export class QuizEditor extends Component {
         this.updateQuiz = this.updateQuiz.bind(this);
         this.addQuestion = this.addQuestion.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
+        this.updateQuiz = this.updateQuiz.bind(this);
+        this.saveConcept = this.saveConcept.bind(this);
       }
 
     addQuestion(){
@@ -35,6 +37,12 @@ export class QuizEditor extends Component {
     }
 
     updateQuiz(quiz){
+        for(var i=0;i<quiz.questions.length;i++){
+            if(document.getElementById(("concept"+quiz.questions[i].id)).value===null || document.getElementById(("concept"+quiz.questions[i].id)).value.replace(/\s/g,'')===""){
+                alert("Please enter info into required fields");
+                return;
+            }
+        }
         console.log(quiz);
         var i = 0;
         this.props.quizSaveMutation({
@@ -49,6 +57,7 @@ export class QuizEditor extends Component {
             this.props.questionSaveMutation({
                 variables:{
                     id:quiz.questions[i].id,
+                    concept:document.getElementById("concept"+quiz.questions[i].id).value,
                     prompt:document.getElementById(quiz.questions[i].id).value
                 }
             });
@@ -63,6 +72,8 @@ export class QuizEditor extends Component {
                     }
                 })
             }
+            console.log(i);
+            this.saveConcept(quiz, (quiz.questions[i]));
         }
         window.location.reload(true);
     }
@@ -97,7 +108,7 @@ export class QuizEditor extends Component {
         var inQuiz = false;
         var input = document.getElementById("concept"+question.id).value;
         for(var i = 0; i < quiz.concepts.length; i++){
-            if(input == quiz.concepts[i]){
+            if(input === quiz.concepts[i]){
                 inQuiz = true;
             }
         }
@@ -109,9 +120,18 @@ export class QuizEditor extends Component {
     conceptFilter(quiz, question){
         var search = document.getElementById("concept"+question.id).value;
         console.log(search);
+        var strs = [];
+        var courseConcepts = quiz.course.concepts;
+        for(var i=0; i < courseConcepts; i++){
+            if(courseConcepts[i].startsWith(document.getElementById("concept"+question.id).value,0)){
+                strs.push(courseConcepts[i]);
+            }
+        }
+        console.log(strs);
     }
 
-    saveConcept(question){
+    saveConcept(quiz, question){
+        console.log(question);
         this.props.conceptQuestion({
             variables:{
                 id:question.id,
@@ -119,6 +139,20 @@ export class QuizEditor extends Component {
             }
         })
         //window.location.reload(true);
+        var inQuiz = false;
+        for(var i=0;i < quiz.concepts.length;i++){
+            if(quiz.concepts[i]===document.getElementById("concept"+question.id).value){
+                inQuiz = true;
+            }
+        }
+        if(!inQuiz){
+            this.props.conceptQuiz({
+                variables:{
+                    id:quiz.id,
+                    title:document.getElementById("concept"+question.id).value
+                }
+            })
+        }
     }
 
   render() {
@@ -163,8 +197,7 @@ export class QuizEditor extends Component {
                 <textarea id = {question.id} key = {question.id} className="textarea is-medium" type="text">{question.prompt}</textarea>
             </div>
             <p className="panel-block">
-                <input type="text" id={"concept"+question.id} placeholder="concept" onChange = {() => this.conceptFilter(quiz, question)}></input>
-                <button onClick = {() => this.saveConcept(question)}>+</button>
+                <input type="text" defaultValue={question.concept} id={"concept"+question.id} placeholder="concept" onChange = {() => this.conceptFilter(quiz, question)}></input>
             </p>
             <form>
                 <p className="panel-block" key={question.options[0].id}>

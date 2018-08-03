@@ -44,7 +44,9 @@ function addCourse (root, args, context, info) {
                     id: userId
                 }
             },
-            concepts:["Example Concept"],
+            concepts:{
+                set:["Example Concept"]
+            },
             quizzes:{
                 create:[{
                     title:"Example Quiz",
@@ -75,28 +77,6 @@ function addCourse (root, args, context, info) {
                 }]
             }
         },
-    }, info)
-}
-
-function updateCourse (root, args, context, info) {
-    return context.db.mutation.updateCourse({
-        data: {
-            title:args.title
-        },
-        where: {
-            id:args.id
-        }
-    }, info)
-}
-
-function updateCourse (root, args, context, info) {
-    return context.db.mutation.updateCourse({
-        data: {
-            title:args.title
-        },
-        where: {
-            id:args.id
-        }
     }, info)
 }
 
@@ -186,7 +166,8 @@ function addQuestion (root, args, context, info) {
 function updateQuiz(root, args, context, info) {
     return context.db.mutation.updateQuiz({
         data:{
-            title:args.title
+            title:args.title,
+            concepts:args.concepts
         },
         where:{
             id:args.id
@@ -236,9 +217,7 @@ function conceptQuiz (root, args, context, info) {
     return context.db.mutation.updateQuiz({
         data: {
             concepts:{
-                create:[{
-                    title:args.title
-                }]
+                set:args.concepts
             }
         },
         where:{
@@ -250,9 +229,7 @@ function conceptCourse (root, args, context, info){
     return context.db.mutation.updateCourse({
         data: {
             concepts:{
-                create:[{
-                    title:args.title
-                }]
+                set:args.concepts
             }
         },
         where:{
