@@ -24,6 +24,7 @@ type Mutation {
   conceptQuiz(id:ID, title:String): Quiz!
   conceptCourse(id:ID, title:String): Course!
   updateOption(id:ID, text:String!, isCorrect:Boolean): Option!
+  updateSurvey(courseId: ID!, survey: Json!): Course!
 
   instructorSignup(email:String!, password:String!): InstructorAuthPayload
   instructorLogin(email:String!, password:String!): InstructorAuthPayload

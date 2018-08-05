@@ -91,6 +91,17 @@ function updateCourse (root, args, context, info) {
     }, info)
 }
 
+function updateSurvey (root, args, context, info) {
+    return context.db.mutation.updateCourse({
+        data: {
+            survey: args.survey
+        },
+        where: {
+            id: args.courseId
+        }
+    }, info);
+}
+
 function addQuiz (root, args, context, info) {
     return context.db.mutation.updateCourse({
       data: {
@@ -527,6 +538,7 @@ module.exports = {
     conceptQuiz, 
     conceptCourse,
     updateOption,
+    updateSurvey,
     instructorLogin,
     instructorSignup,
     startOrResumeQuizAttempt,

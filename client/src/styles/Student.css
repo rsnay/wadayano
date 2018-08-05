@@ -47,3 +47,41 @@ progress::-webkit-progress-value {
     height: 3rem;
     width: 5rem;
 }
+
+/* Survey */
+.survey-editor {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    /* Lots of things overwrite the bulma textarea style */
+    width: 100%!important;
+    height: 100%!important;
+    padding-bottom: 100px;
+    line-height:255%!important;
+    resize: none!important;
+}
+
+.survey-question {
+    margin-bottom: 2rem;
+}
+
+.survey-question-prompt {
+    font-size: 1.2rem;
+}
+
+.survey-question-option {
+    display: block;
+    cursor: pointer;
+    padding: 0 0 1rem 1.5rem;
+    text-align: left;
+    font-size: 1.2rem;
+}
+
+.survey-question-option > input[type=radio] {
+    vertical-align: middle;
+    margin-top: -0.2rem;
+}
+
+.survey-question-option-text {
+    padding-left: 0.6rem;
+}
