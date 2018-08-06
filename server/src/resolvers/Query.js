@@ -36,11 +36,30 @@ function currentStudent(root, args, context, info) {
   }
   return context.db.query.student({where:{id:userId}}, info);
 }
+
+function currentStudentQuizAttempts(root, args, context, info) {
   const { userId, isInstructor } = getUserInfo(context);
   if (isInstructor) {
     throw Error('Not a student');
   }
-  return context.db.query.quizAttempts({}, info);
+  return context.db.query.quizAttempts({
+    orderBy: args.orderBy
+  }, info);
+}
+
+async function currentStudentQuizAttempt(root, args, context, info) {
+  const { userId, isInstructor } = getUserInfo(context);
+  if (isInstructor) {
+    throw Error('Not a student');
+  }
+  // Check that quiz attempt belongs to current student
+  const attempt = await context.db.query.quizAttempt({where: { id: args. id}}, `{ student { id } }`);
+  if (attempt.student.id !== userId) {
+    throw Error('Quiz attempt belongs to a different student');
+  }
+  return context.db.query.quizAttempt({
+    where: { id: args.id }
+  }, info);
 }
 
 module.exports = {
@@ -51,6 +70,7 @@ module.exports = {
   quiz,
   question,
   option,
-  //studentQuizAttempts
   currentStudent,
+  currentStudentQuizAttempts,
+  currentStudentQuizAttempt
 }

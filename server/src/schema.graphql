@@ -1,4 +1,4 @@
-#import Student, Course, Quiz, Question, Option, QuizAttempt, QuestionAttempt, ConceptConfidence from "./generated/prisma.graphql"
+#import Student, Course, Quiz, Question, Option, QuizAttempt, QuizAttemptOrderByInput, QuestionAttempt, ConceptConfidence from "./generated/prisma.graphql"
 
 type Query {
   quizzes: [Quiz!]!
@@ -9,6 +9,8 @@ type Query {
   question(id:ID): Question!
   option(id:ID): Option!
   currentStudent: Student!
+  currentStudentQuizAttempts(orderBy: QuizAttemptOrderByInput): [QuizAttempt!]!
+  currentStudentQuizAttempt(id: ID!): QuizAttempt!
 }
 
 type Mutation {
