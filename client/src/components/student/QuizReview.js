@@ -3,6 +3,8 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
+import { formatScore } from '../../utils';
+
 class QuizReview extends Component {
 
     wadayanoScore(quizAttempt)
@@ -48,7 +50,7 @@ class QuizReview extends Component {
     const conceptConfidences = quizAttempt.conceptConfidences
 
     // Score format of 33.3%
-    const formattedScore = `${Math.round(quizAttempt.score * 1000) / 10}%`;
+    const formattedScore = formatScore(quizAttempt.score);
 
     const gradePostMessage = this.props.isGraded && (this.props.gradePostSucceeded ?
             <span class="notification is-success is-pulled-right">Score posted successfully.</span>
