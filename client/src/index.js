@@ -25,12 +25,26 @@ const middlewareAuthLink = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-
 const httpLinkWithAuthToken = middlewareAuthLink.concat(httpLink);
+
+const defaultOptions = {
+    watchQuery: {
+      fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
+    },
+    query: {
+      fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
+    },
+    mutate: {
+      errorPolicy: 'all',
+    },
+  };
 
 const client = new ApolloClient({
     link: httpLinkWithAuthToken,
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
+    defaultOptions: defaultOptions
 });
 
 ReactDOM.render(
