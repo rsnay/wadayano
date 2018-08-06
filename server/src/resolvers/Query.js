@@ -29,7 +29,13 @@ function option(root, args, context, info){
   return context.db.query.option({where:{id:args.id}}, info)
 }
 
-function studentQuizAttempts(root, args, context, info) {
+function currentStudent(root, args, context, info) {
+  const { userId, isInstructor } = getUserInfo(context);
+  if (isInstructor) {
+    throw Error('Not a student');
+  }
+  return context.db.query.student({where:{id:userId}}, info);
+}
   const { userId, isInstructor } = getUserInfo(context);
   if (isInstructor) {
     throw Error('Not a student');
@@ -46,4 +52,5 @@ module.exports = {
   question,
   option,
   //studentQuizAttempts
+  currentStudent,
 }

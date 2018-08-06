@@ -8,6 +8,7 @@ type Query {
   course(id:ID): Course!
   question(id:ID): Question!
   option(id:ID): Option!
+  currentStudent: Student!
 }
 
 type Mutation {
