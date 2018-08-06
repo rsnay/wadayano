@@ -142,12 +142,12 @@ export class CourseDetails extends Component {
                 <span>New Quiz</span>
             </button>
           <div style={{overflowX: "auto"}}>
-          <table className="table is-striped is-hoverable is-fullwidth">
+          <table className="table is-striped is-hoverable is-fullwidth quiz-table">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Title</th>
-                    <th>Question Count</th>
+                    <th style={{width:"99%"}}>Title</th>
+                    <th style={{whiteSpace: "nowrap"}}>Questions</th>
                     <th>Actions</th>
                 </tr>
             </thead>

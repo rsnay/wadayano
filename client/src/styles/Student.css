@@ -85,3 +85,8 @@ progress::-webkit-progress-value {
 .survey-question-option-text {
     padding-left: 0.6rem;
 }
+
+/* Dashboard */
+.quiz-table tbody tr td {
+    vertical-align: middle;
+}

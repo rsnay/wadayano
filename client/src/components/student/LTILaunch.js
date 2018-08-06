@@ -13,12 +13,7 @@ export default class LTILaunch extends Component {
     super(props);
 
     this.state = {
-      signupMode: false, // Determines if log in or sign up form will be shown
-      email: '',
-      password: '',
-      passwordConfirm: '',
       error: '',
-      isLoading: false
     };
   }
 
@@ -31,16 +26,12 @@ export default class LTILaunch extends Component {
       // Redirect
       this.props.history.replace(`/student/${params.action}/${params.parameter1}`);
     } catch (error) {
+      // Display error
       this.setState({ error: 'Something went wrong with the LTI launch. Please try again.'});
     }
   }
 
   render() {
-
-    if (this.props.quizQuery && this.props.quizQuery.loading) {
-      return <LoadingBox />;
-    }
-
     if (this.state.error) {
       return <ErrorBox>
         <p>{this.state.error}</p>

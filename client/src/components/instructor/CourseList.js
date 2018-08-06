@@ -27,9 +27,8 @@ export class CourseList extends Component {
     if (this.props.instructorQuery && this.props.instructorQuery.error) {
         return <ErrorBox/>;
     }
-    console.log(this.props);
+
     let courses = this.props.instructorQuery.instructor.courses;
-    console.log(courses);
 
     return (
         <section className="section">
