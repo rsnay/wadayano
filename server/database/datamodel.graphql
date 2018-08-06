@@ -28,6 +28,7 @@ type Course {
     instructors: [Instructor!]!
     students: [Student!]!
     ltiSecret: String
+    survey: Json
 }
 
 type Quiz {
@@ -87,3 +88,9 @@ type ConceptConfidence {
     confidenceBias: Float # Ditto
 }
  
+ type SurveyResult {
+    id: ID! @unique
+    course: Course!
+    student: Student!
+    answers: Json!
+ }

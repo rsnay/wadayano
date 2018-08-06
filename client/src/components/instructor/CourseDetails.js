@@ -107,7 +107,7 @@ export class CourseDetails extends Component {
                 <span>Set up a non-graded survey with multiple-choice questions for students to participate in. Place an LTI link in your LMS, and view the survey results here.<br /></span>
                 <span className="is-flex-desktop" style={{marginLeft: "0.5rem"}}>
                     <button style={{marginLeft: "0.5rem", marginBottom: "0.5rem"}} className="button is-light"
-                        onClick={() => alert('Not yet implemented')}>
+                        onClick={() => this.props.history.push('/instructor/survey/edit/' + course.id)}>
                         <span className="icon">
                         <i className="fas fa-edit"></i>
                         </span>
@@ -123,7 +123,7 @@ export class CourseDetails extends Component {
                     </button>
                     <br />
                     <button style={{marginLeft: "0.5rem"}} className="button is-light"
-                        onClick={() => alert('Not yet implemented')}>
+                        onClick={() => this.props.history.push('/instructor/survey/results/' + course.id)}>
                         <span className="icon">
                         <i className="fas fa-chart-bar"></i>
                         </span>
@@ -142,12 +142,12 @@ export class CourseDetails extends Component {
                 <span>New Quiz</span>
             </button>
           <div style={{overflowX: "auto"}}>
-          <table className="table is-striped is-hoverable is-fullwidth">
+          <table className="table is-striped is-hoverable is-fullwidth quiz-table">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Title</th>
-                    <th>Question Count</th>
+                    <th style={{width:"99%"}}>Title</th>
+                    <th style={{whiteSpace: "nowrap"}}>Questions</th>
                     <th>Actions</th>
                 </tr>
             </thead>

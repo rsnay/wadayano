@@ -3,6 +3,8 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
+import { formatScore } from '../../utils';
+
 class QuizReview extends Component {
 
     wadayanoScore(quizAttempt)
@@ -29,14 +31,6 @@ class QuizReview extends Component {
 
   render() {
 
-    /*if (this.props.query && this.props.query.loading) {
-        return <LoadingBox />;
-    }
-
-    if (this.props.query && this.props.query.error) {
-        return <ErrorBox><p>Couldn’t load the quiz review</p></ErrorBox>;
-    }*/
-
     const quizAttempt = this.props.quizAttempt;
     console.log(quizAttempt);
     console.log(quizAttempt.questionAttempts[0].question.title);
@@ -48,10 +42,12 @@ class QuizReview extends Component {
     const conceptConfidences = quizAttempt.conceptConfidences
 
     // Score format of 33.3%
-    const formattedScore = `${Math.round(quizAttempt.score * 1000) / 10}%`;
+    const formattedScore = formatScore(quizAttempt.score);
 
-    const gradePostMessage = this.props.isGraded && (this.props.gradePostSucceeded ?
-            <span class="notification is-success is-pulled-right">Score posted successfully.</span>
+    // If postSucceeded is null, then it was not a graded attempt
+    const isGraded = (quizAttempt.postSucceeded !== null);
+    const gradePostMessage = isGraded && (quizAttempt.postSucceeded ?
+            <span class="notification is-success is-pulled-right">Score was posted successfully.</span>
         :
             <span className="notification is-danger is-pulled-right">There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.</span>
         );
@@ -92,9 +88,7 @@ class QuizReview extends Component {
 }
 
 QuizReview.propTypes = {
-    quizAttempt: PropTypes.object.isRequired,
-    isGraded: PropTypes.bool.isRequired,
-    gradePostSucceeded: PropTypes.bool
+    quizAttempt: PropTypes.object.isRequired
 };
 
 export const QUIZ_ATTEMPT_QUERY = gql`

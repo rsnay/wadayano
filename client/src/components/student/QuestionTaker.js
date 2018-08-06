@@ -134,7 +134,7 @@ class QuestionTaker extends Component {
         return (
             <div>
                 {prompt}
-                {<br />}
+                <br />
                 {options}
                 {this.state.selectedOption && confidenceSelector}
                 {this.state.confident !== null && submitButton}
@@ -145,6 +145,7 @@ class QuestionTaker extends Component {
         return (
             <div>
                 {review}
+                <br />
                 {continueButton}
             </div>
         );
