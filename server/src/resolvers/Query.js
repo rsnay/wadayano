@@ -42,7 +42,15 @@ function currentStudentQuizAttempts(root, args, context, info) {
   if (isInstructor) {
     throw Error('Not a student');
   }
+  // Filter to attempts from current student
+  let where = { student: { id: userId }};
+  // Filter to a given course, if provided
+  if (args.courseId) {
+    where.quiz = { course: { id: args.courseId } }; 
+  }
+  // Order by provided order
   return context.db.query.quizAttempts({
+    where,
     orderBy: args.orderBy
   }, info);
 }
@@ -53,9 +61,13 @@ async function currentStudentQuizAttempt(root, args, context, info) {
     throw Error('Not a student');
   }
   // Check that quiz attempt belongs to current student
-  const attempt = await context.db.query.quizAttempt({where: { id: args. id}}, `{ student { id } }`);
-  if (attempt.student.id !== userId) {
-    throw Error('Quiz attempt belongs to a different student');
+  try {
+    const attempt = await context.db.query.quizAttempt({where: { id: args.id}}, `{ student { id } }`);
+    if (attempt.student.id !== userId) {
+      throw Error('Quiz attempt belongs to a different student');
+    }
+  } catch (error) {
+    throw Error('Quiz attempt not found');
   }
   return context.db.query.quizAttempt({
     where: { id: args.id }
