@@ -221,9 +221,7 @@ class QuizTaker extends Component {
       case phases.RESULTS:
         currentView = (
           <div>
-            <QuizReview quizAttempt={this.state.quizGradePayload.quizAttempt}
-              isGraded={this.state.quizGradePayload.isGraded}
-              gradePostSucceeded={this.state.quizGradePayload.postSucceeded} />
+            <QuizReview quizAttempt={this.state.quizGradePayload.quizAttempt} />
             <hr />
             <p className="control">
                   <Link to="/student" className="button is-medium">
@@ -268,7 +266,7 @@ class QuizTaker extends Component {
         {/* If the student isn't to the results screen yet, have react router confirm before they navigate away */}
         <Prompt
           when={this.state.phase !== phases.RESULTS}
-          message="Are you sure you want to leave this quiz? Your score will not be saved."
+          message="Do you want to pause your quiz attempt? You can resume it from the wadayano course dashboard."
         />
       </section>
     )
@@ -280,6 +278,7 @@ const START_MUTATION = gql`
     startOrResumeQuizAttempt(quizId: $quizId) {
       id
       quiz {
+        id
         title
         questions {
           id
@@ -319,9 +318,11 @@ const COMPLETE_MUTATION = gql`
         id
         completed
         score
+        postSucceeded
         totalConfidenceError
         totalConfidenceBias
         quiz {
+          id
           title
           questions {
             id

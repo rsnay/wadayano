@@ -20,6 +20,7 @@ import DashboardList from './student/DashboardList';
 import Dashboard from './student/Dashboard';
 import QuizTaker from './student/QuizTaker';
 import SurveyTaker from './student/SurveyTaker';
+import QuizReviewPage from './student/QuizReviewPage';
 
 import PageNotFound from './shared/PageNotFound';
 
@@ -44,6 +45,7 @@ class App extends Component {
           <Route path="/student/launch/:token/:action/:parameter1" component={LTILaunch} />
           <Route exact path="/student" component={DashboardList} />
           <Route exact path="/student/dashboard/:courseId" component={Dashboard} />
+          <Route path="/student/quiz/review/:quizAttemptId" component={QuizReviewPage} />
           <Route path="/student/quiz/:quizId" component={QuizTaker} />
           <Route path="/student/survey/:courseId" component={SurveyTaker} />
 
