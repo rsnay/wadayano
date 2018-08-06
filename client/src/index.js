@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
-import registerServiceWorker from './registerServiceWorker';
+import { unregister } from './registerServiceWorker';
 
 import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
@@ -55,4 +55,4 @@ ReactDOM.render(
     </BrowserRouter>
 , document.getElementById('root')
 );
-registerServiceWorker();
+unregister();
