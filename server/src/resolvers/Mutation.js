@@ -223,7 +223,7 @@ function conceptQuiz (root, args, context, info) {
         where:{
             id:args.id
         }
-    })
+    }, info)
 }
 function conceptCourse (root, args, context, info){
     return context.db.mutation.updateCourse({

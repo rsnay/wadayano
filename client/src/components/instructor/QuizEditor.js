@@ -24,6 +24,7 @@ export class QuizEditor extends Component {
         this.deleteQuestion = this.deleteQuestion.bind(this);
         this.updateQuiz = this.updateQuiz.bind(this);
         this.saveConcept = this.saveConcept.bind(this);
+        this.setConcept = this.setConcept.bind(this);
       }
 
     addQuestion(){
@@ -86,14 +87,14 @@ export class QuizEditor extends Component {
                 concepts.push(quiz.questions[i].concept);
             }
         }
-        console.log("here");
+        console.log(concepts);
         this.props.conceptQuiz({
             variables:{
                 id:quiz.id,
                 concepts:concepts
             }
         })
-        window.location.reload(true);
+        //window.location.reload(true);
     }
 
     deleteQuestion(question){
@@ -123,29 +124,42 @@ export class QuizEditor extends Component {
     }
 
     checkConcepts(quiz, question){
-        var inQuiz = false;
+        var suggestions = [];
         var input = document.getElementById("concept"+question.id).value;
         for(var i = 0; i < quiz.concepts.length; i++){
-            if(input === quiz.concepts[i]){
-                inQuiz = true;
+            if(quiz.concepts[i].includes(input)){
+                suggestions.push(quiz.concepts[i]);
             }
         }
-        if(!inQuiz){
-
-        }
+        return suggestions;
     }
 
     conceptFilter(quiz, question){
         var search = document.getElementById("concept"+question.id).value;
         console.log(search);
         var strs = [];
-        var courseConcepts = quiz.course.concepts;
-        for(var i=0; i < courseConcepts; i++){
-            if(courseConcepts[i].startsWith(document.getElementById("concept"+question.id).value,0)){
+        var courseConcepts = quiz.concepts;
+        for(var i=0; i < courseConcepts.length; i++){
+            if(courseConcepts[i].includes(document.getElementById("concept"+question.id).value)){
                 strs.push(courseConcepts[i]);
             }
         }
+        console.log(quiz.concepts);
         console.log(strs);
+        var html = "";
+        html += "<div id="+question.id+">";
+        for(var i = 0;i<strs.length;i++){
+            html += "<p id="+strs[i]+" onClick=\"setConcept("+question.id+","+strs[i]+")\">"+strs[i]+"</p>"
+        }
+        html += "</div>";
+        console.log(html);
+        document.getElementById("suggestions"+question.id).innerHTML = html;
+        return html;
+    }
+
+    setConcept(questionId, str){
+        var e = document.getElementById("concept"+questionId);
+        e.value = str;
     }
 
     saveConcept(quiz, question){
@@ -202,6 +216,7 @@ export class QuizEditor extends Component {
             <p className="panel-block">
                 <input type="text" defaultValue={question.concept} id={"concept"+question.id} placeholder="concept" onChange = {() => this.conceptFilter(quiz, question)}></input>
             </p>
+            <div id={"suggestions"+question.id}></div>
             <form>
                 <p className="panel-block" key={question.options[0].id}>
                 <textarea id = {question.options[0].id+"text"} key = {question.options[0].id+"text"} className="textarea is-small" type="text">{question.options[0].text}</textarea>
@@ -358,14 +373,15 @@ mutation conceptQuestion(
     }`
 
 export const CONCEPT_QUIZ = gql`
-mutation conceptQuiz{
+mutation conceptQuiz(
+    $id:ID!
+    $concepts:[String!]!){
         conceptQuiz(
             id:$id
-            title:$title
+            concepts:$concepts
         ){
             id
-            concept
-            prompt
+            concepts
         }
     }`
 
@@ -377,7 +393,7 @@ mutation conceptCourse{
             title:$title
         ){
             id
-            concept
+            concepts
             prompt
         }
     }`
