@@ -17,7 +17,8 @@
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
     "react-scroll-into-view-if-needed": "^2.1.4",
-    "react-show-more": "^2.0.0"
+    "react-show-more": "^2.0.0",
+    "react-timeago": "^4.1.9"
   },
   "scripts": {
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
