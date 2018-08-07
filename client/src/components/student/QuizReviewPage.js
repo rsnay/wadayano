@@ -54,8 +54,6 @@ const QUIZ_ATTEMPT_QUERY = gql`
       completed
       score
       postSucceeded
-      totalConfidenceError
-      totalConfidenceBias
       quiz {
         id
         title
@@ -90,8 +88,6 @@ const QUIZ_ATTEMPT_QUERY = gql`
         id
         concept
         confidence
-        confidenceError
-        confidenceBias
       }
     }
   }

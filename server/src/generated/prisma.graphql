@@ -1,5 +1,5 @@
-# source: https://us1.prisma.sh/wadayano/wadayano/dev
-# timestamp: Tue Aug 07 2018 09:33:30 GMT-0600 (Mountain Daylight Time)
+# source: http://wadayano.com:4466/wadayano/dev
+# timestamp: Tue Aug 07 2018 14:10:53 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -50,8 +50,6 @@ type ConceptConfidence implements Node {
   id: ID!
   concept: String
   confidence: Int
-  confidenceError: Float
-  confidenceBias: Float
 }
 
 """A connection to a list of items."""
@@ -67,8 +65,6 @@ type ConceptConfidenceConnection {
 input ConceptConfidenceCreateInput {
   concept: String
   confidence: Int
-  confidenceError: Float
-  confidenceBias: Float
 }
 
 input ConceptConfidenceCreateManyInput {
@@ -92,10 +88,6 @@ enum ConceptConfidenceOrderByInput {
   concept_DESC
   confidence_ASC
   confidence_DESC
-  confidenceError_ASC
-  confidenceError_DESC
-  confidenceBias_ASC
-  confidenceBias_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -106,8 +98,6 @@ type ConceptConfidencePreviousValues {
   id: ID!
   concept: String
   confidence: Int
-  confidenceError: Float
-  confidenceBias: Float
 }
 
 type ConceptConfidenceSubscriptionPayload {
@@ -152,15 +142,11 @@ input ConceptConfidenceSubscriptionWhereInput {
 input ConceptConfidenceUpdateDataInput {
   concept: String
   confidence: Int
-  confidenceError: Float
-  confidenceBias: Float
 }
 
 input ConceptConfidenceUpdateInput {
   concept: String
   confidence: Int
-  confidenceError: Float
-  confidenceBias: Float
 }
 
 input ConceptConfidenceUpdateManyInput {
@@ -294,50 +280,9 @@ input ConceptConfidenceWhereInput {
 
   """All values greater than or equal the given value."""
   confidence_gte: Int
-  confidenceError: Float
-
-  """All values that are not equal to given value."""
-  confidenceError_not: Float
-
-  """All values that are contained in given list."""
-  confidenceError_in: [Float!]
-
-  """All values that are not contained in given list."""
-  confidenceError_not_in: [Float!]
-
-  """All values less than the given value."""
-  confidenceError_lt: Float
-
-  """All values less than or equal the given value."""
-  confidenceError_lte: Float
-
-  """All values greater than the given value."""
-  confidenceError_gt: Float
-
-  """All values greater than or equal the given value."""
-  confidenceError_gte: Float
-  confidenceBias: Float
-
-  """All values that are not equal to given value."""
-  confidenceBias_not: Float
-
-  """All values that are contained in given list."""
-  confidenceBias_in: [Float!]
-
-  """All values that are not contained in given list."""
-  confidenceBias_not_in: [Float!]
-
-  """All values less than the given value."""
-  confidenceBias_lt: Float
-
-  """All values less than or equal the given value."""
-  confidenceBias_lte: Float
-
-  """All values greater than the given value."""
-  confidenceBias_gt: Float
-
-  """All values greater than or equal the given value."""
-  confidenceBias_gte: Float
+  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_every: QuizAttemptWhereInput
+  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_some: QuizAttemptWhereInput
+  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input ConceptConfidenceWhereUniqueInput {
@@ -352,7 +297,7 @@ type Course implements Node {
   concepts: [String!]!
   instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor!]
   students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student!]
-  ltiSecret: String
+  ltiSecret: String!
   survey: Json
 }
 
@@ -372,7 +317,7 @@ input CourseCreateconceptsInput {
 
 input CourseCreateInput {
   title: String!
-  ltiSecret: String
+  ltiSecret: String!
   survey: Json
   concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
@@ -402,7 +347,7 @@ input CourseCreateOneWithoutQuizzesInput {
 
 input CourseCreateWithoutInstructorsInput {
   title: String!
-  ltiSecret: String
+  ltiSecret: String!
   survey: Json
   concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
@@ -411,7 +356,7 @@ input CourseCreateWithoutInstructorsInput {
 
 input CourseCreateWithoutQuizzesInput {
   title: String!
-  ltiSecret: String
+  ltiSecret: String!
   survey: Json
   concepts: CourseCreateconceptsInput
   instructors: InstructorCreateManyWithoutCoursesInput
@@ -420,7 +365,7 @@ input CourseCreateWithoutQuizzesInput {
 
 input CourseCreateWithoutStudentsInput {
   title: String!
-  ltiSecret: String
+  ltiSecret: String!
   survey: Json
   concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
@@ -456,7 +401,7 @@ type CoursePreviousValues {
   title: String!
   createdAt: DateTime!
   concepts: [String!]!
-  ltiSecret: String
+  ltiSecret: String!
   survey: Json
 }
 
@@ -777,6 +722,9 @@ input CourseWhereInput {
   students_every: StudentWhereInput
   students_some: StudentWhereInput
   students_none: StudentWhereInput
+  _MagicalBackRelation_CourseToSurveyResult_every: SurveyResultWhereInput
+  _MagicalBackRelation_CourseToSurveyResult_some: SurveyResultWhereInput
+  _MagicalBackRelation_CourseToSurveyResult_none: SurveyResultWhereInput
 }
 
 input CourseWhereUniqueInput {
@@ -1412,6 +1360,12 @@ input OptionWhereInput {
   """All values not ending with the given string."""
   text_not_ends_with: String
   question: QuestionWhereInput
+  _MagicalBackRelation_CorrectAnswerAttemptRelation_every: QuestionAttemptWhereInput
+  _MagicalBackRelation_CorrectAnswerAttemptRelation_some: QuestionAttemptWhereInput
+  _MagicalBackRelation_CorrectAnswerAttemptRelation_none: QuestionAttemptWhereInput
+  _MagicalBackRelation_SelectedAnswerAttemptRelation_every: QuestionAttemptWhereInput
+  _MagicalBackRelation_SelectedAnswerAttemptRelation_some: QuestionAttemptWhereInput
+  _MagicalBackRelation_SelectedAnswerAttemptRelation_none: QuestionAttemptWhereInput
 }
 
 input OptionWhereUniqueInput {
@@ -1698,6 +1652,9 @@ input QuestionAttemptWhereInput {
   question: QuestionWhereInput
   option: OptionWhereInput
   correctOption: OptionWhereInput
+  _MagicalBackRelation_QuestionAttemptToQuizAttempt_every: QuizAttemptWhereInput
+  _MagicalBackRelation_QuestionAttemptToQuizAttempt_some: QuizAttemptWhereInput
+  _MagicalBackRelation_QuestionAttemptToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input QuestionAttemptWhereUniqueInput {
@@ -2002,6 +1959,12 @@ input QuestionWhereInput {
   options_every: OptionWhereInput
   options_some: OptionWhereInput
   options_none: OptionWhereInput
+  _MagicalBackRelation_QuestionToQuiz_every: QuizWhereInput
+  _MagicalBackRelation_QuestionToQuiz_some: QuizWhereInput
+  _MagicalBackRelation_QuestionToQuiz_none: QuizWhereInput
+  _MagicalBackRelation_QuestionToQuestionAttempt_every: QuestionAttemptWhereInput
+  _MagicalBackRelation_QuestionToQuestionAttempt_some: QuestionAttemptWhereInput
+  _MagicalBackRelation_QuestionToQuestionAttempt_none: QuestionAttemptWhereInput
 }
 
 input QuestionWhereUniqueInput {
@@ -2028,8 +1991,6 @@ type QuizAttempt implements Node {
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt!]
   score: Float
   conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence!]
-  totalConfidenceError: Float
-  totalConfidenceBias: Float
 }
 
 """A connection to a list of items."""
@@ -2047,8 +2008,6 @@ input QuizAttemptCreateInput {
   completed: DateTime
   postSucceeded: Boolean
   score: Float
-  totalConfidenceError: Float
-  totalConfidenceBias: Float
   student: StudentCreateOneWithoutQuizAttemptsInput!
   quiz: QuizCreateOneInput!
   questionAttempts: QuestionAttemptCreateManyInput
@@ -2065,8 +2024,6 @@ input QuizAttemptCreateWithoutStudentInput {
   completed: DateTime
   postSucceeded: Boolean
   score: Float
-  totalConfidenceError: Float
-  totalConfidenceBias: Float
   quiz: QuizCreateOneInput!
   questionAttempts: QuestionAttemptCreateManyInput
   conceptConfidences: ConceptConfidenceCreateManyInput
@@ -2094,10 +2051,6 @@ enum QuizAttemptOrderByInput {
   postSucceeded_DESC
   score_ASC
   score_DESC
-  totalConfidenceError_ASC
-  totalConfidenceError_DESC
-  totalConfidenceBias_ASC
-  totalConfidenceBias_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
@@ -2109,8 +2062,6 @@ type QuizAttemptPreviousValues {
   completed: DateTime
   postSucceeded: Boolean
   score: Float
-  totalConfidenceError: Float
-  totalConfidenceBias: Float
 }
 
 type QuizAttemptSubscriptionPayload {
@@ -2157,8 +2108,6 @@ input QuizAttemptUpdateInput {
   completed: DateTime
   postSucceeded: Boolean
   score: Float
-  totalConfidenceError: Float
-  totalConfidenceBias: Float
   student: StudentUpdateOneWithoutQuizAttemptsInput
   quiz: QuizUpdateOneInput
   questionAttempts: QuestionAttemptUpdateManyInput
@@ -2179,8 +2128,6 @@ input QuizAttemptUpdateWithoutStudentDataInput {
   completed: DateTime
   postSucceeded: Boolean
   score: Float
-  totalConfidenceError: Float
-  totalConfidenceBias: Float
   quiz: QuizUpdateOneInput
   questionAttempts: QuestionAttemptUpdateManyInput
   conceptConfidences: ConceptConfidenceUpdateManyInput
@@ -2316,50 +2263,6 @@ input QuizAttemptWhereInput {
 
   """All values greater than or equal the given value."""
   score_gte: Float
-  totalConfidenceError: Float
-
-  """All values that are not equal to given value."""
-  totalConfidenceError_not: Float
-
-  """All values that are contained in given list."""
-  totalConfidenceError_in: [Float!]
-
-  """All values that are not contained in given list."""
-  totalConfidenceError_not_in: [Float!]
-
-  """All values less than the given value."""
-  totalConfidenceError_lt: Float
-
-  """All values less than or equal the given value."""
-  totalConfidenceError_lte: Float
-
-  """All values greater than the given value."""
-  totalConfidenceError_gt: Float
-
-  """All values greater than or equal the given value."""
-  totalConfidenceError_gte: Float
-  totalConfidenceBias: Float
-
-  """All values that are not equal to given value."""
-  totalConfidenceBias_not: Float
-
-  """All values that are contained in given list."""
-  totalConfidenceBias_in: [Float!]
-
-  """All values that are not contained in given list."""
-  totalConfidenceBias_not_in: [Float!]
-
-  """All values less than the given value."""
-  totalConfidenceBias_lt: Float
-
-  """All values less than or equal the given value."""
-  totalConfidenceBias_lte: Float
-
-  """All values greater than the given value."""
-  totalConfidenceBias_gt: Float
-
-  """All values greater than or equal the given value."""
-  totalConfidenceBias_gte: Float
   student: StudentWhereInput
   quiz: QuizWhereInput
   questionAttempts_every: QuestionAttemptWhereInput
@@ -2649,6 +2552,9 @@ input QuizWhereInput {
   questions_some: QuestionWhereInput
   questions_none: QuestionWhereInput
   course: CourseWhereInput
+  _MagicalBackRelation_QuizToQuizAttempt_every: QuizAttemptWhereInput
+  _MagicalBackRelation_QuizToQuizAttempt_some: QuizAttemptWhereInput
+  _MagicalBackRelation_QuizToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input QuizWhereUniqueInput {
@@ -3032,6 +2938,9 @@ input StudentWhereInput {
   quizAttempts_every: QuizAttemptWhereInput
   quizAttempts_some: QuizAttemptWhereInput
   quizAttempts_none: QuizAttemptWhereInput
+  _MagicalBackRelation_StudentToSurveyResult_every: SurveyResultWhereInput
+  _MagicalBackRelation_StudentToSurveyResult_some: SurveyResultWhereInput
+  _MagicalBackRelation_StudentToSurveyResult_none: SurveyResultWhereInput
 }
 
 input StudentWhereUniqueInput {

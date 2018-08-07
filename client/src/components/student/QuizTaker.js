@@ -319,8 +319,6 @@ const COMPLETE_MUTATION = gql`
         completed
         score
         postSucceeded
-        totalConfidenceError
-        totalConfidenceBias
         quiz {
           id
           title
@@ -355,8 +353,6 @@ const COMPLETE_MUTATION = gql`
           id
           concept
           confidence
-          confidenceError
-          confidenceBias
         }
       }
     }
