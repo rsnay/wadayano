@@ -470,21 +470,6 @@ async function completeQuizAttempt(root, args, context, info) {
     const correctCount = attempt.questionAttempts.filter(attempt => attempt.isCorrect).length || 0;
     const score = correctCount / attempt.quiz.questions.length;
 
-    // Calculate totalConfidenceError
-    // TODO use a not-random number
-    const totalConfidenceError = Math.round(Math.random() * 10 ) / 10;
-
-    // Calculate totalConfidenceBias
-    // TODO use a not-random number
-    const totalConfidenceBias = Math.round(Math.random() * 10 ) / 10;
-
-    // For each ConceptConfidence in conceptConfidences
-        // Calculate confidenceError
-        // TODO
-
-        // Calculate confidenceBias
-        // TODO
-    
     // Post the score back to LMS via LTI grade passback, if applicable
     let isGraded = false;
     let postSucceeded = null;
@@ -509,9 +494,7 @@ async function completeQuizAttempt(root, args, context, info) {
         data: {
             completed,
             score,
-            postSucceeded,
-            totalConfidenceError,
-            totalConfidenceBias
+            postSucceeded
         }
     }, `{ id }`);
 
