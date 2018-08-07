@@ -516,7 +516,13 @@ async function submitSurveyResult(root, args, context, info) {
     // Check that student has access to the course that this survey is for
     // TODO
 
-    // TODO can students take a survey for a course multiple times?
+    // Students can take a survey for a course multiple times, but we only store the latest submission
+    await context.db.mutation.deleteManySurveyResults({
+        where: {
+            student: { id: studentId },
+            course: { id: courseId }
+        }
+    }, `{ count }`);
 
     // Save the survey result, and connect it to the user and course
     return context.db.mutation.createSurveyResult({
