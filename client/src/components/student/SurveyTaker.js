@@ -14,21 +14,23 @@ class SurveyTaker extends Component {
         super(props);
 
         this.state = {
-          isSubmitting: false
+          isSubmitting: false,
+          isComplete: false,
+          answers: {}
         };
     }
 
+    // Submit the survey results
     async _submitSurvey() {
         this.setState({ isSubmitting: true });
-        alert('Not yet implemented');
         try {
-            // TODO
             await this.props.submitSurveyMutation({
                 variables: {
                     courseId: this.props.courseQuery.course.id,
-                    survey: this._parseSurveyText(this.state.newSurveyText)
+                    answers: this.state.answers
                 }
             });
+            this.setState({ isComplete: true });
         } catch (error) {
             alert('There was an error submitting the survey. Please try again later.');
         }
@@ -47,13 +49,31 @@ class SurveyTaker extends Component {
 
         let course = this.props.courseQuery.course;
 
+        if (this.state.isComplete) {
+            return (
+                <article className="container message is-success" style={{marginTop: "3em"}}>
+                    <div className="message-header">
+                        <p>Thanks! Your responses have been saved.</p>
+                        <span className="icon is-large"><i className="fas fa-3x fa-check-circle" aria-hidden="true"></i></span>
+                    </div>
+                    <div className="message-body">
+                        <Link className="button" to={"/student/dashboard/" + course.id}>Return to Dashboard</Link>
+                    </div>
+                </article>
+            );
+        }
+
         return (
             <section className="section">
                 <div className="container">
 
                     <h3 className="title is-3">{course.title} Survey</h3>
 
-                    <SurveyView survey={course.survey} />
+                    <SurveyView
+                        survey={course.survey}
+                        selectedAnswers={this.state.answers}
+                        onChange={(answers) => this.setState({ answers })}
+                        />
 
                     <div className="field is-grouped">
                         <p className="control">
@@ -82,18 +102,17 @@ const COURSE_QUERY = gql`
   }
 `
 
-// TODO
+// Submit the survey results
 const SUBMIT_SURVEY = gql`
 mutation saveSurveyMutation(
     $courseId:ID!
-    $survey:Json!
+    $answers:Json!
 ){
-    updateSurvey(
+    submitSurveyResult(
         courseId: $courseId
-        survey: $survey
+        answers: $answers
     ){
         id
-        survey
     }
 }`
 
