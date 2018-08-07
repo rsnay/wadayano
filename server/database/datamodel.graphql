@@ -16,6 +16,7 @@ type Student {
     name: String!
     courses: [Course!]!
     quizAttempts: [QuizAttempt!]!
+    surveyResults: [SurveyResult!]!
 }
 
 # Course data hierarchy
