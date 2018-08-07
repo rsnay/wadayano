@@ -15,7 +15,8 @@ export class QuizEditor extends Component {
         this.state = {
           quiz:null,
           quizTitle:'',
-          questions:[]
+          questions:[],
+          concepts:[]
         };
     
         // Pre-bind this function, to make adding it to input fields easier
@@ -52,12 +53,12 @@ export class QuizEditor extends Component {
                 title:document.getElementById(quiz.id).value
             }
         })
-        for(i;i<quiz.questions.length;i++){
+        for(i=0;i<quiz.questions.length;i++){
             console.log(document.getElementById(quiz.questions[i].id).value);
             this.props.questionSaveMutation({
                 variables:{
                     id:quiz.questions[i].id,
-                    concept:document.getElementById("concept"+quiz.questions[i].id).value,
+                    //concept:document.getElementById("concept"+quiz.questions[i].id).value,
                     prompt:document.getElementById(quiz.questions[i].id).value
                 }
             });
@@ -73,7 +74,7 @@ export class QuizEditor extends Component {
                 })
             }
             console.log(i);
-            this.saveConcept(quiz, (quiz.questions[i]));
+            this.saveConcept(quiz.questions[i]);
         }
         var concepts = [];
         for(var i = 0; i < quiz.questions.length; i++){
@@ -84,7 +85,7 @@ export class QuizEditor extends Component {
                 }
             }
             if(newConcept){
-                concepts.push(quiz.questions[i].concept);
+                concepts.push(document.getElementById("concept"+quiz.questions[i].id).value);
             }
         }
         console.log(concepts);
@@ -94,7 +95,7 @@ export class QuizEditor extends Component {
                 concepts:concepts
             }
         })
-        //window.location.reload(true);
+        window.location.reload(true);
     }
 
     deleteQuestion(question){
@@ -146,28 +147,23 @@ export class QuizEditor extends Component {
         }
         console.log(quiz.concepts);
         console.log(strs);
-        var html = "";
-        html += "<div id="+question.id+">";
-        for(var i = 0;i<strs.length;i++){
-            //html += "<p id="+strs[i]+" onClick=\"setConcept("+question.id+","+strs[i]+")\">"+strs[i]+"</p>"
-        }
-        html += "</div>";
-        console.log(html);
-        document.getElementById("suggestions"+question.id).innerHTML = html;
-        return html;
+        this.setState({concepts: strs, showConceptsForQuestion:question.id})
     }
 
     setConcept(questionId, str){
         var e = document.getElementById("concept"+questionId);
+        this.setState({showConceptsForQuestion:null})
         e.value = str;
     }
 
-    saveConcept(quiz, question){
-        console.log(question);
+    saveConcept(question){
+        console.log("question"+question);
+        console.log("id"+question.id);
+        console.log("con"+document.getElementById("concept"+question.id).value);
         this.props.conceptQuestion({
             variables:{
                 id:question.id,
-                title:document.getElementById("concept"+question.id).value
+                concept:document.getElementById("concept"+question.id).value
             }
         })
     }
@@ -216,7 +212,12 @@ export class QuizEditor extends Component {
             <p className="panel-block">
                 <input type="text" defaultValue={question.concept} id={"concept"+question.id} placeholder="concept" onChange = {() => this.conceptFilter(quiz, question)}></input>
             </p>
-            <div id={"suggestions"+question.id}></div>
+            {(this.state.showConceptsForQuestion === question.id) &&
+            <div id={"suggestions"+question.id}>
+            {this.state.concepts.map(concept => (
+                <p id= {concept} onClick={() => this.setConcept(question.id,concept)}>{concept}</p>
+            ))}
+            </div>}
             <form>
                 <p className="panel-block" key={question.options[0].id}>
                 <textarea id = {question.options[0].id+"text"} key = {question.options[0].id+"text"} className="textarea is-small" type="text">{question.options[0].text}</textarea>
@@ -361,10 +362,10 @@ mutation optionSaveMutation(
 export const CONCEPT_QUESTION = gql`
 mutation conceptQuestion(
     $id:ID!
-    $title:String!){
+    $concept:String!){
         conceptQuestion(
             id:$id
-            title:$title
+            concept:$concept
         ){
             id
             concept

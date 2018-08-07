@@ -206,6 +206,7 @@ function updateQuestion(root, args, context, info){
     return context.db.mutation.updateQuestion({
         data:{
             prompt: args.prompt,
+            concept: args.concept
         },
         where:{
             id:args.id
@@ -216,7 +217,7 @@ function updateQuestion(root, args, context, info){
 function conceptQuestion (root, args, context, info) {
     return context.db.mutation.updateQuestion({
         data: {
-            concept:args.title
+            concept:args.concept
         },
         where:{
             id:args.id

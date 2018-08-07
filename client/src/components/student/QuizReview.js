@@ -7,7 +7,7 @@ import { formatScore } from '../../utils';
 
 class QuizReview extends Component {
 
-    /*wadayanoScore(quizAttempt)
+    wadayanoScore(quizAttempt)
     {
         var i = 0;
         var wadayano = 0;
@@ -70,7 +70,7 @@ class QuizReview extends Component {
         }
         console.log("conceptConfidence"+conceptConfidences);
         return quizAttempt;
-    }*/
+    }
 
   render() {
 

@@ -1,5 +1,5 @@
-# source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Mon Aug 06 2018 17:38:53 GMT-0600 (Mountain Daylight Time)
+# source: https://us1.prisma.sh/wadayano/wadayano/dev
+# timestamp: Tue Aug 07 2018 09:33:30 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -338,9 +338,6 @@ input ConceptConfidenceWhereInput {
 
   """All values greater than or equal the given value."""
   confidenceBias_gte: Float
-  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_every: QuizAttemptWhereInput
-  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_some: QuizAttemptWhereInput
-  _MagicalBackRelation_ConceptConfidenceToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input ConceptConfidenceWhereUniqueInput {
@@ -780,9 +777,6 @@ input CourseWhereInput {
   students_every: StudentWhereInput
   students_some: StudentWhereInput
   students_none: StudentWhereInput
-  _MagicalBackRelation_CourseToSurveyResult_every: SurveyResultWhereInput
-  _MagicalBackRelation_CourseToSurveyResult_some: SurveyResultWhereInput
-  _MagicalBackRelation_CourseToSurveyResult_none: SurveyResultWhereInput
 }
 
 input CourseWhereUniqueInput {
@@ -1418,12 +1412,6 @@ input OptionWhereInput {
   """All values not ending with the given string."""
   text_not_ends_with: String
   question: QuestionWhereInput
-  _MagicalBackRelation_CorrectAnswerAttemptRelation_every: QuestionAttemptWhereInput
-  _MagicalBackRelation_CorrectAnswerAttemptRelation_some: QuestionAttemptWhereInput
-  _MagicalBackRelation_CorrectAnswerAttemptRelation_none: QuestionAttemptWhereInput
-  _MagicalBackRelation_SelectedAnswerAttemptRelation_every: QuestionAttemptWhereInput
-  _MagicalBackRelation_SelectedAnswerAttemptRelation_some: QuestionAttemptWhereInput
-  _MagicalBackRelation_SelectedAnswerAttemptRelation_none: QuestionAttemptWhereInput
 }
 
 input OptionWhereUniqueInput {
@@ -1710,9 +1698,6 @@ input QuestionAttemptWhereInput {
   question: QuestionWhereInput
   option: OptionWhereInput
   correctOption: OptionWhereInput
-  _MagicalBackRelation_QuestionAttemptToQuizAttempt_every: QuizAttemptWhereInput
-  _MagicalBackRelation_QuestionAttemptToQuizAttempt_some: QuizAttemptWhereInput
-  _MagicalBackRelation_QuestionAttemptToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input QuestionAttemptWhereUniqueInput {
@@ -2017,12 +2002,6 @@ input QuestionWhereInput {
   options_every: OptionWhereInput
   options_some: OptionWhereInput
   options_none: OptionWhereInput
-  _MagicalBackRelation_QuestionToQuiz_every: QuizWhereInput
-  _MagicalBackRelation_QuestionToQuiz_some: QuizWhereInput
-  _MagicalBackRelation_QuestionToQuiz_none: QuizWhereInput
-  _MagicalBackRelation_QuestionToQuestionAttempt_every: QuestionAttemptWhereInput
-  _MagicalBackRelation_QuestionToQuestionAttempt_some: QuestionAttemptWhereInput
-  _MagicalBackRelation_QuestionToQuestionAttempt_none: QuestionAttemptWhereInput
 }
 
 input QuestionWhereUniqueInput {
@@ -2670,9 +2649,6 @@ input QuizWhereInput {
   questions_some: QuestionWhereInput
   questions_none: QuestionWhereInput
   course: CourseWhereInput
-  _MagicalBackRelation_QuizToQuizAttempt_every: QuizAttemptWhereInput
-  _MagicalBackRelation_QuizToQuizAttempt_some: QuizAttemptWhereInput
-  _MagicalBackRelation_QuizToQuizAttempt_none: QuizAttemptWhereInput
 }
 
 input QuizWhereUniqueInput {
@@ -3056,9 +3032,6 @@ input StudentWhereInput {
   quizAttempts_every: QuizAttemptWhereInput
   quizAttempts_some: QuizAttemptWhereInput
   quizAttempts_none: QuizAttemptWhereInput
-  _MagicalBackRelation_StudentToSurveyResult_every: SurveyResultWhereInput
-  _MagicalBackRelation_StudentToSurveyResult_some: SurveyResultWhereInput
-  _MagicalBackRelation_StudentToSurveyResult_none: SurveyResultWhereInput
 }
 
 input StudentWhereUniqueInput {
