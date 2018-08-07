@@ -86,6 +86,10 @@ progress::-webkit-progress-value {
     padding-left: 0.6rem;
 }
 
+.survey-results-table {
+    padding-bottom: 20pt;
+}
+
 /* Dashboard */
 .quiz-table tbody tr td {
     vertical-align: middle;

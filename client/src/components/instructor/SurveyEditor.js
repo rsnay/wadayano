@@ -104,7 +104,7 @@ class SurveyEditor extends Component {
         } catch (error) {
             alert('Error parsing survey')
         }
-        return text;
+        return text.trim();
     }
 
     async _saveSurvey() {

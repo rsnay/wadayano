@@ -17,6 +17,7 @@ export default class SurveyView extends Component {
     render() {
         // If there's no change handler, disable the radio buttons
         const disabled = !this.props.onChange;
+        const selectedAnswers = this.props.selectedAnswers || {};
 
         let questions = this.props.survey.questions.map(q => (
             <div className="survey-question" key={q.index}>
@@ -29,7 +30,7 @@ export default class SurveyView extends Component {
                                 name={"question" + q.index}
                                 value={o.index}
                                 disabled={disabled}
-                                checked={this.props.selectedAnswers[q.index] === o.index}
+                                checked={selectedAnswers[q.index] === o.index}
                                 onChange={() => this._handleOptionClick(q.index, o.index)}
                                 />
                             <span className="survey-question-option-text">
