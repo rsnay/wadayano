@@ -8,6 +8,7 @@ import { withAuthCheck } from '../shared/AuthCheck';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import SurveyView from '../shared/SurveyView';
+import Modal from '../shared/Modal';
 
 class SurveyEditor extends Component {
     constructor(props) {
@@ -16,7 +17,8 @@ class SurveyEditor extends Component {
         this.state = {
             surveyLoaded: false,
             newSurveyText: '',
-            isSaving: false
+            isSaving: false,
+            formatModalVisible: false
         };
     }
 
@@ -87,7 +89,7 @@ class SurveyEditor extends Component {
                 newQuestion.options.push({ index: newQuestion.options.length + 1, text: line});
             }
         }
-        console.log(questions);
+        //console.log(questions);
         return { questions };
     }
 
@@ -147,16 +149,26 @@ class SurveyEditor extends Component {
                     </nav>
 
                     <h3 className="title is-3">Course Survey</h3>
+                    <i className="">Note: modifying the survey (except for adding new questions to the very end) after students have taken it will invalidate existing student responses.</i>
+                    <br /><br />
 
                     <div className="columns">
                         <div className="column is-6">
-                            <h4 className="subtitle is-4">Editor</h4>
+                            <h4 className="subtitle is-4">
+                                Editor
+                                <button style={{height:"inherit", padding:"0"}} className="button is-text is-pulled-right" onClick={() => this.setState({ formatModalVisible: true })}>
+                                    <span className="icon is-small"><i className="fas fa-question-circle"></i></span>
+                                    <span>Formatting hints</span>
+                                </button>
+                            </h4>
+
                             <textarea className="textarea is-medium survey-editor" rows={10}
                                 value={this.state.newSurveyText}
                                 onChange={(e) => this.setState({ newSurveyText: e.target.value })} />
                         </div>
                         <div className="column is-6">
                             <h4 className="subtitle is-4">Preview</h4>
+
                             <SurveyView survey={this._parseSurveyText(this.state.newSurveyText)} />
                         </div>
                     </div>
@@ -175,7 +187,29 @@ class SurveyEditor extends Component {
                         </p>
                     </div>
 
-                    <pre>{JSON.stringify(this._parseSurveyText(this.state.newSurveyText))}</pre>
+                    {this.state.formatModalVisible &&
+                        <Modal modalState={true} closeModal={() => this.setState({ formatModalVisible: false })} title="Survey Formatting" showFooter={true}>
+                            <ol>
+                                <li>Type a question on one line.</li>
+                                <li>Put each option for that question on a new line.</li>
+                                <li>Add an extra blank line between the last option and the text of the next question.</li>
+                                <li>Repeat for the next question.</li>
+                            </ol>
+                            Example:
+                            <textarea className="textarea is-medium survey-editor" rows={11} value={
+`How many hours do you spend doing homework each day?
+0–2
+2–4
+4–6
+6+
+
+How many hours do you sleep each night?
+0–5
+5–7
+7–9
+...and so forth`} />
+                        </Modal>
+                    }
                 </div>
             </section>
         );
