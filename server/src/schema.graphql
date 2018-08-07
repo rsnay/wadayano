@@ -1,4 +1,4 @@
-#import Student, Course, Quiz, Question, Option, QuizAttempt, QuizAttemptOrderByInput, QuestionAttempt, ConceptConfidence from "./generated/prisma.graphql"
+#import Student, Course, Quiz, Question, Option, QuizAttempt, QuizAttemptOrderByInput, QuestionAttempt, ConceptConfidence, SurveyResult from "./generated/prisma.graphql"
 
 type Query {
   quizzes: [Quiz!]!
@@ -36,6 +36,8 @@ type Mutation {
   completeQuizAttempt(quizAttemptId: ID!): QuizGradePayload!
   rateConcepts(quizAttemptId: ID!, conceptConfidences: [ConceptConfidenceCreateInput!]!): QuizAttempt!
   attemptQuestion(quizAttemptId: ID!, questionId: ID!, optionId: ID!, isConfident: Boolean!): QuestionAttempt!
+
+  submitSurveyResult(courseId: ID!, answers: Json!): SurveyResult
 }
 
 # This is being redefined here, rather than imported, so that the password is hidden and can't be queried

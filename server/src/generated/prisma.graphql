@@ -1,5 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Tue Aug 07 2018 14:59:23 GMT-0600 (Mountain Daylight Time)
+# timestamp: Tue Aug 07 2018 15:25:13 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -2978,6 +2978,7 @@ type Subscription {
 
 type SurveyResult implements Node {
   id: ID!
+  createdAt: DateTime!
   course(where: CourseWhereInput): Course!
   student(where: StudentWhereInput): Student!
   answers: Json!
@@ -3021,16 +3022,17 @@ type SurveyResultEdge {
 enum SurveyResultOrderByInput {
   id_ASC
   id_DESC
+  createdAt_ASC
+  createdAt_DESC
   answers_ASC
   answers_DESC
   updatedAt_ASC
   updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
 }
 
 type SurveyResultPreviousValues {
   id: ID!
+  createdAt: DateTime!
   answers: Json!
 }
 
@@ -3153,6 +3155,28 @@ input SurveyResultWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
   course: CourseWhereInput
   student: StudentWhereInput
 }

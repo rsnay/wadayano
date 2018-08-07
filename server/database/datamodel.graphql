@@ -87,6 +87,7 @@ type ConceptConfidence {
  
  type SurveyResult {
     id: ID! @unique
+    createdAt: DateTime!
     course: Course!
     student: Student!
     answers: Json!

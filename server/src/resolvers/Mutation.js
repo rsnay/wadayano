@@ -507,6 +507,26 @@ async function completeQuizAttempt(root, args, context, info) {
         error
     };
 }
+
+async function submitSurveyResult(root, args, context, info) {
+    // Check for valid student login
+    const studentId = getUserInfo(context).userId;
+    const { courseId, answers } = args;
+
+    // Check that student has access to the course that this survey is for
+    // TODO
+
+    // TODO can students take a survey for a course multiple times?
+
+    // Save the survey result, and connect it to the user and course
+    return context.db.mutation.createSurveyResult({
+        data: {
+            answers,
+            student: { connect: { id: studentId } },
+            course: { connect: { id: courseId } }
+        }
+    }, info);
+}
     
 module.exports = {
     addQuiz,
@@ -529,4 +549,5 @@ module.exports = {
     completeQuizAttempt,
     attemptQuestion,
     rateConcepts,
+    submitSurveyResult,
 }
