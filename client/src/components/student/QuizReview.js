@@ -7,7 +7,7 @@ import { formatScore } from '../../utils';
 
 class QuizReview extends Component {
 
-    wadayanoScore(quizAttempt)
+    /*wadayanoScore(quizAttempt)
     {
         var i = 0;
         var wadayano = 0;
@@ -29,6 +29,49 @@ class QuizReview extends Component {
         return wadayano;
     }
 
+    overallScore(quizAttempt){
+        var correct = 0;
+        for(var i=0;i<quizAttempt.questionAttempts.length; i++){
+            if(quizAttempt.questionAttempts[i].isCorrect){
+                correct+=1;
+            }
+        }
+        var numQuestion = quizAttempt.questionAttempts.length;
+        var percent = correct/numQuestion;
+        console.log("percent:"+percent+"%");
+    }
+
+    //go through each concept and calculate the confidence bias/error
+    sortConcepts(quizAttempt){
+        var quizConcepts = quizAttempt.quiz.concepts;
+        var conceptConfidences = [];
+        for(var i=0;i<quizConcepts.length;i++){
+            var confidence = 0;
+            var correct = 0;
+            conceptConfidences.push({
+                concept:"",
+                confidence:0,
+                confidenceError:0.0,
+                confidenceBias:0.0
+            });
+            conceptConfidences[i].concept = quizConcepts[i];
+            for(var j=0; j<quizAttempt.questionAttempts.length; j++){
+                var question = quizAttempt.questionAttemps[j].question;
+                var correct = 0;
+                if(question.concept === quizConcepts[i]){
+                    conceptConfidences[i].confidence += 1;
+                }
+                if(question.isCorrect){
+                    correct+=1;
+                }
+                conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
+                conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
+            }
+        }
+        console.log("conceptConfidence"+conceptConfidences);
+        return quizAttempt;
+    }*/
+
   render() {
 
     const quizAttempt = this.props.quizAttempt;
@@ -37,6 +80,8 @@ class QuizReview extends Component {
 
 
     this.wadayanoScore(quizAttempt);
+    this.sortConcepts(quizAttempt);
+    this.overallScore(quizAttempt);
 
     // Use conceptConfidences from the quizAttempt prop
     const conceptConfidences = quizAttempt.conceptConfidences

@@ -149,7 +149,7 @@ export class QuizEditor extends Component {
         var html = "";
         html += "<div id="+question.id+">";
         for(var i = 0;i<strs.length;i++){
-            html += "<p id="+strs[i]+" onClick=\"setConcept("+question.id+","+strs[i]+")\">"+strs[i]+"</p>"
+            //html += "<p id="+strs[i]+" onClick=\"setConcept("+question.id+","+strs[i]+")\">"+strs[i]+"</p>"
         }
         html += "</div>";
         console.log(html);
