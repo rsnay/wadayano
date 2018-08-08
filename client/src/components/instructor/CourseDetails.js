@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import { LTI_LAUNCH_URL } from '../../constants';
+import { LTI_LAUNCH_URL, QUIZ_TYPE_NAMES } from '../../constants';
 
 import { withAuthCheck } from '../shared/AuthCheck';
 
@@ -147,6 +147,7 @@ export class CourseDetails extends Component {
                 <tr>
                     <th>ID</th>
                     <th style={{width:"99%"}}>Title</th>
+                    <th>Type</th>
                     <th style={{whiteSpace: "nowrap"}}>Questions</th>
                     <th>Actions</th>
                 </tr>
@@ -156,6 +157,7 @@ export class CourseDetails extends Component {
                 <tr key={quiz.id}>
                     <td>{quiz.id}</td>
                     <td>{quiz.title}</td>
+                    <td>{QUIZ_TYPE_NAMES[quiz.type]}</td>
                     <td>{quiz.questions.length}</td>
                     <td className="buttons">
                     <Link to={"/instructor/quiz/" + quiz.id}
@@ -214,8 +216,9 @@ export const COURSE_QUERY = gql`
         quizzes{
             id
             title
+            type
             questions{
-                prompt
+                id
             }
         }
     }

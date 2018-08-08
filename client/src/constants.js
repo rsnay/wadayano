@@ -13,3 +13,5 @@ export const AUTH_ROLE_STUDENT = 'student';
 export const AUTH_ROLE_INSTRUCTOR = 'instructor';
 
 export const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+export const QUIZ_TYPE_NAMES = { 'PRACTICE': 'Practice', 'GRADED': 'Graded' };
