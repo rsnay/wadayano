@@ -17,6 +17,7 @@ type Mutation {
   addQuiz(id:ID): Course!
   updateQuiz(id:ID, title:String, type: QuizType): Quiz!
   addCourse(title:String): Course!
+  createQuiz(courseId: ID!): Quiz!
   updateCourse(id:ID, title:String): Course!
   deleteCourse(id:ID):Course!
   deleteQuiz(id:ID): Quiz!

@@ -21,49 +21,49 @@ export class CourseDetails extends Component {
         this.courseTitleInput = React.createRef();
     }
 
-  addQuiz(){
-    //console.log(this.props.match.params.courseId)
-    this.props.addQuizMutation({
-        variables:{
-            id:this.props.match.params.courseId
-        }
-    });
-    window.location.reload(true);
-  }
-
-  async renameCourse(){
-    let title = this.courseTitleInput.current.value.trim();
-    if (title === '') {
-        alert('Please enter a title for this course.');
-        return;
-    }
-    await this.props.courseUpdate({
-        variables: {
-            id: this.props.match.params.courseId,
-            title
-        }
-    });
-    this.props.courseQuery.refetch();
-  }
-
-  async deleteCourse(course){
-      console.log(course)
-    if (window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.') === 'absolutely') {
-        await this.props.courseDelete({
+    async createQuiz(){
+        const result = await this.props.createQuizMutation({
             variables:{
-                id:course.id
+                courseId: this.props.match.params.courseId
             }
         });
-        window.location.assign('/instructor');
-    } else {
-        alert('Course will not be deleted.');
+        console.log(result);
+        this.props.history.push('/instructor/quiz/' + result.data.createQuiz.id);
     }
-  }
 
-  // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
-  _showLTISetup(action, id) {
-    this.setState({ displayLtiSetupUrl: LTI_LAUNCH_URL + action + '/' + id });
-  }
+    async renameCourse(){
+        let title = this.courseTitleInput.current.value.trim();
+        if (title === '') {
+            alert('Please enter a title for this course.');
+            return;
+        }
+        await this.props.courseUpdate({
+            variables: {
+                id: this.props.match.params.courseId,
+                title
+            }
+        });
+        this.props.courseQuery.refetch();
+    }
+
+    async deleteCourse(course){
+        console.log(course)
+        if (window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.') === 'absolutely') {
+            await this.props.courseDelete({
+                variables:{
+                    id:course.id
+                }
+            });
+            window.location.assign('/instructor');
+        } else {
+            alert('Course will not be deleted.');
+        }
+    }
+
+    // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
+    _showLTISetup(action, id) {
+        this.setState({ displayLtiSetupUrl: LTI_LAUNCH_URL + action + '/' + id });
+    }
 
   render() {
 
@@ -90,8 +90,8 @@ export class CourseDetails extends Component {
         <label className="label is-medium">
             Course Title
         </label>
-        <div class="field has-addons">
-            <div class="control">
+        <div className="field has-addons">
+            <div className="control">
                     <input
                         className="input" type="text"
                         placeholder="e.g. CS 101"
@@ -99,7 +99,7 @@ export class CourseDetails extends Component {
                         ref={this.courseTitleInput}
                         />
             </div>
-            <div class="control">
+            <div className="control">
                 <button className="button is-primary" onClick={() => this.renameCourse()}>Rename</button>
             </div>
         </div>
@@ -126,13 +126,13 @@ export class CourseDetails extends Component {
             <div className="is-flex-tablet">
                 <span>Set up a non-graded survey with multiple-choice questions for students to participate in. Place an LTI link in your LMS, and view the survey results here.<br /></span>
                 <span className="is-flex-desktop" style={{marginLeft: "0.5rem"}}>
-                    <button style={{marginLeft: "0.5rem", marginBottom: "0.5rem"}} className="button is-light"
-                        onClick={() => this.props.history.push('/instructor/survey/edit/' + course.id)}>
+                    <Link style={{marginLeft: "0.5rem", marginBottom: "0.5rem"}} className="button is-light"
+                        to={'/instructor/survey/edit/' + course.id}>
                         <span className="icon">
                         <i className="fas fa-edit"></i>
                         </span>
                         <span>Edit Survey</span>
-                    </button>
+                    </Link>
                     <br />
                     <button style={{marginLeft: "0.5rem", marginBottom: "0.5rem"}} className="button is-light"
                         onClick={() => this._showLTISetup('survey', course.id)}>
@@ -142,44 +142,43 @@ export class CourseDetails extends Component {
                         <span>Add Survey Link to LMS</span>
                     </button>
                     <br />
-                    <button style={{marginLeft: "0.5rem"}} className="button is-light"
-                        onClick={() => this.props.history.push('/instructor/survey/results/' + course.id)}>
+                    <Link style={{marginLeft: "0.5rem"}}
+                        className="button is-light"
+                        to={'/instructor/survey/results/' + course.id}>
                         <span className="icon">
                         <i className="fas fa-chart-bar"></i>
                         </span>
                         <span>View Survey Results</span>
-                    </button>
+                    </Link>
                 </span>
             </div>
             <hr />
           </section>
 
             <h4 className="title is-4 is-inline-block">Quizzes</h4>
-            <button className="button is-primary is-pulled-right" onClick = {() => this.addQuiz()}>
+            <button className="button is-primary is-pulled-right" onClick = {() => this.createQuiz()}>
                 <span className="icon">
                 <i className="fas fa-plus"></i>
                 </span>
                 <span>New Quiz</span>
             </button>
-          <div style={{overflowX: "auto"}}>
+          <div style={{overflowX: "auto", overflowY: "hidden"}}>
           <table className="table is-striped is-hoverable is-fullwidth quiz-table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th style={{width:"99%"}}>Title</th>
+                    <th>Title</th>
                     <th>Type</th>
                     <th style={{whiteSpace: "nowrap"}}>Questions</th>
-                    <th>Actions</th>
+                    <th style={{width: "19rem"}}>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {course.quizzes.map((quiz, index)=>
                 <tr key={quiz.id}>
-                    <td>{quiz.id}</td>
-                    <td>{quiz.title}</td>
+                    <td><Link className="has-text-black is-block" to={"/instructor/quiz/" + quiz.id}>{quiz.title}</Link></td>
                     <td>{QUIZ_TYPE_NAMES[quiz.type]}</td>
                     <td>{quiz.questions.length}</td>
-                    <td className="buttons">
+                    <td className="buttons has-text-right">
                     <Link to={"/instructor/quiz/" + quiz.id}
                       className="button is-light">
                         <span className="icon">
@@ -235,8 +234,7 @@ export class CourseDetails extends Component {
 
 }
 
-//all courses for user of id
-//TODO change from hardcoded userId
+// Get course details
 export const COURSE_QUERY = gql`
   query courseQuery($id:ID!) {
     course(
@@ -257,13 +255,13 @@ export const COURSE_QUERY = gql`
   }
 `
 
-export const ADD_QUIZ = gql`
-mutation addQuizMutation($id:ID!)
+export const CREATE_QUIZ = gql`
+mutation createQuizMutation($courseId: ID!)
     {
-        addQuiz(
-            id:$id
+        createQuiz(
+            courseId:$courseId,
         ){
-            title
+            id
         }
     }`
 
@@ -290,7 +288,7 @@ graphql(COURSE_QUERY, {
     return { variables: { id:props.match.params.courseId } }
   }
 }),
-graphql(ADD_QUIZ, {name:"addQuizMutation"}),
+graphql(CREATE_QUIZ, {name:"createQuizMutation"}),
 graphql(COURSE_UPDATE, {name:"courseUpdate"}),
 graphql(COURSE_DELETE, {name:"courseDelete"}),
 ) (CourseDetails), { instructor: true});

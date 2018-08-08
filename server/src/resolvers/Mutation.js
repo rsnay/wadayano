@@ -102,6 +102,16 @@ function updateSurvey (root, args, context, info) {
     }, info);
 }
 
+function createQuiz (root, args, context, info) {
+    return context.db.mutation.createQuiz({
+        data: {
+            title: "New Quiz Title",
+            type: "GRADED",
+            course: { connect: { id: args.courseId } }
+        }
+    }, info);
+}
+
 function addQuiz (root, args, context, info) {
     return context.db.mutation.updateCourse({
       data: {
@@ -540,6 +550,7 @@ module.exports = {
     addCourse,
     updateCourse,
     deleteCourse,
+    createQuiz,
     updateQuiz,
     deleteQuiz,
     addQuestion,
