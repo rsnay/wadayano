@@ -110,9 +110,10 @@ export class QuizEditor extends Component {
         window.location.reload(true);
     }
 
-    deleteQuiz(quiz){
+    async deleteQuiz(quiz){
         console.log(quiz);
-        this.props.quizDeleteMutation({
+        if (!window.confirm('Are you sure you want to delete this quiz? All students’ attempts for this quiz will also be deleted.')) { return; }
+        await this.props.quizDeleteMutation({
             variables:{
                 id:quiz.id
             }
