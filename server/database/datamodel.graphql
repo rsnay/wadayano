@@ -15,8 +15,9 @@ type Student {
     email: String!
     name: String!
     courses: [Course!]!
-    quizAttempts: [QuizAttempt!]!
-    surveyResults: [SurveyResult!]!
+    # If a student is deleted, delete their quiz and survey attempts (not that the other side of this relation, on quizAttempt or surveyResult is SET_NULL, e.g. deleting an attempt removes it from the student, but doesn't delete the student)
+    quizAttempts: [QuizAttempt!]! @relation(name: "StudentQuizAttempts", onDelete: CASCADE)
+    surveyResults: [SurveyResult!]! @relation(name: "StudentSurveyResults", onDelete: CASCADE)
 }
 
 # Course data hierarchy
@@ -24,12 +25,13 @@ type Course {
     id: ID! @unique
     title: String!
     createdAt: DateTime!
-    quizzes: [Quiz!]!
+    quizzes: [Quiz!]! @relation(name: "CourseQuizzes", onDelete: CASCADE)
     concepts: [String!]!
     instructors: [Instructor!]!
     students: [Student!]!
     ltiSecret: String!
     survey: Json
+    surveyResults: [SurveyResult!]! @relation(name: "CourseSurveyResults", onDelete: CASCADE)
 }
 
 enum QuizType {
@@ -40,48 +42,52 @@ enum QuizType {
 type Quiz {
     id: ID! @unique
     createdAt: DateTime!
-    questions: [Question!]!
-    concepts:[String!]!
-    course:Course
+    quizAttempts: [QuizAttempt!]! @relation(name: "QuizQuizAttempts", onDelete: CASCADE)
+    questions: [Question!]! @relation(name: "QuizQuestions", onDelete: CASCADE)
+    concepts: [String!]!
+    course: Course  @relation(name: "CourseQuizzes", onDelete: SET_NULL)
     title: String!
     type: QuizType
 }
 
 type Question {
     id: ID! @unique
-    options: [Option!]!
+    options: [Option!]! @relation(name: "QuestionOptions", onDelete: CASCADE)
     prompt: String!
     concept: String
 }
 
 type Option {
     id: ID! @unique
-    question: Question
+    question: Question @relation(name: "QuestionOptions", onDelete: SET_NULL)
     isCorrect: Boolean
     text: String!
+    # These are needed as backlinks, since QuestionAttempt links to them. Without this, cascading deletes fail
+    questionAttempts: [QuestionAttempt!]! @relation(name: "SelectedAnswerAttemptRelation", onDelete: SET_NULL)
+    correctQuestionAttempts: [QuestionAttempt!]! @relation(name: "CorrectAnswerAttemptRelation", onDelete: SET_NULL)
 }
 
 # Student quiz attempt data
 type QuizAttempt {
     id: ID! @unique
-    student: Student!
-    quiz: Quiz!
+    student: Student! @relation(name: "StudentQuizAttempts", onDelete: SET_NULL)
+    quiz: Quiz! @relation(name: "QuizQuizAttempts", onDelete: SET_NULL)
     createdAt: DateTime!
     ltiSessionInfo: Json
     completed: DateTime
     postSucceeded: Boolean # True/false if it was a graded attempt. Null if practice attempt
-    questionAttempts: [QuestionAttempt!]!
+    questionAttempts: [QuestionAttempt!]! @relation(name: "QuizAttemptQuestionAttempts", onDelete: CASCADE)
     score: Float # (correct/total). No score indicates the attempt was started, but not yet finished
-    conceptConfidences: [ConceptConfidence!]!
+    conceptConfidences: [ConceptConfidence!]! @relation(name: "QuizAttemptConceptConfidences", onDelete: CASCADE)
 }
 
 type QuestionAttempt {
     id: ID! @unique
     createdAt: DateTime!
-    question: Question
-    option: Option! @relation(name: "SelectedAnswerAttemptRelation")
+    question: Question!
+    option: Option! @relation(name: "SelectedAnswerAttemptRelation", onDelete: SET_NULL)
     isCorrect: Boolean! # Yes, this is duplicating isCorrect from Option, but student should be able to review their past attempts without us always having to expose isCorrect on Options
-    correctOption: Option! @relation(name: "CorrectAnswerAttemptRelation") # See note for isCorrect
+    correctOption: Option! @relation(name: "CorrectAnswerAttemptRelation", onDelete: SET_NULL) # See note for isCorrect
     isConfident: Boolean!
 }
 
@@ -91,10 +97,10 @@ type ConceptConfidence {
     confidence: Int
 }
  
- type SurveyResult {
+type SurveyResult {
     id: ID! @unique
     createdAt: DateTime!
-    course: Course!
-    student: Student!
+    course: Course! @relation(name: "CourseSurveyResults", onDelete: SET_NULL)
+    student: Student! @relation(name: "StudentSurveyResults", onDelete: SET_NULL)
     answers: Json!
  }
