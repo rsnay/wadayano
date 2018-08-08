@@ -18,6 +18,7 @@ export class CourseDetails extends Component {
         this.state = {
             displayLtiSetupUrl: null
         };
+        this.courseTitleInput = React.createRef();
     }
 
   addQuiz(){
@@ -30,15 +31,19 @@ export class CourseDetails extends Component {
     window.location.reload(true);
   }
 
-  updateCourse(){
-    //console.log(this.props.match.params.courseId)
-    this.props.courseUpdate({
-        variables:{
-            id:this.props.match.params.courseId,
-            title:document.getElementById(this.props.match.params.courseId).value
+  async renameCourse(){
+    let title = this.courseTitleInput.current.value.trim();
+    if (title === '') {
+        alert('Please enter a title for this course.');
+        return;
+    }
+    await this.props.courseUpdate({
+        variables: {
+            id: this.props.match.params.courseId,
+            title
         }
     });
-    window.location.reload(true);
+    this.props.courseQuery.refetch();
   }
 
   deleteCourse(course){
@@ -77,13 +82,24 @@ export class CourseDetails extends Component {
                 <li className="is-active"><Link to={"/instructor/course/"+course.id} aria-current="page">{course.title}</Link></li>
             </ul>
         </nav>
-          <textarea type="input" id={course.id} className="title is-inline-block">{course.title}</textarea>
-          &nbsp;&nbsp;
-            <a className="button">
-                <span className="icon is-small" onClick = {() => this.updateCourse()}>
-                <i className="fas fa-edit"></i>
-                </span>
-            </a>
+
+        <label className="label is-medium">
+            Course Title
+        </label>
+        <div class="field has-addons">
+            <div class="control">
+                    <input
+                        className="input" type="text"
+                        placeholder="e.g. CS 101"
+                        defaultValue={course.title}
+                        ref={this.courseTitleInput}
+                        />
+            </div>
+            <div class="control">
+                <button className="button is-primary" onClick={() => this.renameCourse()}>Rename</button>
+            </div>
+        </div>
+
           <hr />
 
           <section>
