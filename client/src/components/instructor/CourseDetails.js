@@ -46,14 +46,18 @@ export class CourseDetails extends Component {
     this.props.courseQuery.refetch();
   }
 
-  deleteCourse(course){
+  async deleteCourse(course){
       console.log(course)
-    this.props.courseDelete({
-        variables:{
-            id:course.id
-        }
-    });
-    window.history.back();
+    if (window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.') === 'absolutely') {
+        await this.props.courseDelete({
+            variables:{
+                id:course.id
+            }
+        });
+        window.location.assign('/instructor');
+    } else {
+        alert('Course will not be deleted.');
+    }
   }
 
   // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
@@ -196,13 +200,24 @@ export class CourseDetails extends Component {
             </tbody>
         </table>
 
-        <button className="button is-primary" onClick = {() => this.deleteCourse(course)}>
-            <span className="icon">
-            <i className="fas fa-trash-alt"></i>
-            </span>
-            <span>Delete Course</span>
-        </button>
         </div>
+        <hr />
+
+        <section>
+            <h4 className="title is-4">Delete Course</h4>
+            <div className="is-flex-tablet">
+                <span>Deleteing this course will permanently delete all quizzes, students’ quizzes attempts, survey data, and other information associated with this course. This cannot be undone.<br /></span>
+                <button style={{marginLeft: "1rem"}} className="button is-danger is-outlined"
+                    onClick={() => this.deleteCourse(course)}>
+                    <span className="icon">
+                    <i className="fas fa-trash-alt"></i>
+                    </span>
+                    <span>Delete Course</span>
+                </button>
+            </div>
+            <hr />
+        </section>
+
         </div>
         {this.state.displayLtiSetupUrl &&
             <LTISetupModal
@@ -214,6 +229,7 @@ export class CourseDetails extends Component {
             />
         }
       </section>
+
     )
   }
 
