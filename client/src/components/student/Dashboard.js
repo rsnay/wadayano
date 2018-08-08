@@ -23,13 +23,14 @@ class Dashboard extends Component {
 
     const course = this.props.courseQuery.course;
     const quizzes = course.quizzes;
+    const practiceQuizzes = quizzes.filter(quiz => quiz.type === 'PRACTICE');
     const quizAttempts = this.props.quizAttemptsQuery.currentStudentQuizAttempts;
 
     console.log(quizAttempts);
 
 
     let practiceQuizzesTable = <div class="notification has-text-centered">No practice quizzes are currently available for this course.</div>;
-    if (quizzes.length > 0) {
+    if (practiceQuizzes.length > 0) {
         practiceQuizzesTable = (
         <div style={{overflowX: "auto"}}>
             <table className="table is-striped is-hoverable is-fullwidth quiz-table">
@@ -41,7 +42,7 @@ class Dashboard extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {quizzes.map((quiz, index) => 
+                    {practiceQuizzes.filter(quiz => quiz.type === 'PRACTICE').map((quiz, index) => 
                         <tr key={quiz.id}>
                             <td>
                                 <Link className="has-text-black is-block" to={"/student/quiz/" + quiz.id}>
@@ -157,6 +158,7 @@ const COURSE_QUERY = gql`
         quizzes {
             id
             title
+            type
             questions {
                 id
             }
