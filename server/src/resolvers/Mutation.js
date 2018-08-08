@@ -178,6 +178,7 @@ function updateQuiz(root, args, context, info) {
     return context.db.mutation.updateQuiz({
         data:{
             title:args.title,
+            type: args.type,
             concepts:args.concepts
         },
         where:{

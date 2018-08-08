@@ -32,6 +32,11 @@ type Course {
     survey: Json
 }
 
+enum QuizType {
+    PRACTICE
+    GRADED
+}
+
 type Quiz {
     id: ID! @unique
     createdAt: DateTime!
@@ -39,6 +44,7 @@ type Quiz {
     concepts:[String!]!
     course:Course
     title: String!
+    type: QuizType
 }
 
 type Question {

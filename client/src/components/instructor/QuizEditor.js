@@ -15,6 +15,7 @@ export class QuizEditor extends Component {
         this.state = {
           quiz:null,
           quizTitle:'',
+          quizType: null,
           questions:[],
           concepts:[]
         };
@@ -50,7 +51,8 @@ export class QuizEditor extends Component {
             variables:{
                 id:quiz.id,
                 //title:document.getElementById("quizTitle").value
-                title:document.getElementById(quiz.id).value
+                title:document.getElementById(quiz.id).value,
+                type:document.getElementById("quizTypeSelector").value
             }
         })
         for(i=0;i<quiz.questions.length;i++){
@@ -190,12 +192,24 @@ export class QuizEditor extends Component {
                 <li className="is-active"><Link to={"/instructor/quiz/" + quiz.id} aria-current="page">{quiz.title}</Link></li>
             </ul>
         </nav>
-        <textarea id = {quiz.id} key = {quiz.id} className="textarea is-large" type="text">{quiz.title}</textarea>
-            <a className="button" >
-                <span className="icon is-small">
-                <i className="fas fa-edit"></i>
-                </span>
-            </a>
+        
+        <label className="label is-medium">
+            Quiz Title<br />
+            <input className="input" type="text" placeholder="e.g. Lipids Review" defaultValue={quiz.title} id={quiz.id} style={{maxWidth: "38rem"}} />
+        </label>
+
+        <label className="label is-medium">
+            Quiz Type<br />
+            <div className="select">
+                <select id="quizTypeSelector" defaultValue={quiz.type}>
+                    <option value="GRADED">Graded quiz (must be launched from LMS)</option>
+                    <option value="PRACTICE">Practice quiz (students can launch from wadayano dashboard)</option>
+                </select>
+            </div>
+        </label>
+
+        <label className="label is-medium">Questions</label>
+
         {quiz.questions.map((question,index)=>
         <div className="panel" key={question.id}>
             <p className="panel-heading">
@@ -257,7 +271,7 @@ export class QuizEditor extends Component {
                     <button className="button is-link" onClick={this.updateQuiz.bind(null, quiz)}>Save Quiz</button>
                 </p>
                 <p className="control">
-                    <button onClick={this.addQuestion}>Add Question</button>
+                    <button className="button is-primary" onClick={this.addQuestion}>Add Question</button>
                 </p>
             </div>
         </div>
@@ -282,6 +296,7 @@ export const QUIZ_QUERY = gql`
         id
         title
         concepts
+        type
         course{
             title
             concepts
@@ -319,13 +334,16 @@ export const QUIZ_SAVE = gql`
     mutation quizSaveMutation(
         $id:ID!
         $title:String!
+        $type:QuizType!
     ){
         updateQuiz(
             id:$id
             title:$title
+            type:$type
         ){
             id
             title
+            type
         }
     }`
 
