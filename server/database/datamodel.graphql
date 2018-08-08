@@ -50,7 +50,7 @@ type Question {
 
 type Option {
     id: ID! @unique
-    question: Question!
+    question: Question
     isCorrect: Boolean
     text: String!
 }
@@ -72,7 +72,7 @@ type QuizAttempt {
 type QuestionAttempt {
     id: ID! @unique
     createdAt: DateTime!
-    question: Question!
+    question: Question
     option: Option! @relation(name: "SelectedAnswerAttemptRelation")
     isCorrect: Boolean! # Yes, this is duplicating isCorrect from Option, but student should be able to review their past attempts without us always having to expose isCorrect on Options
     correctOption: Option! @relation(name: "CorrectAnswerAttemptRelation") # See note for isCorrect

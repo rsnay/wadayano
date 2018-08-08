@@ -44,6 +44,7 @@ class QuizReview extends Component {
     //go through each concept and calculate the confidence bias/error
     sortConcepts(quizAttempt){
         var quizConcepts = quizAttempt.quiz.concepts;
+        console.log(quizConcepts);
         var conceptConfidences = [];
         for(var i=0;i<quizConcepts.length;i++){
             var confidence = 0;
