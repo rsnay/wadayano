@@ -4,6 +4,8 @@ import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
 import { formatScore } from '../../utils';
+import ErrorBox from '../shared/ErrorBox';
+import LoadingBox from '../shared/LoadingBox';
 
 class QuizReview extends Component {
 
@@ -43,8 +45,9 @@ class QuizReview extends Component {
 
     //go through each concept and calculate the confidence bias/error
     sortConcepts(quizAttempt){
+        console.log("qa"+quizAttempt);
         var quizConcepts = quizAttempt.quiz.concepts;
-        console.log(quizConcepts);
+        console.log("quiz"+quizConcepts);
         var conceptConfidences = [];
         for(var i=0;i<quizConcepts.length;i++){
             var confidence = 0;
@@ -75,14 +78,24 @@ class QuizReview extends Component {
 
   render() {
 
-    const quizAttempt = this.props.quizAttempt;
-    console.log(quizAttempt);
+    
+    
+    
+    if (this.props.quizAttempt && this.props.quizAttempt.loading) {
+        return <LoadingBox />;
+    }
+
+    if (this.props.quizAttempt && this.props.quizAttempt.error) {
+        return <ErrorBox>Couldn’t load quiz</ErrorBox>;
+    }
+    console.log("hey" + this.props.quizAttempt.quizAttempt);
+    const quizAttempt = this.props.quizAttempt.quizAttempt;
+    
     console.log(quizAttempt.questionAttempts[0].question.title);
 
-
-    this.wadayanoScore(quizAttempt);
+    //this.wadayanoScore(quizAttempt);
     this.sortConcepts(quizAttempt);
-    this.overallScore(quizAttempt);
+    //this.overallScore(quizAttempt);
 
     // Use conceptConfidences from the quizAttempt prop
     const conceptConfidences = quizAttempt.conceptConfidences
@@ -136,6 +149,18 @@ class QuizReview extends Component {
 QuizReview.propTypes = {
     quizAttempt: PropTypes.object.isRequired
 };
+
+/*export const QUIZ_ATTEMPT_QUERY = gql`
+    query {
+        quizzes {
+            id
+            title
+            questions {
+                id
+            }
+        }
+    }
+`*/
 
 export const QUIZ_ATTEMPT_QUERY = gql`
     query {
