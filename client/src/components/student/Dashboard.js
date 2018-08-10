@@ -25,6 +25,8 @@ class Dashboard extends Component {
     const quizzes = course.quizzes;
     const practiceQuizzes = quizzes.filter(quiz => quiz.type === 'PRACTICE');
     const quizAttempts = this.props.quizAttemptsQuery.currentStudentQuizAttempts;
+    const unfinishedAttempts = quizAttempts.filter(attempt => attempt.completed === null);
+    const pastAttempts = quizAttempts.filter(attempt => attempt.completed !== null);
 
     console.log(quizAttempts);
 
@@ -64,10 +66,7 @@ class Dashboard extends Component {
         );
     }
 
-
-    let quizAttemptsTable = <div class="notification has-text-centered">No quiz attempts yet. Choose a practice quiz from the list above, or launch a quiz from your learning management system to get started.</div>;
-    if (quizAttempts.length > 0) {
-        quizAttemptsTable = (
+    let unfinishedAttemptsTable = unfinishedAttempts.length > 0 && (
         <div style={{overflowX: "auto"}}>
             <table className="table is-striped is-hoverable is-fullwidth quiz-table">
                 <thead>
@@ -75,40 +74,65 @@ class Dashboard extends Component {
                         <th style={{whiteSpace: "nowrap"}}>Started</th>
                         <th style={{width:"99%"}}>Quiz</th>
                         <th style={{whiteSpace: "nowrap"}}>Questions</th>
-                        <th>Score</th>
-                        <th>Actions</th>
+                        <th>Completion</th>
+                        <th>Resume</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {quizAttempts.map((attempt, index) => 
+                    {unfinishedAttempts.map((attempt, index) => 
                         <tr key={attempt.id}>
                             <td style={{whiteSpace: "nowrap"}}><TimeAgo date={attempt.createdAt} /></td>
                             <td>
-                                {attempt.completed ?
-                                    <Link className="has-text-black is-block" to={"/student/quiz/review/" + attempt.id}>
-                                    {attempt.quiz.title}</Link>
-                                :
-                                    <Link className="has-text-black is-block" to={"/student/quiz/"+ attempt.quiz.id}>
-                                    {attempt.quiz.title}</Link>
-                                }
+                                <Link className="has-text-black is-block" to={"/student/quiz/"+ attempt.quiz.id}>
+                                {attempt.quiz.title}</Link>
+                            </td>
+                            <td>{attempt.quiz.questions.length}</td>
+                            <td>{formatScore(attempt.questionAttempts.length / attempt.quiz.questions.length)}</td>
+                            <td>
+                                <Link to={"/student/quiz/" + attempt.quiz.id}
+                                className="button is-primary is-outlined">
+                                    <span className="icon"><i className="fas fa-rocket"></i></span>
+                                    <span>Resume</span>
+                                </Link>
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+
+    );
+
+    let pastAttemptsTable = <div class="notification has-text-centered">No quiz attempts yet. Choose a practice quiz from the list above, or launch a quiz from your learning management system to get started.</div>;
+    if (pastAttempts.length > 0) {
+        pastAttemptsTable = (
+        <div style={{overflowX: "auto"}}>
+            <table className="table is-striped is-hoverable is-fullwidth quiz-table">
+                <thead>
+                    <tr>
+                        <th style={{whiteSpace: "nowrap"}}>Completed</th>
+                        <th style={{width:"99%"}}>Quiz</th>
+                        <th style={{whiteSpace: "nowrap"}}>Questions</th>
+                        <th>Score</th>
+                        <th>Review</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {pastAttempts.map((attempt, index) => 
+                        <tr key={attempt.id}>
+                            <td style={{whiteSpace: "nowrap"}}><TimeAgo date={attempt.completed} /></td>
+                            <td>
+                                <Link className="has-text-black is-block" to={"/student/quiz/review/" + attempt.id}>
+                                {attempt.quiz.title}</Link>
                             </td>
                             <td>{attempt.quiz.questions.length}</td>
                             <td>{attempt.completed ? formatScore(attempt.score) : "n/a"}</td>
                             <td>
-                                {attempt.completed ?
-                                    <Link to={"/student/quiz/review/" + attempt.id}
-                                    className="button is-info is-outlined">
-                                        <span className="icon"><i className="fas fa-history"></i></span>
-                                        <span>Review</span>
-                                    </Link>
-                                :
-                                    <Link to={"/student/quiz/" + attempt.quiz.id}
-                                    className="button is-primary is-outlined">
-                                        <span className="icon"><i className="fas fa-rocket"></i></span>
-                                        <span>Resume</span>
-                                    </Link>
-
-                                }
+                                <Link to={"/student/quiz/review/" + attempt.id}
+                                className="button is-info is-outlined">
+                                    <span className="icon"><i className="fas fa-history"></i></span>
+                                    <span>Review</span>
+                                </Link>
                             </td>
                         </tr>
                     )}
@@ -125,6 +149,18 @@ class Dashboard extends Component {
           <hr />
 
 
+          {unfinishedAttempts.length > 0 && <section className="message is-info">
+            <div className="message-header">
+                <h4 className="title is-4 has-text-white">Unfinished Quiz Attempts</h4>
+            </div>
+            <div className="message-body">
+                <p>Need to pause during a quiz? Simply close the quiz, and resume it here.<br /><br /></p>
+
+                {unfinishedAttemptsTable}
+            </div>
+            <hr />
+          </section>}
+
           <section>
             <h4 className="title is-4">Practice Quizzes</h4>
             <p>Take a practice quiz below. To take a quiz that is graded for this course, please launch it from your learning management system (i.e. Canvas or Learning Suite).<br /><br /></p>
@@ -135,10 +171,10 @@ class Dashboard extends Component {
           </section>
 
           <section>
-            <h4 className="title is-4">Quiz Attempts</h4>
-            <p>Review previous quiz attempts, or resume an in-progress attempt.<br /><br /></p>
+            <h4 className="title is-4">Past Quiz Attempts</h4>
+            <p>Review previous quiz attempts, and see where you’ve improved.<br /><br /></p>
 
-            {quizAttemptsTable}
+            {pastAttemptsTable}
 
             <hr />
           </section>
@@ -169,7 +205,7 @@ const COURSE_QUERY = gql`
 
 const QUIZ_ATTEMPTS_QUERY = gql`
     query($courseId: ID!) {
-        currentStudentQuizAttempts(orderBy: createdAt_DESC, courseId: $courseId) {
+        currentStudentQuizAttempts(orderBy: completed_DESC, courseId: $courseId) {
             id
             quiz {
                 id
