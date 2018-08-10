@@ -60,6 +60,7 @@ type Question {
 type Option {
     id: ID! @unique
     question: Question @relation(name: "QuestionOptions", onDelete: SET_NULL)
+    # On the application-level graphql server, the isCorrect resolver is overwritten to always return false for students
     isCorrect: Boolean
     text: String!
     # These are needed as backlinks, since QuestionAttempt links to them. Without this, cascading deletes fail

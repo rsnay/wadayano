@@ -4,6 +4,7 @@ const { Prisma } = require('prisma-binding');
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const QuizGradePayload = require('./resolvers/QuizGradePayload');
+const Option = require('./resolvers/Option');
 
 // App server (for static and LTI processing)
 const express = require('express');
@@ -30,7 +31,8 @@ const appDir = '../client/build';
 const resolvers = {
   Query,
   Mutation,
-  QuizGradePayload
+  QuizGradePayload,
+  Option
 };
 
 // Set up prisma DB

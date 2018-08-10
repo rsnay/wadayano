@@ -328,7 +328,6 @@ const COMPLETE_MUTATION = gql`
             options {
               id
               text
-              isCorrect
             }
           }
         }

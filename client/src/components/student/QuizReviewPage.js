@@ -63,7 +63,6 @@ const QUIZ_ATTEMPT_QUERY = gql`
           options {
             id
             text
-            isCorrect
           }
         }
       }
