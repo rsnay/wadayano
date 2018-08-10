@@ -309,15 +309,22 @@ async function instructorSignup(root, args, context, info) {
     };
 }
 
+// This will only be practice launches. LTI launches are handled in lti.js
 async function startOrResumeQuizAttempt(root, args, context, info) {
-    // TODO quizId: ID!, studentId: ID!): QuizAttempt!
-
     // Check for valid student login
     const studentId = getUserInfo(context).userId;
     const quizId = args.quizId;
 
-    // Check that student has access to the course that owns this quiz
-    // TODO
+    // Check that student has access to the course that owns this quiz (LTI launch would automatically enroll, but practice launches shouldn't)
+    const studentInCourse = await context.db.query.students({
+        where: {
+            id: studentId,
+            courses_some: { quizzes_some: {id: quizId } }
+        }
+    }, `{ id }`);
+    if (studentInCourse.length === 0) {
+        throw Error('Student not enrolled in course that this quiz belongs to');
+    }
 
     // Check availability date of quiz
     // TODO
@@ -350,10 +357,18 @@ async function startOrResumeQuizAttempt(root, args, context, info) {
 }
 
 async function rateConcepts(root, args, context, info) {
+    // Check for valid student login
+    const studentId = getUserInfo(context).userId;
+
     // Get any existing conceptConfidences on the attempt to delete them (so concepts aren't duplicated)
     const attempt = await context.db.query.quizAttempt({
         where: { id: args.quizAttemptId }
-    }, `{ conceptConfidences { id } }`);
+    }, `{ student { id }, conceptConfidences { id } }`);
+
+    // Check that student owns the given QuizAttempt
+    if (attempt.student.id !== studentId) {
+        throw Error('Quiz attempt belongs to a different student.');
+    }
 
     // Update the quiz attempt, deleting old conceptConfidences and adding new ones
     return context.db.mutation.updateQuizAttempt({
@@ -373,9 +388,6 @@ async function attemptQuestion(root, args, context, info) {
 
     console.log('Attempt question', args);
 
-    // Check that student owns the given QuizAttempt
-    // TODO
-
     // Check availability date of quiz hasn't expired since starting
     // TODO
 
@@ -384,8 +396,13 @@ async function attemptQuestion(root, args, context, info) {
         where: {
            id: args.quizAttemptId
         }
-    }, `{ questionAttempts { id, question { id } } }`);
+    }, `{ student { id }, questionAttempts { id, question { id } } }`);
     
+    // Check that student owns the given QuizAttempt
+    if (existingQuizAttempt.student.id !== studentId) {
+        throw Error('Quiz attempt belongs to a different student.');
+    }
+
     // If it has been attempted, return the previous attempt (to help avoid cheating)
     if (existingQuizAttempt.questionAttempts && existingQuizAttempt.questionAttempts.length > 0) {
         for (let i = 0; i < existingQuizAttempt.questionAttempts.length; i++) {
@@ -469,13 +486,8 @@ async function completeQuizAttempt(root, args, context, info) {
         throw new Error('Could not complete this quiz attempt.');
     }
 
-    // Check that all questions were attempted
-    // TODO is this necessary?
-
     // Set completed to current timestamp
     const completed = new Date().toISOString();
-    console.log(attempt);
-    console.log(attempt.questionAttempts.filter(attempt => attempt.isCorrect).length);
 
     // Calculate score
     const correctCount = attempt.questionAttempts.filter(attempt => attempt.isCorrect).length || 0;
