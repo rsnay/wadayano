@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
+import Icon from '../../icon.png';
 import Logo from '../../logo.svg';
 
 import { AUTH_TOKEN, AUTH_ROLE } from '../../constants';
@@ -36,11 +37,8 @@ class Header extends Component {
       <nav className="navbar is-light no-select" aria-label="main navigation">
         <div className="navbar-brand">
             <Link to="/" className="navbar-item">
-                <span className="icon is-medium">
-                    <i className="fas fa-2x fa-book"></i>
-                </span>
-                &nbsp;&nbsp;
-                <img src={Logo} alt="Knowledge Monitoring" height="28" />
+                <img src={Icon} alt="W" style={{maxHeight: "4rem"}} />
+                <img src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "2rem"}} />
             </Link>
             <a role="button" className="navbar-burger" onClick={(e) => this._toggleMenu(e) } data-target="navMenu" aria-label="menu" aria-expanded="false">
                 <span aria-hidden="true"></span>
