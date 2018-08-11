@@ -188,7 +188,7 @@ export class QuizEditor extends Component {
         <div className="container">
         <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><Link to="/instructor">Course List</Link></li>
+                <li><Link to="/instructor/courses">Course List</Link></li>
                 <li><Link to={"/instructor/course/" + quiz.course.id}>{quiz.course.title}</Link></li>
                 <li className="is-active"><Link to={"/instructor/quiz/" + quiz.id} aria-current="page">{quiz.title}</Link></li>
             </ul>

@@ -4,7 +4,7 @@ import { withRouter } from 'react-router';
 import Icon from '../../icon.png';
 import Logo from '../../logo.svg';
 
-import { AUTH_TOKEN, AUTH_ROLE } from '../../constants';
+import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR, AUTH_ROLE_STUDENT } from '../../constants';
 
 class Header extends Component {
 
@@ -32,7 +32,9 @@ class Header extends Component {
     }
 
   render() {
-    let instructorLoggedIn = !!localStorage.getItem(AUTH_TOKEN);
+    this.isLoggedIn = !!localStorage.getItem(AUTH_TOKEN);
+    this.isInstructor = localStorage.getItem(AUTH_ROLE) === AUTH_ROLE_INSTRUCTOR;
+    this.isStudent = localStorage.getItem(AUTH_ROLE) === AUTH_ROLE_STUDENT;
     return (
       <nav className="navbar is-light no-select" aria-label="main navigation">
         <div className="navbar-brand">
@@ -49,12 +51,13 @@ class Header extends Component {
 
         <div id="header-main-menu" className="navbar-menu">
             <div className="navbar-start">
-                <NavLink activeClassName="is-active" to="/instructor" className="navbar-item">Instructors</NavLink>
-                <NavLink activeClassName="is-active" to="/student" className="navbar-item">Students</NavLink>
+                {this.isInstructor && <NavLink activeClassName="is-active" to="/instructor/courses" className="navbar-item">Courses</NavLink>}
+                {this.isInstructor && <NavLink activeClassName="is-active" to="/instructor/profile" className="navbar-item">Profile</NavLink>}
+                {this.isStudent && <NavLink activeClassName="is-active" to="/student/dashboard" className="navbar-item">Dashboard</NavLink>}
             </div>
             <div className="navbar-end">
                 <div className="navbar-item">
-                {instructorLoggedIn ? 
+                {this.isLoggedIn ? 
                     <button className="button is-danger is-outlined" onClick={() => this._logOut() }>Log Out</button>
                 : 
                     <Link to="/login" className="button is-info is-outlined">Log In</Link>

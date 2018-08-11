@@ -88,7 +88,7 @@ class SurveyResults extends Component {
 
                         <nav className="breadcrumb" aria-label="breadcrumbs">
                             <ul>
-                                <li><Link to="/instructor">Course List</Link></li>
+                                <li><Link to="/instructor/courses">Course List</Link></li>
                                 <li><Link to={"/instructor/course/" + course.id}>{course.title}</Link></li>
                                 <li className="is-active"><Link to={"/instructor/survey/edit/" + course.id} aria-current="page">Survey Results</Link></li>
                             </ul>

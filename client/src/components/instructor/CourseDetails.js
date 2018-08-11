@@ -54,7 +54,7 @@ export class CourseDetails extends Component {
                     id:course.id
                 }
             });
-            window.location.assign('/instructor');
+            window.location.assign('/instructor/courses');
         } else {
             alert('Course will not be deleted.');
         }
@@ -82,7 +82,7 @@ export class CourseDetails extends Component {
         <div className="container">
         <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><Link to="/instructor">Course List</Link></li>
+                <li><Link to="/instructor/courses">Course List</Link></li>
                 <li className="is-active"><Link to={"/instructor/course/"+course.id} aria-current="page">{course.title}</Link></li>
             </ul>
         </nav>

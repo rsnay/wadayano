@@ -8,11 +8,11 @@ export default class Welcome extends Component {
   componentDidMount() {
     const authRole = localStorage.getItem(AUTH_ROLE);
     if (authRole === AUTH_ROLE_STUDENT) {
-      this.props.history.replace('/student');
+      this.props.history.replace('/student/dashboard');
       return;
     }
     if (authRole === AUTH_ROLE_INSTRUCTOR) {
-      this.props.history.replace('/instructor');
+      this.props.history.replace('/instructor/courses');
       return;
     }
   }
