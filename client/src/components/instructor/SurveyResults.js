@@ -31,7 +31,7 @@ class SurveyResults extends Component {
 
         let resultsTable;
         if (students.length === 0) {
-            resultsTable = (<p class="notification is-light">There are no students enrolled in this course. When a student launches the survey from their LMS, he/she will be automatically enrolled.</p>);
+            resultsTable = (<p className="notification is-light">There are no students enrolled in this course. When a student launches the survey from their LMS, he/she will be automatically enrolled.</p>);
         } else {
             resultsTable = (
                 <div style={{overflowX: "auto"}}>

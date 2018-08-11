@@ -93,7 +93,7 @@ class QuizReview extends Component {
     // If postSucceeded is null, then it was not a graded attempt
     const isGraded = (quizAttempt.postSucceeded !== null);
     const gradePostMessage = isGraded && (quizAttempt.postSucceeded ?
-            <span class="notification is-success is-pulled-right">Score was posted successfully.</span>
+            <span className="notification is-success is-pulled-right">Score was posted successfully.</span>
         :
             <span className="notification is-danger is-pulled-right">There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.</span>
         );
