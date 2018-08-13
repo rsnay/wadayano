@@ -47,7 +47,7 @@ type Quiz {
     concepts: [String!]!
     course: Course  @relation(name: "CourseQuizzes", onDelete: SET_NULL)
     title: String!
-    type: QuizType
+    type: QuizType!
 }
 
 type Question {

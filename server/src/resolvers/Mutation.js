@@ -50,6 +50,7 @@ function addCourse (root, args, context, info) {
             quizzes:{
                 create:[{
                     title:"Example Quiz",
+                    type:"GRADED",
                     questions:{
                         create:[{
                             prompt: "Enter Prompt Here",
@@ -118,6 +119,7 @@ function addQuiz (root, args, context, info) {
         quizzes:{
             create:[{
                 title: "Quiz Title",
+                type: "GRADED",
                 questions: {
                 create: [{
                     prompt: "Enter Prompt Here",
