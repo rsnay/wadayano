@@ -30,5 +30,22 @@ $primary: #6CC5D6;
 //$primary: #6CD57C;
 $size-6: 1.1rem;
 
+// From https://github.com/jgthms/bulma/issues/1042#issuecomment-392599814
+// Only collapse the navbar and show burger on mobile (not on tablet)
+// ./node_modules/bulma/sass/components/navbar.sass must be modified accordingly
+$navbar-breakpoint: 414px;
+
+@mixin navbar-touch {
+  @media screen and (max-width: $navbar-breakpoint - 1px) {
+    @content;
+  }
+}
+
+@mixin navbar-desktop {
+  @media screen and (min-width: $navbar-breakpoint) {
+    @content;
+  }
+}
+
 // Import the rest of Bulma:
 @import "bulma/bulma.sass";
