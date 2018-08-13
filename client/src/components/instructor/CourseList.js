@@ -40,7 +40,7 @@ export class CourseList extends Component {
           <div className="tile is-4 is-parent">
                 <span className="tile is-child box">
                     <p className="title">
-                        <span className="icon"><i className="fas fa-plus-square" aria-hidden="true"></i></span>
+                        <span style={{verticalAlign: "-10%"}} className="icon"><i className="fas fa-plus-square" aria-hidden="true"></i></span>
                         &nbsp;
                         Create Course
                     </p>
@@ -54,14 +54,16 @@ export class CourseList extends Component {
                 <div className="tile is-4 is-parent" key={course.id}>
                     <Link to={"/instructor/course/" + course.id} className="tile is-child box">
                         <p className="title">
-                            <span className="icon"><i className="fas fa-flask" aria-hidden="true"></i></span>
+                            <span style={{verticalAlign: "middle"}} className="icon"><i className="fas fa-chalkboard-teacher" aria-hidden="true"></i></span>
                             &nbsp; &nbsp;
                             {course.title}
                         </p>
                         <hr />
                         <div className="content">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+                            <span className="icon"><i className="fas fa-user-graduate" aria-hidden="true"></i></span>&nbsp;
+                            {course.students.length === 1 ? '1 Student' : course.students.length + ' Students'}
                             <br />
+                            <span className="icon"><i className="fas fa-list-ul" aria-hidden="true"></i></span>&nbsp;
                             {course.quizzes.length === 1 ? '1 Quiz' : course.quizzes.length + ' Quizzes'}
                         </div>
                     </Link>
@@ -88,24 +90,14 @@ export const INSTRUCTOR_QUERY = gql`
           quizzes{
               id
           }
+          students {
+              id
+          }
       }
     }
   }
 `
 
-export const COURSE_QUERY = gql`
-query coursesQuery{
-    courses{
-        id
-        title
-        quizzes{
-            id
-        }
-    }
-}`
-
-
 export default withAuthCheck(compose(
-graphql(INSTRUCTOR_QUERY, {name:"instructorQuery"}),
-graphql(COURSE_QUERY, {name:"coursesQuery"}),
+    graphql(INSTRUCTOR_QUERY, {name:"instructorQuery"}),
 ) (CourseList), { instructor: true});
