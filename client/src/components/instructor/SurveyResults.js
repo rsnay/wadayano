@@ -47,7 +47,6 @@ class SurveyResults extends Component {
                                 // Determine if student took this course’s survey
                                 let result = null;
                                 try {
-                                    console.log(student);
                                     result = student.surveyResults.filter(r => r.course.id === course.id)[0];
                                 } catch (error) { }
                                 // Output answer for each question, if survey was taken

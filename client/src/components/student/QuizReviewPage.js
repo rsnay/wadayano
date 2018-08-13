@@ -20,7 +20,6 @@ class QuizReviewPage extends Component {
       return <ErrorBox><p>Couldn’t load quiz results. Please try again later.</p></ErrorBox>;
     }
 
-    console.log(this.props);
     const quizAttempt = this.props.quizAttemptQuery.currentStudentQuizAttempt;
 
     return (
@@ -96,7 +95,6 @@ export default withAuthCheck(compose(
   graphql(QUIZ_ATTEMPT_QUERY, {
     name: 'quizAttemptQuery',
     options: (props) => {
-      console.log(props);
       return { variables: { id: props.match.params.quizAttemptId } }
     }
   }),

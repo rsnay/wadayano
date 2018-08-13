@@ -27,7 +27,6 @@ export class CourseDetails extends Component {
                 courseId: this.props.match.params.courseId
             }
         });
-        console.log(result);
         this.props.history.push('/instructor/quiz/' + result.data.createQuiz.id);
     }
 
@@ -47,7 +46,6 @@ export class CourseDetails extends Component {
     }
 
     async deleteCourse(course){
-        console.log(course)
         if (window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.') === 'absolutely') {
             await this.props.courseDelete({
                 variables:{
@@ -74,7 +72,6 @@ export class CourseDetails extends Component {
     if (this.props.courseQuery && this.props.courseQuery.error) {
         return <ErrorBox>Couldn’t load courses</ErrorBox>;
     }
-    console.log(this.props);
     let course = this.props.courseQuery.course;
 
 
@@ -297,7 +294,6 @@ export default withAuthCheck(compose(
 graphql(COURSE_QUERY, {
   name: 'courseQuery',
   options: (props) => {
-    console.log(props.match.params.courseId);
     return { variables: { id:props.match.params.courseId } }
   }
 }),

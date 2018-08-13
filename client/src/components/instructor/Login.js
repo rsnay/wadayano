@@ -27,10 +27,8 @@ class Login extends Component {
 
   // If a user is on signup page and clicks login in the header, we need to detect that as well.
   componentWillReceiveProps(nextProps) {
-    console.log("Mounted")
     // Determine from URL to show login or signup mode
     let signupMode = nextProps.match.path.match('signup');
-    console.log(signupMode)
     this.setState({ signupMode });
   }
 
@@ -119,7 +117,7 @@ class Login extends Component {
         }
       }
       this.setState({ error: 'Error signing up: ' + message, isLoading: false });
-      console.error('Login error: ' + JSON.stringify(e));
+      console.error('Signup error: ' + JSON.stringify(e));
     }
   }
 
