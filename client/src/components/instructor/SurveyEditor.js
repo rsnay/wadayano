@@ -164,6 +164,7 @@ class SurveyEditor extends Component {
 
                             <textarea className="textarea is-medium survey-editor" rows={10}
                                 value={this.state.newSurveyText}
+                                placeholder="Click “Formatting Hints” above to get started creating your survey."
                                 onChange={(e) => this.setState({ newSurveyText: e.target.value })} />
                         </div>
                         <div className="column is-6">

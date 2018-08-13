@@ -77,6 +77,53 @@ export class CourseDetails extends Component {
     console.log(this.props);
     let course = this.props.courseQuery.course;
 
+
+    let quizzesTable = (<div className="notification has-text-centered">
+        No quizzes in this course. Create a quiz to get started! <br /><br />
+        <button className="button is-primary" onClick = {() => this.createQuiz()}>New Quiz</button>
+    </div>);
+    if (course.quizzes.length > 0) {
+
+        quizzesTable = (<div style={{overflowX: "auto", overflowY: "hidden"}}>
+        <table className="table is-striped is-hoverable is-fullwidth quiz-table">
+          <thead>
+              <tr>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th style={{whiteSpace: "nowrap"}}>Questions</th>
+                  <th style={{width: "19rem"}}>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              {course.quizzes.map((quiz, index)=>
+              <tr key={quiz.id}>
+                  <td><Link className="has-text-black is-block" to={"/instructor/quiz/" + quiz.id}>{quiz.title}</Link></td>
+                  <td>{QUIZ_TYPE_NAMES[quiz.type]}</td>
+                  <td>{quiz.questions.length}</td>
+                  <td className="buttons has-text-right">
+                  <Link to={"/instructor/quiz/" + quiz.id}
+                    className="button is-light">
+                      <span className="icon">
+                      <i className="fas fa-edit"></i>
+                      </span>
+                      <span>Edit/View</span>
+                  </Link>
+                  <button className="button is-light"
+                    onClick={() => this._showLTISetup('quiz', quiz.id)}>
+                      <span className="icon">
+                      <i className="fas fa-link"></i>
+                      </span>
+                      <span>Add to LMS</span>
+                  </button>
+                  </td>
+              </tr>
+          )}
+          </tbody>
+      </table>
+
+      </div>);
+    }
+
     return (
         <section className="section">
         <div className="container">
@@ -162,44 +209,8 @@ export class CourseDetails extends Component {
                 </span>
                 <span>New Quiz</span>
             </button>
-          <div style={{overflowX: "auto", overflowY: "hidden"}}>
-          <table className="table is-striped is-hoverable is-fullwidth quiz-table">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Type</th>
-                    <th style={{whiteSpace: "nowrap"}}>Questions</th>
-                    <th style={{width: "19rem"}}>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {course.quizzes.map((quiz, index)=>
-                <tr key={quiz.id}>
-                    <td><Link className="has-text-black is-block" to={"/instructor/quiz/" + quiz.id}>{quiz.title}</Link></td>
-                    <td>{QUIZ_TYPE_NAMES[quiz.type]}</td>
-                    <td>{quiz.questions.length}</td>
-                    <td className="buttons has-text-right">
-                    <Link to={"/instructor/quiz/" + quiz.id}
-                      className="button is-light">
-                        <span className="icon">
-                        <i className="fas fa-edit"></i>
-                        </span>
-                        <span>Edit/View</span>
-                    </Link>
-                    <button className="button is-light"
-                      onClick={() => this._showLTISetup('quiz', quiz.id)}>
-                        <span className="icon">
-                        <i className="fas fa-link"></i>
-                        </span>
-                        <span>Add to LMS</span>
-                    </button>
-                    </td>
-                </tr>
-            )}
-            </tbody>
-        </table>
+            {quizzesTable}
 
-        </div>
         <hr />
 
         <section>

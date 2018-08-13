@@ -19,6 +19,10 @@ export default class SurveyView extends Component {
         const disabled = !this.props.onChange;
         const selectedAnswers = this.props.selectedAnswers || {};
 
+        if (!this.props.survey || !this.props.survey.questions || this.props.survey.questions.length === 0) {
+            return <p className="survey-question-prompt notification">There are no questions in this survey.</p>  
+        }
+
         let questions = this.props.survey.questions.map(q => (
             <div className="survey-question" key={q.index}>
                 <p className="survey-question-prompt notification">{q.index}.&nbsp; {q.prompt}</p>
