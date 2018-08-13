@@ -46,6 +46,9 @@ class QuizTaker extends Component {
           quizId: this.props.match.params.quizId
         }
       });
+      if (result.errors && result.errors.length > 0) {
+        throw result;
+      }
         
       // Quiz attempt and quiz data to store in state
       const quizAttempt = result.data.startOrResumeQuizAttempt;
@@ -85,8 +88,8 @@ class QuizTaker extends Component {
     } catch (e) {
       // Catch errors
       let message = 'Please try again later.';
-      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
-        message = e.graphQLErrors[0].message;
+      if (e.errors && e.errors.length > 0) {
+        message = e.errors[0].message;
       }
       this.setState({ error: message, isLoading: false });
       console.error('Quiz attempt load error: ' + JSON.stringify(e));

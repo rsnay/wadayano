@@ -50,6 +50,9 @@ class Login extends Component {
           password
         }
       });
+      if (result.errors && result.errors.length > 0) {
+        throw result;
+      }
       // Get token and save it
       const { token } = result.data.instructorLogin;
       localStorage.setItem(AUTH_TOKEN, token);
@@ -58,8 +61,8 @@ class Login extends Component {
       this._redirect();
     } catch (e) {
       let message = 'Please try again later.';
-      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
-        message = e.graphQLErrors[0].message;
+      if (e.errors && e.errors.length > 0) {
+        message = e.errors[0].message;
       }
       this.setState({ error: 'Error logging in: ' + message, isLoading: false });
       console.error('Login error: ' + JSON.stringify(e));
@@ -88,6 +91,9 @@ class Login extends Component {
           password
         }
       });
+      if (result.errors && result.errors.length > 0) {
+        throw result;
+      }
       // Get token and save it
       const { token } = result.data.instructorSignup;
       localStorage.setItem(AUTH_TOKEN, token);
@@ -96,8 +102,8 @@ class Login extends Component {
       this._redirect();
     } catch (e) {
       let message = 'Please try again later.';
-      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
-        message = e.graphQLErrors[0].message;
+      if (e.errors && e.errors.length > 0) {
+        message = e.errors[0].message;
         // Decode some error messages
         if (message.indexOf('unique constraint would be violated') >= 0) {
           message = 'An instructor with this email address already exists.';
