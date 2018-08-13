@@ -25,6 +25,15 @@ class Login extends Component {
     this._handleInputChange = this._handleInputChange.bind(this);
   }
 
+  // If a user is on signup page and clicks login in the header, we need to detect that as well.
+  componentWillReceiveProps(nextProps) {
+    console.log("Mounted")
+    // Determine from URL to show login or signup mode
+    let signupMode = nextProps.match.path.match('signup');
+    console.log(signupMode)
+    this.setState({ signupMode });
+  }
+
   // When the log in or sign up button is pressed, or form is submitted via enter key
   _submit(e) {
     if (e) {
