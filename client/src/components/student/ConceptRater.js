@@ -55,6 +55,7 @@ class ConceptRater extends Component {
             <div className="" key={concept}>
                 <h4 className="subtitle is-4">{concept}</h4>
                 <NumericRater
+                    autoFocus={index === 0}
                     minRating={MIN_RATING}
                     maxRating={MAX_RATING}
                     onChange={(newConfidence) => this._setRating(concept, newConfidence)}
@@ -120,11 +121,12 @@ class NumericRater extends Component {
         // Loop to make buttons
         for (var i = this.props.minRating; i <= this.props.maxRating; i++) {
             ratingButtons.push(
-                <span key={i.toString()}
+                <button key={i.toString()}
+                    autoFocus={i === this.props.minRating && this.props.autoFocus /* Only autofocus first button */}
                     className={"button " + (this.state.selectedValue === i ? "is-selected is-info" : "")}
                     onClick={this._buttonClickHandler(i)} >
                     {i}
-                </span>
+                </button>
             );
         }
         // Put buttons in a group
@@ -139,11 +141,13 @@ class NumericRater extends Component {
 NumericRater.defaultProps = {
     minRating: 1,
     maxRating: 5,
-    onChange: (val) => alert(val)
+    onChange: (val) => alert(val),
+    autoFocus: false
 };
 
 NumericRater.propTypes = {
     minRating: PropTypes.number,
     maxRating: PropTypes.number,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    autoFocus: PropTypes.bool
 };
