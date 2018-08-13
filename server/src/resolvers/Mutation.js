@@ -346,6 +346,15 @@ async function startOrResumeQuizAttempt(root, args, context, info) {
     } else {
         // Otherwise create a new attempt and return it
         // This will only be practice launches. LTI launches are handled in lti.js
+        // If it’s a graded quiz, block starting the attempt (since it must be LTI-launched first)
+        const quiz = await context.db.query.quiz({
+            where: { id: quizId }
+        }, `{ id, type }`);
+
+        if (quiz.type === 'GRADED') {
+            throw Error('This is a graded quiz, and must be launched from your LMS.');
+        }
+
         return context.db.mutation.createQuizAttempt({
             data: {
                 quiz: { connect: { id: quizId } },
