@@ -1,5 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Mon Aug 13 2018 09:08:37 GMT-0600 (Mountain Daylight Time)
+# timestamp: Mon Aug 13 2018 13:26:51 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -10,6 +10,10 @@ type AggregateCourse {
 }
 
 type AggregateInstructor {
+  count: Int!
+}
+
+type AggregateInstructorPasswordResetToken {
   count: Int!
 }
 
@@ -781,6 +785,11 @@ input InstructorCreateManyWithoutCoursesInput {
   connect: [InstructorWhereUniqueInput!]
 }
 
+input InstructorCreateOneInput {
+  create: InstructorCreateInput
+  connect: InstructorWhereUniqueInput
+}
+
 input InstructorCreateWithoutCoursesInput {
   email: String!
   password: String!
@@ -806,6 +815,170 @@ enum InstructorOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+}
+
+type InstructorPasswordResetToken implements Node {
+  id: ID!
+  createdAt: DateTime!
+  instructor(where: InstructorWhereInput): Instructor!
+}
+
+"""A connection to a list of items."""
+type InstructorPasswordResetTokenConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [InstructorPasswordResetTokenEdge]!
+  aggregate: AggregateInstructorPasswordResetToken!
+}
+
+input InstructorPasswordResetTokenCreateInput {
+  instructor: InstructorCreateOneInput!
+}
+
+"""An edge in a connection."""
+type InstructorPasswordResetTokenEdge {
+  """The item at the end of the edge."""
+  node: InstructorPasswordResetToken!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum InstructorPasswordResetTokenOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type InstructorPasswordResetTokenPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+}
+
+type InstructorPasswordResetTokenSubscriptionPayload {
+  mutation: MutationType!
+  node: InstructorPasswordResetToken
+  updatedFields: [String!]
+  previousValues: InstructorPasswordResetTokenPreviousValues
+}
+
+input InstructorPasswordResetTokenSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InstructorPasswordResetTokenSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InstructorPasswordResetTokenSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InstructorPasswordResetTokenSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: InstructorPasswordResetTokenWhereInput
+}
+
+input InstructorPasswordResetTokenUpdateInput {
+  instructor: InstructorUpdateOneInput
+}
+
+input InstructorPasswordResetTokenWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InstructorPasswordResetTokenWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InstructorPasswordResetTokenWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InstructorPasswordResetTokenWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  instructor: InstructorWhereInput
+}
+
+input InstructorPasswordResetTokenWhereUniqueInput {
+  id: ID
 }
 
 type InstructorPreviousValues {
@@ -854,6 +1027,12 @@ input InstructorSubscriptionWhereInput {
   node: InstructorWhereInput
 }
 
+input InstructorUpdateDataInput {
+  email: String
+  password: String
+  courses: CourseUpdateManyWithoutInstructorsInput
+}
+
 input InstructorUpdateInput {
   email: String
   password: String
@@ -869,6 +1048,14 @@ input InstructorUpdateManyWithoutCoursesInput {
   upsert: [InstructorUpsertWithWhereUniqueWithoutCoursesInput!]
 }
 
+input InstructorUpdateOneInput {
+  create: InstructorCreateInput
+  connect: InstructorWhereUniqueInput
+  delete: Boolean
+  update: InstructorUpdateDataInput
+  upsert: InstructorUpsertNestedInput
+}
+
 input InstructorUpdateWithoutCoursesDataInput {
   email: String
   password: String
@@ -877,6 +1064,11 @@ input InstructorUpdateWithoutCoursesDataInput {
 input InstructorUpdateWithWhereUniqueWithoutCoursesInput {
   where: InstructorWhereUniqueInput!
   data: InstructorUpdateWithoutCoursesDataInput!
+}
+
+input InstructorUpsertNestedInput {
+  update: InstructorUpdateDataInput!
+  create: InstructorCreateInput!
 }
 
 input InstructorUpsertWithWhereUniqueWithoutCoursesInput {
@@ -1039,6 +1231,9 @@ input InstructorWhereInput {
   courses_every: CourseWhereInput
   courses_some: CourseWhereInput
   courses_none: CourseWhereInput
+  _MagicalBackRelation_InstructorToInstructorPasswordResetToken_every: InstructorPasswordResetTokenWhereInput
+  _MagicalBackRelation_InstructorToInstructorPasswordResetToken_some: InstructorPasswordResetTokenWhereInput
+  _MagicalBackRelation_InstructorToInstructorPasswordResetToken_none: InstructorPasswordResetTokenWhereInput
 }
 
 input InstructorWhereUniqueInput {
@@ -1056,63 +1251,69 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createInstructor(data: InstructorCreateInput!): Instructor!
+  createInstructorPasswordResetToken(data: InstructorPasswordResetTokenCreateInput!): InstructorPasswordResetToken!
   createStudent(data: StudentCreateInput!): Student!
   createCourse(data: CourseCreateInput!): Course!
   createQuiz(data: QuizCreateInput!): Quiz!
   createOption(data: OptionCreateInput!): Option!
   createQuizAttempt(data: QuizAttemptCreateInput!): QuizAttempt!
   createSurveyResult(data: SurveyResultCreateInput!): SurveyResult!
+  createInstructor(data: InstructorCreateInput!): Instructor!
   createQuestionAttempt(data: QuestionAttemptCreateInput!): QuestionAttempt!
   createConceptConfidence(data: ConceptConfidenceCreateInput!): ConceptConfidence!
   createQuestion(data: QuestionCreateInput!): Question!
-  updateInstructor(data: InstructorUpdateInput!, where: InstructorWhereUniqueInput!): Instructor
+  updateInstructorPasswordResetToken(data: InstructorPasswordResetTokenUpdateInput!, where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
   updateStudent(data: StudentUpdateInput!, where: StudentWhereUniqueInput!): Student
   updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
   updateQuiz(data: QuizUpdateInput!, where: QuizWhereUniqueInput!): Quiz
   updateOption(data: OptionUpdateInput!, where: OptionWhereUniqueInput!): Option
   updateQuizAttempt(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereUniqueInput!): QuizAttempt
   updateSurveyResult(data: SurveyResultUpdateInput!, where: SurveyResultWhereUniqueInput!): SurveyResult
+  updateInstructor(data: InstructorUpdateInput!, where: InstructorWhereUniqueInput!): Instructor
   updateQuestionAttempt(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
   updateConceptConfidence(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
-  deleteInstructor(where: InstructorWhereUniqueInput!): Instructor
+  deleteInstructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
   deleteStudent(where: StudentWhereUniqueInput!): Student
   deleteCourse(where: CourseWhereUniqueInput!): Course
   deleteQuiz(where: QuizWhereUniqueInput!): Quiz
   deleteOption(where: OptionWhereUniqueInput!): Option
   deleteQuizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   deleteSurveyResult(where: SurveyResultWhereUniqueInput!): SurveyResult
+  deleteInstructor(where: InstructorWhereUniqueInput!): Instructor
   deleteQuestionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
   deleteConceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   deleteQuestion(where: QuestionWhereUniqueInput!): Question
-  upsertInstructor(where: InstructorWhereUniqueInput!, create: InstructorCreateInput!, update: InstructorUpdateInput!): Instructor!
+  upsertInstructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!, create: InstructorPasswordResetTokenCreateInput!, update: InstructorPasswordResetTokenUpdateInput!): InstructorPasswordResetToken!
   upsertStudent(where: StudentWhereUniqueInput!, create: StudentCreateInput!, update: StudentUpdateInput!): Student!
   upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
   upsertQuiz(where: QuizWhereUniqueInput!, create: QuizCreateInput!, update: QuizUpdateInput!): Quiz!
   upsertOption(where: OptionWhereUniqueInput!, create: OptionCreateInput!, update: OptionUpdateInput!): Option!
   upsertQuizAttempt(where: QuizAttemptWhereUniqueInput!, create: QuizAttemptCreateInput!, update: QuizAttemptUpdateInput!): QuizAttempt!
   upsertSurveyResult(where: SurveyResultWhereUniqueInput!, create: SurveyResultCreateInput!, update: SurveyResultUpdateInput!): SurveyResult!
+  upsertInstructor(where: InstructorWhereUniqueInput!, create: InstructorCreateInput!, update: InstructorUpdateInput!): Instructor!
   upsertQuestionAttempt(where: QuestionAttemptWhereUniqueInput!, create: QuestionAttemptCreateInput!, update: QuestionAttemptUpdateInput!): QuestionAttempt!
   upsertConceptConfidence(where: ConceptConfidenceWhereUniqueInput!, create: ConceptConfidenceCreateInput!, update: ConceptConfidenceUpdateInput!): ConceptConfidence!
   upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
-  updateManyInstructors(data: InstructorUpdateInput!, where: InstructorWhereInput): BatchPayload!
+  updateManyInstructorPasswordResetTokens(data: InstructorPasswordResetTokenUpdateInput!, where: InstructorPasswordResetTokenWhereInput): BatchPayload!
   updateManyStudents(data: StudentUpdateInput!, where: StudentWhereInput): BatchPayload!
   updateManyCourses(data: CourseUpdateInput!, where: CourseWhereInput): BatchPayload!
   updateManyQuizzes(data: QuizUpdateInput!, where: QuizWhereInput): BatchPayload!
   updateManyOptions(data: OptionUpdateInput!, where: OptionWhereInput): BatchPayload!
   updateManyQuizAttempts(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereInput): BatchPayload!
   updateManySurveyResults(data: SurveyResultUpdateInput!, where: SurveyResultWhereInput): BatchPayload!
+  updateManyInstructors(data: InstructorUpdateInput!, where: InstructorWhereInput): BatchPayload!
   updateManyQuestionAttempts(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereInput): BatchPayload!
   updateManyConceptConfidences(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereInput): BatchPayload!
   updateManyQuestions(data: QuestionUpdateInput!, where: QuestionWhereInput): BatchPayload!
-  deleteManyInstructors(where: InstructorWhereInput): BatchPayload!
+  deleteManyInstructorPasswordResetTokens(where: InstructorPasswordResetTokenWhereInput): BatchPayload!
   deleteManyStudents(where: StudentWhereInput): BatchPayload!
   deleteManyCourses(where: CourseWhereInput): BatchPayload!
   deleteManyQuizzes(where: QuizWhereInput): BatchPayload!
   deleteManyOptions(where: OptionWhereInput): BatchPayload!
   deleteManyQuizAttempts(where: QuizAttemptWhereInput): BatchPayload!
   deleteManySurveyResults(where: SurveyResultWhereInput): BatchPayload!
+  deleteManyInstructors(where: InstructorWhereInput): BatchPayload!
   deleteManyQuestionAttempts(where: QuestionAttemptWhereInput): BatchPayload!
   deleteManyConceptConfidences(where: ConceptConfidenceWhereInput): BatchPayload!
   deleteManyQuestions(where: QuestionWhereInput): BatchPayload!
@@ -1457,33 +1658,36 @@ type PageInfo {
 }
 
 type Query {
-  instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor]!
+  instructorPasswordResetTokens(where: InstructorPasswordResetTokenWhereInput, orderBy: InstructorPasswordResetTokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InstructorPasswordResetToken]!
   students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student]!
   courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course]!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz]!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option]!
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt]!
   surveyResults(where: SurveyResultWhereInput, orderBy: SurveyResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SurveyResult]!
+  instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor]!
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt]!
   conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence]!
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
-  instructor(where: InstructorWhereUniqueInput!): Instructor
+  instructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
   student(where: StudentWhereUniqueInput!): Student
   course(where: CourseWhereUniqueInput!): Course
   quiz(where: QuizWhereUniqueInput!): Quiz
   option(where: OptionWhereUniqueInput!): Option
   quizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   surveyResult(where: SurveyResultWhereUniqueInput!): SurveyResult
+  instructor(where: InstructorWhereUniqueInput!): Instructor
   questionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
   conceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   question(where: QuestionWhereUniqueInput!): Question
-  instructorsConnection(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorConnection!
+  instructorPasswordResetTokensConnection(where: InstructorPasswordResetTokenWhereInput, orderBy: InstructorPasswordResetTokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorPasswordResetTokenConnection!
   studentsConnection(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StudentConnection!
   coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
   quizzesConnection(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizConnection!
   optionsConnection(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OptionConnection!
   quizAttemptsConnection(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizAttemptConnection!
   surveyResultsConnection(where: SurveyResultWhereInput, orderBy: SurveyResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SurveyResultConnection!
+  instructorsConnection(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorConnection!
   questionAttemptsConnection(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionAttemptConnection!
   conceptConfidencesConnection(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ConceptConfidenceConnection!
   questionsConnection(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionConnection!
@@ -3194,13 +3398,14 @@ input StudentWhereUniqueInput {
 }
 
 type Subscription {
-  instructor(where: InstructorSubscriptionWhereInput): InstructorSubscriptionPayload
+  instructorPasswordResetToken(where: InstructorPasswordResetTokenSubscriptionWhereInput): InstructorPasswordResetTokenSubscriptionPayload
   student(where: StudentSubscriptionWhereInput): StudentSubscriptionPayload
   course(where: CourseSubscriptionWhereInput): CourseSubscriptionPayload
   quiz(where: QuizSubscriptionWhereInput): QuizSubscriptionPayload
   option(where: OptionSubscriptionWhereInput): OptionSubscriptionPayload
   quizAttempt(where: QuizAttemptSubscriptionWhereInput): QuizAttemptSubscriptionPayload
   surveyResult(where: SurveyResultSubscriptionWhereInput): SurveyResultSubscriptionPayload
+  instructor(where: InstructorSubscriptionWhereInput): InstructorSubscriptionPayload
   questionAttempt(where: QuestionAttemptSubscriptionWhereInput): QuestionAttemptSubscriptionPayload
   conceptConfidence(where: ConceptConfidenceSubscriptionWhereInput): ConceptConfidenceSubscriptionPayload
   question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload

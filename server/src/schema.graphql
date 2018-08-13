@@ -32,6 +32,8 @@ type Mutation {
 
   instructorSignup(email:String!, password:String!): InstructorAuthPayload
   instructorLogin(email:String!, password:String!): InstructorAuthPayload
+  instructorRequestPasswordReset(email: String!): Boolean!
+  instructorResetPassword(token: String!, password: String!): InstructorAuthPayload
 
   startOrResumeQuizAttempt(quizId: ID!): QuizAttempt!
   completeQuizAttempt(quizAttemptId: ID!): QuizGradePayload!

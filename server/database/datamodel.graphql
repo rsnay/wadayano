@@ -7,6 +7,12 @@ type Instructor {
     courses: [Course!]!
 }
 
+type InstructorPasswordResetToken {
+    id: ID! @unique
+    createdAt: DateTime!
+    instructor: Instructor!
+}
+
 type Student {
     id: ID! @unique
     # This is a simplistic approach, where each student has to be created and logged in via LTI.

@@ -8,8 +8,8 @@
     "graphql-yoga": "^1.14.10",
     "ims-lti": "^3.0.2",
     "jsonwebtoken": "^8.3.0",
-    "prisma-binding": "^2.1.0",
-    "react-show-more": "^2.0.0"
+    "node-ses": "^2.1.0",
+    "prisma-binding": "^2.1.0"
   },
   "name": "Server",
   "version": "1.0.0",

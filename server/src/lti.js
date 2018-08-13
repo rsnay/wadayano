@@ -66,8 +66,6 @@ async function handleLaunch(config, db, req, res) {
             // Enroll the student in the course that this launch belongs to, if necessary
             _enrollStudentInCourse(db, studentId, courseId);
 
-            // TODO
-
             // If this is a quiz 
             if (action === 'quiz') {
                 let quizId = parameter1;

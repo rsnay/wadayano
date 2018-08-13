@@ -114,6 +114,28 @@ class Login extends Component {
     }
   }
 
+  // Quick way to submit a request for a password reset
+  async _requestPasswordReset() {
+    let email = window.prompt('Enter the email address connected with your wadayano instructor account. If you are a student, simply launch wadayano from your learning management system.');
+    if (!email || email.trim() === '') {
+      return;
+    }
+    let result = await this.props.instructorRequestPasswordResetMutation({
+      variables: {
+        email: email.trim()
+      }
+    });
+    if (result.errors && result.errors.length > 0) {
+      window.alert(result.errors[0].message);
+    } else {
+      if (result.data.instructorRequestPasswordReset === true) {
+        window.alert(`An email was sent to ${email} with further instructions.`);
+      } else {
+        window.alert(`No account was found for ${email}, or there was an unexpected error sending the password reset email.`);
+      }
+    }
+  }
+
 
   // If login or signup was successful, redirect to instructor view, or a 'from' redirect location, if passed in
   _redirect() {
@@ -232,6 +254,11 @@ class Login extends Component {
               <button className="button is-text" onClick={() => this.setState({ signupMode: true }) }>New to wadayano? Sign Up</button>
             }
           </div>
+
+          <div className="field">
+            <button className="button is-text" onClick={() => this._requestPasswordReset() }>Forgot Your Password?</button>
+          </div>
+
         </div>
       </section>
     )
@@ -254,7 +281,14 @@ const LOGIN_MUTATION = gql`
   }
 `
 
+const REQUEST_PASSWORD_RESET_MUTATION = gql`
+  mutation LoginMutation($email: String!) {
+    instructorRequestPasswordReset(email: $email)
+  }
+`
+
 export default compose(
   graphql(SIGNUP_MUTATION, { name: 'instructorSignupMutation' }),
   graphql(LOGIN_MUTATION, { name: 'instructorLoginMutation' }),
+  graphql(REQUEST_PASSWORD_RESET_MUTATION, { name: 'instructorRequestPasswordResetMutation' }),
 )(Login)

@@ -1,8 +1,12 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { APP_SECRET } = require('../../config');
+const ses = require('node-ses');
+const { APP_SECRET, AWS_SES_ENDPOINT, AWS_SES_KEY, AWS_SES_SECRET, AWS_SES_FROM_ADDRESS } = require('../../config');
 const { getUserInfo, validateEmail } = require('../utils');
 const { postGrade } = require('../lti');
+const emailTemplates = require('../emailTemplate');
+
+const MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
 function updateOption (root, args, context, info){
     return context.db.mutation.updateOption({
@@ -311,6 +315,81 @@ async function instructorSignup(root, args, context, info) {
     };
 }
 
+async function instructorRequestPasswordReset(root, args, context, info) {
+    const email = args.email.toLowerCase();
+    // Validate email
+    if (!validateEmail(email)) {
+        throw new Error('Invalid email address');
+    }
+    // Determine if user exists
+    const instructor = await context.db.query.instructor({ where: { email: email } }, ` { id } `);
+    if (!instructor) {
+        // If not found, return false
+        return false;
+    }
+
+    // Create a password reset token
+    const createToken = await context.db.mutation.createInstructorPasswordResetToken({
+        data: {
+            instructor: { connect: { id: instructor.id } }
+        }
+    }, `{ id }`);
+    const token = createToken.id;
+
+    console.log(emailTemplates.requestPasswordReset(token));
+
+    // Send token in a password reset email to the instructor
+    const client = ses.createClient({ amazon: AWS_SES_ENDPOINT, key: AWS_SES_KEY, secret: AWS_SES_SECRET });
+    client.sendEmail({
+        to: email,
+        //to: 'success@simulator.amazonses.com',
+        from: AWS_SES_FROM_ADDRESS,
+        subject: 'wadayano Password Reset Request',
+        message: emailTemplates.requestPasswordReset(token)
+    }, function(err, data, res) { console.log(err, data) });
+
+    // Return boolean for "successful" or not (we dont’t know if email actually sent)
+    return true;
+}
+
+async function instructorResetPassword(root, args, context, info) {
+    // Check that the reset token exists and is valid
+    const resetToken = await context.db.query.instructorPasswordResetToken({
+        where: { id: args.token }
+    }, `{ createdAt, instructor { id } }`);
+    if (!resetToken) {
+        throw Error('Invalid password reset request.');
+    }
+
+    let tokenAge = new Date() - new Date(resetToken.createdAt);
+    if (tokenAge > MILLISECONDS_IN_DAY) {
+        throw Error('This password reset request has expired.');
+    }
+
+    // Hash new password
+    const password = await bcrypt.hash(args.password, 10);
+
+    // Set new password on the instructor
+    const updatedInstructor = await context.db.mutation.updateInstructor({
+        where: { id: resetToken.instructor.id },
+        data: { password },
+    }, `{ id }`);
+
+    // Delete the password reset token to prevent re-use
+    await context.db.mutation.deleteInstructorPasswordResetToken({
+        where: { id: args.token }
+    });
+
+    // Sign token using id of instructor
+    const newToken = jwt.sign({ userId: resetToken.instructor.id, isInstructor: true }, APP_SECRET);
+
+    // Return an InstructorAuthPayload, so user can be signed in immediately after resetting password
+    return {
+        token: newToken,
+        instructor: updatedInstructor
+    };
+}
+
 // This will only be practice launches. LTI launches are handled in lti.js
 async function startOrResumeQuizAttempt(root, args, context, info) {
     // Check for valid student login
@@ -327,9 +406,6 @@ async function startOrResumeQuizAttempt(root, args, context, info) {
     if (studentInCourse.length === 0) {
         throw Error('Student not enrolled in course that this quiz belongs to');
     }
-
-    // Check availability date of quiz
-    // TODO
 
     // Since the quiz attempt is unique on the combination of two fields (quizId and studentId), prisma's built-in upsert won't work
     // Find existing uncompleted attempt(s) for this student and quiz
@@ -398,9 +474,6 @@ async function attemptQuestion(root, args, context, info) {
     const studentId = getUserInfo(context).userId;
 
     console.log('Attempt question', args);
-
-    // Check availability date of quiz hasn't expired since starting
-    // TODO
 
     // Check that this question hasn't already been attempted in this QuizAttempt
     const existingQuizAttempt = await context.db.query.quizAttempt({
@@ -586,6 +659,8 @@ module.exports = {
     updateSurvey,
     instructorLogin,
     instructorSignup,
+    instructorRequestPasswordReset,
+    instructorResetPassword,
     startOrResumeQuizAttempt,
     completeQuizAttempt,
     attemptQuestion,
