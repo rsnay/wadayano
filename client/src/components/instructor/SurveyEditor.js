@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Prompt } from 'react-router';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -18,6 +19,7 @@ class SurveyEditor extends Component {
             surveyLoaded: false,
             newSurveyText: '',
             isSaving: false,
+            isDirty: false,
             formatModalVisible: false
         };
     }
@@ -42,6 +44,20 @@ class SurveyEditor extends Component {
             });
         }
     }
+
+    componentDidUpdate() {
+        // If the survey has been modified, have the browser confirm before user leaves the page
+        if (this.state.isDirty) {
+          window.onbeforeunload = () => true;
+        } else {
+          window.onbeforeunload = undefined;
+        }
+      }
+    
+      componentWillUnmount() {
+        // Remove leave confirmation when the user navigates away
+        window.onbeforeunload = undefined;
+      }
 
     /* Structure of survey object:
        survey = {
@@ -124,12 +140,13 @@ class SurveyEditor extends Component {
             if (result.errors && result.errors.length > 0) {
                 throw result;
             }
-            // Redirect to course details after successful save
-            this.props.history.push('/instructor/course/' + courseId);
+            this.setState({ isSaving: false, isDirty: false }, () => {
+                // Redirect to course details after successful save
+                this.props.history.push('/instructor/course/' + courseId);
+            });
         } catch (error) {
             alert('There was an error saving the survey. Please copy the text somewhere safe and try again later.');
         }
-        this.setState({ isSaving: false });
     }
 
     render() {
@@ -173,7 +190,7 @@ class SurveyEditor extends Component {
                             <textarea className="textarea is-medium survey-editor" rows={10}
                                 value={this.state.newSurveyText}
                                 placeholder="Click “Formatting Hints” above to get started creating your survey."
-                                onChange={(e) => this.setState({ newSurveyText: e.target.value })} />
+                                onChange={(e) => this.setState({ newSurveyText: e.target.value, isDirty: true })} />
                         </div>
                         <div className="column is-6">
                             <h4 className="subtitle is-4">Preview</h4>
@@ -196,6 +213,11 @@ class SurveyEditor extends Component {
                         </p>
                     </div>
 
+                    {/* If the survey has been modified, have react router confirm before user navigates away */}
+                    <Prompt
+                        when={this.state.isDirty}
+                        message="Do you want to discard your unsaved changes to this survey?"
+                    />
                     {this.state.formatModalVisible &&
                         <Modal modalState={true} closeModal={() => this.setState({ formatModalVisible: false })} title="Survey Formatting" showFooter={true}>
                             <ol>
