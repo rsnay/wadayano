@@ -14,7 +14,8 @@ class ResetPassword extends Component {
       password: '',
       passwordConfirm: '',
       error: '',
-      isLoading: false
+      isLoading: false,
+      isComplete: false
     };
 
     // Pre-bind this function, to make adding it to input fields easier
@@ -62,10 +63,8 @@ class ResetPassword extends Component {
       const newToken = result.data.instructorResetPassword.token;
       localStorage.setItem(AUTH_TOKEN, newToken);
       localStorage.setItem(AUTH_ROLE, AUTH_ROLE_INSTRUCTOR);
-      window.alert('Thanks! Your password has been reset.');
-
-      // Continue to instructor dashboard, not allowing back navigation
-      this.props.history.replace('/instructor/courses');
+      // Show success message
+      this.setState({ isComplete: true });
     } catch (e) {
       let message = 'Please try again later.';
       if (e.errors && e.errors.length > 0) {
@@ -74,6 +73,11 @@ class ResetPassword extends Component {
       this.setState({ error: 'Error resetting password: ' + message, isLoading: false });
       console.error('Error resetting password: ' + JSON.stringify(e));
     }
+  }
+
+  _redirect() {
+      // Continue to instructor dashboard, not allowing back navigation
+      this.props.history.replace('/instructor/courses');
   }
 
   // Called when the form fields change
@@ -97,6 +101,20 @@ class ResetPassword extends Component {
   }
 
   render() {
+
+    if (this.state.isComplete) {
+        return (
+            <article className="container message is-success" style={{marginTop: "3em"}}>
+                <div className="message-header">
+                    <p>Thanks! Your password has been reset.</p>
+                    <span className="icon is-large"><i className="fas fa-3x fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                <div className="message-body">
+                    <button onClick={() => this._redirect() } className="button">Continue to Dashboard</button>
+                </div>
+            </article>
+        );
+    }
 
     let formCompleted = this.state.passwordConfirm && this.state.password;
 

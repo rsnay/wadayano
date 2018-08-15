@@ -324,7 +324,7 @@ async function instructorResetPassword(root, args, context, info) {
         where: { id: args.token }
     }, `{ createdAt, instructor { id } }`);
     if (!resetToken) {
-        throw Error('Invalid password reset request.');
+        throw Error('Invalid password reset request. The link in a password reset email can only be used once.');
     }
 
     let tokenAge = new Date() - new Date(resetToken.createdAt);
