@@ -205,7 +205,7 @@ class SurveyEditor extends Component {
                                 <li>Repeat for the next question.</li>
                             </ol>
                             Example:
-                            <textarea className="textarea is-medium survey-editor" rows={11} value={
+                            <textarea wrap="off" className="textarea is-medium survey-editor" style={{overflowY: "hidden"}} rows={11} value={
 `How many hours do you spend doing homework each day?
 0–2
 2–4
