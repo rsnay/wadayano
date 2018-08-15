@@ -41,7 +41,10 @@ class Dashboard extends Component {
                 <thead>
                     <tr className="sticky-header">
                         <th style={{width:"99%"}}>Title</th>
-                        <th style={{whiteSpace: "nowrap"}}>Questions</th>
+                        <th style={{whiteSpace: "nowrap"}}>
+                            <span className="is-hidden-touch">Questions</span>
+                            <span className="is-hidden-desktop">?s</span>
+                        </th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -75,7 +78,10 @@ class Dashboard extends Component {
                     <tr>
                         <th style={{whiteSpace: "nowrap"}}>Started</th>
                         <th style={{width:"99%"}}>Quiz</th>
-                        <th style={{whiteSpace: "nowrap"}}>Questions</th>
+                        <th style={{whiteSpace: "nowrap"}}>
+                            <span className="is-hidden-touch">Questions</span>
+                            <span className="is-hidden-desktop">?s</span>
+                        </th>
                         <th>Completion</th>
                         <th>Resume</th>
                     </tr>
@@ -114,7 +120,10 @@ class Dashboard extends Component {
                     <tr className="sticky-header">
                         <th style={{whiteSpace: "nowrap"}}>Completed</th>
                         <th style={{width:"99%"}}>Quiz</th>
-                        <th style={{whiteSpace: "nowrap"}}>Questions</th>
+                        <th style={{whiteSpace: "nowrap"}}>
+                            <span className="is-hidden-touch">Questions</span>
+                            <span className="is-hidden-desktop">?s</span>
+                        </th>
                         <th>Type</th>
                         <th>Score</th>
                         <th>Review</th>

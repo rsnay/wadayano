@@ -77,7 +77,10 @@ export class CourseDetails extends Component {
               <tr className="sticky-header">
                   <th>Title</th>
                   <th>Type</th>
-                  <th style={{whiteSpace: "nowrap"}}>Questions</th>
+                  <th style={{whiteSpace: "nowrap"}}>
+                      <span className="is-hidden-touch">Questions</span>
+                      <span className="is-hidden-desktop">?s</span>
+                  </th>
                   <th style={{width: "19rem"}}>Actions</th>
               </tr>
           </thead>
