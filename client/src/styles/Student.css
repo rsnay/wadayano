@@ -1,3 +1,10 @@
+/* General */
+.navbar-burger {
+    /* Make burger fill navbar height, since our logo is taller than default navbar height */
+    height: auto!important;
+    min-height: 3.25rem;
+}
+
 /* Quiz Taker */
 progress::-webkit-progress-value {
     transition: width 0.3s ease-out;
