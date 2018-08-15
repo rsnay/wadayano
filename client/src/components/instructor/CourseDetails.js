@@ -35,7 +35,8 @@ export class CourseDetails extends Component {
     }
 
     async deleteCourse(course){
-        if (window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.') === 'absolutely') {
+        let response = window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.')
+        if (response.toLowerCase() === 'absolutely') {
             await this.props.courseDelete({
                 variables:{
                     id:course.id
