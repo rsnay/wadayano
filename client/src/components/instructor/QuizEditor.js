@@ -118,7 +118,8 @@ export class QuizEditor extends Component {
                 id:quiz.id
             }
         });
-        window.history.back();
+        // Redirect to course details after successful deletion
+        this.props.history.push('/instructor/course/' + quiz.course.id);
     }
 
     editQuizTitle(){
