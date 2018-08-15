@@ -105,6 +105,7 @@ class SurveyResults extends Component {
                         <Link className="button" to={"/instructor/course/" + course.id}>Return to Course</Link>
                     </p>
                 </div>
+                <br />
             </div>
         );
     }
