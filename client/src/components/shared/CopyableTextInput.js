@@ -11,6 +11,27 @@ class CopyableTextInput extends Component {
     }
     
     _copyText() {
+        // iOS complicates copying text
+        // From https://stackoverflow.com/a/34046084/702643
+        if (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)) {
+            let el = this.textInput.current;
+            let range = document.createRange();
+    
+            el.contenteditable = true;
+            el.readonly = false;
+            range.selectNodeContents(el);
+        
+            let s = window.getSelection();
+            s.removeAllRanges();
+            s.addRange(range);
+        
+            el.setSelectionRange(0, 999999); // A big number, to cover anything that could be inside the element.
+        
+            el.contentEditable = false;
+            el.readOnly = this.props.readOnly;
+        
+            document.execCommand('copy');
+        }
         try {
             this.textInput.current.select();
             document.execCommand('copy');
