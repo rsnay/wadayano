@@ -1,5 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Mon Aug 13 2018 13:26:51 GMT-0600 (Mountain Daylight Time)
+# timestamp: Wed Aug 15 2018 10:27:35 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -296,6 +296,8 @@ input ConceptConfidenceWhereUniqueInput {
 type Course implements Node {
   id: ID!
   title: String!
+  number: String
+  lmsUrl: String
   createdAt: DateTime!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz!]
   concepts: [String!]!
@@ -322,6 +324,8 @@ input CourseCreateconceptsInput {
 
 input CourseCreateInput {
   title: String!
+  number: String
+  lmsUrl: String
   ltiSecret: String!
   survey: Json
   concepts: CourseCreateconceptsInput
@@ -353,6 +357,8 @@ input CourseCreateOneWithoutSurveyResultsInput {
 
 input CourseCreateWithoutInstructorsInput {
   title: String!
+  number: String
+  lmsUrl: String
   ltiSecret: String!
   survey: Json
   concepts: CourseCreateconceptsInput
@@ -363,6 +369,8 @@ input CourseCreateWithoutInstructorsInput {
 
 input CourseCreateWithoutQuizzesInput {
   title: String!
+  number: String
+  lmsUrl: String
   ltiSecret: String!
   survey: Json
   concepts: CourseCreateconceptsInput
@@ -373,6 +381,8 @@ input CourseCreateWithoutQuizzesInput {
 
 input CourseCreateWithoutStudentsInput {
   title: String!
+  number: String
+  lmsUrl: String
   ltiSecret: String!
   survey: Json
   concepts: CourseCreateconceptsInput
@@ -383,6 +393,8 @@ input CourseCreateWithoutStudentsInput {
 
 input CourseCreateWithoutSurveyResultsInput {
   title: String!
+  number: String
+  lmsUrl: String
   ltiSecret: String!
   survey: Json
   concepts: CourseCreateconceptsInput
@@ -405,6 +417,10 @@ enum CourseOrderByInput {
   id_DESC
   title_ASC
   title_DESC
+  number_ASC
+  number_DESC
+  lmsUrl_ASC
+  lmsUrl_DESC
   createdAt_ASC
   createdAt_DESC
   ltiSecret_ASC
@@ -418,6 +434,8 @@ enum CourseOrderByInput {
 type CoursePreviousValues {
   id: ID!
   title: String!
+  number: String
+  lmsUrl: String
   createdAt: DateTime!
   concepts: [String!]!
   ltiSecret: String!
@@ -469,6 +487,8 @@ input CourseUpdateconceptsInput {
 
 input CourseUpdateInput {
   title: String
+  number: String
+  lmsUrl: String
   ltiSecret: String
   survey: Json
   concepts: CourseUpdateconceptsInput
@@ -515,6 +535,8 @@ input CourseUpdateOneWithoutSurveyResultsInput {
 
 input CourseUpdateWithoutInstructorsDataInput {
   title: String
+  number: String
+  lmsUrl: String
   ltiSecret: String
   survey: Json
   concepts: CourseUpdateconceptsInput
@@ -525,6 +547,8 @@ input CourseUpdateWithoutInstructorsDataInput {
 
 input CourseUpdateWithoutQuizzesDataInput {
   title: String
+  number: String
+  lmsUrl: String
   ltiSecret: String
   survey: Json
   concepts: CourseUpdateconceptsInput
@@ -535,6 +559,8 @@ input CourseUpdateWithoutQuizzesDataInput {
 
 input CourseUpdateWithoutStudentsDataInput {
   title: String
+  number: String
+  lmsUrl: String
   ltiSecret: String
   survey: Json
   concepts: CourseUpdateconceptsInput
@@ -545,6 +571,8 @@ input CourseUpdateWithoutStudentsDataInput {
 
 input CourseUpdateWithoutSurveyResultsDataInput {
   title: String
+  number: String
+  lmsUrl: String
   ltiSecret: String
   survey: Json
   concepts: CourseUpdateconceptsInput
@@ -674,6 +702,86 @@ input CourseWhereInput {
 
   """All values not ending with the given string."""
   title_not_ends_with: String
+  number: String
+
+  """All values that are not equal to given value."""
+  number_not: String
+
+  """All values that are contained in given list."""
+  number_in: [String!]
+
+  """All values that are not contained in given list."""
+  number_not_in: [String!]
+
+  """All values less than the given value."""
+  number_lt: String
+
+  """All values less than or equal the given value."""
+  number_lte: String
+
+  """All values greater than the given value."""
+  number_gt: String
+
+  """All values greater than or equal the given value."""
+  number_gte: String
+
+  """All values containing the given string."""
+  number_contains: String
+
+  """All values not containing the given string."""
+  number_not_contains: String
+
+  """All values starting with the given string."""
+  number_starts_with: String
+
+  """All values not starting with the given string."""
+  number_not_starts_with: String
+
+  """All values ending with the given string."""
+  number_ends_with: String
+
+  """All values not ending with the given string."""
+  number_not_ends_with: String
+  lmsUrl: String
+
+  """All values that are not equal to given value."""
+  lmsUrl_not: String
+
+  """All values that are contained in given list."""
+  lmsUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  lmsUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  lmsUrl_lt: String
+
+  """All values less than or equal the given value."""
+  lmsUrl_lte: String
+
+  """All values greater than the given value."""
+  lmsUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  lmsUrl_gte: String
+
+  """All values containing the given string."""
+  lmsUrl_contains: String
+
+  """All values not containing the given string."""
+  lmsUrl_not_contains: String
+
+  """All values starting with the given string."""
+  lmsUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  lmsUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  lmsUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  lmsUrl_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""

@@ -30,6 +30,8 @@ type Student {
 type Course {
     id: ID! @unique
     title: String!
+    number: String
+    lmsUrl: String
     createdAt: DateTime!
     quizzes: [Quiz!]! @relation(name: "CourseQuizzes", onDelete: CASCADE)
     concepts: [String!]!
