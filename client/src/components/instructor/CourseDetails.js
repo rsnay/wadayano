@@ -70,10 +70,10 @@ export class CourseDetails extends Component {
     </div>);
     // Create table of quizzes, if any exist for the course
     if (course.quizzes.length > 0) {
-        quizzesTable = (<div style={{overflowX: "auto", overflowY: "hidden"}}>
+        quizzesTable = (<div className="table-wrapper">
         <table className="table is-striped is-hoverable is-fullwidth quiz-table">
           <thead>
-              <tr>
+              <tr className="sticky-header">
                   <th>Title</th>
                   <th>Type</th>
                   <th style={{whiteSpace: "nowrap"}}>Questions</th>

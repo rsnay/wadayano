@@ -34,10 +34,10 @@ class SurveyResults extends Component {
             resultsTable = (<p className="notification is-light">There are no students enrolled in this course. When a student launches the survey from their LMS, he/she will be automatically enrolled.</p>);
         } else {
             resultsTable = (
-                <div style={{overflowX: "auto"}}>
+                <div className="table-wrapper">
                     <table className="table is-striped is-fullwidth survey-results-table">
                         <thead>
-                            <tr>
+                            <tr className="sticky-header">
                                 <th>Student Name</th>
                                 {course.survey.questions.map(q => <th key={q.index}>{q.prompt}</th>)}
                             </tr>

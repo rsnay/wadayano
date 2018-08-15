@@ -34,10 +34,10 @@ class Dashboard extends Component {
     let practiceQuizzesTable = <div className="notification has-text-centered">No practice quizzes are currently available for this course.</div>;
     if (practiceQuizzes.length > 0) {
         practiceQuizzesTable = (
-        <div style={{overflowX: "auto"}}>
+        <div className="table-wrapper">
             <table className="table is-striped is-hoverable is-fullwidth quiz-table">
                 <thead>
-                    <tr>
+                    <tr className="sticky-header">
                         <th style={{width:"99%"}}>Title</th>
                         <th style={{whiteSpace: "nowrap"}}>Questions</th>
                         <th>Actions</th>
@@ -106,10 +106,10 @@ class Dashboard extends Component {
     let pastAttemptsTable = <div className="notification has-text-centered">No quiz attempts yet. Choose a practice quiz from the list above, or launch a quiz from your learning management system to get started.</div>;
     if (pastAttempts.length > 0) {
         pastAttemptsTable = (
-        <div style={{overflowX: "auto"}}>
+        <div className="table-wrapper">
             <table className="table is-striped is-hoverable is-fullwidth quiz-table">
                 <thead>
-                    <tr>
+                    <tr className="sticky-header">
                         <th style={{whiteSpace: "nowrap"}}>Completed</th>
                         <th style={{width:"99%"}}>Quiz</th>
                         <th style={{whiteSpace: "nowrap"}}>Questions</th>
