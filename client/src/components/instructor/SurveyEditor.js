@@ -112,12 +112,20 @@ class SurveyEditor extends Component {
     async _saveSurvey() {
         this.setState({ isSaving: true });
         try {
-            await this.props.saveSurveyMutation({
+            const courseId = this.props.courseQuery.course.id;
+            // Save the new survey
+            const result = await this.props.saveSurveyMutation({
                 variables: {
-                    courseId: this.props.courseQuery.course.id,
+                    courseId,
                     survey: this._parseSurveyText(this.state.newSurveyText)
                 }
             });
+            // Handle errors
+            if (result.errors && result.errors.length > 0) {
+                throw result;
+            }
+            // Redirect to course details after successful save
+            this.props.history.push('/instructor/course/' + courseId);
         } catch (error) {
             alert('There was an error saving the survey. Please copy the text somewhere safe and try again later.');
         }
