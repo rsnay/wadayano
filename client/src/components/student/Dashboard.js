@@ -4,6 +4,8 @@ import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import TimeAgo from 'react-timeago';
 
+import { QUIZ_TYPE_NAMES } from '../../constants';
+
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import { withAuthCheck } from '../shared/AuthCheck';
@@ -113,6 +115,7 @@ class Dashboard extends Component {
                         <th style={{whiteSpace: "nowrap"}}>Completed</th>
                         <th style={{width:"99%"}}>Quiz</th>
                         <th style={{whiteSpace: "nowrap"}}>Questions</th>
+                        <th>Type</th>
                         <th>Score</th>
                         <th>Review</th>
                     </tr>
@@ -126,6 +129,7 @@ class Dashboard extends Component {
                                 {attempt.quiz.title}</Link>
                             </td>
                             <td>{attempt.quiz.questions.length}</td>
+                            <td>{QUIZ_TYPE_NAMES[attempt.quiz.type]}</td>
                             <td>{attempt.completed ? formatScore(attempt.score) : "n/a"}</td>
                             <td>
                                 <Link to={"/student/quiz/review/" + attempt.id}
@@ -210,6 +214,7 @@ const QUIZ_ATTEMPTS_QUERY = gql`
             quiz {
                 id
                 title
+                type
                 questions {
                     id
                 }
