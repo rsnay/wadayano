@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -9,14 +10,17 @@ import { withAuthCheck } from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+import Modal from '../shared/Modal';
 import LTISetupModal from './LTISetupModal';
+import CourseInfoForm from './CourseInfoForm';
 
 export class CourseDetails extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            displayLtiSetupUrl: null
+            displayLtiSetupUrl: null,
+            displayCourseInfoForm: false
         };
         this.courseTitleInput = React.createRef();
     }
@@ -28,21 +32,6 @@ export class CourseDetails extends Component {
             }
         });
         this.props.history.push('/instructor/quiz/' + result.data.createQuiz.id);
-    }
-
-    async renameCourse(){
-        let title = this.courseTitleInput.current.value.trim();
-        if (title === '') {
-            alert('Please enter a title for this course.');
-            return;
-        }
-        await this.props.courseUpdate({
-            variables: {
-                id: this.props.match.params.courseId,
-                title
-            }
-        });
-        this.props.courseQuery.refetch();
     }
 
     async deleteCourse(course){
@@ -133,24 +122,24 @@ export class CourseDetails extends Component {
             </ul>
         </nav>
 
-        <label className="label is-medium">
-            Course Title
-        </label>
-        <div className="field has-addons">
-            <div className="control">
-                    <input
-                        className="input" type="text"
-                        placeholder="e.g. CS 101"
-                        defaultValue={course.title}
-                        ref={this.courseTitleInput}
-                        />
+          <section>
+            <h4 className="title is-4">Course Info</h4>
+            <div className="is-flex-tablet">
+                <span style={{flex: 1}}>
+                    <label className="label">Title: {course.title}</label>
+                    <label className="label">Number: {course.number}</label>
+                    <label className="label">LMS URL: {course.lmsUrl}</label>
+                </span>
+                <button style={{marginLeft: "1rem"}} className="button is-light"
+                    onClick={() => this.setState({ displayCourseInfoForm: true })}>
+                    <span className="icon">
+                        <i className="fas fa-edit"></i>
+                    </span>
+                    <span>Edit Course Info</span>
+                </button>
             </div>
-            <div className="control">
-                <button className="button is-primary" onClick={() => this.renameCourse()}>Rename</button>
-            </div>
-        </div>
-
-          <hr />
+            <hr />
+          </section>
 
           <section>
             <h4 className="title is-4">Student Dashboard</h4>
@@ -237,6 +226,19 @@ export class CourseDetails extends Component {
                 modalState={true}
             />
         }
+        <Modal
+            modalState={this.state.displayCourseInfoForm}
+            closeModal={() => this.setState({ displayCourseInfoForm: false })}
+            title="Edit Course Info">
+            <CourseInfoForm
+                course={course}
+                onCancel={() => this.setState({ displayCourseInfoForm: false })}
+                onSave={() => {
+                    this.setState({ displayCourseInfoForm: false });
+                    this.props.courseQuery.refetch();
+                }}
+            />
+        </Modal>
       </section>
 
     )
@@ -252,6 +254,8 @@ export const COURSE_QUERY = gql`
     ){
         id
         title
+        number
+        lmsUrl
         ltiSecret
         quizzes{
             id
@@ -266,20 +270,11 @@ export const COURSE_QUERY = gql`
 `
 
 export const CREATE_QUIZ = gql`
-mutation createQuizMutation($courseId: ID!)
-    {
-        createQuiz(
-            courseId:$courseId,
-        ){
-            id
-        }
-    }`
-
-export const COURSE_UPDATE = gql`
-mutation courseUpdate($id:ID!, $title:String!) {
-    updateCourse(id:$id, title:$title){
+mutation createQuizMutation($courseId: ID!) {
+    createQuiz(
+        courseId:$courseId,
+    ){
         id
-        title
     }
 }`
 
@@ -291,13 +286,12 @@ mutation courseDelete($id:ID!) {
 }`
 
 export default withAuthCheck(compose(
-graphql(COURSE_QUERY, {
-  name: 'courseQuery',
-  options: (props) => {
-    return { variables: { id:props.match.params.courseId } }
-  }
-}),
-graphql(CREATE_QUIZ, {name:"createQuizMutation"}),
-graphql(COURSE_UPDATE, {name:"courseUpdate"}),
-graphql(COURSE_DELETE, {name:"courseDelete"}),
+    graphql(COURSE_QUERY, {
+        name: 'courseQuery',
+        options: (props) => {
+            return { variables: { id:props.match.params.courseId } }
+        }
+    }),
+    graphql(CREATE_QUIZ, {name:"createQuizMutation"}),
+    graphql(COURSE_DELETE, {name:"courseDelete"}),
 ) (CourseDetails), { instructor: true});
