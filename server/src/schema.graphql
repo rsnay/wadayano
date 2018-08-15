@@ -14,11 +14,10 @@ type Query {
 }
 
 type Mutation {
-  addQuiz(id:ID): Course!
   updateQuiz(id:ID, title:String, type: QuizType): Quiz!
   addCourse(title:String): Course!
   createQuiz(courseId: ID!): Quiz!
-  updateCourse(id:ID, title:String): Course!
+  updateCourse(id:ID, info: CourseInfoUpdateInput): Course!
   deleteCourse(id:ID):Course!
   deleteQuiz(id:ID): Quiz!
   addQuestion(id:ID): Quiz!
@@ -49,6 +48,13 @@ type Instructor {
     email: String!
     createdAt: DateTime!
     courses: [Course!]!
+}
+
+# Use a restricted subset of CourseUpdateInput (rather than Prisma’s full one), to avoid changing ltiSecret, modifying students, etc.
+input CourseInfoUpdateInput {
+  title: String
+  number: String
+  lmsUrl: String
 }
 
 # Returned from instructor signup or login

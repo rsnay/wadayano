@@ -85,11 +85,12 @@ function addCourse (root, args, context, info) {
     }, info)
 }
 
-function updateCourse (root, args, context, info) {
+async function updateCourse (root, args, context, info) {
+    // Check that the course belongs to the current instructor
+    // TODO
+    // args.info is CourseInfoUpdateInput, which is a subset of CourseUpdateInput
     return context.db.mutation.updateCourse({
-        data: {
-            title:args.title
-        },
+        data: args.info,
         where: {
             id:args.id
         }
@@ -97,6 +98,8 @@ function updateCourse (root, args, context, info) {
 }
 
 function updateSurvey (root, args, context, info) {
+    // Check that the course belongs to the current instructor
+    // TODO
     return context.db.mutation.updateCourse({
         data: {
             survey: args.survey
@@ -108,6 +111,8 @@ function updateSurvey (root, args, context, info) {
 }
 
 function createQuiz (root, args, context, info) {
+    // Check that the course belongs to the current instructor
+    // TODO
     return context.db.mutation.createQuiz({
         data: {
             title: "New Quiz Title",
@@ -115,45 +120,6 @@ function createQuiz (root, args, context, info) {
             course: { connect: { id: args.courseId } }
         }
     }, info);
-}
-
-function addQuiz (root, args, context, info) {
-    return context.db.mutation.updateCourse({
-      data: {
-        quizzes:{
-            create:[{
-                title: "Quiz Title",
-                type: "GRADED",
-                questions: {
-                create: [{
-                    prompt: "Enter Prompt Here",
-                    options: {
-                    create: [{
-                            isCorrect: true,
-                            text: "OptionA"
-                        },
-                        {
-                            isCorrect: false,
-                            text: "OptionB"
-                        },
-                        {
-                            isCorrect: false,
-                            text: "OptionC"
-                        },
-                        {
-                            isCorrect: false,
-                            text: "OptionD"
-                        }]
-                    }
-                }]
-            }
-            }]
-        }
-    },
-    where:{
-        id:args.id
-    }
-    },info)
 }
 
 function addQuestion (root, args, context, info) {
@@ -642,7 +608,6 @@ async function submitSurveyResult(root, args, context, info) {
 }
     
 module.exports = {
-    addQuiz,
     addCourse,
     updateCourse,
     deleteCourse,
