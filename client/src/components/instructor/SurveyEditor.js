@@ -164,7 +164,7 @@ class SurveyEditor extends Component {
                         <div className="column is-6">
                             <h4 className="subtitle is-4">
                                 Editor
-                                <button style={{height:"inherit", padding:"0"}} className="button is-text is-pulled-right" onClick={() => this.setState({ formatModalVisible: true })}>
+                                <button style={{height:"inherit", padding:"0 0 0 0.5rem"}} className="button is-text is-pulled-right" onClick={() => this.setState({ formatModalVisible: true })}>
                                     <span className="icon is-small"><i className="fas fa-question-circle"></i></span>
                                     <span>Formatting hints</span>
                                 </button>
