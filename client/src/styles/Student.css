@@ -5,8 +5,14 @@
     min-height: 3.25rem;
 }
 
+/* Hide firefox dotted focus on buttons */
 button::-moz-focus-inner { 
     border: 0; 
+}
+
+/* On mobile browsers with toolbars that hide and disappear, attempt to have the modal dialogs not get clipped by the toolbars. Issue is that Bulma's 100vh behaves differently than 100% of viewport height. Could cause issues, depending on the height of the modal's parent element? */
+.modal-card {
+    max-height: calc(100% - 40px)!important;
 }
 
 /* Quiz Taker */
