@@ -42,7 +42,7 @@ export class CreateCourseForm extends Component {
     render() {
         // If the new course has been created, redirect to it
         if (this.state.redirectCourseId) {
-            return (<Redirect to={{
+            return (<Redirect push to={{
                 pathname: `/instructor/course/${this.state.redirectCourseId}`
             }} />);
         }
