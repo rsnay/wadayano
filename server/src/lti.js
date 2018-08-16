@@ -17,13 +17,13 @@ const CLIENT_BASE_URL = PRISMA_ENDPOINT.match('production') ? '' : 'http://local
 async function handleLaunch(config, db, req, res) {
     // Get body and params
     const body = req.body;
-	const action = req.params.action;
-    const parameter1 = req.params.parameter1;
+	const action = req.params.action || req.query.action;
+    const objectId = req.params.objectId || req.query.objectId;
     // Oauth consumer key will be course ID
     const courseId = body.oauth_consumer_key;
 
 	// Log info
-    console.log(`We got an LTI request for ${action} ${parameter1}!! ${req.method} ${req.url}`);
+    console.log(`We got an LTI request for ${action} ${objectId}!! ${req.method} ${req.url}`);
     
     // Check for user_id, lis_person_name_full, and lis_person_contact_email_primary
     if (!(body.user_id && body.lis_person_name_full && body.lis_person_contact_email_primary)) {
@@ -69,13 +69,13 @@ async function handleLaunch(config, db, req, res) {
 
             // If this is a quiz 
             if (action === 'quiz') {
-                let quizId = parameter1;
+                let quizId = objectId;
                 // Start a quiz attempt and stick the LTI passback info in it
                 // Use provider.body instead of body, since the provider will take out the oauth info, which we don't want to store
                 _upsertQuizAttempt(db, studentId, quizId, provider.body);
             }
 
-            let redirectURL = `${CLIENT_BASE_URL}/student/launch/${token}/${action}/${parameter1}`;
+            let redirectURL = `${CLIENT_BASE_URL}/student/launch/${token}/${action}/${objectId}`;
 
             // CLIENT_BASE_URL should be '' on production
             if (req.hostname.indexOf('wadayano.com') >= 0) {

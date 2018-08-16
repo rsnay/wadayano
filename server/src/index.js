@@ -63,7 +63,8 @@ server.express.enable('trust proxy');
 // Handle LTI launch requests
 // create application/x-www-form-urlencoded parser
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
-server.post('/lti/:action/:parameter1', urlencodedParser, (req, res) => handleLaunch(config, db, req, res));
+server.post('/lti', urlencodedParser, (req, res) => handleLaunch(config, db, req, res));
+server.post('/lti/:action/:objectId', urlencodedParser, (req, res) => handleLaunch(config, db, req, res));
 
 // Serve static files last, to catch everything else
 server.use(express.static(appDir));
