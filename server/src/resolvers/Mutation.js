@@ -1,10 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const ses = require('node-ses');
-const { APP_SECRET, AWS_SES_ENDPOINT, AWS_SES_KEY, AWS_SES_SECRET, AWS_SES_FROM_ADDRESS } = require('../../config');
+const { APP_SECRET } = require('../../config');
 const { getUserInfo, validateEmail } = require('../utils');
 const { postGrade } = require('../lti');
-const emailTemplates = require('../emailTemplate');
+const { sendEmail } = require('../email');
+const emailTemplates = require('../emailTemplates');
 
 const MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
@@ -305,14 +305,7 @@ async function instructorRequestPasswordReset(root, args, context, info) {
     console.log(emailTemplates.requestPasswordReset(token));
 
     // Send token in a password reset email to the instructor
-    const client = ses.createClient({ amazon: AWS_SES_ENDPOINT, key: AWS_SES_KEY, secret: AWS_SES_SECRET });
-    client.sendEmail({
-        to: email,
-        //to: 'success@simulator.amazonses.com',
-        from: AWS_SES_FROM_ADDRESS,
-        subject: 'wadayano Password Reset Request',
-        message: emailTemplates.requestPasswordReset(token)
-    }, function(err, data, res) { console.log(err, data) });
+    sendEmail(email, 'wadayano Password Reset Request', emailTemplates.requestPasswordReset(token));
 
     // Return boolean for "successful" or not (we dont’t know if email actually sent)
     return true;
