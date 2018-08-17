@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1069px" height="300px" viewBox="0 0 1069 300" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>Logo Title</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Logo-Title" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <polygon id="Triangle" fill="#FF7E7E" fill-rule="nonzero" opacity="0" points="150 292 23 72 277 72"></polygon>
+        <path d="M192.846224,189.38522 C194.317556,172.738544 199.273653,157.102139 207.714514,142.476005 C225.14355,112.275366 255.905379,88.7833642 300,72 L200,246 C171.711704,223.768606 156.013096,199.93696 152.904176,174.505063 C149.795255,149.073166 159.338728,124.193242 181.534592,99.8652896 L192.846224,189.38522 Z M146,246 L46,72 C85.6240345,80.9907843 114.156053,100.58333 131.596055,130.777638 C149.036058,160.971945 153.837373,199.379399 146,246 Z" id="Combined-Shape" fill="#68C5D7" fill-rule="nonzero"></path>
+        <text id="wadayano" font-family="Helvetica-Light, Helvetica" font-size="112" font-weight="300" letter-spacing="1.05660379" fill="#000000">
+            <tspan x="323" y="149">wadayano</tspan>
+        </text>
+    </g>
+</svg>
