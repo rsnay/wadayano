@@ -49,8 +49,8 @@ export class CourseDetails extends Component {
     }
 
     // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
-    _showLTISetup(action, id) {
-        this.setState({ displayLtiSetupUrl: LTI_LAUNCH_URL + action + '/' + id });
+    _showLTISetup(action, objectId) {
+        this.setState({ displayLtiSetupUrl: `${LTI_LAUNCH_URL}?action=${action}&objectId=${objectId}` });
     }
 
   render() {

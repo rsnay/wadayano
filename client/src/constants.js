@@ -1,8 +1,8 @@
 // The Application GraphQL Server endpoint to use (and auto-switch for production)
 export const GRAPHQL_ENDPOINT = (process.env.NODE_ENV !== 'production') ? 'http://localhost:4000/' : 'https://wadayano.com/api/';
 
-// Base URL for LTI launches, to which action and ID will be appended
-export const LTI_LAUNCH_URL = 'https://www.wadayano.com/lti/';
+// Base URL for LTI launches (no trailing slash), to which action and ID will be appended as GET parameters
+export const LTI_LAUNCH_URL = (process.env.NODE_ENV !== 'production') ? 'http://localhost:4000/lti' : 'https://www.wadayano.com/lti';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
 export const AUTH_TOKEN = 'authToken';
