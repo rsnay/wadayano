@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { APP_SECRET } = require('../../config');
+const { APP_SECRET, FEEDBACK_EMAIL_ADDRESS } = require('../../config');
 const { getUserInfo, validateEmail } = require('../utils');
 const { postGrade } = require('../lti');
 const { sendEmail } = require('../email');
@@ -349,6 +349,27 @@ async function instructorResetPassword(root, args, context, info) {
     };
 }
 
+async function sendFeedback(root, args, context, info) {
+    // Determine if user exists, if not sending anonymously
+    const { isInstructor, userId } = getUserInfo(context);
+    const user = await (isInstructor ? context.db.query.instructor : context.db.query.student)({ where: { id: userId }}, `{ id, email }`);
+    if (!user) {
+        // If not found, return false
+        return false;
+    }
+
+    const { message, anonymous } = args;
+    const sentFrom = anonymous ? 'Anonymous' : user.email;
+
+    console.log(FEEDBACK_EMAIL_ADDRESS, 'wadayano Feedback – ' + new Date().toLocaleString(), emailTemplates.feedback(sentFrom, message));
+
+    // Send feedback email to us
+    sendEmail(FEEDBACK_EMAIL_ADDRESS, 'wadayano Feedback – ' + new Date().toLocaleString(), emailTemplates.feedback(sentFrom, message));
+
+    // Return boolean for "successful" or not (we dont’t know if email actually sent)
+    return true;
+}
+
 // This will only be practice launches. LTI launches are handled in lti.js
 async function startOrResumeQuizAttempt(root, args, context, info) {
     // Check for valid student login
@@ -619,6 +640,7 @@ module.exports = {
     instructorSignup,
     instructorRequestPasswordReset,
     instructorResetPassword,
+    sendFeedback,
     startOrResumeQuizAttempt,
     completeQuizAttempt,
     attemptQuestion,

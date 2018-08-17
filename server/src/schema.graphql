@@ -33,6 +33,7 @@ type Mutation {
   instructorLogin(email:String!, password:String!): InstructorAuthPayload
   instructorRequestPasswordReset(email: String!): Boolean!
   instructorResetPassword(token: String!, password: String!): InstructorAuthPayload
+  sendFeedback(anonymous: Boolean!, message: String!): Boolean!
 
   startOrResumeQuizAttempt(quizId: ID!): QuizAttempt!
   completeQuizAttempt(quizAttemptId: ID!): QuizGradePayload!
