@@ -27,6 +27,8 @@ class CourseInfoForm extends Component {
     // When the save button is pressed, or form is submitted via enter key
     async _submit(e) {
         if (e) { e.preventDefault(); }
+        // Prevent re-submission while loading
+        if (this.state.isLoading) { return; }
         // Clear existing error, and set loading
         this.setState({ error: '', isLoading: true });
 

@@ -27,6 +27,8 @@ class ResetPassword extends Component {
     if (e) {
       e.preventDefault();
     }
+    // Prevent re-submission while loading
+    if (this.state.isLoading) { return; }
     // Clear existing error, and set loading
     this.setState({ error: '', isLoading: true });
     this._resetPassword();

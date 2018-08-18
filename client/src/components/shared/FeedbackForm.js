@@ -27,6 +27,8 @@ class FeedbackForm extends Component {
     if (e) {
       e.preventDefault();
     }
+    // Prevent re-submission while loading
+    if (this.state.isLoading) { return; }
     // Clear existing error, and set loading
     this.setState({ error: '', isLoading: true });
     // Send feedback mutation
@@ -98,7 +100,7 @@ class FeedbackForm extends Component {
             <div className="field">
               <label className="label">Message</label>
               <div className="control">
-                <textarea className="textarea" name="message" value={this.state.message} onChange={this._handleInputChange} />
+                <textarea autoFocus className="textarea" name="message" value={this.state.message} onChange={this._handleInputChange} />
               </div>
             </div>
 
