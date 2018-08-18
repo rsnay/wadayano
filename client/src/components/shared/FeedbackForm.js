@@ -30,7 +30,10 @@ class FeedbackForm extends Component {
     // Clear existing error, and set loading
     this.setState({ error: '', isLoading: true });
     // Send feedback mutation
-    const { anonymous, message } = this.state;
+    let { anonymous, message } = this.state;
+    // Add user-agent to message
+    message += '\n\n' + navigator.userAgent;
+
     try {
       const result = await this.props.sendFeedbackMutation({
         variables: {
@@ -112,8 +115,7 @@ class FeedbackForm extends Component {
               <p className="control">
                   <button
                     className={"button is-primary" + (this.state.isLoading ? " is-loading" : "")}
-                    disabled={!formCompleted}
-                    onClick={() => this._submit() }>
+                    disabled={!formCompleted}>
                     Send
                   </button>
               </p>
