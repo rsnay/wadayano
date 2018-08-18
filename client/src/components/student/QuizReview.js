@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
+
+import { withAuthCheck } from '../shared/AuthCheck';
 
 import { formatScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
@@ -19,7 +21,7 @@ class QuizReview extends Component {
         console.log("correct:"+quizAttempt.correct);
 
         for(i; i < quizAttempt.questionAttempts.length; i++){
-            if(quizAttempt.questionAttempts[i].confidence){
+            if(quizAttempt.questionAttempts[i].isConfident){
                 confidence += 1;
             }
             if(quizAttempt.questionAttempts[i].isCorrect){
@@ -27,6 +29,8 @@ class QuizReview extends Component {
             }
         }
         wadayano = confidence - correct;
+        console.log(confidence);
+        console.log(correct)
         console.log(wadayano);
         return wadayano;
     }
@@ -39,7 +43,7 @@ class QuizReview extends Component {
             }
         }
         var numQuestion = quizAttempt.questionAttempts.length;
-        var percent = correct/numQuestion;
+        var percent = correct/numQuestion*10;
         console.log("percent:"+percent+"%");
     }
 
@@ -60,7 +64,8 @@ class QuizReview extends Component {
             });
             conceptConfidences[i].concept = quizConcepts[i];
             for(var j=0; j<quizAttempt.questionAttempts.length; j++){
-                var question = quizAttempt.questionAttemps[j].question;
+                conceptConfidences[i].id = i;
+                var question = quizAttempt.questionAttempts[j].question;
                 var correct = 0;
                 if(question.concept === quizConcepts[i]){
                     conceptConfidences[i].confidence += 1;
@@ -72,33 +77,36 @@ class QuizReview extends Component {
                 conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
             }
         }
-        console.log("conceptConfidence"+conceptConfidences);
-        return quizAttempt;
+        console.log("conceptConfidence:")
+        console.log(conceptConfidences);
+        return conceptConfidences;
     }
 
   render() {
 
     
+    console.log(this.props);
     
-    
-    if (this.props.quizAttempt && this.props.quizAttempt.loading) {
+    if (this.props.quizAttemptQuery && this.props.quizAttemptQuery.loading) {
         return <LoadingBox />;
     }
 
-    if (this.props.quizAttempt && this.props.quizAttempt.error) {
+    if (this.props.quizAttemptQuery && this.props.quizAttemptQuery.error) {
         return <ErrorBox>Couldn’t load quiz</ErrorBox>;
     }
-    console.log("hey" + this.props.quizAttempt.quizAttempt);
-    const quizAttempt = this.props.quizAttempt.quizAttempt;
+    console.log(this.props.quizAttemptQuery);
+
+    const quizAttempt = this.props.quizAttemptQuery.currentStudentQuizAttempt;
     
     console.log(quizAttempt.questionAttempts[0].question.title);
 
-    //this.wadayanoScore(quizAttempt);
+    this.wadayanoScore(quizAttempt);
     this.sortConcepts(quizAttempt);
-    //this.overallScore(quizAttempt);
+    this.overallScore(quizAttempt);
 
     // Use conceptConfidences from the quizAttempt prop
-    const conceptConfidences = quizAttempt.conceptConfidences
+    //const conceptConfidences = quizAttempt.conceptConfidences;
+    const conceptConfidences = this.sortConcepts(quizAttempt);
 
     // Score format of 33.3%
     const formattedScore = formatScore(quizAttempt.score);
@@ -150,19 +158,54 @@ QuizReview.propTypes = {
     quizAttempt: PropTypes.object.isRequired
 };
 
-/*export const QUIZ_ATTEMPT_QUERY = gql`
-    query {
-        quizzes {
+const QUIZ_ATTEMPT_QUERY = gql`
+  query quizAttemptQuery($id: ID!) {
+    currentStudentQuizAttempt(id: $id) {
+      id
+      completed
+      score
+      postSucceeded
+      quiz {
+        id
+        title
+        concepts
+        questions {
+          id
+          prompt
+          options {
             id
-            title
-            questions {
-                id
-            }
+            text
+            isCorrect
+          }
         }
+      }
+      questionAttempts {
+        id
+        question {
+          id
+          prompt
+        }
+        option {
+          id
+          text
+        }
+        correctOption {
+          id
+          text
+        }
+        isCorrect
+        isConfident
+      }
+      conceptConfidences {
+        id
+        concept
+        confidence
+      }
     }
-`*/
+  }
+`
 
-export const QUIZ_ATTEMPT_QUERY = gql`
+/*export const QUIZ_ATTEMPT_QUERY = gql`
     query {
         quizzes {
             id
@@ -180,4 +223,14 @@ export default graphql(QUIZ_ATTEMPT_QUERY, {
         // Pass the quiz ID from the route into the query
         return { variables: { id: props.quizAttemptId } }
     }
-}) (QuizReview)
+}) (QuizReview)*/
+
+export default withAuthCheck(compose(
+    graphql(QUIZ_ATTEMPT_QUERY, {
+      name: 'quizAttemptQuery',
+      options: (props) => {
+        console.log(props);
+        return { variables: { id: props.quizAttempt.id } }
+      }
+    }),
+  )(QuizReview), { student: true });

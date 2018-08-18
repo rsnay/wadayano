@@ -52,7 +52,7 @@ class ConceptRater extends Component {
     }
 
     render() {
-
+        console.log(this.props);
         let concepts = this.props.concepts.map((concept, index) =>
             <div className="" key={concept}>
                 <h4 className="subtitle is-4">{concept}</h4>
