@@ -37,6 +37,8 @@ class Login extends Component {
     if (e) {
       e.preventDefault();
     }
+    // Prevent re-submission while loading
+    if (this.state.isLoading) { return; }
     // Clear existing error, and set loading
     this.setState({ error: '', isLoading: true });
     if (this.state.signupMode) {
@@ -246,8 +248,8 @@ class Login extends Component {
               <p className="control">
                   <button
                     className={"button is-primary" + (this.state.isLoading ? " is-loading" : "")}
-                    disabled={!formCompleted}
-                    onClick={() => this._submit() }>
+                    type="submit"
+                    disabled={!formCompleted}>
                   {this.state.signupMode ? "Sign Up" : "Log In"}
                   </button>
               </p>

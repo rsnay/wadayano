@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
-import Icon from '../../icon.png';
-import Logo from '../../logo.svg';
+import Logo from '../../logo_title.svg';
 
 import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR, AUTH_ROLE_STUDENT } from '../../constants';
 
@@ -38,9 +37,8 @@ class Header extends Component {
     return (
       <nav className="navbar is-light no-select" aria-label="main navigation">
         <div className="navbar-brand">
-            <Link to="/" className="navbar-item">
-                <img src={Icon} alt="W" style={{maxHeight: "4rem"}} />
-                <img src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "2rem"}} />
+            <Link to="/" className="navbar-item" style={{padding: 0}}>
+                <img src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem"}} />
             </Link>
             <a role="button" className="navbar-burger" onClick={(e) => this._toggleMenu(e) } data-target="navMenu" aria-label="menu" aria-expanded="false">
                 <span aria-hidden="true"></span>
@@ -56,6 +54,7 @@ class Header extends Component {
                 {this.isStudent && <NavLink activeClassName="is-active" to="/student/dashboard" className="navbar-item">Dashboard</NavLink>}
             </div>
             <div className="navbar-end">
+                {this.isLoggedIn && <NavLink activeClassName="is-active is-pulled-right" to="/feedback" className="navbar-item">Send Feedback</NavLink>}
                 <div className="navbar-item">
                 {this.isLoggedIn ? 
                     <button className="button is-danger is-outlined" onClick={() => this._logOut() }>Log Out</button>

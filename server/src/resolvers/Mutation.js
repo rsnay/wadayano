@@ -1,10 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const ses = require('node-ses');
-const { APP_SECRET, AWS_SES_ENDPOINT, AWS_SES_KEY, AWS_SES_SECRET, AWS_SES_FROM_ADDRESS } = require('../../config');
+const { APP_SECRET, FEEDBACK_EMAIL_ADDRESS } = require('../../config');
 const { getUserInfo, validateEmail } = require('../utils');
 const { postGrade } = require('../lti');
-const emailTemplates = require('../emailTemplate');
+const { sendEmail } = require('../email');
+const emailTemplates = require('../emailTemplates');
 
 const MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
@@ -305,14 +305,7 @@ async function instructorRequestPasswordReset(root, args, context, info) {
     console.log(emailTemplates.requestPasswordReset(token));
 
     // Send token in a password reset email to the instructor
-    const client = ses.createClient({ amazon: AWS_SES_ENDPOINT, key: AWS_SES_KEY, secret: AWS_SES_SECRET });
-    client.sendEmail({
-        to: email,
-        //to: 'success@simulator.amazonses.com',
-        from: AWS_SES_FROM_ADDRESS,
-        subject: 'wadayano Password Reset Request',
-        message: emailTemplates.requestPasswordReset(token)
-    }, function(err, data, res) { console.log(err, data) });
+    sendEmail(email, 'wadayano Password Reset Request', emailTemplates.requestPasswordReset(token));
 
     // Return boolean for "successful" or not (we dont’t know if email actually sent)
     return true;
@@ -354,6 +347,27 @@ async function instructorResetPassword(root, args, context, info) {
         token: newToken,
         instructor: updatedInstructor
     };
+}
+
+async function sendFeedback(root, args, context, info) {
+    // Determine if user exists, if not sending anonymously
+    const { isInstructor, userId } = getUserInfo(context);
+    const user = await (isInstructor ? context.db.query.instructor : context.db.query.student)({ where: { id: userId }}, `{ id, email }`);
+    if (!user) {
+        // If not found, return false
+        return false;
+    }
+
+    const { message, anonymous } = args;
+    const sentFrom = anonymous ? 'Anonymous' : user.email;
+
+    console.log(FEEDBACK_EMAIL_ADDRESS, 'wadayano Feedback – ' + new Date().toLocaleString(), emailTemplates.feedback(sentFrom, message));
+
+    // Send feedback email to us
+    sendEmail(FEEDBACK_EMAIL_ADDRESS, 'wadayano Feedback – ' + new Date().toLocaleString(), emailTemplates.feedback(sentFrom, message));
+
+    // Return boolean for "successful" or not (we dont’t know if email actually sent)
+    return true;
 }
 
 // This will only be practice launches. LTI launches are handled in lti.js
@@ -626,6 +640,7 @@ module.exports = {
     instructorSignup,
     instructorRequestPasswordReset,
     instructorResetPassword,
+    sendFeedback,
     startOrResumeQuizAttempt,
     completeQuizAttempt,
     attemptQuestion,

@@ -9,6 +9,7 @@ import { Switch, Route } from 'react-router-dom';
 import Welcome from './shared/Welcome';
 import Login from './instructor/Login';
 import ResetPassword from './instructor/ResetPassword';
+import FeedbackForm from './shared/FeedbackForm';
 
 import CourseList from './instructor/CourseList';
 import CourseDetails from './instructor/CourseDetails';
@@ -36,6 +37,7 @@ class App extends Component {
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={Login} />
           <Route path="/reset-password/:token" component={ResetPassword} />
+          <Route exact path="/feedback" component={FeedbackForm} />
 
           <Route exact path="/instructor" component={CourseList} />
           <Route exact path="/instructor/courses" component={CourseList} />

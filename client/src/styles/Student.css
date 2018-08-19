@@ -5,6 +5,12 @@
     min-height: 3.25rem;
 }
 
+input[type=checkbox] {
+    vertical-align: middle;
+    position: relative;
+    bottom: 1px;
+}
+
 /* Hide firefox dotted focus on buttons */
 button::-moz-focus-inner { 
     border: 0; 

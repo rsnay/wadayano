@@ -37,6 +37,8 @@ class ConceptRater extends Component {
 
     // Sends the concept confidences/ratings to the server
     async _submitConceptRatings() {
+        // Prevent re-submission while loading
+        if (this.state.isLoading) { return; }
         this.setState({ isLoading: true });
         await this.props.rateConceptsMutation({
             variables: {

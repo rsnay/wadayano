@@ -22,6 +22,8 @@ class SurveyTaker extends Component {
 
     // Submit the survey results
     async _submitSurvey() {
+        // Prevent re-submission while loading
+        if (this.state.isSubmitting) { return; }
         this.setState({ isSubmitting: true });
         try {
             await this.props.submitSurveyMutation({
