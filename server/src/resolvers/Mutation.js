@@ -129,6 +129,7 @@ function addQuestion (root, args, context, info) {
         questions: {
           create: [{
             prompt: "Enter Prompt Here",
+            concept: "Example Concept",
             options: {
                create:[{
                     isCorrect: true,
