@@ -4,6 +4,7 @@ import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import { withAuthCheck } from '../shared/AuthCheck';
+import { ALPHABET } from '../../constants';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
@@ -13,8 +14,9 @@ export class QuizEditor extends Component {
         super(props);
     
         this.state = {
-          concepts: [],
-          showConceptsForQuestion: null
+            isLoading: false,
+            concepts: [],
+            showConceptsForQuestion: null
         };
     
         // Pre-bind this function, to make adding it to input fields easier
@@ -73,8 +75,7 @@ export class QuizEditor extends Component {
         });
 
         // Remove duplicate concepts (a Set can’t have duplicates, so it will return only unique concepts)
-        quizData.concepts= Array.from(new Set(quizData.concepts));
-        console.log(quizData.concepts);
+        quizData.concepts = Array.from(new Set(quizData.concepts));
 
         // Send the mutation
         await this.props.saveQuizMutation({
@@ -90,6 +91,7 @@ export class QuizEditor extends Component {
 
     async deleteQuiz(quiz){
         if (!window.confirm('Are you sure you want to delete this quiz? All students’ attempts for this quiz will also be deleted.')) { return; }
+        this.setState({ isLoading: true });
         await this.props.quizDeleteMutation({
             variables:{
                 id: quiz.id
@@ -100,22 +102,26 @@ export class QuizEditor extends Component {
     }
 
     async addQuestion(){
-      await this.props.addQuestionMutation({
-          variables:{
-              id: this.props.match.params.quizId
-          }
-      });
-      this.props.quizQuery.refetch();
+        this.setState({ isLoading: true });
+        await this.props.addQuestionMutation({
+            variables:{
+                id: this.props.match.params.quizId
+            }
+        });
+        this.props.quizQuery.refetch();
+        this.setState({ isLoading: false });
     }
 
     async deleteQuestion(question){
         if (!window.confirm('Are you sure you want to delete this question? All students’ attempts for this question will also be deleted.')) { return; }
+        this.setState({ isLoading: true });
         await this.props.questionDeleteMutation({
             variables:{
                 id: question.id
             }
         });
         this.props.quizQuery.refetch();
+        this.setState({ isLoading: false });
     }
 
     conceptFilter(quiz, question){
@@ -141,7 +147,7 @@ export class QuizEditor extends Component {
 
   render() {
 
-    if (this.props.quizQuery && this.props.quizQuery.loading) {
+    if (this.state.isLoading || (this.props.quizQuery && this.props.quizQuery.loading)) {
         return <LoadingBox />;
     }
 
@@ -179,10 +185,10 @@ export class QuizEditor extends Component {
 
         <label className="label is-medium">Questions</label>
 
-        {quiz.questions.map((question,index)=>
+        {quiz.questions.map((question, questionIndex)=>
         <div className="panel" key={question.id}>
             <p className="panel-heading">
-                Question {index+1}
+                Question {questionIndex + 1}
                 <a className="is-pulled-right button is-small">
                     <span className="icon " onClick={this.deleteQuestion.bind(null,(question))}>
                         <i className="fas fa-trash"></i>
@@ -190,39 +196,49 @@ export class QuizEditor extends Component {
                 </a>
             </p>
             <div className="panel-block">
-                <textarea id = {question.id} key = {question.id} className="textarea is-medium" type="text">{question.prompt}</textarea>
+                <textarea
+                    id={question.id}
+                    className="textarea is-medium"
+                    placeholder="Question Prompt"
+                    defaultValue={question.prompt} />
             </div>
             <p className="panel-block">
-                <input type="text" defaultValue={question.concept} id={"concept"+question.id} placeholder="concept" onChange = {() => this.conceptFilter(quiz, question)}></input>
+                <label>
+                    <span className="is-inline" style={{verticalAlign: "-webkit-baseline-middle"}}>Concept &nbsp; &nbsp;</span>
+                    <input className="input is-inline" type="text" defaultValue={question.concept} id={"concept"+question.id} placeholder="concept" onFocus={() => this.conceptFilter(quiz, question)} onChange = {() => this.conceptFilter(quiz, question)}></input>
+                </label>
+                {(this.state.showConceptsForQuestion === question.id && this.state.concepts.length > 0) &&
+                    <div id={"suggestions"+question.id}>
+                    &nbsp; Suggestions: &nbsp;
+                    {this.state.concepts.map(concept => (
+                        <p id= {concept} className="concept-tag tag is-light" onClick={() => this.setConcept(question.id,concept)}>{concept}</p>
+                    ))}
+                    </div>
+                }
             </p>
-            {(this.state.showConceptsForQuestion === question.id) &&
-            <div id={"suggestions"+question.id}>
-            {this.state.concepts.map(concept => (
-                <p id= {concept} onClick={() => this.setConcept(question.id,concept)}>{concept}</p>
-            ))}
-            </div>}
             <form>
-                <p className="panel-block" key={question.options[0].id}>
-                <textarea id = {question.options[0].id+"text"} key = {question.options[0].id+"text"} className="textarea is-small" type="text">{question.options[0].text}</textarea>
-                <input id = {question.options[0].id+"radio"} key = {question.options[0].id+"radio"} defaultChecked={question.options[0].isCorrect} name={"question"+index} value= "A" type="radio"/>
-                </p>
-                <p className="panel-block" key={question.options[1].id}>
-                <textarea id = {question.options[1].id+"text"} key = {question.options[1].id+"text"} className="textarea is-small" type="text">{question.options[1].text}</textarea>
-                <input id = {question.options[1].id+"radio"} key = {question.options[1].id+"radio"} defaultChecked={question.options[1].isCorrect} name={"question"+index} value= "B" type="radio"/>
-                </p>
-                <p className="panel-block" key={question.options[2].id}>
-                <textarea id = {question.options[2].id+"text"} key = {question.options[2].id+"text"} className="textarea is-small" type="text">{question.options[2].text}</textarea>
-                <input id = {question.options[2].id+"radio"} key = {question.options[2].id+"radio"} defaultChecked={question.options[2].isCorrect} name={"question"+index} value= "C" type="radio"/>
-                </p>
-                <p className="panel-block" key={question.options[3].id}>
-                <textarea id = {question.options[3].id+"text"} key = {question.options[3].id+"text"} className="textarea is-small" type="text">{question.options[3].text}</textarea>
-                <input id = {question.options[3].id+"radio"} key = {question.options[3].id+"radio"} defaultChecked={question.options[3].isCorrect} name={"question"+index} value= "D" type="radio"/>
-                </p>
+                {question.options.map((option, optionIndex) =>
+                    <p className="panel-block" key={option.id}>
+                        <label className="radio">
+                            <input
+                                id={option.id + "radio"}
+                                key={option.id + "radio"}
+                                defaultChecked={option.isCorrect}
+                                name={"question" + questionIndex}
+                                placeholder="Option Text"
+                                type="radio" />
+                            {ALPHABET[optionIndex]}
+                        </label>
+                        <textarea
+                            id={option.id + "text"}
+                            className="textarea is-small"
+                            style={{margin: "0 0 0 1rem", minWidth: "inherit"}}
+                            rows="2"
+                            defaultValue={option.text} />
+                    </p>
+                )}
             </form>
-            <p className="panel-block">
-                So forth
-            </p>
-            </div>
+        </div>
         )}
 
             <div className="field is-grouped">
@@ -260,7 +276,9 @@ export const QUIZ_QUERY = gql`
         type
         course{
             title
-            concepts
+            quizzes {
+                concepts
+            }
             id
         }
         questions{
