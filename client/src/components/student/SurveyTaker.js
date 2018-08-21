@@ -77,15 +77,17 @@ class SurveyTaker extends Component {
                         onChange={(answers) => this.setState({ answers })}
                         />
 
-                    <div className="field is-grouped">
-                        <p className="control">
-                            <button
-                                className={"button is-link" + (this.state.isSubmitting ? " is-loading is-disabled" : "")}
-                                onClick={() => this._submitSurvey()}>
-                                Submit Answers
-                            </button>
-                        </p>
-                    </div>
+                    {(course.survey.questions && course.survey.questions.length > 0) &&
+                        <div className="field is-grouped">
+                            <p className="control">
+                                <button
+                                    className={"button is-link" + (this.state.isSubmitting ? " is-loading is-disabled" : "")}
+                                    onClick={() => this._submitSurvey()}>
+                                    Submit Answers
+                                </button>
+                            </p>
+                        </div>
+                    }
 
                 </div>
             </section>
