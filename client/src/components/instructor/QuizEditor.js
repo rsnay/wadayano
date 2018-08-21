@@ -109,6 +109,7 @@ export class QuizEditor extends Component {
     }
 
     async deleteQuestion(question){
+        if (!window.confirm('Are you sure you want to delete this question? All students’ attempts for this question will also be deleted.')) { return; }
         await this.props.questionDeleteMutation({
             variables:{
                 id: question.id

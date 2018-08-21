@@ -72,8 +72,8 @@ type Option {
     isCorrect: Boolean
     text: String!
     # These are needed as backlinks, since QuestionAttempt links to them. Without this, cascading deletes fail
-    questionAttempts: [QuestionAttempt!]! @relation(name: "SelectedAnswerAttemptRelation", onDelete: SET_NULL)
-    correctQuestionAttempts: [QuestionAttempt!]! @relation(name: "CorrectAnswerAttemptRelation", onDelete: SET_NULL)
+    questionAttempts: [QuestionAttempt!]! @relation(name: "SelectedAnswerAttemptRelation", onDelete: CASCADE)
+    correctQuestionAttempts: [QuestionAttempt!]! @relation(name: "CorrectAnswerAttemptRelation", onDelete: CASCADE)
 }
 
 # Student quiz attempt data
