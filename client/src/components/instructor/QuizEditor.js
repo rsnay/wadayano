@@ -224,6 +224,12 @@ export class QuizEditor extends Component {
 
         <label className="label is-medium">Questions</label>
 
+        {(quiz.quizAttempts.length > 0) &&
+            <div className="notification is-warning">
+            <p>Students have taken this quiz. Changing quiz questions may invalidate data and lead to inconsistencies and/or errors. Please <Link to="/feedback">contact us</Link> if you need assistance.</p>
+            </div>
+        }
+
         {quiz.questions.map((question, questionIndex)=>
         <div className="panel" key={question.id}>
             <p className="panel-heading">
@@ -329,6 +335,9 @@ export const QUIZ_QUERY = gql`
                 text
                 isCorrect
             }
+        }
+        quizAttempts {
+            id
         }
     }
   }
