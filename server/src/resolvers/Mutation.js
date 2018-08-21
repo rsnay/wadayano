@@ -60,22 +60,16 @@ function addCourse (root, args, context, info) {
                             prompt: "Enter Prompt Here",
                             concept: "Example Concept",
                             options: {
-                                create:[{
-                                    isCorrect: true,
-                                    text: "OptionA"
-                                },
-                                {
-                                    isCorrect: false,
-                                    text: "OptionB"
-                                },
-                                {
-                                    isCorrect: false,
-                                    text: "OptionC"
-                                },
-                                {
-                                    isCorrect: false,
-                                    text: "OptionD"
-                                }]
+                                create:[
+                                    { isCorrect: true, text: "OptionA" },
+                                    { isCorrect: false, text: "OptionB" },
+                                    { isCorrect: false, text: "OptionC" },
+                                    { isCorrect: false, text: "OptionD" },
+                                    { isCorrect: false, text: "" },
+                                    { isCorrect: false, text: "" },
+                                    { isCorrect: false, text: "" },
+                                    { isCorrect: false, text: "" }
+                                ]
                             }
                         }]
                     }
@@ -131,22 +125,16 @@ function addQuestion (root, args, context, info) {
             prompt: "Enter Prompt Here",
             concept: "Example Concept",
             options: {
-               create:[{
-                    isCorrect: true,
-                    text: "OptionA"
-                },
-                {
-                    isCorrect: false,
-                    text: "OptionB"
-                },
-                {
-                    isCorrect: false,
-                    text: "OptionC"
-                },
-                {
-                    isCorrect: false,
-                    text: "OptionD"
-                }]
+               create:[
+                    { isCorrect: true, text: "OptionA" },
+                    { isCorrect: false, text: "OptionB" },
+                    { isCorrect: false, text: "OptionC" },
+                    { isCorrect: false, text: "OptionD" },
+                    { isCorrect: false, text: "" },
+                    { isCorrect: false, text: "" },
+                    { isCorrect: false, text: "" },
+                    { isCorrect: false, text: "" }
+                ]
             }
         }]
       }
