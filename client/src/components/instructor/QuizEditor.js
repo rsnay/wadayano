@@ -13,130 +13,108 @@ export class QuizEditor extends Component {
         super(props);
     
         this.state = {
-          quiz:null,
-          quizTitle:'',
-          quizType: null,
-          questions:[],
-          concepts:[]
+          concepts: [],
+          showConceptsForQuestion: null
         };
     
         // Pre-bind this function, to make adding it to input fields easier
-        this.updateQuiz = this.updateQuiz.bind(this);
+        this.saveQuiz = this.saveQuiz.bind(this);
         this.addQuestion = this.addQuestion.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
-        this.updateQuiz = this.updateQuiz.bind(this);
-        this.saveConcept = this.saveConcept.bind(this);
-        this.setConcept = this.setConcept.bind(this);
-      }
-
-    addQuestion(){
-      console.log(this.props.match.params.quizId)
-      this.props.addQuestionMutation({
-          variables:{
-              id:this.props.match.params.quizId
-          }
-      });
-      window.location.reload(true);
     }
 
-    updateQuiz(quiz){
-        for(var i=0;i<quiz.questions.length;i++){
-            if(document.getElementById(("concept"+quiz.questions[i].id)).value===null || document.getElementById(("concept"+quiz.questions[i].id)).value.replace(/\s/g,'')===""){
-                alert("Please enter info into required fields");
+    async saveQuiz(quiz){
+        // Ensure that each question has a non-empty concept
+        for(let i = 0; i < quiz.questions.length; i++){
+            let concept = document.getElementById(('concept' + quiz.questions[i].id)).value;
+            if (concept === null || concept.trim() === '') {
+                alert(`Please enter a concept for each question. Question ${i + 1} is missing a concept.`);
                 return;
             }
         }
-        console.log(quiz);
-        this.props.quizSaveMutation({
-            variables:{
-                id:quiz.id,
-                //title:document.getElementById("quizTitle").value
-                title:document.getElementById(quiz.id).value,
-                type:document.getElementById("quizTypeSelector").value
-            }
-        })
-        for(i=0;i<quiz.questions.length;i++){
-            console.log(document.getElementById(quiz.questions[i].id).value);
-            this.props.questionSaveMutation({
-                variables:{
-                    id:quiz.questions[i].id,
-                    //concept:document.getElementById("concept"+quiz.questions[i].id).value,
-                    prompt:document.getElementById(quiz.questions[i].id).value
-                }
-            });
-            var j=0;
-            console.log(quiz.questions[i].id);
-            for(j;j<quiz.questions[i].options.length;j++){
-                this.props.optionSaveMutation({
-                    variables:{
-                        id:quiz.questions[i].options[j].id,
-                        text:document.getElementById(quiz.questions[i].options[j].id+"text").value,
-                        isCorrect:document.getElementById(quiz.questions[i].options[j].id+"radio").checked
-                    }
-                })
-            }
-            console.log(i);
-            this.saveConcept(quiz.questions[i]);
-        }
-        var concepts = [];
-        for(var i = 0; i < quiz.questions.length; i++){
-            var newConcept = true;
-            for(var j = 0; j< concepts.length; j++){
-                if(quiz.questions[i].concept === concepts[j]){
-                    newConcept = false;
-                }
-            }
-            if(newConcept){
-                concepts.push(document.getElementById("concept"+quiz.questions[i].id).value);
-            }
-        }
-        console.log(concepts);
-        this.props.conceptQuiz({
-            variables:{
-                id:quiz.id,
-                concepts:concepts
-            }
-        })
-        window.location.reload(true);
-    }
 
-    deleteQuestion(question){
-        console.log(question.id);
-        this.props.questionDeleteMutation({
+        // Collect data to update in the quiz
+        let quizData = {
+            title: document.getElementById(quiz.id).value,
+            type: document.getElementById('quizTypeSelector').value,
+            // Updated questions will be added here
+            questions: { update: [] },
+            // Concepts will be added here (QuizUpdateconceptsInput requires a set sub-property)
+            concepts: []
+        };
+
+        // Get updated fields of each question
+        quiz.questions.forEach(question => {
+            // Prisma-specific syntax for nested update mutation
+            let updatedQuestion = {
+                where: { id: question.id },
+                data: {
+                    prompt: document.getElementById(question.id).value,
+                    concept: document.getElementById('concept' + question.id).value,
+                    options: { update: [] }
+                }
+            };
+            // Add concept to quiz concept list
+            quizData.concepts.push(document.getElementById('concept' + question.id).value);
+            // Get updated options for this question
+            question.options.forEach(option => {
+                let updatedOption = {
+                    where: { id: option.id },
+                    data: {
+                        text: document.getElementById(option.id + 'text').value,
+                        isCorrect: document.getElementById(option.id + 'radio').checked
+                    }
+                };
+                // Add updated option to question mutation
+                updatedQuestion.data.options.update.push(updatedOption);
+            });
+            // Add this updated question to main quiz mutation
+            quizData.questions.update.push(updatedQuestion);
+        });
+
+        // Remove duplicate concepts (a Set can’t have duplicates, so it will return only unique concepts)
+        quizData.concepts= Array.from(new Set(quizData.concepts));
+        console.log(quizData.concepts);
+
+        // Send the mutation
+        await this.props.saveQuizMutation({
             variables:{
-                id:question.id
+                id: quiz.id,
+                data: quizData
             }
         });
-        window.location.reload(true);
+
+        // Reload quiz data after it's done
+        this.props.quizQuery.refetch();
     }
 
     async deleteQuiz(quiz){
-        console.log(quiz);
         if (!window.confirm('Are you sure you want to delete this quiz? All students’ attempts for this quiz will also be deleted.')) { return; }
         await this.props.quizDeleteMutation({
             variables:{
-                id:quiz.id
+                id: quiz.id
             }
         });
         // Redirect to course details after successful deletion
         this.props.history.push('/instructor/course/' + quiz.course.id);
     }
 
-    editQuizTitle(){
-        var title = document.getElementById('quizTitle');
-        title.type = "input";
-        title.value = "TEST";
+    async addQuestion(){
+      await this.props.addQuestionMutation({
+          variables:{
+              id: this.props.match.params.quizId
+          }
+      });
+      this.props.quizQuery.refetch();
     }
 
-    checkConcepts(quiz, question){
-        var suggestions = [];
-        var input = document.getElementById("concept"+question.id).value;
-        for(var i = 0; i < quiz.concepts.length; i++){
-            if(quiz.concepts[i].includes(input)){
-                suggestions.push(quiz.concepts[i]);
+    async deleteQuestion(question){
+        await this.props.questionDeleteMutation({
+            variables:{
+                id: question.id
             }
-        }
-        return suggestions;
+        });
+        this.props.quizQuery.refetch();
     }
 
     conceptFilter(quiz, question){
@@ -160,18 +138,6 @@ export class QuizEditor extends Component {
         e.value = str;
     }
 
-    saveConcept(question){
-        console.log("question"+question);
-        console.log("id"+question.id);
-        console.log("con"+document.getElementById("concept"+question.id).value);
-        this.props.conceptQuestion({
-            variables:{
-                id:question.id,
-                concept:document.getElementById("concept"+question.id).value
-            }
-        })
-    }
-
   render() {
 
     if (this.props.quizQuery && this.props.quizQuery.loading) {
@@ -179,7 +145,7 @@ export class QuizEditor extends Component {
     }
 
     if (this.props.quizQuery && this.props.quizQuery.error) {
-        return <ErrorBox>Couldn’t load quiz</ErrorBox>;
+        return <ErrorBox><p>Couldn’t load quiz.</p></ErrorBox>;
     }
     console.log(this.props);
     let quiz = this.props.quizQuery.quiz;
@@ -197,7 +163,7 @@ export class QuizEditor extends Component {
         
         <label className="label is-medium">
             Quiz Title<br />
-            <input className="input" type="text" placeholder="e.g. Lipids Review" defaultValue={quiz.title} id={quiz.id} style={{maxWidth: "38rem"}} />
+            <input className="input" type="text" placeholder="e.g. Lipids Review" defaultValue={quiz.title} id={quiz.id} style={{maxWidth: "42rem"}} />
         </label>
 
         <label className="label is-medium">
@@ -205,7 +171,7 @@ export class QuizEditor extends Component {
             <div className="select">
                 <select id="quizTypeSelector" defaultValue={quiz.type}>
                     <option value="GRADED">Graded quiz (must be launched from LMS)</option>
-                    <option value="PRACTICE">Practice quiz (students can launch from wadayano dashboard)</option>
+                    <option value="PRACTICE">Practice quiz (students can launch from wadayano dashboard or LMS)</option>
                 </select>
             </div>
         </label>
@@ -270,7 +236,7 @@ export class QuizEditor extends Component {
                     </button>
                 </p>
                 <p className="control">
-                    <button className="button is-link" onClick={this.updateQuiz.bind(null, quiz)}>Save Quiz</button>
+                    <button className="button is-link" onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz</button>
                 </p>
                 <p className="control">
                     <button className="button is-primary" onClick={this.addQuestion}>Add Question</button>
@@ -282,14 +248,6 @@ export class QuizEditor extends Component {
   }
 
 }
-
-export const CONCEPT_QUERY = gql`
-  query conceptQuery($id:ID!) {
-      concept(id:$id){
-          title
-          id
-      }
-  }`
 
 // Get the quiz
 export const QUIZ_QUERY = gql`
@@ -318,6 +276,19 @@ export const QUIZ_QUERY = gql`
   }
 `
 
+export const QUIZ_SAVE = gql`
+mutation quizSaveMutation(
+    $id: ID!
+    $data: QuizUpdateInput!
+){
+    updateQuiz(
+        id: $id
+        data: $data
+    ){
+        id
+    }
+}`
+
 export const QUIZ_DELETE = gql`
 mutation quizDeleteMutation($id:ID!) {
     deleteQuiz(id:$id){
@@ -329,93 +300,6 @@ export const QUESTION_DELETE = gql`
     mutation questionDeleteMutation($id:ID!) {
         deleteQuestion(id:$id){
             id
-        }
-    }`
-
-export const QUIZ_SAVE = gql`
-    mutation quizSaveMutation(
-        $id:ID!
-        $title:String!
-        $type:QuizType!
-    ){
-        updateQuiz(
-            id:$id
-            title:$title
-            type:$type
-        ){
-            id
-            title
-            type
-        }
-    }`
-
-export const QUESTION_SAVE = gql`
-mutation questionSaveMutation(
-    $id:ID!
-    $prompt:String!
-){
-    updateQuestion(
-        id:$id
-        prompt:$prompt
-    ){
-        id
-        prompt
-    }
-}`
-
-export const OPTION_SAVE = gql`
-mutation optionSaveMutation(
-    $id:ID!
-    $isCorrect:Boolean!
-    $text:String!){
-        updateOption(
-            id:$id
-            isCorrect:$isCorrect
-            text:$text
-        ){
-            id
-            isCorrect
-            text
-        }
-    }`
-
-export const CONCEPT_QUESTION = gql`
-mutation conceptQuestion(
-    $id:ID!
-    $concept:String!){
-        conceptQuestion(
-            id:$id
-            concept:$concept
-        ){
-            id
-            concept
-            prompt
-        }
-    }`
-
-export const CONCEPT_QUIZ = gql`
-mutation conceptQuiz(
-    $id:ID!
-    $concepts:[String!]!){
-        conceptQuiz(
-            id:$id
-            concepts:$concepts
-        ){
-            id
-            concepts
-        }
-    }`
-
-
-export const CONCEPT_COURSE = gql`
-mutation conceptCourse{
-        conceptQuiz(
-            id:$id
-            title:$title
-        ){
-            id
-            concepts
-            prompt
         }
     }`
 
@@ -431,19 +315,13 @@ mutation addQuestionMutation($id:ID!)
 
 export default withAuthCheck(compose(
     graphql(QUIZ_QUERY, {name: 'quizQuery',
-  options: (props) => {
-    console.log(props.match.params.quizId);
-    return { variables: { id:props.match.params.quizId } }
-  }
-}),
-    //graphql(CONCEPT_QUERY, {name: 'conceptQuery'}),
-    graphql(QUESTION_SAVE, {name: 'questionSaveMutation'}),
-    graphql(OPTION_SAVE, {name: 'optionSaveMutation'}),
+        options: (props) => {
+            console.log(props.match.params.quizId);
+            return { variables: { id:props.match.params.quizId } }
+        }
+    }),
+    graphql(QUIZ_SAVE, {name: 'saveQuizMutation'}),
+    graphql(QUIZ_DELETE, {name:'quizDeleteMutation'}),
     graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),
     graphql(QUESTION_DELETE, {name: 'questionDeleteMutation'}),
-    graphql(QUIZ_SAVE, {name: 'quizSaveMutation'}),
-    graphql(QUIZ_DELETE, {name:'quizDeleteMutation'}),
-    graphql(CONCEPT_QUESTION, {name: 'conceptQuestion'}),
-    graphql(CONCEPT_QUIZ, {name: 'conceptQuiz'}),
-    graphql(CONCEPT_COURSE, {name:'conceptCourse'})
 ) (QuizEditor), { instructor: true });

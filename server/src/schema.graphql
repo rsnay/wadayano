@@ -1,4 +1,4 @@
-#import Student, Course, Quiz, QuizType, Question, Option, QuizAttempt, QuizAttemptOrderByInput, QuestionAttempt, ConceptConfidence, SurveyResult from "./generated/prisma.graphql"
+#import Student, Course, Quiz, QuizType, Question, QuestionUpdateManyInput, Option, QuizAttempt, QuizAttemptOrderByInput, QuestionAttempt, ConceptConfidence, SurveyResult from "./generated/prisma.graphql"
 
 type Query {
   quizzes: [Quiz!]!
@@ -14,7 +14,7 @@ type Query {
 }
 
 type Mutation {
-  updateQuiz(id:ID, title:String, type: QuizType): Quiz!
+  updateQuiz(id: ID!, data: QuizUpdateInput!): Quiz
   addCourse(title:String): Course!
   createQuiz(courseId: ID!): Quiz!
   updateCourse(id:ID, info: CourseInfoUpdateInput): Course!
@@ -56,6 +56,14 @@ input CourseInfoUpdateInput {
   title: String
   number: String
   lmsUrl: String
+}
+
+# Use a restricted and modified subset of QuizUpdateInput (rather than Prisma’s full one), to avoid changing students’ quiz attempts, the parent course, etc.
+input QuizUpdateInput {
+  title: String
+  type: QuizType
+  concepts: [String!] # Note this differs from Prisma's QuizUpdateconceptsInput
+  questions: QuestionUpdateManyInput
 }
 
 # Returned from instructor signup or login

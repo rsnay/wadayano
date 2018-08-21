@@ -158,11 +158,13 @@ function addQuestion (root, args, context, info) {
 }
 
 function updateQuiz(root, args, context, info) {
+    // TODO make sure the quiz belongs to the logged-in instructor
     return context.db.mutation.updateQuiz({
-        data:{
-            title:args.title,
-            type: args.type,
-            concepts:args.concepts
+        data: {
+            title: args.data.title,
+            type: args.data.type,
+            concepts: { set: args.data.concepts },
+            questions: args.data.questions
         },
         where:{
             id:args.id
