@@ -75,9 +75,15 @@ progress::-webkit-progress-value {
 .concept-tag {
     margin: 0.25rem;
     cursor: pointer;
+    border: none;
 }
 .concept-tag:hover {
-    background-color: #d4d4d4;
+    background-color: #d4d4d4!important;
+}
+.concept-tag:focus {
+    outline: none;
+    border: solid gray 1px;
+    background-color: #d4d4d4!important;
 }
 
 /* Survey */

@@ -125,18 +125,28 @@ export class QuizEditor extends Component {
     }
 
     conceptFilter(quiz, question){
-        var search = document.getElementById("concept"+question.id).value;
-        console.log(search);
-        var strs = [];
-        var courseConcepts = quiz.concepts;
-        for(var i=0; i < courseConcepts.length; i++){
-            if(courseConcepts[i].includes(document.getElementById("concept"+question.id).value)){
-                strs.push(courseConcepts[i]);
+        let allConcepts = [];
+        // Combine concepts from all quizzes in the course
+        quiz.course.quizzes.forEach(quiz => {
+            allConcepts = allConcepts.concat(quiz.concepts);
+        });
+        console.log(quiz);
+        // Add in concepts that have been added in the current editing session
+        quiz.questions.forEach(q => {
+            // Exclude current question
+            if (q.id !== question.id) {
+                allConcepts.push(document.getElementById('concept' + q.id).value);
             }
-        }
-        console.log(quiz.concepts);
-        console.log(strs);
-        this.setState({concepts: strs, showConceptsForQuestion:question.id})
+        });
+
+        // Filter to current search term
+        let searchTerm = document.getElementById("concept"+question.id).value.toLowerCase();
+        let filteredConcepts = allConcepts.filter(concept => concept.toLowerCase().includes(searchTerm));
+
+        // Remove duplicates
+        filteredConcepts = Array.from(new Set(filteredConcepts));
+
+        this.setState({concepts: filteredConcepts, showConceptsForQuestion: question.id})
     }
 
     setConcept(questionId, str){
@@ -208,12 +218,12 @@ export class QuizEditor extends Component {
                     <input className="input is-inline" type="text" defaultValue={question.concept} id={"concept"+question.id} placeholder="concept" onFocus={() => this.conceptFilter(quiz, question)} onChange = {() => this.conceptFilter(quiz, question)}></input>
                 </label>
                 {(this.state.showConceptsForQuestion === question.id && this.state.concepts.length > 0) &&
-                    <div id={"suggestions"+question.id}>
+                    <span id={"suggestions"+question.id}>
                     &nbsp; Suggestions: &nbsp;
                     {this.state.concepts.map(concept => (
-                        <p id= {concept} className="concept-tag tag is-light" onClick={() => this.setConcept(question.id,concept)}>{concept}</p>
+                        <button id={concept} key={concept} className="concept-tag tag is-light" onClick={() => this.setConcept(question.id,concept)}>{concept}</button>
                     ))}
-                    </div>
+                    </span>
                 }
             </p>
             <form>
