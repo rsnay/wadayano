@@ -141,7 +141,7 @@ export class QuizEditor extends Component {
 
         // Filter to current search term
         let searchTerm = document.getElementById("concept"+question.id).value.toLowerCase();
-        let filteredConcepts = allConcepts.filter(concept => concept.toLowerCase().includes(searchTerm));
+        let filteredConcepts = allConcepts.filter(concept => (concept.toLowerCase().includes(searchTerm) && concept !== ''));
 
         // Remove duplicates
         filteredConcepts = Array.from(new Set(filteredConcepts));
@@ -218,7 +218,7 @@ export class QuizEditor extends Component {
                     <input className="input is-inline" type="text" defaultValue={question.concept} id={"concept"+question.id} placeholder="concept" onFocus={() => this.conceptFilter(quiz, question)} onChange = {() => this.conceptFilter(quiz, question)}></input>
                 </label>
                 {(this.state.showConceptsForQuestion === question.id && this.state.concepts.length > 0) &&
-                    <span id={"suggestions"+question.id}>
+                    <span className="concept-suggestions-list" id={"suggestions"+question.id}>
                     &nbsp; Suggestions: &nbsp;
                     {this.state.concepts.map(concept => (
                         <button id={concept} key={concept} className="concept-tag tag is-light" onClick={() => this.setConcept(question.id,concept)}>{concept}</button>
