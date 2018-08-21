@@ -25,12 +25,41 @@ export class QuizEditor extends Component {
         this.deleteQuestion = this.deleteQuestion.bind(this);
     }
 
+    // Performs various checks on a given question (for before the quiz is saved)
+    // Returns true if valid, or a message describing why it’s invalid
+    validateQuestion(question) {
+        // Ensure the question has a non-empty concept
+        let concept = document.getElementById(('concept' + question.id)).value;
+        if (concept === null || concept.trim() === '') {
+            return 'Please enter a concept for this question';
+        }
+        // Ensure there are at least 2 non-empty options
+        let optionCount = 0;
+        let correctOptionEmpty = false;
+        question.options.forEach(option => {
+            const text = document.getElementById(option.id + 'text').value;
+            const isCorrect = document.getElementById(option.id + 'radio').checked;
+            const isEmpty = text === null || text.trim() === '';
+            if (!isEmpty) { optionCount++; }
+            // Ensure that the correct option is non-empty
+            if (isCorrect && isEmpty) { correctOptionEmpty = true; }
+        });
+        if (correctOptionEmpty) {
+            return 'The correct option must not be be blank';
+        }
+        if (optionCount < 2) {
+            return 'The quetion must have 2 or more non-blank options';
+        }
+        // Question is valid
+        return true;
+    }
+
     async saveQuiz(quiz){
-        // Ensure that each question has a non-empty concept
-        for(let i = 0; i < quiz.questions.length; i++){
-            let concept = document.getElementById(('concept' + quiz.questions[i].id)).value;
-            if (concept === null || concept.trim() === '') {
-                alert(`Please enter a concept for each question. Question ${i + 1} is missing a concept.`);
+        // Validate the questions in the quiz
+        for (let i = 0; i < quiz.questions.length; i++){
+            const valid = this.validateQuestion(quiz.questions[i]);
+            if (valid !== true) {
+                alert(`Please correct this error in question ${i + 1}: ${valid}`);
                 return;
             }
         }
@@ -235,7 +264,6 @@ export class QuizEditor extends Component {
                                 key={option.id + "radio"}
                                 defaultChecked={option.isCorrect}
                                 name={"question" + questionIndex}
-                                placeholder="Option Text"
                                 type="radio" />
                             {ALPHABET[optionIndex]}
                         </label>
@@ -243,6 +271,7 @@ export class QuizEditor extends Component {
                             id={option.id + "text"}
                             className="textarea is-small"
                             style={{margin: "0 0 0 1rem", minWidth: "inherit"}}
+                            placeholder="(Leave option blank to hide on quiz)"
                             rows="2"
                             defaultValue={option.text} />
                     </p>
