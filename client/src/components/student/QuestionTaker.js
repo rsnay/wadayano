@@ -93,8 +93,12 @@ class QuestionTaker extends Component {
         </div>
     );
 
-    let options = questionOptions.map((option, index) =>
-        <div className="columns is-mobile question-option-container" key={option.id}
+    let options = questionOptions.map((option, index) => {
+        // Hide empty options
+        if (option.text.trim() === '') {
+            return null;
+        }
+        return (<div className="columns is-mobile question-option-container" key={option.id}
             onClick={() => {
                 this.setState({ selectedOption: option })
             }}>
@@ -104,8 +108,8 @@ class QuestionTaker extends Component {
             <span className="column question-option-text level-left">
                 {option.text}
             </span>
-        </div>
-    );
+        </div>);
+    });
 
     let confidenceSelector = (
         <ScrollIntoViewIfNeeded>

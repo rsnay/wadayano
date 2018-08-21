@@ -62,6 +62,11 @@ export default class QuestionReview extends Component {
             const iconClass = correct ? "has-text-success" : (incorrect ? "is-danger" : "");
             const answerPrefix = correct ? "Correct: " : (incorrect ? "Selected: " : "");
 
+            // Hide empty options
+            if (option.text.trim() === '') {
+                return null;
+            }
+
             return (<div className="columns is-mobile question-option-container is-review" key={option.id}>
                 <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
                     <span>{icon}</span>
