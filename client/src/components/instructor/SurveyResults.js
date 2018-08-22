@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import ShowMore from 'react-show-more';
 
 import { withAuthCheck } from '../shared/AuthCheck';
 
@@ -39,7 +40,7 @@ class SurveyResults extends Component {
                         <thead>
                             <tr className="sticky-header">
                                 <th>Student Name</th>
-                                {course.survey.questions.map(q => <th key={q.index}>{q.prompt}</th>)}
+                                {course.survey.questions.map(q => <th key={q.index}><ShowMore>{q.prompt}</ShowMore></th>)}
                             </tr>
                         </thead>
                         <tbody>

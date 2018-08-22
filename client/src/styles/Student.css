@@ -132,6 +132,12 @@ progress::-webkit-progress-value {
 
 .survey-results-table {
     padding-bottom: 20pt;
+    overflow: scroll;
+    max-width: 1000%;
+}
+
+.survey-results-table td {
+    max-width: 33%;
 }
 
 /* Dashboard */
