@@ -37,7 +37,7 @@ class Dashboard extends Component {
     if (practiceQuizzes.length > 0) {
         practiceQuizzesTable = (
         <div className="table-wrapper">
-            <table className="table is-striped is-hoverable is-fullwidth quiz-table">
+            <table className="table is-striped is-hoverable is-fullwidth quiz-table responsive-table">
                 <thead>
                     <tr className="sticky-header">
                         <th style={{width:"99%"}}>Title</th>
@@ -51,12 +51,12 @@ class Dashboard extends Component {
                 <tbody>
                     {practiceQuizzes.filter(quiz => quiz.type === 'PRACTICE').map((quiz, index) => 
                         <tr key={quiz.id}>
-                            <td>
+                            <td data-title="Title">
                                 <Link className="has-text-black is-block" to={"/student/quiz/" + quiz.id}>
                                 {quiz.title}</Link>
                             </td>
-                            <td>{quiz.questions.length}</td>
-                            <td>
+                            <td data-title="Questions">{quiz.questions.length}</td>
+                            <td data-title="Actions">
                                 <Link to={"/student/quiz/" + quiz.id}
                                 className="button is-primary is-outlined">
                                     <span className="icon"><i className="fas fa-rocket"></i></span>
@@ -73,7 +73,7 @@ class Dashboard extends Component {
 
     let unfinishedAttemptsTable = unfinishedAttempts.length > 0 && (
         <div style={{overflowX: "auto"}}>
-            <table className="table is-striped is-hoverable is-fullwidth quiz-table">
+            <table className="table is-striped is-hoverable is-fullwidth quiz-table responsive-table" style={{border: "solid #209cee 1px"}}>
                 <thead>
                     <tr>
                         <th style={{whiteSpace: "nowrap"}}>Started</th>
@@ -89,14 +89,14 @@ class Dashboard extends Component {
                 <tbody>
                     {unfinishedAttempts.map((attempt, index) => 
                         <tr key={attempt.id}>
-                            <td style={{whiteSpace: "nowrap"}}><TimeAgo date={attempt.createdAt} /></td>
-                            <td>
+                            <td data-title="Started" style={{whiteSpace: "nowrap"}}><TimeAgo date={attempt.createdAt} /></td>
+                            <td data-title="Quiz">
                                 <Link className="has-text-black is-block" to={"/student/quiz/"+ attempt.quiz.id}>
                                 {attempt.quiz.title}</Link>
                             </td>
-                            <td>{attempt.quiz.questions.length}</td>
-                            <td>{formatScore(attempt.questionAttempts.length / attempt.quiz.questions.length)}</td>
-                            <td>
+                            <td data-title="Questions">{attempt.quiz.questions.length}</td>
+                            <td data-title="Completion">{formatScore(attempt.questionAttempts.length / attempt.quiz.questions.length)}</td>
+                            <td data-title="Resume">
                                 <Link to={"/student/quiz/" + attempt.quiz.id}
                                 className="button is-primary is-outlined">
                                     <span className="icon"><i className="fas fa-rocket"></i></span>
@@ -115,7 +115,7 @@ class Dashboard extends Component {
     if (pastAttempts.length > 0) {
         pastAttemptsTable = (
         <div className="table-wrapper">
-            <table className="table is-striped is-hoverable is-fullwidth quiz-table">
+            <table className="table is-striped is-hoverable is-fullwidth quiz-table responsive-table">
                 <thead>
                     <tr className="sticky-header">
                         <th style={{whiteSpace: "nowrap"}}>Completed</th>
@@ -132,15 +132,15 @@ class Dashboard extends Component {
                 <tbody>
                     {pastAttempts.map((attempt, index) => 
                         <tr key={attempt.id}>
-                            <td style={{whiteSpace: "nowrap"}}><TimeAgo date={attempt.completed} /></td>
-                            <td>
+                            <td data-title="Completed" style={{whiteSpace: "nowrap"}}><TimeAgo date={attempt.completed} /></td>
+                            <td data-title="Quiz">
                                 <Link className="has-text-black is-block" to={"/student/quiz/review/" + attempt.id}>
                                 {attempt.quiz.title}</Link>
                             </td>
-                            <td>{attempt.quiz.questions.length}</td>
-                            <td>{QUIZ_TYPE_NAMES[attempt.quiz.type]}</td>
-                            <td>{attempt.completed ? formatScore(attempt.score) : "n/a"}</td>
-                            <td>
+                            <td data-title="Questions">{attempt.quiz.questions.length}</td>
+                            <td data-title="Type">{QUIZ_TYPE_NAMES[attempt.quiz.type]}</td>
+                            <td data-title="Score">{attempt.completed ? formatScore(attempt.score) : "n/a"}</td>
+                            <td data-title="Review">
                                 <Link to={"/student/quiz/review/" + attempt.id}
                                 className="button is-info is-outlined">
                                     <span className="icon"><i className="fas fa-history"></i></span>
@@ -167,10 +167,10 @@ class Dashboard extends Component {
                 <h4 className="title is-4 has-text-white">Unfinished Quiz Attempts</h4>
             </div>
             <div className="message-body">
-                <p>Need to pause during a quiz? Simply close the quiz, and resume it here.<br /><br /></p>
+                <p>Need to pause during a quiz? Simply close the quiz, and resume it here.</p>
 
-                {unfinishedAttemptsTable}
             </div>
+                {unfinishedAttemptsTable}
             <hr />
           </section>}
 

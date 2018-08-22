@@ -73,7 +73,7 @@ export class CourseDetails extends Component {
     // Create table of quizzes, if any exist for the course
     if (course.quizzes.length > 0) {
         quizzesTable = (<div className="table-wrapper">
-        <table className="table is-striped is-hoverable is-fullwidth quiz-table">
+        <table className="table is-striped is-hoverable is-fullwidth quiz-table responsive-table">
           <thead>
               <tr className="sticky-header">
                   <th>Title</th>
@@ -88,10 +88,10 @@ export class CourseDetails extends Component {
           <tbody>
               {course.quizzes.map((quiz, index)=>
               <tr key={quiz.id}>
-                  <td><Link className="has-text-black is-block" to={"/instructor/quiz/" + quiz.id}>{quiz.title}</Link></td>
-                  <td>{QUIZ_TYPE_NAMES[quiz.type]}</td>
-                  <td>{quiz.questions.length}</td>
-                  <td>
+                  <td data-title="Title"><Link className="has-text-black is-block" to={"/instructor/quiz/" + quiz.id}>{quiz.title}</Link></td>
+                  <td data-title="Type">{QUIZ_TYPE_NAMES[quiz.type]}</td>
+                  <td data-title="Questions">{quiz.questions.length}</td>
+                  <td data-title="Actions">
                     <span className="buttons">
                         <Link to={"/instructor/quiz/" + quiz.id}
                             className="button is-light">

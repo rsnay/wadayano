@@ -172,13 +172,24 @@ progress::-webkit-progress-value {
 		left: -9999px;
 	}
  
-	.responsive-table tr { margin-bottom: 10px; }
+	.responsive-table tr {
+        /* Override zebra stripes */
+        background: inherit!important;
+        margin-bottom: 1rem;
+        /* Add bottom border on tr instead of td */
+        border-bottom: solid #cecece 1px;
+    }
+
+    .responsive-table tr:last-child {
+        /* Hide bottom border on last row */
+        border-bottom: none;
+    }
  
 	.responsive-table td { 
 		/* Behave  like a "row" */
-		border: none;
+		border: none!important;
 		position: relative;
-		padding-left: 50%!important; 
+		padding-left: 45%!important; 
 		white-space: normal;
 		text-align:left;
 	}
@@ -187,17 +198,15 @@ progress::-webkit-progress-value {
 		/* Now like a table header */
 		position: absolute;
 		/* Top/left values mimic padding */
-		top: 6px;
-		left: 6px;
-		width: 45%; 
-		padding-right: 10px; 
+		top: 0.5rem;
+		left: 0.5rem;
+		width: 40%; 
+		padding-right: 0.5rem; 
 		white-space: nowrap;
 		text-align:left;
 		font-weight: bold;
 	}
  
-	/*
-	Label the data
-	*/
+	/* Label the data */
 	.responsive-table td:before { content: attr(data-title); }
 }
