@@ -111,7 +111,7 @@ class Dashboard extends Component {
 
     );
 
-    let pastAttemptsTable = <div className="notification has-text-centered">No quiz attempts yet. Choose a practice quiz from the list above, or launch a quiz from your learning management system to get started.</div>;
+    let pastAttemptsTable = <div className="notification has-text-centered">No quiz attempts yet. Choose a practice quiz from the list above, or <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>click here to launch a quiz from your learning management system</a> to get started.</div>;
     if (pastAttempts.length > 0) {
         pastAttemptsTable = (
         <div className="table-wrapper">
@@ -176,7 +176,7 @@ class Dashboard extends Component {
 
           <section>
             <h4 className="title is-4">Practice Quizzes</h4>
-            <p>Take a practice quiz below. To take a quiz that is graded for this course, please launch it from your learning management system (i.e. Canvas or Learning Suite).<br /><br /></p>
+            <p>Take a practice quiz below. To take a quiz that is graded for this course, please <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>click here to launch it from your course’s learning management system</a> (i.e. Canvas or Learning Suite).<br /><br /></p>
 
             {practiceQuizzesTable}
 
@@ -204,6 +204,7 @@ const COURSE_QUERY = gql`
         id
         title
         survey
+        lmsUrl
         quizzes {
             id
             title

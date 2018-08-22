@@ -20,7 +20,7 @@ export class CourseDetails extends Component {
         super(props);
         this.state = {
             displayLtiSetupAction: null,
-            displayLtiSetupObjectId: null,
+            displayLtiSetupObjectI: null,
             displayCourseInfoForm: false
         };
         this.courseTitleInput = React.createRef();
@@ -133,7 +133,7 @@ export class CourseDetails extends Component {
                 <span style={{flex: 1}}>
                     <label className="label">Title: {course.title}</label>
                     <label className="label">Number: {course.number}</label>
-                    <label className="label">LMS URL: {course.lmsUrl}</label>
+                    <label className="label">LMS URL: <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>{course.lmsUrl}</a></label>
                 </span>
                 <button style={{marginLeft: "1rem"}} className="button is-light"
                     onClick={() => this.setState({ displayCourseInfoForm: true })}>

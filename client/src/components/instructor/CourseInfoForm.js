@@ -16,7 +16,7 @@ class CourseInfoForm extends Component {
         this.fields = [
             {id: 'title', title: 'Course Title', required: true, placeholder: 'e.g. Introduction to Pathophysiology', hint: ''},
             {id: 'number', title: 'Course Number', required: false, placeholder: 'e.g. CS 101', hint: ''},
-            {id: 'lmsUrl', title: 'Course LMS URL', required: false, placeholder: 'e.g. https://canvas.instructure.com/courses/123456', hint: 'Since students must launch graded quizzes from the LMS, wadayano can provide a link to the LMS to make it easier for students. Enter a course-specific URL that works for students.'}
+            {id: 'lmsUrl', title: 'Course LMS URL', required: false, placeholder: 'e.g. https://canvas.instructure.com/courses/123456', hint: 'Since students must launch graded quizzes from the LMS, wadayano can provide a link to the LMS to make it easier for students. Enter a course-specific URL that works for students, perhaps pointing to the assignments page.'}
         ];
         // Load default value for each field from props (if undefined, set to '' to keep the form fields as controlled components)
         this.fields.forEach(field => { this.state[field.id] = props.course[field.id] || '' });
@@ -101,6 +101,7 @@ class CourseInfoForm extends Component {
                             placeholder={field.placeholder}
                         />
                     </div>
+                    {field.hint !== '' && <p className="help">{field.hint}</p>}
                 </div>
             ))}
 
