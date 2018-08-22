@@ -19,7 +19,8 @@ export class CourseDetails extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            displayLtiSetupUrl: null,
+            displayLtiSetupAction: null,
+            displayLtiSetupObjectId: null,
             displayCourseInfoForm: false
         };
         this.courseTitleInput = React.createRef();
@@ -50,7 +51,7 @@ export class CourseDetails extends Component {
 
     // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
     _showLTISetup(action, objectId) {
-        this.setState({ displayLtiSetupUrl: `${LTI_LAUNCH_URL}?action=${action}&objectId=${objectId}` });
+        this.setState({ displayLtiSetupAction: action, displayLtiSetupObjectId: objectId });
     }
 
   render() {
@@ -221,12 +222,13 @@ export class CourseDetails extends Component {
         </section>
 
         </div>
-        {this.state.displayLtiSetupUrl &&
+        {this.state.displayLtiSetupAction &&
             <LTISetupModal
-                launchUrl={this.state.displayLtiSetupUrl}
+                action={this.state.displayLtiSetupAction}
+                objectId={this.state.displayLtiSetupObjectId}
                 consumerKey={course.id}
                 sharedSecret={course.ltiSecret}
-                closeModal={() => this.setState({ displayLtiSetupUrl: null })}
+                closeModal={() => this.setState({ displayLtiSetupAction: null })}
                 modalState={true}
             />
         }
