@@ -40,6 +40,14 @@ type Course {
     ltiSecret: String!
     survey: Json
     surveyResults: [SurveyResult!]! @relation(name: "CourseSurveyResults", onDelete: CASCADE)
+    pendingCourseInvites: [PendingCourseInvite!]! @relation(name: "CoursePendingCourseInvite", onDelete: CASCADE)
+}
+
+type PendingCourseInvite {
+    id: ID! @unique
+    createdAt: DateTime!
+    email: String!
+    course: Course! @relation(name: "CoursePendingCourseInvite", onDelete: SET_NULL)
 }
 
 enum QuizType {

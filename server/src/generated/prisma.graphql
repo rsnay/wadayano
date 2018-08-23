@@ -1,5 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Wed Aug 15 2018 10:27:35 GMT-0600 (Mountain Daylight Time)
+# timestamp: Wed Aug 22 2018 19:36:37 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -18,6 +18,10 @@ type AggregateInstructorPasswordResetToken {
 }
 
 type AggregateOption {
+  count: Int!
+}
+
+type AggregatePendingCourseInvite {
   count: Int!
 }
 
@@ -306,6 +310,7 @@ type Course implements Node {
   ltiSecret: String!
   survey: Json
   surveyResults(where: SurveyResultWhereInput, orderBy: SurveyResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SurveyResult!]
+  pendingCourseInvites(where: PendingCourseInviteWhereInput, orderBy: PendingCourseInviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PendingCourseInvite!]
 }
 
 """A connection to a list of items."""
@@ -333,6 +338,7 @@ input CourseCreateInput {
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
   surveyResults: SurveyResultCreateManyWithoutCourseInput
+  pendingCourseInvites: PendingCourseInviteCreateManyWithoutCourseInput
 }
 
 input CourseCreateManyWithoutInstructorsInput {
@@ -343,6 +349,11 @@ input CourseCreateManyWithoutInstructorsInput {
 input CourseCreateManyWithoutStudentsInput {
   create: [CourseCreateWithoutStudentsInput!]
   connect: [CourseWhereUniqueInput!]
+}
+
+input CourseCreateOneWithoutPendingCourseInvitesInput {
+  create: CourseCreateWithoutPendingCourseInvitesInput
+  connect: CourseWhereUniqueInput
 }
 
 input CourseCreateOneWithoutQuizzesInput {
@@ -365,6 +376,20 @@ input CourseCreateWithoutInstructorsInput {
   quizzes: QuizCreateManyWithoutCourseInput
   students: StudentCreateManyWithoutCoursesInput
   surveyResults: SurveyResultCreateManyWithoutCourseInput
+  pendingCourseInvites: PendingCourseInviteCreateManyWithoutCourseInput
+}
+
+input CourseCreateWithoutPendingCourseInvitesInput {
+  title: String!
+  number: String
+  lmsUrl: String
+  ltiSecret: String!
+  survey: Json
+  concepts: CourseCreateconceptsInput
+  quizzes: QuizCreateManyWithoutCourseInput
+  instructors: InstructorCreateManyWithoutCoursesInput
+  students: StudentCreateManyWithoutCoursesInput
+  surveyResults: SurveyResultCreateManyWithoutCourseInput
 }
 
 input CourseCreateWithoutQuizzesInput {
@@ -377,6 +402,7 @@ input CourseCreateWithoutQuizzesInput {
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
   surveyResults: SurveyResultCreateManyWithoutCourseInput
+  pendingCourseInvites: PendingCourseInviteCreateManyWithoutCourseInput
 }
 
 input CourseCreateWithoutStudentsInput {
@@ -389,6 +415,7 @@ input CourseCreateWithoutStudentsInput {
   quizzes: QuizCreateManyWithoutCourseInput
   instructors: InstructorCreateManyWithoutCoursesInput
   surveyResults: SurveyResultCreateManyWithoutCourseInput
+  pendingCourseInvites: PendingCourseInviteCreateManyWithoutCourseInput
 }
 
 input CourseCreateWithoutSurveyResultsInput {
@@ -401,6 +428,7 @@ input CourseCreateWithoutSurveyResultsInput {
   quizzes: QuizCreateManyWithoutCourseInput
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
+  pendingCourseInvites: PendingCourseInviteCreateManyWithoutCourseInput
 }
 
 """An edge in a connection."""
@@ -496,6 +524,7 @@ input CourseUpdateInput {
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
   surveyResults: SurveyResultUpdateManyWithoutCourseInput
+  pendingCourseInvites: PendingCourseInviteUpdateManyWithoutCourseInput
 }
 
 input CourseUpdateManyWithoutInstructorsInput {
@@ -514,6 +543,14 @@ input CourseUpdateManyWithoutStudentsInput {
   delete: [CourseWhereUniqueInput!]
   update: [CourseUpdateWithWhereUniqueWithoutStudentsInput!]
   upsert: [CourseUpsertWithWhereUniqueWithoutStudentsInput!]
+}
+
+input CourseUpdateOneWithoutPendingCourseInvitesInput {
+  create: CourseCreateWithoutPendingCourseInvitesInput
+  connect: CourseWhereUniqueInput
+  delete: Boolean
+  update: CourseUpdateWithoutPendingCourseInvitesDataInput
+  upsert: CourseUpsertWithoutPendingCourseInvitesInput
 }
 
 input CourseUpdateOneWithoutQuizzesInput {
@@ -543,6 +580,20 @@ input CourseUpdateWithoutInstructorsDataInput {
   quizzes: QuizUpdateManyWithoutCourseInput
   students: StudentUpdateManyWithoutCoursesInput
   surveyResults: SurveyResultUpdateManyWithoutCourseInput
+  pendingCourseInvites: PendingCourseInviteUpdateManyWithoutCourseInput
+}
+
+input CourseUpdateWithoutPendingCourseInvitesDataInput {
+  title: String
+  number: String
+  lmsUrl: String
+  ltiSecret: String
+  survey: Json
+  concepts: CourseUpdateconceptsInput
+  quizzes: QuizUpdateManyWithoutCourseInput
+  instructors: InstructorUpdateManyWithoutCoursesInput
+  students: StudentUpdateManyWithoutCoursesInput
+  surveyResults: SurveyResultUpdateManyWithoutCourseInput
 }
 
 input CourseUpdateWithoutQuizzesDataInput {
@@ -555,6 +606,7 @@ input CourseUpdateWithoutQuizzesDataInput {
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
   surveyResults: SurveyResultUpdateManyWithoutCourseInput
+  pendingCourseInvites: PendingCourseInviteUpdateManyWithoutCourseInput
 }
 
 input CourseUpdateWithoutStudentsDataInput {
@@ -567,6 +619,7 @@ input CourseUpdateWithoutStudentsDataInput {
   quizzes: QuizUpdateManyWithoutCourseInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   surveyResults: SurveyResultUpdateManyWithoutCourseInput
+  pendingCourseInvites: PendingCourseInviteUpdateManyWithoutCourseInput
 }
 
 input CourseUpdateWithoutSurveyResultsDataInput {
@@ -579,6 +632,7 @@ input CourseUpdateWithoutSurveyResultsDataInput {
   quizzes: QuizUpdateManyWithoutCourseInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
+  pendingCourseInvites: PendingCourseInviteUpdateManyWithoutCourseInput
 }
 
 input CourseUpdateWithWhereUniqueWithoutInstructorsInput {
@@ -589,6 +643,11 @@ input CourseUpdateWithWhereUniqueWithoutInstructorsInput {
 input CourseUpdateWithWhereUniqueWithoutStudentsInput {
   where: CourseWhereUniqueInput!
   data: CourseUpdateWithoutStudentsDataInput!
+}
+
+input CourseUpsertWithoutPendingCourseInvitesInput {
+  update: CourseUpdateWithoutPendingCourseInvitesDataInput!
+  create: CourseCreateWithoutPendingCourseInvitesInput!
 }
 
 input CourseUpsertWithoutQuizzesInput {
@@ -856,6 +915,9 @@ input CourseWhereInput {
   surveyResults_every: SurveyResultWhereInput
   surveyResults_some: SurveyResultWhereInput
   surveyResults_none: SurveyResultWhereInput
+  pendingCourseInvites_every: PendingCourseInviteWhereInput
+  pendingCourseInvites_some: PendingCourseInviteWhereInput
+  pendingCourseInvites_none: PendingCourseInviteWhereInput
 }
 
 input CourseWhereUniqueInput {
@@ -1362,6 +1424,7 @@ type Mutation {
   createInstructorPasswordResetToken(data: InstructorPasswordResetTokenCreateInput!): InstructorPasswordResetToken!
   createStudent(data: StudentCreateInput!): Student!
   createCourse(data: CourseCreateInput!): Course!
+  createPendingCourseInvite(data: PendingCourseInviteCreateInput!): PendingCourseInvite!
   createQuiz(data: QuizCreateInput!): Quiz!
   createOption(data: OptionCreateInput!): Option!
   createQuizAttempt(data: QuizAttemptCreateInput!): QuizAttempt!
@@ -1373,6 +1436,7 @@ type Mutation {
   updateInstructorPasswordResetToken(data: InstructorPasswordResetTokenUpdateInput!, where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
   updateStudent(data: StudentUpdateInput!, where: StudentWhereUniqueInput!): Student
   updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
+  updatePendingCourseInvite(data: PendingCourseInviteUpdateInput!, where: PendingCourseInviteWhereUniqueInput!): PendingCourseInvite
   updateQuiz(data: QuizUpdateInput!, where: QuizWhereUniqueInput!): Quiz
   updateOption(data: OptionUpdateInput!, where: OptionWhereUniqueInput!): Option
   updateQuizAttempt(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereUniqueInput!): QuizAttempt
@@ -1384,6 +1448,7 @@ type Mutation {
   deleteInstructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
   deleteStudent(where: StudentWhereUniqueInput!): Student
   deleteCourse(where: CourseWhereUniqueInput!): Course
+  deletePendingCourseInvite(where: PendingCourseInviteWhereUniqueInput!): PendingCourseInvite
   deleteQuiz(where: QuizWhereUniqueInput!): Quiz
   deleteOption(where: OptionWhereUniqueInput!): Option
   deleteQuizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
@@ -1395,6 +1460,7 @@ type Mutation {
   upsertInstructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!, create: InstructorPasswordResetTokenCreateInput!, update: InstructorPasswordResetTokenUpdateInput!): InstructorPasswordResetToken!
   upsertStudent(where: StudentWhereUniqueInput!, create: StudentCreateInput!, update: StudentUpdateInput!): Student!
   upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
+  upsertPendingCourseInvite(where: PendingCourseInviteWhereUniqueInput!, create: PendingCourseInviteCreateInput!, update: PendingCourseInviteUpdateInput!): PendingCourseInvite!
   upsertQuiz(where: QuizWhereUniqueInput!, create: QuizCreateInput!, update: QuizUpdateInput!): Quiz!
   upsertOption(where: OptionWhereUniqueInput!, create: OptionCreateInput!, update: OptionUpdateInput!): Option!
   upsertQuizAttempt(where: QuizAttemptWhereUniqueInput!, create: QuizAttemptCreateInput!, update: QuizAttemptUpdateInput!): QuizAttempt!
@@ -1406,6 +1472,7 @@ type Mutation {
   updateManyInstructorPasswordResetTokens(data: InstructorPasswordResetTokenUpdateInput!, where: InstructorPasswordResetTokenWhereInput): BatchPayload!
   updateManyStudents(data: StudentUpdateInput!, where: StudentWhereInput): BatchPayload!
   updateManyCourses(data: CourseUpdateInput!, where: CourseWhereInput): BatchPayload!
+  updateManyPendingCourseInvites(data: PendingCourseInviteUpdateInput!, where: PendingCourseInviteWhereInput): BatchPayload!
   updateManyQuizzes(data: QuizUpdateInput!, where: QuizWhereInput): BatchPayload!
   updateManyOptions(data: OptionUpdateInput!, where: OptionWhereInput): BatchPayload!
   updateManyQuizAttempts(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereInput): BatchPayload!
@@ -1417,6 +1484,7 @@ type Mutation {
   deleteManyInstructorPasswordResetTokens(where: InstructorPasswordResetTokenWhereInput): BatchPayload!
   deleteManyStudents(where: StudentWhereInput): BatchPayload!
   deleteManyCourses(where: CourseWhereInput): BatchPayload!
+  deleteManyPendingCourseInvites(where: PendingCourseInviteWhereInput): BatchPayload!
   deleteManyQuizzes(where: QuizWhereInput): BatchPayload!
   deleteManyOptions(where: OptionWhereInput): BatchPayload!
   deleteManyQuizAttempts(where: QuizAttemptWhereInput): BatchPayload!
@@ -1765,10 +1833,254 @@ type PageInfo {
   endCursor: String
 }
 
+type PendingCourseInvite implements Node {
+  id: ID!
+  createdAt: DateTime!
+  email: String!
+  course(where: CourseWhereInput): Course!
+}
+
+"""A connection to a list of items."""
+type PendingCourseInviteConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PendingCourseInviteEdge]!
+  aggregate: AggregatePendingCourseInvite!
+}
+
+input PendingCourseInviteCreateInput {
+  email: String!
+  course: CourseCreateOneWithoutPendingCourseInvitesInput!
+}
+
+input PendingCourseInviteCreateManyWithoutCourseInput {
+  create: [PendingCourseInviteCreateWithoutCourseInput!]
+  connect: [PendingCourseInviteWhereUniqueInput!]
+}
+
+input PendingCourseInviteCreateWithoutCourseInput {
+  email: String!
+}
+
+"""An edge in a connection."""
+type PendingCourseInviteEdge {
+  """The item at the end of the edge."""
+  node: PendingCourseInvite!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PendingCourseInviteOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  email_ASC
+  email_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PendingCourseInvitePreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  email: String!
+}
+
+type PendingCourseInviteSubscriptionPayload {
+  mutation: MutationType!
+  node: PendingCourseInvite
+  updatedFields: [String!]
+  previousValues: PendingCourseInvitePreviousValues
+}
+
+input PendingCourseInviteSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PendingCourseInviteSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PendingCourseInviteSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PendingCourseInviteSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PendingCourseInviteWhereInput
+}
+
+input PendingCourseInviteUpdateInput {
+  email: String
+  course: CourseUpdateOneWithoutPendingCourseInvitesInput
+}
+
+input PendingCourseInviteUpdateManyWithoutCourseInput {
+  create: [PendingCourseInviteCreateWithoutCourseInput!]
+  connect: [PendingCourseInviteWhereUniqueInput!]
+  disconnect: [PendingCourseInviteWhereUniqueInput!]
+  delete: [PendingCourseInviteWhereUniqueInput!]
+  update: [PendingCourseInviteUpdateWithWhereUniqueWithoutCourseInput!]
+  upsert: [PendingCourseInviteUpsertWithWhereUniqueWithoutCourseInput!]
+}
+
+input PendingCourseInviteUpdateWithoutCourseDataInput {
+  email: String
+}
+
+input PendingCourseInviteUpdateWithWhereUniqueWithoutCourseInput {
+  where: PendingCourseInviteWhereUniqueInput!
+  data: PendingCourseInviteUpdateWithoutCourseDataInput!
+}
+
+input PendingCourseInviteUpsertWithWhereUniqueWithoutCourseInput {
+  where: PendingCourseInviteWhereUniqueInput!
+  update: PendingCourseInviteUpdateWithoutCourseDataInput!
+  create: PendingCourseInviteCreateWithoutCourseInput!
+}
+
+input PendingCourseInviteWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PendingCourseInviteWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PendingCourseInviteWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PendingCourseInviteWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  course: CourseWhereInput
+}
+
+input PendingCourseInviteWhereUniqueInput {
+  id: ID
+}
+
 type Query {
   instructorPasswordResetTokens(where: InstructorPasswordResetTokenWhereInput, orderBy: InstructorPasswordResetTokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InstructorPasswordResetToken]!
   students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student]!
   courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course]!
+  pendingCourseInvites(where: PendingCourseInviteWhereInput, orderBy: PendingCourseInviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PendingCourseInvite]!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz]!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option]!
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt]!
@@ -1780,6 +2092,7 @@ type Query {
   instructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
   student(where: StudentWhereUniqueInput!): Student
   course(where: CourseWhereUniqueInput!): Course
+  pendingCourseInvite(where: PendingCourseInviteWhereUniqueInput!): PendingCourseInvite
   quiz(where: QuizWhereUniqueInput!): Quiz
   option(where: OptionWhereUniqueInput!): Option
   quizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
@@ -1791,6 +2104,7 @@ type Query {
   instructorPasswordResetTokensConnection(where: InstructorPasswordResetTokenWhereInput, orderBy: InstructorPasswordResetTokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorPasswordResetTokenConnection!
   studentsConnection(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StudentConnection!
   coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
+  pendingCourseInvitesConnection(where: PendingCourseInviteWhereInput, orderBy: PendingCourseInviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PendingCourseInviteConnection!
   quizzesConnection(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizConnection!
   optionsConnection(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OptionConnection!
   quizAttemptsConnection(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizAttemptConnection!
@@ -3509,6 +3823,7 @@ type Subscription {
   instructorPasswordResetToken(where: InstructorPasswordResetTokenSubscriptionWhereInput): InstructorPasswordResetTokenSubscriptionPayload
   student(where: StudentSubscriptionWhereInput): StudentSubscriptionPayload
   course(where: CourseSubscriptionWhereInput): CourseSubscriptionPayload
+  pendingCourseInvite(where: PendingCourseInviteSubscriptionWhereInput): PendingCourseInviteSubscriptionPayload
   quiz(where: QuizSubscriptionWhereInput): QuizSubscriptionPayload
   option(where: OptionSubscriptionWhereInput): OptionSubscriptionPayload
   quizAttempt(where: QuizAttemptSubscriptionWhereInput): QuizAttemptSubscriptionPayload
