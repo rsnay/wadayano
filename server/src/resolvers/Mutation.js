@@ -9,6 +9,9 @@ const emailTemplates = require('../emailTemplates');
 const MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
 function updateOption (root, args, context, info){
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     return context.db.mutation.updateOption({
         data:{
             isCorrect: args.isCorrect,
@@ -21,6 +24,9 @@ function updateOption (root, args, context, info){
 }
 
 function deleteCourse (root, args, context, info){
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     return context.db.mutation.deleteCourse({
         where:{
             id:args.id
@@ -80,6 +86,9 @@ function addCourse (root, args, context, info) {
 }
 
 async function updateCourse (root, args, context, info) {
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     // Check that the course belongs to the current instructor
     // TODO
     // args.info is CourseInfoUpdateInput, which is a subset of CourseUpdateInput
@@ -92,6 +101,9 @@ async function updateCourse (root, args, context, info) {
 }
 
 function updateSurvey (root, args, context, info) {
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     // Check that the course belongs to the current instructor
     // TODO
     return context.db.mutation.updateCourse({
@@ -105,6 +117,9 @@ function updateSurvey (root, args, context, info) {
 }
 
 function createQuiz (root, args, context, info) {
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     // Check that the course belongs to the current instructor
     // TODO
     return context.db.mutation.createQuiz({
@@ -117,6 +132,9 @@ function createQuiz (root, args, context, info) {
 }
 
 function addQuestion (root, args, context, info) {
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     return context.db.mutation.updateQuiz({
       data: {
         //title: root.title,
@@ -146,6 +164,9 @@ function addQuestion (root, args, context, info) {
 }
 
 function updateQuiz(root, args, context, info) {
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     // TODO make sure the quiz belongs to the logged-in instructor
     return context.db.mutation.updateQuiz({
         data: {
@@ -161,6 +182,9 @@ function updateQuiz(root, args, context, info) {
 }
 
 function deleteQuiz(root, args, context, info) {
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     return context.db.mutation.deleteQuiz({
         where:{
             id: args.id
@@ -169,6 +193,9 @@ function deleteQuiz(root, args, context, info) {
 }
 
 function deleteQuestion(root, args, context, info) {
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     return context.db.mutation.deleteQuestion({
         where:{
             id: args.id
@@ -177,6 +204,9 @@ function deleteQuestion(root, args, context, info) {
 }
 
 function updateQuestion(root, args, context, info){
+    if (!(getUserInfo(context).isInstructor)) {
+        throw new Error('Not authenticated as an instructor');
+    }
     return context.db.mutation.updateQuestion({
         data:{
             prompt: args.prompt,
@@ -186,42 +216,6 @@ function updateQuestion(root, args, context, info){
             id:args.id
         }
     }, info)
-}
-
-function conceptQuestion (root, args, context, info) {
-    return context.db.mutation.updateQuestion({
-        data: {
-            concept:args.concept
-        },
-        where:{
-            id:args.id
-        }
-    })
-}
-
-function conceptQuiz (root, args, context, info) {
-    return context.db.mutation.updateQuiz({
-        data: {
-            concepts:{
-                set:args.concepts//?
-            }
-        },
-        where:{
-            id:args.id
-        }
-    }, info)
-}
-function conceptCourse (root, args, context, info){
-    return context.db.mutation.updateCourse({
-        data: {
-            concepts:{
-                set:args.concepts
-            }
-        },
-        where:{
-            id:args.id
-        }
-    })
 }
 
 async function instructorLogin(root, args, context, info) {
@@ -622,9 +616,6 @@ module.exports = {
     addQuestion,
     updateQuestion,
     deleteQuestion,
-    conceptQuestion,
-    conceptQuiz, 
-    conceptCourse,
     updateOption,
     updateSurvey,
     instructorLogin,
