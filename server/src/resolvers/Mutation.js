@@ -1,32 +1,17 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { APP_SECRET, FEEDBACK_EMAIL_ADDRESS } = require('../../config');
-const { getUserInfo, validateEmail } = require('../utils');
+const { getUserInfo, instructorCheck, instructorCourseCheck, validateEmail } = require('../utils');
 const { postGrade } = require('../lti');
 const { sendEmail } = require('../email');
 const emailTemplates = require('../emailTemplates');
 
 const MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
-function updateOption (root, args, context, info){
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
-    }
-    return context.db.mutation.updateOption({
-        data:{
-            isCorrect: args.isCorrect,
-            text: args.text
-        },
-        where:{
-            id:args.id
-        }
-    }, info)
-}
+async function deleteCourse (root, args, context, info){
+    // Check that user is an instructor and belongs to this course
+    const { isInstructor, userId } = await instructorCourseCheck(context, args.id);
 
-function deleteCourse (root, args, context, info){
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
-    }
     return context.db.mutation.deleteCourse({
         where:{
             id:args.id
@@ -36,10 +21,7 @@ function deleteCourse (root, args, context, info){
 
 function addCourse (root, args, context, info) {
     // Make sure user is logged in and an instructor
-    const { isInstructor, userId } = getUserInfo(context);
-    if (!isInstructor) {
-        throw new Error('Not authenticated as an instructor');
-    }
+    const { isInstructor, userId } = instructorCheck(context);
 
     // Generate the LTI/oauth secret for this course.
     const ltiSecret = require('crypto').randomBytes(16).toString('hex');
@@ -86,11 +68,9 @@ function addCourse (root, args, context, info) {
 }
 
 async function updateCourse (root, args, context, info) {
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
-    }
-    // Check that the course belongs to the current instructor
-    // TODO
+    // Check that user is an instructor and belongs to this course
+    const { isInstructor, userId } = await instructorCourseCheck(context, args.id);
+
     // args.info is CourseInfoUpdateInput, which is a subset of CourseUpdateInput
     return context.db.mutation.updateCourse({
         data: args.info,
@@ -100,12 +80,10 @@ async function updateCourse (root, args, context, info) {
     }, info)
 }
 
-function updateSurvey (root, args, context, info) {
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
-    }
-    // Check that the course belongs to the current instructor
-    // TODO
+async function updateSurvey (root, args, context, info) {
+    // Check that user is an instructor and belongs to this course
+    const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
+
     return context.db.mutation.updateCourse({
         data: {
             survey: args.survey
@@ -116,12 +94,10 @@ function updateSurvey (root, args, context, info) {
     }, info);
 }
 
-function createQuiz (root, args, context, info) {
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
-    }
-    // Check that the course belongs to the current instructor
-    // TODO
+async function createQuiz (root, args, context, info) {
+    // Check that user is an instructor and belongs to this course
+    const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
+
     return context.db.mutation.createQuiz({
         data: {
             title: "New Quiz Title",
@@ -132,42 +108,39 @@ function createQuiz (root, args, context, info) {
 }
 
 function addQuestion (root, args, context, info) {
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
-    }
+    instructorCheck(context);
+    // TODO how to most easily verify instructor permission where we receive a quiz id, not a course id?
     return context.db.mutation.updateQuiz({
-      data: {
-        //title: root.title,
-        questions: {
-          create: [{
-            prompt: "Enter Prompt Here",
-            concept: "Example Concept",
-            options: {
-               create:[
-                    { isCorrect: true, text: "OptionA" },
-                    { isCorrect: false, text: "OptionB" },
-                    { isCorrect: false, text: "OptionC" },
-                    { isCorrect: false, text: "OptionD" },
-                    { isCorrect: false, text: "" },
-                    { isCorrect: false, text: "" },
-                    { isCorrect: false, text: "" },
-                    { isCorrect: false, text: "" }
-                ]
-            }
-        }]
-      }
-    },
-    where:{
-        id:args.id
-    }
-    },info)
+        data: {
+            questions: {
+            create: [{
+                prompt: "Enter Prompt Here",
+                concept: "Example Concept",
+                options: {
+                    create:[
+                            { isCorrect: true, text: "OptionA" },
+                            { isCorrect: false, text: "OptionB" },
+                            { isCorrect: false, text: "OptionC" },
+                            { isCorrect: false, text: "OptionD" },
+                            { isCorrect: false, text: "" },
+                            { isCorrect: false, text: "" },
+                            { isCorrect: false, text: "" },
+                            { isCorrect: false, text: "" }
+                    ]
+                }
+            }]
+        }
+        },
+        where:{
+            id:args.id
+        }
+    },info);
 }
 
 function updateQuiz(root, args, context, info) {
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
-    }
+    instructorCheck(context);
     // TODO make sure the quiz belongs to the logged-in instructor
+
     return context.db.mutation.updateQuiz({
         data: {
             title: args.data.title,
@@ -182,9 +155,9 @@ function updateQuiz(root, args, context, info) {
 }
 
 function deleteQuiz(root, args, context, info) {
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
-    }
+    instructorCheck(context);
+    // TODO make sure the quiz belongs to the logged-in instructor
+
     return context.db.mutation.deleteQuiz({
         where:{
             id: args.id
@@ -193,9 +166,9 @@ function deleteQuiz(root, args, context, info) {
 }
 
 function deleteQuestion(root, args, context, info) {
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
-    }
+    instructorCheck(context);
+    // TODO make sure the quiz belongs to the logged-in instructor
+
     return context.db.mutation.deleteQuestion({
         where:{
             id: args.id

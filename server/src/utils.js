@@ -25,7 +25,45 @@ function getUserInfo(context) {
     throw new Error('Not authenticated');
 }
 
+
+/**
+ * Checks that the current user is an instructor. Wraps getUserInfo(context)
+ * Throws an error if not an instructor.
+ * @param {*} context
+ * @returns { userId: "string", isInstructor: true/false } from getUserInfo
+ */
+function instructorCheck(context) {
+  const userInfo = getUserInfo(context);
+  if (!userInfo.isInstructor) {
+      throw new Error('Not authenticated as an instructor');
+  }
+  return userInfo;
+}
+
+/**
+* Checks that the current user is an instructor and has access to a given courseId. Wraps instructorCheck(context)
+* Throws an error if not an instructor, or no permission for given course
+* @param {*} context
+* @returns { userId: "string", isInstructor: true/false } from getUserInfo
+*/
+async function instructorCourseCheck(context, courseId) {
+  // Perform instructor check first
+  const userInfo = instructorCheck(context);
+
+  // Check that the logged-in instructor is part of the given course
+  const course = await context.db.query.course({
+      where: { id: courseId }
+  }, `{ instructors { id, email } }`);
+  if (course.instructors.filter(i => i.id === userInfo.userId).length === 0) {
+      throw new Error('You don’t have permission to access this course.');
+  }
+
+  return userInfo;
+}
+
 module.exports = {
     validateEmail,
-    getUserInfo
+    getUserInfo,
+    instructorCheck,
+    instructorCourseCheck
 };
