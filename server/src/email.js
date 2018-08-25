@@ -3,6 +3,8 @@ const { AWS_SES_ENDPOINT, AWS_SES_KEY, AWS_SES_SECRET, AWS_SES_FROM_ADDRESS } = 
 
 // Send an email using Amazon SES
 const sendEmail = function(to, subject, message) {
+    // Log
+    console.log('Sending email', to, subject, message);
 
     const client = ses.createClient({ amazon: AWS_SES_ENDPOINT, key: AWS_SES_KEY, secret: AWS_SES_SECRET });
 
