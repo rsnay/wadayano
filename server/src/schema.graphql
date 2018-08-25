@@ -25,6 +25,8 @@ type Mutation {
   deleteQuestion(id:ID): Question!
   updateOption(id:ID, text:String!, isCorrect:Boolean): Option!
   updateSurvey(courseId: ID!, survey: Json!): Course!
+  sendInstructorCourseInvite(courseId: ID!, email: String!): String!
+  removeInstructorFromCourse(courseId: ID!, email: String!): String!
 
   instructorSignup(email:String!, password:String!): InstructorAuthPayload
   instructorLogin(email:String!, password:String!): InstructorAuthPayload

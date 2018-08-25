@@ -206,6 +206,15 @@ function deleteQuestion(root, args, context, info) {
 function updateQuestion(root, args, context, info){
     if (!(getUserInfo(context).isInstructor)) {
         throw new Error('Not authenticated as an instructor');
+async function sendInstructorCourseInvite(root, args, context, info) {
+    // Check that user is an instructor and belongs to this course
+    const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
+
+    // Lower-case email
+    const email = args.email.toLowerCase();
+    // Validate email
+    if (!validateEmail(email)) {
+        throw new Error('Invalid email address');
     }
     return context.db.mutation.updateQuestion({
         data:{
@@ -214,8 +223,86 @@ function updateQuestion(root, args, context, info){
         },
         where:{
             id:args.id
+
+    // If an instructor account exists with that email
+    const invitedInstructor = await context.db.query.instructor({
+        where: { email }
+    }, `{ id }`);
+    if (invitedInstructor && invitedInstructor.id) {
+        // Mutation to link the Course and Instructor
+        const updatedInstructor = await context.db.mutation.updateInstructor({
+            where: { id: invitedInstructor.id },
+            data: {
+                courses: { connect: { id: args.courseId } }
+            }
+        }, `{ courses { id, title } }`);
+
+        // Get title to send in email
+        const courseTitle = updatedInstructor.courses.filter(course => course.id === args.courseId)[0].title;
+        // Send an email informing that they've been added to the course, with a link to view
+        sendEmail(email, 'wadayano Course Invite', emailTemplates.courseAddedNotification(courseTitle, args.courseId));
+
+        return `Success! ${email} can now access this course in their wadayano account`;
+    }
+
+    // If no instructor account for that email address,
+    try {
+        // Create a PendingCourseInvite for the given course ID and instructor email address, with 48-hour expiration
+        const courseInvite = await context.db.mutation.createPendingCourseInvite({
+            data: {
+                email,
+                course: { connect: { id: args.courseId } }
+            }
+        }, `{ id, course { id, title } }`);
+
+        // Send an email informing that they've been added to the course, with a link to sign up, and a note that the course will be automatically added when they sign up
+        sendEmail(email, 'wadayano Course Invite', emailTemplates.courseInviteNotification(courseInvite.course.title, args.courseId));
+
+        return `Success! ${email} has been sent an invite to join wadayano. When the instructor signs up within 48 hours, this course will be automatically added to their account. You can resend this invite after 48 hours, if necessary.`;
+    } catch (error) {
+        throw new Error(`Unexpected error while inviting ${email}.`);
+    }
+}
+
+// This takes email, rather than instructor ID, to handle both removing an instructor and cancel a pending invite in one mutation
+async function removeInstructorFromCourse(root, args, context, info) {
+    // Check that user is an instructor and belongs to this course
+    const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
+
+    // Lower-case email
+    const email = args.email.toLowerCase();
+
+    try {
+        // It could be a pending invite that should be canceled
+        const invitesCanceled = await context.db.mutation.deleteManyPendingCourseInvites({
+            where: {
+                course: { id: args.courseId },
+                email: email
+            },
+        }, `{ count }`);
+        console.log(JSON.stringify(invitesCanceled));
+        if (invitesCanceled.count > 0) {
+            return 'Invite canceled';
         }
     }, info)
+
+        // Prevent a user from removing the last instructor of a course
+        const course = await context.db.query.course({
+            where: { id: args.courseId }
+        }, `{ instructors { id } }`);
+        if (course.instructors.length === 1)  {
+            return `${email} is the only instructor in this course, and cannot be removed. To transfer ownership of a course, invite another instructor and have them remove you from the course.`;
+        }
+
+        // Otherwise, try to remove the instructor from the course
+        await context.db.mutation.updateCourse({
+            where: { id: args.courseId },
+            data: { instructors: { disconnect: { email } } }
+        });
+        return 'Instructor removed';
+    } catch (error) {
+        return 'Instructor was not in the course.';
+    }
 }
 
 async function instructorLogin(root, args, context, info) {
@@ -618,6 +705,8 @@ module.exports = {
     deleteQuestion,
     updateOption,
     updateSurvey,
+    sendInstructorCourseInvite,
+    removeInstructorFromCourse,
     instructorLogin,
     instructorSignup,
     instructorRequestPasswordReset,
