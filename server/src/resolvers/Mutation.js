@@ -346,6 +346,25 @@ async function instructorSignup(root, args, context, info) {
     // Sign token using id of newly-created user
     const token = jwt.sign({ userId: instructor.id, isInstructor: true }, APP_SECRET);
 
+    // Check for any PendingCourseInvites for this email address
+    const pendingInvites = await context.db.query.pendingCourseInvites({
+        where: { email }
+    }, `{ createdAt, course { id } }`);
+    // Delete the invites after connecting the new instructor with the course
+    pendingInvites.forEach(async invite => {
+        // Check that invite isn't expired (48-hour limit)
+        let inviteAge = new Date() - new Date(invite.createdAt);
+        if (inviteAge <= MILLISECONDS_IN_DAY * 2) {
+            await context.db.mutation.updateInstructor({
+                where: { id: instructor.id },
+                data: { courses: { connect: { id: invite.course.id } } }
+            }, `{ id }`);
+        }
+    });
+    await context.db.mutation.deleteManyPendingCourseInvites({
+        where: { email }
+    }, `{ count }`);
+
     // Return an InstructorAuthPayload
     return {
         token,
