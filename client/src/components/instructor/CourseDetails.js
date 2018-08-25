@@ -54,6 +54,47 @@ export class CourseDetails extends Component {
         this.setState({ displayLtiSetupAction: action, displayLtiSetupObjectId: objectId });
     }
 
+    // Asks for the email address of an instructor to invite and sends to server
+    async inviteInstructor(course) {
+        let email = window.prompt('Enter the email address of the instructor whom you would like to invite to this course:');
+        if (!email || email.trim() === '') {
+          return;
+        }
+        // Send invite mutation
+        const result = await this.props.inviteInstructorMutation({
+          variables: {
+            courseId: course.id,
+            email: email.trim()
+          }
+        });
+        // Show error, or success string from mutation
+        if (result.errors && result.errors.length > 0) {
+            window.alert(result.errors[0].message);
+        } else {
+            window.alert(result.data.sendInstructorCourseInvite);
+        }
+        this.props.courseQuery.refetch();
+    }
+
+    // Removes the given instructor from the course
+    async removeInstructor(course, email) {
+        if (!window.confirm(`Are you sure you want to remove ${email} from this course?`)) { return; }
+        // Send remove mutation
+        const result = await this.props.removeInstructorMutation({
+          variables: {
+            courseId: course.id,
+            email: email.trim()
+          }
+        });
+        // Show error, or success string from mutation
+        if (result.errors && result.errors.length > 0) {
+            window.alert(result.errors[0].message);
+        } else {
+            window.alert(result.data.removeInstructorFromCourse);
+        }
+        this.props.courseQuery.refetch();
+    }
+
   render() {
 
     if (this.props.courseQuery && this.props.courseQuery.loading) {
@@ -207,6 +248,34 @@ export class CourseDetails extends Component {
         <hr />
 
         <section>
+            <h4 className="title is-4">Course Instructors</h4>
+            <div className="is-flex-tablet">
+                <span>Invite other instructors to join this course. Other instructors will have all course permissions, including managing quizzes, deleting the course, and inviting/removing any instructors.<br /><br /></span>
+                <button style={{marginLeft: "1rem"}} className="button is-light"
+                    onClick={() => this.inviteInstructor(course)}>
+                    <span className="icon">
+                    <i className="fas fa-user-plus"></i>
+                    </span>
+                    <span>Invite an Instructor</span>
+                </button>
+            </div>
+            {course.instructors.map(instructor => 
+                <span className="tag is-light is-large" style={{margin: ".25rem"}} key={instructor.email}>
+                    {instructor.email}
+                    <button className="delete is-small" onClick={() => this.removeInstructor(course, instructor.email)} title="Remove Instructor"></button>
+                </span>
+            )}
+            <br />
+            {course.pendingCourseInvites.map(invite => 
+                <span className="tag is-warning is-large" style={{margin: ".25rem"}} key={invite.email}>
+                    {invite.email} (pending)
+                    <button className="delete is-small" onClick={() => this.removeInstructor(course, invite.email)} title="Cancel Invite"></button>
+                </span>
+            )}
+            <hr />
+        </section>
+
+        <section>
             <h4 className="title is-4">Delete Course</h4>
             <div className="is-flex-tablet">
                 <span>Deleteing this course will permanently delete all quizzes, students’ quizzes attempts, survey data, and other information associated with this course. This cannot be undone.<br /></span>
@@ -271,6 +340,15 @@ export const COURSE_QUERY = gql`
                 id
             }
         }
+        instructors {
+            id
+            email
+        }
+        pendingCourseInvites {
+            id
+            createdAt
+            email
+        }
     }
   }
 `
@@ -291,6 +369,16 @@ mutation courseDelete($id:ID!) {
     }
 }`
 
+export const INVITE_INSTRUCTOR = gql`
+mutation inviteInstructor($email: String!, $courseId: ID!) {
+    sendInstructorCourseInvite(email: $email, courseId: $courseId)
+} `
+
+export const REMOVE_INSTRUCTOR = gql`
+mutation removeInstructor($email: String!, $courseId: ID!) {
+    removeInstructorFromCourse(email: $email, courseId: $courseId)
+} `
+
 export default withAuthCheck(compose(
     graphql(COURSE_QUERY, {
         name: 'courseQuery',
@@ -300,4 +388,6 @@ export default withAuthCheck(compose(
     }),
     graphql(CREATE_QUIZ, {name:"createQuizMutation"}),
     graphql(COURSE_DELETE, {name:"courseDelete"}),
+    graphql(INVITE_INSTRUCTOR, {name:"inviteInstructorMutation"}),
+    graphql(REMOVE_INSTRUCTOR, {name:"removeInstructorMutation"}),
 ) (CourseDetails), { instructor: true});
