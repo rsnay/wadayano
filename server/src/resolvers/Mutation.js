@@ -203,9 +203,6 @@ function deleteQuestion(root, args, context, info) {
     }, info)
 }
 
-function updateQuestion(root, args, context, info){
-    if (!(getUserInfo(context).isInstructor)) {
-        throw new Error('Not authenticated as an instructor');
 async function sendInstructorCourseInvite(root, args, context, info) {
     // Check that user is an instructor and belongs to this course
     const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
@@ -216,13 +213,6 @@ async function sendInstructorCourseInvite(root, args, context, info) {
     if (!validateEmail(email)) {
         throw new Error('Invalid email address');
     }
-    return context.db.mutation.updateQuestion({
-        data:{
-            prompt: args.prompt,
-            concept: args.concept
-        },
-        where:{
-            id:args.id
 
     // If an instructor account exists with that email
     const invitedInstructor = await context.db.query.instructor({
@@ -284,7 +274,6 @@ async function removeInstructorFromCourse(root, args, context, info) {
         if (invitesCanceled.count > 0) {
             return 'Invite canceled';
         }
-    }, info)
 
         // Prevent a user from removing the last instructor of a course
         const course = await context.db.query.course({
@@ -720,9 +709,7 @@ module.exports = {
     updateQuiz,
     deleteQuiz,
     addQuestion,
-    updateQuestion,
     deleteQuestion,
-    updateOption,
     updateSurvey,
     sendInstructorCourseInvite,
     removeInstructorFromCourse,
