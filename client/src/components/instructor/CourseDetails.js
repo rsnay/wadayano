@@ -37,7 +37,7 @@ export class CourseDetails extends Component {
 
     async deleteCourse(course){
         let response = window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.')
-        if (response.toLowerCase() === 'absolutely') {
+        if (response && response.toLowerCase() === 'absolutely') {
             await this.props.courseDelete({
                 variables:{
                     id:course.id
@@ -261,14 +261,14 @@ export class CourseDetails extends Component {
             </div>
             {course.instructors.map(instructor => 
                 <span className="tag is-light is-large" style={{margin: ".25rem"}} key={instructor.email}>
-                    {instructor.email}
+                    {instructor.email}&nbsp;
                     <button className="delete is-small" onClick={() => this.removeInstructor(course, instructor.email)} title="Remove Instructor"></button>
                 </span>
             )}
             <br />
             {course.pendingCourseInvites.map(invite => 
                 <span className="tag is-warning is-large" style={{margin: ".25rem"}} key={invite.email}>
-                    {invite.email} (pending)
+                    {invite.email} (pending)&nbsp;
                     <button className="delete is-small" onClick={() => this.removeInstructor(course, invite.email)} title="Cancel Invite"></button>
                 </span>
             )}
