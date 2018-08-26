@@ -17,8 +17,8 @@ class QuizReview extends Component {
         var wadayano = 0;
         var confidence = 0;
         var correct = 0;
-        console.log("confidence:"+quizAttempt.conceptConfidence);
-        console.log("correct:"+quizAttempt.correct);
+        //console.log("confidence:"+quizAttempt.conceptConfidence);
+        //console.log("correct:"+quizAttempt.correct);
 
         for(i; i < quizAttempt.questionAttempts.length; i++){
             if(quizAttempt.questionAttempts[i].isConfident){
@@ -29,9 +29,9 @@ class QuizReview extends Component {
             }
         }
         wadayano = confidence - correct;
-        console.log(confidence);
-        console.log(correct)
-        console.log(wadayano);
+        //console.log(confidence);
+        //console.log(correct)
+        //console.log(wadayano);
         return wadayano;
     }
 
@@ -44,38 +44,95 @@ class QuizReview extends Component {
         }
         var numQuestion = quizAttempt.questionAttempts.length;
         var percent = correct/numQuestion*10;
-        console.log("percent:"+percent+"%");
+        //console.log("percent:"+percent+"%");
     }
 
     //go through each concept and calculate the confidence bias/error
     sortConcepts(quizAttempt){
-        console.log("qa"+quizAttempt);
+        //console.log("qa")
+        //console.log(quizAttempt);
         var quizConcepts = quizAttempt.quiz.concepts;
-        console.log("quiz"+quizConcepts);
+        //console.log("quiz")
+        //console.log(quizConcepts);
         var conceptConfidences = [];
         for(var i=0;i<quizConcepts.length;i++){
-            var confidence = 0;
+            //var confidence = 0;
             var correct = 0;
             conceptConfidences.push({
                 concept:"",
                 confidence:0,
                 confidenceError:0.0,
-                confidenceBias:0.0
+                confidenceBias:0.0,
+                questionCnt:0,
+                confidenceText:"",
+                conceptScore:0,
+                correctQuestions:0,
+                overCQuestions:0,
+                underCQuestions:0
+
             });
             conceptConfidences[i].concept = quizConcepts[i];
+            conceptConfidences[i].confidence = quizAttempt.conceptConfidences[i].confidence;
+            var confNum = 0;
+            var corNum = 0;
             for(var j=0; j<quizAttempt.questionAttempts.length; j++){
                 conceptConfidences[i].id = i;
                 var question = quizAttempt.questionAttempts[j].question;
+                var questionAttempt = quizAttempt.questionAttempts[j];
                 var correct = 0;
+                //console.log(question.concept);
+                //console.log(quizConcepts[i]);
                 if(question.concept === quizConcepts[i]){
-                    conceptConfidences[i].confidence += 1;
-                }
-                if(question.isCorrect){
+                    conceptConfidences[i].questionCnt +=1;
+                    if(quizAttempt.questionAttempts[j].confidence){
+                        conceptConfidences[i].confidence += 1;
+                    }
+                
+                if(questionAttempt.isCorrect){
                     correct+=1;
                 }
+                
+                if(questionAttempt.isConfident){
+                    confNum = 1;
+                }
+                if(questionAttempt.isCorrect){
+                    corNum = 1;
+                }
+                var compare = confNum - corNum; //get over/under/accurate confidence for single concept
+                console.log(compare);
+                switch(compare){
+                    case -1:
+                        console.log("A?");
+                        conceptConfidences[i].underCQuestions += 1;
+                        break;
+                    case 0:
+                        console.log("B?");
+                        conceptConfidences[i].correctQuestions += 1;
+                        break;
+                    case 1:
+                        console.log("C?");
+                        conceptConfidences[i].overCQuestions += 1;
+                        break;
+                }  
+            }
+            }
+                conceptConfidences[i].score = correct/conceptConfidences[i].questionCnt*10;
                 conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
                 conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
+            if(conceptConfidences[i].correctQuestions > conceptConfidences[i].underCQuestions){
+                if(conceptConfidences[i].correctQuestions > conceptConfidences[i].overCQuestions){
+                    conceptConfidences[i].confidenceText = "accurate";
+                } else {
+                    conceptConfidences[i].confidenceText = "overConfident";
+                }
+            } else {
+                if(conceptConfidences[i].underCQuestions > conceptConfidences[i].overCQuestions){
+                    conceptConfidences[i].confidenceText = "underConfident";
+                } else {
+                    conceptConfidences[i].confidenceText = "overConfident";
+                }
             }
+            console.log(conceptConfidences[i].confidenceText);
         }
         console.log("conceptConfidence:")
         console.log(conceptConfidences);
@@ -84,7 +141,7 @@ class QuizReview extends Component {
 
   render() {
 
-    
+    console.log("here");
     console.log(this.props);
     
     if (this.props.quizAttemptQuery && this.props.quizAttemptQuery.loading) {
@@ -94,15 +151,23 @@ class QuizReview extends Component {
     if (this.props.quizAttemptQuery && this.props.quizAttemptQuery.error) {
         return <ErrorBox>Couldn’t load quiz</ErrorBox>;
     }
-    console.log(this.props.quizAttemptQuery);
+    //console.log(this.props.quizAttemptQuery);
 
     const quizAttempt = this.props.quizAttemptQuery.currentStudentQuizAttempt;
     
-    console.log(quizAttempt.questionAttempts[0].question.title);
+    //console.log(quizAttempt.questionAttempts[0].question.title);
 
-    this.wadayanoScore(quizAttempt);
-    this.sortConcepts(quizAttempt);
-    this.overallScore(quizAttempt);
+    var wadayano = this.wadayanoScore(quizAttempt);
+    var quizConfidenceText;
+    if(wadayano == -1){
+        quizConfidenceText = "underConfidence";
+    } else if(wadayano == 0){
+        quizConfidenceText = "accurate";
+    } else {
+        quizConfidenceText = "overConfident";
+    }
+    //this.sortConcepts(quizAttempt);
+    //this.overallScore(quizAttempt);
 
     // Use conceptConfidences from the quizAttempt prop
     //const conceptConfidences = quizAttempt.conceptConfidences;
@@ -124,6 +189,7 @@ class QuizReview extends Component {
             <div className="columns">
                 <div className="column">
                     <h2 className="subtitle is-2">Score: {formattedScore}</h2>
+                    <h2 className="subtitle is-2">Wadayano: {wadayano}</h2> <p> ({quizConfidenceText}) </p>
                 </div>
                 <div className="column">
                     {gradePostMessage}
@@ -136,11 +202,15 @@ class QuizReview extends Component {
                         <p className="title">
                             {conceptConfidence.concept}
                         </p>
+                        <p>
+                        # of Questions: {conceptConfidence.questionCnt}
+                        </p>
                         <p className="title">
                             {/*conceptConfidence.confidenceBias*/}
                         </p>
                         <div className="content">
                             <span className="icon"><i className="fas fa-thumbs-up"></i></span>&nbsp; Confidence: {conceptConfidence.confidence}
+                            <br/>({conceptConfidence.confidenceText})
                         </div>
                         <footer className="">
                             <button className="button is-primary is-block" style={{width: "100%"}}>Add to Study Plan</button>
@@ -172,10 +242,10 @@ const QUIZ_ATTEMPT_QUERY = gql`
         questions {
           id
           prompt
+          concept
           options {
             id
             text
-            isCorrect
           }
         }
       }
@@ -184,6 +254,7 @@ const QUIZ_ATTEMPT_QUERY = gql`
         question {
           id
           prompt
+          concept
         }
         option {
           id

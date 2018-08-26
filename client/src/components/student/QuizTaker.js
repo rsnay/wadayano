@@ -198,14 +198,11 @@ class QuizTaker extends Component {
       </ErrorBox>
     }
 
-<<<<<<< HEAD
-=======
     // TODO get actual concepts
     //let concepts = [ 'Gene Expression', 'Genomics', 'Epigenetics', 'Gene Therapy' ];
     let concepts = quiz.concepts;
     console.log(concepts);
 
->>>>>>> 	modified:   client/src/components/student/ConceptRater.js
     let currentView;
     switch (this.state.phase) {
       case phases.CONCEPTS:
