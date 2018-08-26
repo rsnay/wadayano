@@ -92,6 +92,16 @@ progress::-webkit-progress-value {
     flex: 1;
 }
 
+.quiz-editor-question-option input[type=radio] {
+    vertical-align: middle;
+    margin-top: 0.2rem;
+    margin-right: 0.5rem;
+}
+
+.quiz-editor-question-option label {
+    padding: 0 0.7rem 0 0;
+}
+
 /* Survey */
 .survey-editor {
     box-sizing: border-box;

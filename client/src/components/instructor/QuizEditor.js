@@ -263,20 +263,20 @@ export class QuizEditor extends Component {
             </p>
             <form>
                 {question.options.map((option, optionIndex) =>
-                    <p className="panel-block" key={option.id}>
-                        <label className="radio">
+                    <p className="panel-block is-flex quiz-editor-question-option" key={option.id}>
+                        <label className="radio is-flex">
                             <input
                                 id={option.id + "radio"}
                                 key={option.id + "radio"}
                                 defaultChecked={option.isCorrect}
                                 name={"question" + questionIndex}
                                 type="radio" />
-                            {ALPHABET[optionIndex]}
+                            <span>{ALPHABET[optionIndex]}</span>
                         </label>
-                        <textarea
+                        <input
+                            type="text"
                             id={option.id + "text"}
-                            className="textarea is-small"
-                            style={{margin: "0 0 0 1rem", minWidth: "inherit"}}
+                            className="input"
                             placeholder="(Leave option blank to hide on quiz)"
                             rows="2"
                             defaultValue={option.text} />
