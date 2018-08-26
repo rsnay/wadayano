@@ -312,11 +312,6 @@ export class QuizEditor extends Component {
                     </button>
                 </p>
                 <p className="control">
-                    <button className="button" onClick={() => window.location.reload(true)}>
-                    Discard Changes
-                    </button>
-                </p>
-                <p className="control">
                     <button className="button is-link" onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz</button>
                 </p>
                 <p className="control">
