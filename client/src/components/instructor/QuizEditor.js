@@ -16,12 +16,26 @@ export class QuizEditor extends Component {
         this.state = {
             isLoading: false,
             concepts: [],
-            showConceptsForQuestion: null
+            showConceptsForQuestion: null,
+            savedScrollPosition: null
         };
     
         // Pre-bind this function, to make adding it to input fields easier
         this.saveQuiz = this.saveQuiz.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // Workaround for no callback after apollo query finishes loading.
+        if (nextProps.quizQuery && !nextProps.quizQuery.loading && this.state.savedScrollPosition !== null) {
+            // If a scroll position was saved before, go back to it
+            console.log(this.state.savedScrollPosition);
+            window.setTimeout(() => {
+                window.scrollTo(0, this.state.savedScrollPosition)
+                console.log("scrolling to ", this.state.savedScrollPosition, document.body.scrollHeight);
+                this.setState({ savedScrollPosition: null });
+            }, 100);
+        }
     }
 
     // Performs various checks on a given question (for before the quiz is saved)
@@ -53,7 +67,7 @@ export class QuizEditor extends Component {
         return true;
     }
 
-    async saveQuiz(quiz){
+    async saveQuiz(quiz, refetch = true){
         // Validate the questions in the quiz
         for (let i = 0; i < quiz.questions.length; i++){
             const valid = this.validateQuestion(quiz.questions[i]);
@@ -114,7 +128,9 @@ export class QuizEditor extends Component {
         });
 
         // Reload quiz data after it's done
-        this.props.quizQuery.refetch();
+        if (refetch) {
+            this.props.quizQuery.refetch();
+        }
     }
 
     async deleteQuiz(quiz){
@@ -130,13 +146,16 @@ export class QuizEditor extends Component {
     }
 
     async addQuestion(quiz) {
+        // TODO magic number is approximate height of the new question
+        const savedScrollPosition = window.scrollY + 740;
         this.setState({ isLoading: true });
-        await this.saveQuiz(quiz);
+        await this.saveQuiz(quiz, false);
         await this.props.addQuestionMutation({
             variables:{
                 id: this.props.match.params.quizId
             }
         });
+        this.setState({ savedScrollPosition });
         this.props.quizQuery.refetch();
         this.setState({ isLoading: false });
     }
