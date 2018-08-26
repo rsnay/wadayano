@@ -278,7 +278,7 @@ export class CourseDetails extends Component {
         <section>
             <h4 className="title is-4">Delete Course</h4>
             <div className="is-flex-tablet">
-                <span>Deleteing this course will permanently delete all quizzes, students’ quizzes attempts, survey data, and other information associated with this course. This cannot be undone.<br /></span>
+                <span>Deleting this course will permanently delete all quizzes, students’ quizzes attempts, survey data, and other information associated with this course. This cannot be undone.<br /></span>
                 <button style={{marginLeft: "1rem"}} className="button is-danger is-outlined"
                     onClick={() => this.deleteCourse(course)}>
                     <span className="icon">
