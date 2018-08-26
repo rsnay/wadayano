@@ -21,7 +21,6 @@ export class QuizEditor extends Component {
     
         // Pre-bind this function, to make adding it to input fields easier
         this.saveQuiz = this.saveQuiz.bind(this);
-        this.addQuestion = this.addQuestion.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
     }
 
@@ -130,8 +129,9 @@ export class QuizEditor extends Component {
         this.props.history.push('/instructor/course/' + quiz.course.id);
     }
 
-    async addQuestion(){
+    async addQuestion(quiz) {
         this.setState({ isLoading: true });
+        await this.saveQuiz(quiz);
         await this.props.addQuestionMutation({
             variables:{
                 id: this.props.match.params.quizId
@@ -301,7 +301,7 @@ export class QuizEditor extends Component {
                     <button className="button is-link" onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz</button>
                 </p>
                 <p className="control">
-                    <button className="button is-primary" onClick={this.addQuestion}>Add Question</button>
+                    <button className="button is-primary" onClick={() => this.addQuestion(quiz)}>Add Question</button>
                 </p>
             </div>
         </div>
