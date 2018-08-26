@@ -75,11 +75,12 @@ class QuizReview extends Component {
             conceptConfidences[i].confidence = quizAttempt.conceptConfidences[i].confidence;
             var confNum = 0;
             var corNum = 0;
+            var correct = 0;
             for(var j=0; j<quizAttempt.questionAttempts.length; j++){
                 conceptConfidences[i].id = i;
                 var question = quizAttempt.questionAttempts[j].question;
                 var questionAttempt = quizAttempt.questionAttempts[j];
-                var correct = 0;
+                
                 //console.log(question.concept);
                 //console.log(quizConcepts[i]);
                 if(question.concept === quizConcepts[i]){
@@ -116,7 +117,7 @@ class QuizReview extends Component {
                 }  
             }
             }
-                conceptConfidences[i].score = correct/conceptConfidences[i].questionCnt*10;
+                conceptConfidences[i].conceptScore = (correct/conceptConfidences[i].questionCnt)*100;
                 conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
                 conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
             if(conceptConfidences[i].correctQuestions > conceptConfidences[i].underCQuestions){
@@ -206,7 +207,7 @@ class QuizReview extends Component {
                         # of Questions: {conceptConfidence.questionCnt}
                         </p>
                         <p className="title">
-                            {/*conceptConfidence.confidenceBias*/}
+                            Score: {conceptConfidence.conceptScore}%
                         </p>
                         <div className="content">
                             <span className="icon"><i className="fas fa-thumbs-up"></i></span>&nbsp; Confidence: {conceptConfidence.confidence}
