@@ -219,9 +219,21 @@ export class QuizEditor extends Component {
     console.log(this.props);
     let quiz = this.props.quizQuery.quiz;
 
+    const questionScrubber = (
+        <div className="question-scrubber">
+            <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Go to:</span>
+            {quiz.questions.map((question, index) => (
+                <button onClick={() => document.getElementById("container" + question.id).scrollIntoView()} className="question-scrubber-item button is-text">{index + 1}</button>
+            ))}
+            <button className="button is-text question-scrubber-item" onClick={() => this.addQuestion(quiz)}>
+                <span className="icon"><i className="fas fa-plus"></i></span>
+            </button>
+        </div>
+    );
+
     return (
         <section className="section">
-        <div className="container" style={{paddingRight: "3rem"}}>
+        <div className="container">
         <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 <li><Link to="/instructor/courses">Course List</Link></li>
@@ -246,6 +258,8 @@ export class QuizEditor extends Component {
         </label>
 
         <label className="label is-medium">Questions</label>
+        {questionScrubber}
+        <br />
 
         {(quiz.quizAttempts.length > 0) &&
             <div className="notification is-warning">
@@ -323,16 +337,6 @@ export class QuizEditor extends Component {
                     <button className="button is-link" onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz</button>
                 </p>
             </div>
-        </div>
-        <div className="question-scrubber">
-            <span className="has-text-white">Go to:</span>
-            {quiz.questions.map((question, index) => (
-                <button onClick={() => document.getElementById("container" + question.id).scrollIntoView()} className="question-scrubber-item button is-text">{index + 1}</button>
-            ))}
-            <button className="button is-text question-scrubber-item" onClick={() => this.addQuestion(quiz)}>
-                <span className="icon"><i className="fas fa-plus"></i></span>
-            </button>
-            
         </div>
       </section>
     )
