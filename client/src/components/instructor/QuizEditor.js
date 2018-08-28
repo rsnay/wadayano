@@ -146,8 +146,9 @@ export class QuizEditor extends Component {
     }
 
     async addQuestion(quiz) {
+        // Scroll to bottom of page after adding new question
         // TODO magic number is approximate height of the new question
-        const savedScrollPosition = window.scrollY + 740;
+        const savedScrollPosition = document.documentElement.scrollHeight + 740;
         this.setState({ isLoading: true });
         await this.saveQuiz(quiz, false);
         await this.props.addQuestionMutation({
@@ -217,7 +218,7 @@ export class QuizEditor extends Component {
 
     return (
         <section className="section">
-        <div className="container">
+        <div className="container" style={{paddingRight: "3rem"}}>
         <nav className="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 <li><Link to="/instructor/courses">Course List</Link></li>
@@ -250,7 +251,7 @@ export class QuizEditor extends Component {
         }
 
         {quiz.questions.map((question, questionIndex)=>
-        <div className="panel" key={question.id}>
+        <div className="panel" key={question.id} id={"container" + question.id}>
             <p className="panel-heading">
                 Question {questionIndex + 1}
                 <a className="is-pulled-right button is-small">
@@ -259,7 +260,7 @@ export class QuizEditor extends Component {
                     </span>
                 </a>
             </p>
-            <div className="panel-block">
+            <div className="panel-block quiz-editor-question-prompt">
                 <textarea
                     id={question.id}
                     className="textarea is-medium"
@@ -305,6 +306,10 @@ export class QuizEditor extends Component {
         </div>
         )}
 
+            <p className="control">
+                <button className="button is-primary" onClick={() => this.addQuestion(quiz)}>Add Question</button>
+            </p>
+            <br />
             <div className="field is-grouped">
                 <p className="control">
                     <button className="button is-danger" onClick={() => this.deleteQuiz(quiz)}>
@@ -314,10 +319,17 @@ export class QuizEditor extends Component {
                 <p className="control">
                     <button className="button is-link" onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz</button>
                 </p>
-                <p className="control">
-                    <button className="button is-primary" onClick={() => this.addQuestion(quiz)}>Add Question</button>
-                </p>
             </div>
+        </div>
+        <div className="question-scrubber">
+            <span className="has-text-white">Go to:</span>
+            {quiz.questions.map((question, index) => (
+                <button onClick={() => document.getElementById("container" + question.id).scrollIntoView()} className="question-scrubber-item button is-text">{index + 1}</button>
+            ))}
+            <button className="button is-text question-scrubber-item" onClick={() => this.addQuestion(quiz)}>
+                <span className="icon"><i className="fas fa-plus"></i></span>
+            </button>
+            
         </div>
       </section>
     )
