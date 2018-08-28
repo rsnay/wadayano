@@ -163,12 +163,15 @@ export class QuizEditor extends Component {
 
     async deleteQuestion(question){
         if (!window.confirm('Are you sure you want to delete this question? All students’ attempts for this question will also be deleted.')) { return; }
+        const savedScrollPosition = window.scrollY;
         this.setState({ isLoading: true });
+        await this.saveQuiz(this.props.quizQuery.quiz, false);
         await this.props.questionDeleteMutation({
             variables:{
                 id: question.id
             }
         });
+        this.setState({ savedScrollPosition });
         this.props.quizQuery.refetch();
         this.setState({ isLoading: false });
     }
