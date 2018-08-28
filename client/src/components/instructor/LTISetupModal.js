@@ -48,11 +48,9 @@ class LTISetupModal extends Component {
         switch(lmsId) {
             case LMS.CANVAS.id:
                 return `${LTI_LAUNCH_URL}?action=${action}&objectId=${objectId}`;
-                break;
             case LMS.LEARNING_SUITE.id:
             default:
                 return `${LTI_LAUNCH_URL}/${action}/${objectId}`;
-                break;
         }
     }
 

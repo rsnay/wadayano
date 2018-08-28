@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import { LTI_LAUNCH_URL, QUIZ_TYPE_NAMES } from '../../constants';
+import { QUIZ_TYPE_NAMES } from '../../constants';
 
 import { withAuthCheck } from '../shared/AuthCheck';
 
