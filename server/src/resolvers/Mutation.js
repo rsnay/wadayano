@@ -36,10 +36,7 @@ function addCourse (root, args, context, info) {
                     id: userId
                 }
             },
-            concepts:{
-                set:["Example Concept"]
-            },
-            quizzes:{
+            /*quizzes:{
                 create:[{
                     title:"Example Quiz",
                     type:"GRADED",
@@ -62,7 +59,7 @@ function addCourse (root, args, context, info) {
                         }]
                     }
                 }]
-            }
+            }*/
         },
     }, info)
 }
@@ -100,7 +97,7 @@ async function createQuiz (root, args, context, info) {
 
     return context.db.mutation.createQuiz({
         data: {
-            title: "New Quiz Title",
+            title: "",
             type: "GRADED",
             course: { connect: { id: args.courseId } }
         }
@@ -114,14 +111,14 @@ function addQuestion (root, args, context, info) {
         data: {
             questions: {
             create: [{
-                prompt: "Enter Prompt Here",
-                concept: "Example Concept",
+                prompt: "",
+                concept: "",
                 options: {
                     create:[
-                            { isCorrect: true, text: "OptionA" },
-                            { isCorrect: false, text: "OptionB" },
-                            { isCorrect: false, text: "OptionC" },
-                            { isCorrect: false, text: "OptionD" },
+                            { isCorrect: true, text: "" },
+                            { isCorrect: false, text: "" },
+                            { isCorrect: false, text: "" },
+                            { isCorrect: false, text: "" },
                             { isCorrect: false, text: "" },
                             { isCorrect: false, text: "" },
                             { isCorrect: false, text: "" },
