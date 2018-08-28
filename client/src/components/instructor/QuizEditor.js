@@ -148,7 +148,7 @@ export class QuizEditor extends Component {
     async addQuestion(quiz) {
         // Scroll to bottom of page after adding new question
         // TODO magic number is approximate height of the new question
-        const savedScrollPosition = document.documentElement.scrollHeight + 740;
+        const savedScrollPosition = document.documentElement.scrollHeight + 640;
         this.setState({ isLoading: true });
         await this.saveQuiz(quiz, false);
         await this.props.addQuestionMutation({
@@ -207,6 +207,14 @@ export class QuizEditor extends Component {
         e.value = str;
     }
 
+    // Scroll to a particular question, taking into account the sticky question navbar
+    scrollToQuestion(question) {
+        const questionY = document.getElementById('container' + question.id).offsetTop;
+        const headerHeight = document.getElementById('question-navbar').offsetHeight;
+        window.scrollTo(0, questionY + headerHeight);
+    }
+
+
   render() {
 
     if (this.state.isLoading || (this.props.quizQuery && this.props.quizQuery.loading)) {
@@ -220,12 +228,12 @@ export class QuizEditor extends Component {
     let quiz = this.props.quizQuery.quiz;
 
     const questionScrubber = (
-        <div className="question-scrubber">
+        <div id="question-navbar" className="question-navbar">
             <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Go to:</span>
             {quiz.questions.map((question, index) => (
-                <button onClick={() => document.getElementById("container" + question.id).scrollIntoView()} className="question-scrubber-item button is-text">{index + 1}</button>
+                <button onClick={() => this.scrollToQuestion(question)} className="question-navbar-item button is-text">{index + 1}</button>
             ))}
-            <button className="button is-text question-scrubber-item" onClick={() => this.addQuestion(quiz)}>
+            <button className="button is-text question-navbar-item" onClick={() => this.addQuestion(quiz)}>
                 <span className="icon"><i className="fas fa-plus"></i></span>
             </button>
         </div>
@@ -258,7 +266,7 @@ export class QuizEditor extends Component {
         </label>
 
         <label className="label is-medium">Questions</label>
-        {questionScrubber}
+        {quiz.questions.length > 0 && questionScrubber}
         <br />
 
         {(quiz.quizAttempts.length > 0) &&
