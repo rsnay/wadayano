@@ -37,7 +37,9 @@ export default class QuestionReview extends Component {
         </div>
     );
 
+    // Correct is if the student got it correct; actualCorrect is if the student got it wrong, to show what the actual correct answer was.
     let correctIcon = <span className="icon"><i className="fas fa-check"></i></span>;
+    let actualCorrectIcon = <span className="icon"><i className="fas fa-arrow-right"></i></span>;
     let incorrectIcon = <span className="icon"><i className="fas fa-times"></i></span>;
 
     let optionsView;
@@ -58,8 +60,9 @@ export default class QuestionReview extends Component {
         optionsView = questionOptions.map((option, index) => {
             const correct = (attempt.correctOption.id === option.id);
             const incorrect = (attempt.option.id === option.id);
-            const icon = correct ? correctIcon : (incorrect ? incorrectIcon : ALPHABET[index]);
-            const iconClass = correct ? "has-text-success" : (incorrect ? "is-danger" : "");
+            const icon = correct ? actualCorrectIcon : (incorrect ? incorrectIcon : ALPHABET[index]);
+            const iconClass = correct ? "has-text-success" : (incorrect ? "has-text-danger" : "");
+            const containerClass = correct ? "actual-correct" : "";
             const answerPrefix = correct ? "Correct: " : (incorrect ? "Selected: " : "");
 
             // Hide empty options
@@ -67,7 +70,7 @@ export default class QuestionReview extends Component {
                 return null;
             }
 
-            return (<div className="columns is-mobile question-option-container is-review" key={option.id}>
+            return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={option.id}>
                 <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
                     <span>{icon}</span>
                 </span>

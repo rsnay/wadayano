@@ -39,6 +39,10 @@ progress::-webkit-progress-value {
     cursor: default;
     border: none;
 }
+.question-option-container.is-review.actual-correct {
+    border: solid hsl(141, 71%, 48%) 1px!important;
+    border-radius: 5px;
+}
 
 .question-option-container:hover .question-option-letter {
     border-color: gray;
