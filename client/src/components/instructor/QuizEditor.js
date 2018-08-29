@@ -209,9 +209,11 @@ export class QuizEditor extends Component {
 
     // Scroll to a particular question, taking into account the sticky question navbar
     scrollToQuestion(question) {
-        const questionY = document.getElementById('container' + question.id).offsetTop;
+        // Scroll to question
+        document.getElementById('container' + question.id).scrollIntoView(true);
+        // Scroll up to account for sticky question navbar
         const headerHeight = document.getElementById('question-navbar').offsetHeight;
-        window.scrollTo(0, questionY + headerHeight);
+        window.scrollTo(0, window.scrollY - headerHeight);
     }
 
 
