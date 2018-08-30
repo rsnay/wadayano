@@ -9,29 +9,46 @@ import { formatScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
+import Logo from '../../logo_title.svg';
+
+import QuestionReview from './QuestionReview';
+
 class QuizReview extends Component {
+
+    constructor(props) {
+        super(props);
+    
+        this.state = {
+            concept:null,
+            concepts: [],
+            showReviewForConcept: null,
+            conceptQuestions: [],
+            savedScrollPosition: null
+        };
+    
+        // Pre-bind this function, to make adding it to input fields easier
+        //this.saveQuiz = this.saveQuiz.bind(this);
+        this.selectReview = this.selectReview.bind(this);
+    }
+
 
     wadayanoScore(quizAttempt)
     {
         var i = 0;
         var wadayano = 0;
-        var confidence = 0;
-        var correct = 0;
+        var questionNum = 0;
+        var correctConfidence = 0;
+        
         //console.log("confidence:"+quizAttempt.conceptConfidence);
         //console.log("correct:"+quizAttempt.correct);
 
         for(i; i < quizAttempt.questionAttempts.length; i++){
-            if(quizAttempt.questionAttempts[i].isConfident){
-                confidence += 1;
-            }
-            if(quizAttempt.questionAttempts[i].isCorrect){
-                correct += 1;
+            questionNum += 1;
+            if(quizAttempt.questionAttempts[i].isConfident && quizAttempt.questionAttempts[i].isCorrect){
+                correctConfidence += 1;
             }
         }
-        wadayano = confidence - correct;
-        //console.log(confidence);
-        //console.log(correct)
-        //console.log(wadayano);
+        wadayano = correctConfidence / questionNum * 100;
         return wadayano;
     }
 
@@ -140,6 +157,23 @@ class QuizReview extends Component {
         return conceptConfidences;
     }
 
+    selectReview(concept, quizAttempt){
+        this.setState({concept: concept});
+        var conceptQuestions = [];
+        var questionAttempt;
+        console.log("this");
+        console.log(quizAttempt);
+        for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
+            questionAttempt = quizAttempt.questionAttempts[i];
+            if(questionAttempt.question.concept === concept){
+                conceptQuestions.push(questionAttempt);
+            }
+        }
+        this.setState({conceptQuestions: conceptQuestions})
+        this.setState({showReviewForConcept: concept});
+        //conceptQuestions: [],
+    }
+
   render() {
 
     console.log("here");
@@ -161,15 +195,15 @@ class QuizReview extends Component {
     var wadayano = this.wadayanoScore(quizAttempt);
     var quizConfidenceText;
     if(wadayano == -1){
-        quizConfidenceText = "underConfidence";
+        quizConfidenceText = "🙍‍ underConfidence";
     } else if(wadayano == 0){
-        quizConfidenceText = "accurate";
+        quizConfidenceText = "🧘 accurate";
     } else {
-        quizConfidenceText = "overConfident";
+        quizConfidenceText = "🤦‍ overConfident";
     }
     //this.sortConcepts(quizAttempt);
     //this.overallScore(quizAttempt);
-
+    
     // Use conceptConfidences from the quizAttempt prop
     //const conceptConfidences = quizAttempt.conceptConfidences;
     const conceptConfidences = this.sortConcepts(quizAttempt);
@@ -190,7 +224,7 @@ class QuizReview extends Component {
             <div className="columns">
                 <div className="column">
                     <h2 className="subtitle is-2">Score: {formattedScore}</h2>
-                    <h2 className="subtitle is-2">Wadayano: {wadayano}</h2> <p> ({quizConfidenceText}) </p>
+                    <span><img src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem"}} /> <h2 className="subtitle is-2">: {wadayano}%</h2> <p> {quizConfidenceText} </p></span>
                 </div>
                 <div className="column">
                     {gradePostMessage}
@@ -213,8 +247,17 @@ class QuizReview extends Component {
                             <span className="icon"><i className="fas fa-thumbs-up"></i></span>&nbsp; Confidence: {conceptConfidence.confidence}
                             <br/>({conceptConfidence.confidenceText})
                         </div>
+                        <div id={conceptConfidence.concept+ "review"}></div>
+                        {(this.state.showReviewForConcept === conceptConfidence.concept && this.state.conceptQuestions.length > 0) &&
+                            <span className="concept-questions-list" id={"questionReview"+this.state.concept}>
+                            &nbsp; Questions about {this.state.concept}: &nbsp;
+                            {this.state.conceptQuestions.map(conceptQuestion => (
+                                <QuestionReview questionAttempt={conceptQuestion} question={conceptQuestion.question} />
+                            ))}
+                            </span>
+                        }
                         <footer className="">
-                            <button className="button is-primary is-block" style={{width: "100%"}}>Add to Study Plan</button>
+                            <button className="button is-primary is-block" style={{width: "100%"}} onClick = {this.selectReview.bind(null,conceptConfidence.concept, quizAttempt)}>Review Concept</button>
                         </footer>
                     </div>
                 </div>
@@ -256,6 +299,10 @@ const QUIZ_ATTEMPT_QUERY = gql`
           id
           prompt
           concept
+          options{
+              id
+              text
+          }
         }
         option {
           id

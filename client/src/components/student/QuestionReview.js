@@ -22,6 +22,7 @@ export default class QuestionReview extends Component {
   }
 
   render() {
+      console.log(this.props);
     const questionOptions = this.props.question.options;
     const attempt = this.props.questionAttempt;
     
