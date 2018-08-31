@@ -64,7 +64,7 @@ export default class QuestionReview extends Component {
             const icon = correct ? actualCorrectIcon : (incorrect ? incorrectIcon : ALPHABET[index]);
             const iconClass = correct ? "has-text-success" : (incorrect ? "has-text-danger" : "");
             const containerClass = correct ? "actual-correct" : "";
-            const answerPrefix = correct ? "Correct: " : (incorrect ? "Selected: " : "");
+            const answerPrefix = ""; //correct ? "Correct: " : (incorrect ? "Selected: " : "");
 
             // Hide empty options
             if (option.text.trim() === '') {
