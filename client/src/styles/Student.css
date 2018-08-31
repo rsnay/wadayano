@@ -127,6 +127,7 @@ progress::-webkit-progress-value {
 
 .quiz-editor-question-option input[type=radio] + span {
     font-size: 80%;
+    min-width: 1rem;
 }
 .quiz-editor-question-option input[type=radio]:checked + span::after {
     padding-left: 0.8rem;
