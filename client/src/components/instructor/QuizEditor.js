@@ -80,7 +80,7 @@ export class QuizEditor extends Component {
         // Collect data to update in the quiz
         let quizData = {
             title: document.getElementById(quiz.id).value,
-            type: document.getElementById('quizTypeSelector').value,
+            type: Array.from(document.getElementsByName('quizType')).find(r => r.checked).value,
             // Updated questions will be added here
             questions: { update: [] },
             // Concepts will be added here (QuizUpdateconceptsInput requires a set sub-property)
@@ -233,7 +233,7 @@ export class QuizEditor extends Component {
         <div id="question-navbar" className="question-navbar">
             <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Go to:</span>
             {quiz.questions.map((question, index) => (
-                <button onClick={() => this.scrollToQuestion(question)} className="question-navbar-item button is-text">{index + 1}</button>
+                <button key={question.id} onClick={() => this.scrollToQuestion(question)} className="question-navbar-item button is-text">{index + 1}</button>
             ))}
             <button className="button is-text question-navbar-item" onClick={() => this.addQuestion(quiz)}>
                 <span className="icon"><i className="fas fa-plus"></i></span>
@@ -259,15 +259,20 @@ export class QuizEditor extends Component {
 
         <label className="label is-medium">
             Quiz Type<br />
-            <div className="select">
-                <select id="quizTypeSelector" defaultValue={quiz.type}>
-                    <option value="GRADED">Graded quiz (must be launched from LMS)</option>
-                    <option value="PRACTICE">Practice quiz (students can launch from wadayano dashboard or LMS)</option>
-                </select>
-            </div>
         </label>
+        <div className="control">
+            <label className="radio">
+                <input type="radio" name="quizType" value="GRADED" defaultChecked={quiz.type === "GRADED"} />
+                Graded quiz (must be launched from LMS)
+            </label>
+            <br />
+            <label className="radio">
+                <input type="radio" name="quizType" value="PRACTICE" defaultChecked={quiz.type === "PRACTICE"} />
+                Practice quiz (students can launch from wadayano dashboard or LMS)
+            </label>
+        </div>
 
-        <label className="label is-medium">Questions</label>
+        <label className="label is-medium" style={{marginTop: "0.4rem"}}>Questions</label>
         {quiz.questions.length > 0 && questionScrubber}
         <br />
 

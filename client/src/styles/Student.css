@@ -11,6 +11,12 @@ input[type=checkbox] {
     bottom: 1px;
 }
 
+input[type=radio] {
+    vertical-align: middle!important;
+    margin-top: -0.2rem;
+    margin-right: 0.5rem;
+}
+
 /* Hide firefox dotted focus on buttons */
 button::-moz-focus-inner { 
     border: 0; 
