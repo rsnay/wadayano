@@ -214,9 +214,9 @@ class QuizReview extends Component {
     // If postSucceeded is null, then it was not a graded attempt
     const isGraded = (quizAttempt.postSucceeded !== null);
     const gradePostMessage = isGraded && (quizAttempt.postSucceeded ?
-            <span className="notification is-success is-pulled-right">Score was posted successfully.</span>
+            <span className="notification is-success is-inline-block">Score was posted successfully.</span>
         :
-            <span className="notification is-danger is-pulled-right">There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.</span>
+            <span className="notification is-danger is-inline-block">There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.</span>
         );
 
     return (
@@ -226,10 +226,8 @@ class QuizReview extends Component {
                     <h2 className="subtitle is-2">Score: {formattedScore}</h2>
                     <span><img src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem"}} /> <h2 className="subtitle is-2">: {wadayano}%</h2> <p> {quizConfidenceText} </p></span>
                 </div>
-                <div className="column">
-                    {gradePostMessage}
-                </div>
             </div>
+            {gradePostMessage}
             <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
             {conceptConfidences.map((conceptConfidence, index) => 
                 <div className="tile is-4 is-parent" key={conceptConfidence.id}>
