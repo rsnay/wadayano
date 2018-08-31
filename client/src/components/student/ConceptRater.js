@@ -76,7 +76,11 @@ class ConceptRater extends Component {
 
         return (
             <div>
-                <p className="notification">This quiz includes the following topics.<br />How confident are you in your mastery of each? (1 = least confident; 5 = most confident)</p>
+                <p className="notification">
+                    This quiz includes the following topics.<br />
+                    How confident are you in your mastery of each?<br />
+                    1 = least confident; 5 = most confident
+                </p>
                 {concepts}
                 <br />
                 {this.state.ratings.length === this.props.concepts.length && submitButton}
