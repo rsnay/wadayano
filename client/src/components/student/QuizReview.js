@@ -85,12 +85,12 @@ class QuizReview extends Component {
             compare = confident - correct;
             switch(compare){
                 case -1:
-                    quizOverC += 1;
+                    quizUnderC += 1;
                     break;
                 case 0:
                     break;
                 case 1:
-                    quizUnderC += 1;
+                quizOverC += 1;
                     break;
             } 
         }
@@ -155,9 +155,13 @@ class QuizReview extends Component {
                     
                     if(questionAttempt.isConfident){
                         confNum = 1;
+                    } else {
+                        confNum = 0;
                     }
                     if(questionAttempt.isCorrect){
                         corNum = 1;
+                    } else {
+                        corNum = 0;
                     }
                     var compare = confNum - corNum; //get over/under/accurate confidence for single concept
                     console.log(compare);
@@ -181,8 +185,12 @@ class QuizReview extends Component {
             conceptConfidences[i].conceptScore = (correct/conceptConfidences[i].questionCnt)*100; //individual concept score
             conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
             conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
-            
-            if(conceptConfidences[i].conceptScore > 90){
+            var conceptCorrectPercent;
+            conceptCorrectPercent = (conceptConfidences[i].correctQuestions/conceptConfidences[i].questionCnt)*100;
+            console.log(conceptConfidences[i].correctQuestions);
+            console.log(conceptConfidences[i].questionCnt);
+            console.log(conceptCorrectPercent);
+            if(conceptCorrectPercent > 90){
                 conceptConfidences[i].confidenceText = "🧘 accurate";
             } else if(conceptConfidences[i].overCQuestions === conceptConfidences[i].underCQuestions){
                 conceptConfidences[i].confidenceText = "🤷‍ mixed";
@@ -203,8 +211,8 @@ class QuizReview extends Component {
             this.setState({concept: concept});
             var conceptQuestions = [];
             var questionAttempt;
-            console.log("this");
-            console.log(quizAttempt);
+            //console.log("this");
+            //console.log(quizAttempt);
             for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
                 questionAttempt = quizAttempt.questionAttempts[i];
                 if(questionAttempt.question.concept === concept){
