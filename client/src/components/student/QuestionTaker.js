@@ -93,11 +93,8 @@ class QuestionTaker extends Component {
         </div>
     );
 
-    let options = questionOptions.map((option, index) => {
-        // Hide empty options
-        if (option.text.trim() === '') {
-            return null;
-        }
+    // Hide empty options
+    let options = questionOptions.filter(option => option.text.trim() !== '').map((option, index) => {
         return (<div className="columns is-mobile question-option-container" key={option.id}
             onClick={() => {
                 this.setState({ selectedOption: option })
