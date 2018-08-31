@@ -114,7 +114,6 @@ class QuestionTaker extends Component {
     let confidenceSelector = (
         <ScrollIntoViewIfNeeded>
             <ConfidenceSelector
-                autoFocus
                 onChange={(confident) => { this.setState({ confident }) }}
                 confident={this.state.confident} />
         </ScrollIntoViewIfNeeded>
