@@ -23,7 +23,9 @@ class QuizReview extends Component {
             concepts: [],
             showReviewForConcept: null,
             conceptQuestions: [],
-            savedScrollPosition: null
+            savedScrollPosition: null,
+            confidenceText:null,
+            wadayano:null
         };
     
         // Pre-bind this function, to make adding it to input fields easier
@@ -35,7 +37,7 @@ class QuizReview extends Component {
     wadayanoScore(quizAttempt)
     {
         var i = 0;
-        var wadayano = 0;
+        //var wadayano = 0;
         var questionNum = 0;
         var correctConfidence = 0;
         
@@ -48,8 +50,10 @@ class QuizReview extends Component {
                 correctConfidence += 1;
             }
         }
-        wadayano = correctConfidence / questionNum * 100;
-        return wadayano;
+        if(this.state.wadayano === null){
+            this.setState({wadayano : (correctConfidence / questionNum * 100)});
+            this.confidenceText(this.state.wadayano,quizAttempt);
+        }
     }
 
     overallScore(quizAttempt){
@@ -64,8 +68,46 @@ class QuizReview extends Component {
         //console.log("percent:"+percent+"%");
     }
 
+    confidenceText(wadayano, quizAttempt){
+        var quizConfidenceText;
+        var quizOverC = 0;
+        var quizUnderC = 0;
+        for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
+            var correct = 0;
+            var confident = 0;
+            var compare = 0;
+            if(quizAttempt.questionAttempts[i].isConfident){
+                confident = 1;
+            }
+            if(quizAttempt.questionAttempts[i].isCorrect){
+                correct = 1;
+            }
+            compare = confident - correct;
+            switch(compare){
+                case -1:
+                    quizOverC += 1;
+                    break;
+                case 0:
+                    break;
+                case 1:
+                    quizUnderC += 1;
+                    break;
+            } 
+        }
+        if(wadayano > 90){
+            quizConfidenceText = "🧘 accurate";
+        } else if(quizOverC === quizUnderC){
+            quizConfidenceText = "🤷‍ mixed";
+        } else if(quizOverC > quizUnderC){
+            quizConfidenceText = "🤦‍ overConfident";
+        } else {
+            quizConfidenceText = "🙍‍ underConfidence";
+        }
+        this.setState({confidenceText:quizConfidenceText});
+    }
     //go through each concept and calculate the confidence bias/error
     sortConcepts(quizAttempt){
+        console.log("WHY!!!!!");
         //console.log("qa")
         //console.log(quizAttempt);
         var quizConcepts = quizAttempt.quiz.concepts;
@@ -73,6 +115,7 @@ class QuizReview extends Component {
         //console.log(quizConcepts);
         var conceptConfidences = [];
         for(var i=0;i<quizConcepts.length;i++){
+            
             //var confidence = 0;
             var correct = 0;
             conceptConfidences.push({
@@ -105,50 +148,48 @@ class QuizReview extends Component {
                     if(quizAttempt.questionAttempts[j].confidence){
                         conceptConfidences[i].confidence += 1;
                     }
-                
-                if(questionAttempt.isCorrect){
-                    correct+=1;
+    
+                    if(questionAttempt.isCorrect){
+                        correct+=1;
+                    }
+                    
+                    if(questionAttempt.isConfident){
+                        confNum = 1;
+                    }
+                    if(questionAttempt.isCorrect){
+                        corNum = 1;
+                    }
+                    var compare = confNum - corNum; //get over/under/accurate confidence for single concept
+                    console.log(compare);
+                    switch(compare){
+                        case -1:
+                            console.log("A?");
+                            conceptConfidences[i].underCQuestions += 1;
+                            break;
+                        case 0:
+                            console.log("B?");
+                            conceptConfidences[i].correctQuestions += 1;
+                            break;
+                        case 1:
+                            console.log("C?");
+                            conceptConfidences[i].overCQuestions += 1;
+                            break;
+                    }  
                 }
-                
-                if(questionAttempt.isConfident){
-                    confNum = 1;
-                }
-                if(questionAttempt.isCorrect){
-                    corNum = 1;
-                }
-                var compare = confNum - corNum; //get over/under/accurate confidence for single concept
-                console.log(compare);
-                switch(compare){
-                    case -1:
-                        console.log("A?");
-                        conceptConfidences[i].underCQuestions += 1;
-                        break;
-                    case 0:
-                        console.log("B?");
-                        conceptConfidences[i].correctQuestions += 1;
-                        break;
-                    case 1:
-                        console.log("C?");
-                        conceptConfidences[i].overCQuestions += 1;
-                        break;
-                }  
             }
-            }
-                conceptConfidences[i].conceptScore = (correct/conceptConfidences[i].questionCnt)*100;
-                conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
-                conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
-            if(conceptConfidences[i].correctQuestions > conceptConfidences[i].underCQuestions){
-                if(conceptConfidences[i].correctQuestions > conceptConfidences[i].overCQuestions){
-                    conceptConfidences[i].confidenceText = "accurate";
-                } else {
-                    conceptConfidences[i].confidenceText = "overConfident";
-                }
+            //
+            conceptConfidences[i].conceptScore = (correct/conceptConfidences[i].questionCnt)*100; //individual concept score
+            conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
+            conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
+            
+            if(conceptConfidences[i].conceptScore > 90){
+                conceptConfidences[i].confidenceText = "🧘 accurate";
+            } else if(conceptConfidences[i].overCQuestions === conceptConfidences[i].underCQuestions){
+                conceptConfidences[i].confidenceText = "🤷‍ mixed";
+            } else if(conceptConfidences[i].overCQuestions > conceptConfidences[i].underCQuestions){
+                conceptConfidences[i].confidenceText = "🤦‍ overConfident";
             } else {
-                if(conceptConfidences[i].underCQuestions > conceptConfidences[i].overCQuestions){
-                    conceptConfidences[i].confidenceText = "underConfident";
-                } else {
-                    conceptConfidences[i].confidenceText = "overConfident";
-                }
+                conceptConfidences[i].confidenceText = "🙍‍ underConfidence";
             }
             console.log(conceptConfidences[i].confidenceText);
         }
@@ -158,19 +199,22 @@ class QuizReview extends Component {
     }
 
     selectReview(concept, quizAttempt){
-        this.setState({concept: concept});
-        var conceptQuestions = [];
-        var questionAttempt;
-        console.log("this");
-        console.log(quizAttempt);
-        for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
-            questionAttempt = quizAttempt.questionAttempts[i];
-            if(questionAttempt.question.concept === concept){
-                conceptQuestions.push(questionAttempt);
+        if(this.state.concept === null){
+            this.setState({concept: concept});
+            var conceptQuestions = [];
+            var questionAttempt;
+            console.log("this");
+            console.log(quizAttempt);
+            for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
+                questionAttempt = quizAttempt.questionAttempts[i];
+                if(questionAttempt.question.concept === concept){
+                    conceptQuestions.push(questionAttempt);
+                }
             }
+            this.setState({conceptQuestions: conceptQuestions, showReviewForConcept: concept});
+        } else {
+            this.setState({concept:null,conceptQuestions: [],showReviewForConcept: null});
         }
-        this.setState({conceptQuestions: conceptQuestions})
-        this.setState({showReviewForConcept: concept});
         //conceptQuestions: [],
     }
 
@@ -192,15 +236,8 @@ class QuizReview extends Component {
     
     //console.log(quizAttempt.questionAttempts[0].question.title);
 
-    var wadayano = this.wadayanoScore(quizAttempt);
-    var quizConfidenceText;
-    if(wadayano == -1){
-        quizConfidenceText = "🙍‍ underConfidence";
-    } else if(wadayano == 0){
-        quizConfidenceText = "🧘 accurate";
-    } else {
-        quizConfidenceText = "🤦‍ overConfident";
-    }
+    this.wadayanoScore(quizAttempt);
+
     //this.sortConcepts(quizAttempt);
     //this.overallScore(quizAttempt);
     
@@ -224,7 +261,8 @@ class QuizReview extends Component {
             <div className="columns">
                 <div className="column">
                     <h2 className="subtitle is-2">Score: {formattedScore}</h2>
-                    <span><img src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem"}} /> <h2 className="subtitle is-2">: {wadayano}%</h2> <p> {quizConfidenceText} </p></span>
+                    <span><img src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem"}} />&nbsp;
+                    <h2 className="subtitle is-2">: {this.state.wadayano}%</h2>&nbsp;<h1> {this.state.confidenceText} </h1></span>
                 </div>
             </div>
             {gradePostMessage}
@@ -236,13 +274,13 @@ class QuizReview extends Component {
                             {conceptConfidence.concept}
                         </p>
                         <p>
-                        # of Questions: {conceptConfidence.questionCnt}
+                            # of Questions: {conceptConfidence.questionCnt}
                         </p>
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}%
                         </p>
                         <div className="content">
-                            <span className="icon"><i className="fas fa-thumbs-up"></i></span>&nbsp; Confidence: {conceptConfidence.confidence}
+                            <span className="icon"><i className="fas fa-thumbs-up"></i></span>&nbsp; Confidence: {conceptConfidence.confidence}/5
                             <br/>({conceptConfidence.confidenceText})
                         </div>
                         <div id={conceptConfidence.concept+ "review"}></div>
@@ -250,12 +288,13 @@ class QuizReview extends Component {
                             <span className="concept-questions-list" id={"questionReview"+this.state.concept}>
                             &nbsp; Questions about {this.state.concept}: &nbsp;
                             {this.state.conceptQuestions.map(conceptQuestion => (
-                                <QuestionReview questionAttempt={conceptQuestion} question={conceptQuestion.question} />
+                                <QuestionReview id={conceptQuestion.id} questionAttempt={conceptQuestion} question={conceptQuestion.question} />
                             ))}
+                            <br/>
                             </span>
                         }
                         <footer className="">
-                            <button className="button is-primary is-block" style={{width: "100%"}} onClick = {this.selectReview.bind(null,conceptConfidence.concept, quizAttempt)}>Review Concept</button>
+                            <button className="button is-primary is-block" style={{width: "100%"}} onClick = {() => this.selectReview.bind(null,conceptConfidence.concept, quizAttempt)}>Review Concept</button>
                         </footer>
                     </div>
                 </div>
