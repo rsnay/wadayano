@@ -199,7 +199,7 @@ class QuizReview extends Component {
     }
 
     selectReview(concept, quizAttempt){
-        if(this.state.concept === null){
+        if(this.state.concept !== concept){
             this.setState({concept: concept});
             var conceptQuestions = [];
             var questionAttempt;
@@ -294,7 +294,7 @@ class QuizReview extends Component {
                             </span>
                         }
                         <footer className="">
-                            <button className="button is-primary is-block" style={{width: "100%"}} onClick = {() => this.selectReview.bind(null,conceptConfidence.concept, quizAttempt)}>Review Concept</button>
+                            <button className="button is-primary is-block" style={{width: "100%"}} onClick = {this.selectReview.bind(null,conceptConfidence.concept, quizAttempt)}>Review Concept</button>
                         </footer>
                     </div>
                 </div>
