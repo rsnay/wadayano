@@ -231,11 +231,11 @@ export class QuizEditor extends Component {
 
     const questionScrubber = (
         <div id="question-navbar" className="question-navbar">
-            <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Go to:</span>
+            <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Jump to Question:</span>
             {quiz.questions.map((question, index) => (
                 <button key={question.id} onClick={() => this.scrollToQuestion(question)} className="question-navbar-item button is-text">{index + 1}</button>
             ))}
-            <button className="button is-text question-navbar-item" onClick={() => this.addQuestion(quiz)}>
+            <button className="button is-text question-navbar-item" title="Add Question" onClick={() => this.addQuestion(quiz)}>
                 <span className="icon"><i className="fas fa-plus"></i></span>
             </button>
         </div>
