@@ -17,6 +17,9 @@ export class QuizEditor extends Component {
             isLoading: false,
             concepts: [],
             showConceptsForQuestion: null,
+            // Used for scrolling to a new question where position is unknown before added
+            shouldScrollToQuestionId: null,
+            // Used for scrolling back to the same page position, but not to top of a specific question
             savedScrollPosition: null
         };
     
@@ -27,14 +30,17 @@ export class QuizEditor extends Component {
 
     componentWillReceiveProps(nextProps) {
         // Workaround for no callback after apollo query finishes loading.
-        if (nextProps.quizQuery && !nextProps.quizQuery.loading && this.state.savedScrollPosition !== null) {
-            // If a scroll position was saved before, go back to it
-            console.log(this.state.savedScrollPosition);
-            window.setTimeout(() => {
-                window.scrollTo(0, this.state.savedScrollPosition)
-                console.log("scrolling to ", this.state.savedScrollPosition, document.body.scrollHeight);
-                this.setState({ savedScrollPosition: null });
-            }, 100);
+        if (nextProps.quizQuery && !nextProps.quizQuery.loading) {
+            if (this.state.savedScrollPosition !== null) {
+                // If a scroll position was saved before, go back to it
+                window.setTimeout(() => {
+                    window.scrollTo(0, this.state.savedScrollPosition)
+                    this.setState({ savedScrollPosition: null });
+                }, 100);
+            } else if (this.state.shouldScrollToQuestionId !== null) {
+                // Or scroll to a specific question id
+                window.setTimeout(() => this.scrollToQuestionId(this.state.shouldScrollToQuestionId), 50);
+            }
         }
     }
 
@@ -146,17 +152,17 @@ export class QuizEditor extends Component {
     }
 
     async addQuestion(quiz) {
-        // Scroll to bottom of page after adding new question
-        // TODO magic number is approximate height of the new question
-        const savedScrollPosition = document.documentElement.scrollHeight + 640;
+        // Add new question
         this.setState({ isLoading: true });
         await this.saveQuiz(quiz, false);
-        await this.props.addQuestionMutation({
+        const result = await this.props.addQuestionMutation({
             variables:{
                 id: this.props.match.params.quizId
             }
         });
-        this.setState({ savedScrollPosition });
+        // Scroll to new question after quiz reloads
+        const newQuestionId = result.data.addQuestion.questions[result.data.addQuestion.questions.length - 1].id;
+        this.setState({ shouldScrollToQuestionId: newQuestionId });
         this.props.quizQuery.refetch();
         this.setState({ isLoading: false });
     }
@@ -182,7 +188,6 @@ export class QuizEditor extends Component {
         quiz.course.quizzes.forEach(quiz => {
             allConcepts = allConcepts.concat(quiz.concepts);
         });
-        console.log(quiz);
         // Add in concepts that have been added in the current editing session
         quiz.questions.forEach(q => {
             // Exclude current question
@@ -208,12 +213,15 @@ export class QuizEditor extends Component {
     }
 
     // Scroll to a particular question, taking into account the sticky question navbar
-    scrollToQuestion(question) {
+    scrollToQuestionId(questionId) {
         // Scroll to question
-        document.getElementById('container' + question.id).scrollIntoView(true);
-        // Scroll up to account for sticky question navbar
-        const headerHeight = document.getElementById('question-navbar').offsetHeight;
-        window.scrollTo(0, window.scrollY - headerHeight);
+        document.getElementById('container' + questionId).scrollIntoView(true);
+        // Scroll up to account for sticky question navbar, if not at bottom of page already
+        // https://stackoverflow.com/a/44422472/702643
+        if ((window.innerHeight + Math.ceil(window.pageYOffset)) < document.body.offsetHeight) {
+            const headerHeight = document.getElementById('question-navbar').offsetHeight;
+            window.scrollTo(0, window.scrollY - headerHeight);
+        }
     }
 
 
@@ -233,7 +241,7 @@ export class QuizEditor extends Component {
         <div id="question-navbar" className="question-navbar">
             <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Jump to Question:</span>
             {quiz.questions.map((question, index) => (
-                <button key={question.id} onClick={() => this.scrollToQuestion(question)} className="question-navbar-item button is-text">{index + 1}</button>
+                <button key={question.id} onClick={() => this.scrollToQuestionId(question.id)} className="question-navbar-item button is-text">{index + 1}</button>
             ))}
             <button className="button is-text question-navbar-item" title="Add Question" onClick={() => this.addQuestion(quiz)}>
                 <span className="icon"><i className="fas fa-plus"></i></span>
@@ -424,7 +432,7 @@ mutation addQuestionMutation($id:ID!)
         addQuestion(
             id:$id
         ){
-            title
+            questions { id }
         }
     }`
 
