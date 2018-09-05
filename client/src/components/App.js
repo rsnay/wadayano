@@ -26,6 +26,7 @@ import SurveyTaker from './student/SurveyTaker';
 import QuizReviewPage from './student/QuizReviewPage';
 
 import PageNotFound from './shared/PageNotFound';
+import QuestionImporter from './instructor/QuestionImporter';
 
 class App extends Component {
   render() {
@@ -42,6 +43,7 @@ class App extends Component {
           <Route exact path="/instructor" component={CourseList} />
           <Route exact path="/instructor/courses" component={CourseList} />
           <Route path="/instructor/course/:courseId" component={CourseDetails} />
+          <Route path="/instructor/quiz/:quizId/import-questions" component={QuestionImporter} />
           <Route path="/instructor/quiz/:quizId" component={QuizEditor} />
           <Route path="/instructor/survey/edit/:courseId" component={SurveyEditor} />
           <Route path="/instructor/survey/results/:courseId" component={SurveyResults} />

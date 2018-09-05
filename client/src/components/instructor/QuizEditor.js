@@ -281,6 +281,8 @@ export class QuizEditor extends Component {
         </div>
 
         <label className="label is-medium" style={{marginTop: "0.4rem"}}>Questions</label>
+        <Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} className="button">Import From Other Quizzes</Link>
+        <br /><br />
         {quiz.questions.length > 0 && questionScrubber}
         <br />
 
