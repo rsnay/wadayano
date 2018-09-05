@@ -173,6 +173,41 @@ function deleteQuestion(root, args, context, info) {
     }, info)
 }
 
+async function importQuestions(root, args, context, info) {
+    //importQuestions(quizId: ID!, questionIds: [ID!]!): Quiz!
+    instructorCheck(context);
+    // TODO make sure the quiz belongs to the logged-in instructor
+
+    let newQuestions = [];
+
+    for (let i = 0; i < args.questionIds.length; i++) {
+        // TODO optimize so we don’t query separately for each question
+        const question = await context.db.query.question({
+            where: { id: args.questionIds[i] }
+        }, `{ id, prompt, concept, options { isCorrect, text } }`);
+
+        newQuestions.push({
+            prompt: question.prompt,
+            concept: question.concept,
+            options: {
+                create: question.options
+            }
+        });
+    }
+
+    // Create new copied questions in the quiz
+    return context.db.mutation.updateQuiz({
+        data: {
+            questions: {
+                create: newQuestions
+            }
+        },
+        where:{
+            id: args.quizId
+        }
+    },info);
+}
+
 async function sendInstructorCourseInvite(root, args, context, info) {
     // Check that user is an instructor and belongs to this course
     const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
@@ -680,6 +715,7 @@ module.exports = {
     deleteQuiz,
     addQuestion,
     deleteQuestion,
+    importQuestions,
     updateSurvey,
     sendInstructorCourseInvite,
     removeInstructorFromCourse,

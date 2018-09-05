@@ -23,6 +23,7 @@ type Mutation {
   addQuestion(id:ID): Quiz!
   updateQuestion(id:ID, prompt:String): Question!
   deleteQuestion(id:ID): Question!
+  importQuestions(quizId: ID!, questionIds: [ID!]!): Quiz!
   updateOption(id:ID, text:String!, isCorrect:Boolean): Option!
   updateSurvey(courseId: ID!, survey: Json!): Course!
   sendInstructorCourseInvite(courseId: ID!, email: String!): String!
