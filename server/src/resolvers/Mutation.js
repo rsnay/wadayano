@@ -97,7 +97,7 @@ async function createQuiz (root, args, context, info) {
 
     return context.db.mutation.createQuiz({
         data: {
-            title: "",
+            title: "Untitled Quiz",
             type: "GRADED",
             course: { connect: { id: args.courseId } }
         }
