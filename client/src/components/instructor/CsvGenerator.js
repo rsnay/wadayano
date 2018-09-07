@@ -1,5 +1,5 @@
 
-// From https://github.com/AlexLibs/client-side-csv-generator
+// Modified from https://github.com/AlexLibs/client-side-csv-generator
 /*
 MIT License
 
@@ -34,7 +34,7 @@ export default function CsvGenerator(dataArray, fileName, separator, addQuotes) 
         this.separator = '"' + this.separator + '"';
     }
 
-    this.getDownloadLink = function () {
+    this.getRawCsv = function() {
         var separator = this.separator;
         var addQuotes = this.addQuotes;
 
@@ -48,8 +48,12 @@ export default function CsvGenerator(dataArray, fileName, separator, addQuotes) 
             return rowData;
         });
 
+        return rows.join('\n');
+    }
+
+    this.getDownloadLink = function () {
+        var data = this.getRawCsv();
         var type = 'data:text/csv;charset=utf-8';
-        var data = rows.join('\n');
 
         if (typeof btoa === 'function') {
             type += ';base64';
@@ -76,12 +80,19 @@ export default function CsvGenerator(dataArray, fileName, separator, addQuotes) 
 
     // call with removeAfterDownload = true if you want the link to be removed after downloading
     this.download = function (removeAfterDownload) {
-        var linkElement = this.getLinkElement();
-        linkElement.style.display = 'none';
-        document.body.appendChild(linkElement);
-        linkElement.click();
-        if (removeAfterDownload) {
-            document.body.removeChild(linkElement);
+        // https://stackoverflow.com/a/41914124/702643
+        // IE-specific download method
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            var blob = new Blob([this.getRawCsv()]);
+            window.navigator.msSaveBlob(blob, this.fileName);
+        } else {
+            var linkElement = this.getLinkElement();
+            linkElement.style.display = 'none';
+            document.body.appendChild(linkElement);
+            linkElement.click();
+            if (removeAfterDownload) {
+                document.body.removeChild(linkElement);
+            }
         }
     };
 }

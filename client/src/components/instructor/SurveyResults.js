@@ -57,7 +57,7 @@ class SurveyResults extends Component {
         });
 
         // Download the generated CSV
-        let csvGenerator = new CsvGenerator(rows, 'course_survey_results.csv');
+        let csvGenerator = new CsvGenerator(rows, 'course_survey_results.csv', ',', true);
         csvGenerator.download(true);
     }
 
