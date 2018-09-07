@@ -85,25 +85,16 @@ class QuestionImporter extends Component {
         const quiz = this.props.quizQuery.quiz;
         const course = quiz.course;
         const selectedIds = this.state.questionIds;
-        // Exclude the destination quiz from the source list
-        const quizzes = course.quizzes.filter(q => q.id !== quiz.id);
+        // Exclude the destination quiz and empty quizzes from the source list
+        const quizzes = course.quizzes.filter(q => (q.id !== quiz.id) && (q.questions.length > 0));
 
-        return (
-            <section className="section">
-              <div className="container">
-
-                <nav className="breadcrumb" aria-label="breadcrumbs">
-                    <ul>
-                        <li><Link to="/instructor/courses">Course List</Link></li>
-                        <li><Link to={"/instructor/course/" + quiz.course.id}>{quiz.course.title}</Link></li>
-                        <li><Link to={"/instructor/quiz/" + quiz.id} aria-current="page">{quiz.title}</Link></li>
-                        <li className="is-active"><Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} aria-current="page">Import Questions</Link></li>
-                    </ul>
-                </nav>
-
-                <h4 className="title is-4">Select questions from other quizzes in this course to copy to “{quiz.title}”</h4>
-
-                {quizzes.map(quiz => (
+        let quizzesList;
+        // If there are no other non-empty quizzes, alert the instructor
+        if (quizzes.length === 0) {
+            quizzesList = (<p className="notification is-light">Nothing to see here! There are no other non-empty quizzes in this course to import questions from.</p>);
+        } else {
+            // Otherwise show a list of quizzes and their questions
+            quizzesList = quizzes.map(quiz => (
                 <table key={quiz.id} className="table is-striped is-fullwidth">
                     <thead>
                         <tr className="sticky-header">
@@ -143,8 +134,25 @@ class QuestionImporter extends Component {
                         })}
                     </tbody>
                 </table>
+            ));
+        }
 
-                ))}
+        return (
+            <section className="section">
+              <div className="container">
+
+                <nav className="breadcrumb" aria-label="breadcrumbs">
+                    <ul>
+                        <li><Link to="/instructor/courses">Course List</Link></li>
+                        <li><Link to={"/instructor/course/" + quiz.course.id}>{quiz.course.title}</Link></li>
+                        <li><Link to={"/instructor/quiz/" + quiz.id} aria-current="page">{quiz.title}</Link></li>
+                        <li className="is-active"><Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} aria-current="page">Import Questions</Link></li>
+                    </ul>
+                </nav>
+
+                <h4 className="title is-4">Select questions from other quizzes in this course to copy to “{quiz.title}”</h4>
+
+                {quizzesList}
 
                 <br /> <br />
                 <div style={{position: "fixed", bottom: 0, backgroundColor: "white", padding: "1rem", zIndex: 20, width: "100%", borderTop: "solid #f3f3f3 1px"}}>
