@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import ShowMore from 'react-show-more';
 
 import { withAuthCheck } from '../shared/AuthCheck';
+import CsvGenerator from './CsvGenerator';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
@@ -15,6 +16,49 @@ class SurveyResults extends Component {
 
         this.state = {
         };
+    }
+
+    _downloadCsv() {
+        // Check that data has loaded
+        if (!this.props.courseQuery || this.props.courseQuery.loading || this.props.courseQuery.error) {
+            alert('The survey data has not loaded. Please refresh the page and try again.');
+            return;
+        }
+
+        const course = this.props.courseQuery.course;
+        const students = course.students;
+        let rows = [];
+
+        // Header row with survey questions
+        let headerRow = ['Student Name'];
+        headerRow = headerRow.concat(course.survey.questions.map(q => q.prompt));
+        rows.push(headerRow);
+
+        // Add row for each student (this is largely duplicated from the table display)
+        students.forEach(student => {
+            let studentRow = [];
+            studentRow.push(student.name);
+            // Determine if student took this course’s survey
+            let result = null;
+            try {
+                result = student.surveyResults.filter(r => r.course.id === course.id)[0];
+            } catch (error) { }
+            // Output answer for each question, if survey was taken
+            if (result) {
+                studentRow = studentRow.concat(course.survey.questions.map(q => {
+                    if (result.answers[q.index]) {
+                        return q.options.filter(o => o.index === result.answers[q.index])[0].text
+                    } else {
+                        return '';
+                    }
+                }));
+            }
+            rows.push(studentRow);
+        });
+
+        // Download the generated CSV
+        let csvGenerator = new CsvGenerator(rows, 'course_survey_results.csv');
+        csvGenerator.download(true);
     }
 
     render() {
@@ -94,7 +138,15 @@ class SurveyResults extends Component {
                             </ul>
                         </nav>
 
-                        <h3 className="title is-3">Survey Results</h3>
+                        <h3 className="title is-3 is-inline">Survey Results</h3>
+
+                        {students.length > 0 && <button className="button is-light is-pulled-right"
+                            onClick={() => this._downloadCsv() }>
+                            <span className="icon">
+                                <i className="fas fa-download"></i>
+                            </span>
+                            <span>Download Results as CSV</span>
+                        </button>}
                     </div>
                 </section>
 
