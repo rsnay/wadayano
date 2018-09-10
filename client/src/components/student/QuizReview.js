@@ -405,7 +405,6 @@ const QUIZ_ATTEMPT_QUERY = gql`
         }
     }
 `
-
 export default graphql(QUIZ_ATTEMPT_QUERY, {
     name: 'query',
     options: (props) => {
