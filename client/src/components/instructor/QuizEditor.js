@@ -9,6 +9,8 @@ import { ALPHABET } from '../../constants';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
+import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
+
 export class QuizEditor extends Component {
     constructor(props) {
         super(props);
@@ -294,6 +296,7 @@ export class QuizEditor extends Component {
 
         {quiz.questions.map((question, questionIndex)=>
         <div className="panel" key={question.id} id={"container" + question.id}>
+            <CollapsibleQuestionEditor questionId={question.id} defaultPrompt={question.prompt} defaultExpanded={false} />
             <p className="panel-heading">
                 Question {questionIndex + 1}
                 <a className="is-pulled-right button is-small">

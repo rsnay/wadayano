@@ -33,7 +33,7 @@ const defaultOptions = {
       errorPolicy: 'all',
     },
     query: {
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'network',
       errorPolicy: 'all',
     },
     mutate: {
