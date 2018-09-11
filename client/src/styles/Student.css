@@ -54,6 +54,11 @@ button::-moz-focus-inner {
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+#questionNum {
+    font-weight: normal;
+    font-size:24px;
+}
+
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;

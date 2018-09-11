@@ -298,16 +298,13 @@ class QuizReview extends Component {
                 <div className="tile is-4 is-parent" key={conceptConfidence.id}>
                     <div className="tile is-child box">
                         <p className="title">
-                            {conceptConfidence.concept}
-                        </p>
-                        <p>
-                            # of Questions: {conceptConfidence.questionCnt}
+                            {conceptConfidence.concept} <span id="questionNum" >{conceptConfidence.questionCnt} Questions</span>
                         </p>
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}%
                         </p>
                         <div className="content">
-                            <span className="icon"><i className="fas fa-thumbs-up"></i></span>&nbsp; Confidence: {conceptConfidence.confidence}/5
+                            <span className="icon"><i className="fas fa-thumbs-up"></i> <i className="fas fa-thumbs-down"></i></span>&nbsp; Confidence: {conceptConfidence.confidence}/5
                             <br/><span id="emoji">{conceptConfidence.confidenceEmoji}</span>({conceptConfidence.confidenceText})
                         </div>
                         <div id={conceptConfidence.concept+ "review"}></div>
