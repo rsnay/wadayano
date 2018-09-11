@@ -5,15 +5,16 @@ import '../styles/BulmaConfig.css';
 
 import Header from './shared/Header';
 import { Switch, Route } from 'react-router-dom';
+import Loadable from 'react-loadable';
 
 import Welcome from './shared/Welcome';
 import Login from './instructor/Login';
 import ResetPassword from './instructor/ResetPassword';
 import FeedbackForm from './shared/FeedbackForm';
+import LoadingBox from './shared/LoadingBox';
 
 import CourseList from './instructor/CourseList';
 import CourseDetails from './instructor/CourseDetails';
-import QuizEditor from './instructor/QuizEditor';
 import SurveyEditor from './instructor/SurveyEditor';
 import SurveyResults from './instructor/SurveyResults';
 import ProfileEditor from './instructor/ProfileEditor';
@@ -27,6 +28,12 @@ import QuizReviewPage from './student/QuizReviewPage';
 
 import PageNotFound from './shared/PageNotFound';
 import QuestionImporter from './instructor/QuestionImporter';
+
+// Load QuizEditor separately, since it has large dependencies not needed for the rest of the app
+const QuizEditor = Loadable({
+  loader: () => import('./instructor/QuizEditor'),
+  loading: LoadingBox,
+});
 
 class App extends Component {
   render() {
