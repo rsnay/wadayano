@@ -162,6 +162,16 @@ function deleteQuiz(root, args, context, info) {
     }, info)
 }
 
+function updateQuestion(root, args, context, info) {
+    instructorCheck(context);
+    // TODO make sure the quiz belongs to the logged-in instructor
+
+    return context.db.mutation.updateQuestion({
+        data: args.data,
+        where: { id: args.id }
+    }, info)   
+}
+
 function deleteQuestion(root, args, context, info) {
     instructorCheck(context);
     // TODO make sure the quiz belongs to the logged-in instructor
@@ -715,6 +725,7 @@ module.exports = {
     deleteQuiz,
     addQuestion,
     deleteQuestion,
+    updateQuestion,
     importQuestions,
     updateSurvey,
     sendInstructorCourseInvite,

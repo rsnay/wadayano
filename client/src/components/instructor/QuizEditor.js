@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import { withAuthCheck } from '../shared/AuthCheck';
 import { ALPHABET } from '../../constants';
+import { reorder } from '../../utils';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
@@ -17,6 +19,15 @@ export class QuizEditor extends Component {
     
         this.state = {
             isLoading: false,
+            // Questions are stored in state once query loads, so that they can be reordered (query loads into read-only prop). Object 
+            questions: new Map(),
+            orderedQuestionIds: [],
+            // TODO
+            items: [
+                {id: 'item1', content: 'Item 1'},
+                {id: 'item2', content: 'Item 2'},
+                {id: 'item3', content: 'Item 3'},
+            ],
             concepts: [],
             showConceptsForQuestion: null,
             // Used for scrolling to a new question where position is unknown before added
@@ -28,11 +39,25 @@ export class QuizEditor extends Component {
         // Pre-bind this function, to make adding it to input fields easier
         this.saveQuiz = this.saveQuiz.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
+        this._onQuestionListSortEnd = this._onQuestionListSortEnd.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         // Workaround for no callback after apollo query finishes loading.
         if (nextProps.quizQuery && !nextProps.quizQuery.loading) {
+            // Update order of question IDs
+            const quiz = nextProps.quizQuery.quiz;
+            // Tweak structure so drag-and-drop reorder is easier
+            // Map of questions: key=questionId, value=question
+            // Array of ordered question IDs that will be changed on reorder
+            let questions = new Map();
+            let orderedQuestionIds = [];
+            quiz.questions.forEach(q => {
+                questions.set(q.id, q);
+                orderedQuestionIds.push(q.id);
+            });
+            this.setState({ questions, orderedQuestionIds });
+            // Deal with scroll position
             if (this.state.savedScrollPosition !== null) {
                 // If a scroll position was saved before, go back to it
                 window.setTimeout(() => {
@@ -226,6 +251,25 @@ export class QuizEditor extends Component {
         }
     }
 
+    // Called when a question is reordered
+    _onQuestionListSortEnd(result) {
+        // Dropped outside the list
+        if (!result.destination) {
+          return;
+        }
+    
+        const orderedQuestionIds = reorder(
+          this.state.orderedQuestionIds,
+          result.source.index,
+          result.destination.index
+        );
+    
+        this.setState({
+          orderedQuestionIds,
+        });
+
+        alert('Saving the question order is not yet implemented.');
+    }
 
   render() {
 
@@ -248,7 +292,37 @@ export class QuizEditor extends Component {
             <button className="button is-text question-navbar-item" title="Add Question" onClick={() => this.addQuestion(quiz)}>
                 <span className="icon"><i className="fas fa-plus"></i></span>
             </button>
+            <div id="editor-toolbar"></div>
         </div>
+    );
+
+    const questionList = (
+    <DragDropContext onDragEnd={this._onQuestionListSortEnd}>
+        <Droppable droppableId="droppable">
+        {(provided, snapshot) => (
+            <div ref={provided.innerRef}>
+            {this.state.orderedQuestionIds.map((questionId, index) => (
+                <Draggable key={questionId} draggableId={questionId} index={index}>
+                {(provided, snapshot) => (
+                    <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    >
+                    {<CollapsibleQuestionEditor
+                        questionId={questionId}
+                        questionIndex={index}
+                        defaultPrompt={this.state.questions.get(questionId).prompt}
+                        defaultExpanded={false}
+                        dragHandleProps={provided.dragHandleProps} />}
+                    </div>
+                )}
+                </Draggable>
+            ))}
+            {provided.placeholder}
+            </div>
+        )}
+        </Droppable>
+    </DragDropContext>
     );
 
     return (
@@ -294,9 +368,11 @@ export class QuizEditor extends Component {
             </div>
         }
 
+        {questionList}
+        <hr />
+
         {quiz.questions.map((question, questionIndex)=>
         <div className="panel" key={question.id} id={"container" + question.id}>
-            <CollapsibleQuestionEditor questionId={question.id} defaultPrompt={question.prompt} defaultExpanded={false} />
             <p className="panel-heading">
                 Question {questionIndex + 1}
                 <a className="is-pulled-right button is-small">
