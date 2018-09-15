@@ -2,12 +2,18 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+// https://reactjs.org/docs/update.html
+import update from 'immutability-helper';
 
 import { withAuthCheck } from '../shared/AuthCheck';
 import { ALPHABET } from '../../constants';
+import { reorder } from '../../utils';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+
+import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
 
 export class QuizEditor extends Component {
     constructor(props) {
@@ -15,115 +21,46 @@ export class QuizEditor extends Component {
     
         this.state = {
             isLoading: false,
-            concepts: [],
-            showConceptsForQuestion: null,
-            // Used for scrolling to a new question where position is unknown before added
-            shouldScrollToQuestionId: null,
-            // Used for scrolling back to the same page position, but not to top of a specific question
-            savedScrollPosition: null
+            isAddingQuestion: false,
+            // Questions are stored in state once query loads, so that they can be reordered (otherwise, query just loads into read-only prop).
+            questions: new Map(),
+            orderedQuestionIds: [],
+            // Store a special flag for questions added during the editing session to auto-expand them
+            autoExpandQuestionIds: [],
         };
     
         // Pre-bind this function, to make adding it to input fields easier
         this.saveQuiz = this.saveQuiz.bind(this);
-        this.deleteQuestion = this.deleteQuestion.bind(this);
+        this.addQuestion = this.addQuestion.bind(this);
+        this.onQuestionListSortEnd = this.onQuestionListSortEnd.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         // Workaround for no callback after apollo query finishes loading.
         if (nextProps.quizQuery && !nextProps.quizQuery.loading) {
-            if (this.state.savedScrollPosition !== null) {
-                // If a scroll position was saved before, go back to it
-                window.setTimeout(() => {
-                    window.scrollTo(0, this.state.savedScrollPosition)
-                    this.setState({ savedScrollPosition: null });
-                }, 100);
-            } else if (this.state.shouldScrollToQuestionId !== null) {
-                // Or scroll to a specific question id
-                window.setTimeout(() => this.scrollToQuestionId(this.state.shouldScrollToQuestionId), 50);
-            }
+            // Update order of question IDs
+            const quiz = nextProps.quizQuery.quiz;
+            // Tweak structure so drag-and-drop reorder is easier
+            // Map of questions: key=questionId, value=question
+            // Array of ordered question IDs that will be changed on reorder
+            let questions = new Map();
+            let orderedQuestionIds = [];
+            quiz.questions.forEach(q => {
+                questions.set(q.id, q);
+                orderedQuestionIds.push(q.id);
+            });
+            this.setState({ questions, orderedQuestionIds });
         }
-    }
-
-    // Performs various checks on a given question (for before the quiz is saved)
-    // Returns true if valid, or a message describing why it’s invalid
-    validateQuestion(question) {
-        // Ensure the question has a non-empty concept
-        let concept = document.getElementById(('concept' + question.id)).value;
-        if (concept === null || concept.trim() === '') {
-            return 'Please enter a concept for this question';
-        }
-        // Ensure there are at least 2 non-empty options
-        let optionCount = 0;
-        let correctOptionEmpty = false;
-        question.options.forEach(option => {
-            const text = document.getElementById(option.id + 'text').value;
-            const isCorrect = document.getElementById(option.id + 'radio').checked;
-            const isEmpty = text === null || text.trim() === '';
-            if (!isEmpty) { optionCount++; }
-            // Ensure that the correct option is non-empty
-            if (isCorrect && isEmpty) { correctOptionEmpty = true; }
-        });
-        if (correctOptionEmpty) {
-            return 'The correct option must not be be blank';
-        }
-        if (optionCount < 2) {
-            return 'The quetion must have 2 or more non-blank options';
-        }
-        // Question is valid
-        return true;
     }
 
     async saveQuiz(quiz, refetch = true){
-        // Validate the questions in the quiz
-        for (let i = 0; i < quiz.questions.length; i++){
-            const valid = this.validateQuestion(quiz.questions[i]);
-            if (valid !== true) {
-                alert(`Please correct this error in question ${i + 1}: ${valid}`);
-                return;
-            }
-        }
-
         // Collect data to update in the quiz
         let quizData = {
             title: document.getElementById(quiz.id).value,
             type: Array.from(document.getElementsByName('quizType')).find(r => r.checked).value,
             // Updated questions will be added here
             questions: { update: [] },
-            // Concepts will be added here (QuizUpdateconceptsInput requires a set sub-property)
-            concepts: []
         };
-
-        // Get updated fields of each question
-        quiz.questions.forEach(question => {
-            // Prisma-specific syntax for nested update mutation
-            let updatedQuestion = {
-                where: { id: question.id },
-                data: {
-                    prompt: document.getElementById(question.id).value,
-                    concept: document.getElementById('concept' + question.id).value,
-                    options: { update: [] }
-                }
-            };
-            // Add concept to quiz concept list
-            quizData.concepts.push(document.getElementById('concept' + question.id).value);
-            // Get updated options for this question
-            question.options.forEach(option => {
-                let updatedOption = {
-                    where: { id: option.id },
-                    data: {
-                        text: document.getElementById(option.id + 'text').value,
-                        isCorrect: document.getElementById(option.id + 'radio').checked
-                    }
-                };
-                // Add updated option to question mutation
-                updatedQuestion.data.options.update.push(updatedOption);
-            });
-            // Add this updated question to main quiz mutation
-            quizData.questions.update.push(updatedQuestion);
-        });
-
-        // Remove duplicate concepts (a Set can’t have duplicates, so it will return only unique concepts)
-        quizData.concepts = Array.from(new Set(quizData.concepts));
 
         // Send the mutation
         await this.props.saveQuizMutation({
@@ -151,65 +88,44 @@ export class QuizEditor extends Component {
         this.props.history.push('/instructor/course/' + quiz.course.id);
     }
 
-    async addQuestion(quiz) {
-        // Add new question
-        this.setState({ isLoading: true });
-        await this.saveQuiz(quiz, false);
+    async addQuestion() {
+        if (this.state.isAddingQuestion) { return; }
+        this.setState({ isAddingQuestion: true });
+        console.log('adding questino');
+        // Send new question mutation
         const result = await this.props.addQuestionMutation({
             variables:{
                 id: this.props.match.params.quizId
             }
         });
-        // Scroll to new question after quiz reloads
+
         const newQuestionId = result.data.addQuestion.questions[result.data.addQuestion.questions.length - 1].id;
-        this.setState({ shouldScrollToQuestionId: newQuestionId });
-        this.props.quizQuery.refetch();
-        this.setState({ isLoading: false });
-    }
 
-    async deleteQuestion(question){
-        if (!window.confirm('Are you sure you want to delete this question? All students’ attempts for this question will also be deleted.')) { return; }
-        const savedScrollPosition = window.scrollY;
-        this.setState({ isLoading: true });
-        await this.saveQuiz(this.props.quizQuery.quiz, false);
-        await this.props.questionDeleteMutation({
-            variables:{
-                id: question.id
-            }
+        // Manually add new (empty) question to question Map and ordered ID array
+        // See immutability-helper syntax for adding to Map (array of [key, value] arrays)
+        const questions = update(this.state.questions, {
+            $add: [[newQuestionId, { id: newQuestionId, prompt: '' }]]
         });
-        this.setState({ savedScrollPosition });
-        this.props.quizQuery.refetch();
-        this.setState({ isLoading: false });
-    }
-
-    conceptFilter(quiz, question){
-        let allConcepts = [];
-        // Combine concepts from all quizzes in the course
-        quiz.course.quizzes.forEach(quiz => {
-            allConcepts = allConcepts.concat(quiz.concepts);
-        });
-        // Add in concepts that have been added in the current editing session
-        quiz.questions.forEach(q => {
-            // Exclude current question
-            if (q.id !== question.id) {
-                allConcepts.push(document.getElementById('concept' + q.id).value);
-            }
+        const orderedQuestionIds = update(this.state.orderedQuestionIds, {
+            $push: [newQuestionId]
         });
 
-        // Filter to current search term
-        let searchTerm = document.getElementById("concept"+question.id).value.toLowerCase();
-        let filteredConcepts = allConcepts.filter(concept => (concept.toLowerCase().includes(searchTerm) && concept !== ''));
+        // Auto-expand new questions. Store a separate flag for them
+        const autoExpandQuestionIds = update(this.state.autoExpandQuestionIds, {
+            $push: [newQuestionId]
+        });
 
-        // Remove duplicates
-        filteredConcepts = Array.from(new Set(filteredConcepts));
+        this.setState({
+            isAddingQuestion: false,
+            questions,
+            autoExpandQuestionIds,
+            orderedQuestionIds
+         });
 
-        this.setState({concepts: filteredConcepts, showConceptsForQuestion: question.id})
-    }
-
-    setConcept(questionId, str){
-        var e = document.getElementById("concept"+questionId);
-        this.setState({showConceptsForQuestion:null})
-        e.value = str;
+        // Scroll to new question after render and question load have hopefully finished
+        window.setTimeout(() => this.scrollToQuestionId(newQuestionId), 100);
+        window.setTimeout(() => this.scrollToQuestionId(newQuestionId), 400);
+        return false;
     }
 
     // Scroll to a particular question, taking into account the sticky question navbar
@@ -224,6 +140,40 @@ export class QuizEditor extends Component {
         }
     }
 
+    // Called when a question is reordered
+    onQuestionListSortEnd(result) {
+        // Dropped outside the list
+        if (!result.destination) {
+          return;
+        }
+    
+        const orderedQuestionIds = reorder(
+          this.state.orderedQuestionIds,
+          result.source.index,
+          result.destination.index
+        );
+    
+        this.setState({
+          orderedQuestionIds,
+        });
+
+        alert('Saving the question order is not yet implemented.');
+    }
+
+    // Called after a question is deleted (the delete mutation was already sent; we just need to remove from display)
+    onQuestionDelete(questionId) {
+        // This transition isn’t super great. Consider https://reactcommunity.org/react-transition-group/
+        document.getElementById('container' + questionId).classList.add('fade-opacity');
+        // After fade animation finishes, remove this question from the list of ordered question IDs, and it won’t be displayed
+        window.setTimeout(() => {
+            const index = this.state.orderedQuestionIds.indexOf(questionId);
+            if (index >= 0) {
+                const orderedQuestionIds = update(this.state.orderedQuestionIds, { $splice: [[index, 1]] });
+                this.setState({ orderedQuestionIds });
+            }
+        }, 300);
+    }
+
 
   render() {
 
@@ -234,20 +184,67 @@ export class QuizEditor extends Component {
     if (this.props.quizQuery && this.props.quizQuery.error) {
         return <ErrorBox><p>Couldn’t load quiz.</p></ErrorBox>;
     }
-    console.log(this.props);
-    let quiz = this.props.quizQuery.quiz;
 
-    const questionScrubber = (
-        <div id="question-navbar" className="question-navbar">
+    const questionNavbar = (
+        <div id="question-navbar" className="question-navbar no-select">
             <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Jump to Question:</span>
-            {quiz.questions.map((question, index) => (
-                <button key={question.id} onClick={() => this.scrollToQuestionId(question.id)} className="question-navbar-item button is-text">{index + 1}</button>
+            {this.state.orderedQuestionIds.map((questionId, index) => (
+                <button key={questionId} onClick={() => this.scrollToQuestionId(questionId)} className="question-navbar-item button is-text">{index + 1}</button>
             ))}
-            <button className="button is-text question-navbar-item" title="Add Question" onClick={() => this.addQuestion(quiz)}>
+            <button className={"button is-text question-navbar-item"+ (this.state.isAddingQuestion ? " is-loading" : "")} title="Add Question" onClick={this.addQuestion}>
                 <span className="icon"><i className="fas fa-plus"></i></span>
             </button>
+            <div id="editor-toolbar"></div>
         </div>
     );
+
+    const questionList = (
+    <DragDropContext onDragEnd={this.onQuestionListSortEnd}>
+        <Droppable droppableId="droppable">
+        {(provided, snapshot) => (
+            <div ref={provided.innerRef}>
+            {this.state.orderedQuestionIds.map((questionId, index) => (
+                <Draggable key={questionId} draggableId={questionId} index={index}>
+                {(provided, snapshot) => (
+                    <div
+                        id={"container" + questionId}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                    >
+                    {<CollapsibleQuestionEditor
+                        questionId={questionId}
+                        questionIndex={index}
+                        defaultPrompt={this.state.questions.get(questionId).prompt}
+                        defaultExpanded={(this.state.autoExpandQuestionIds.indexOf(questionId) > -1)}
+                        dragHandleProps={provided.dragHandleProps}
+                        onDelete={() => this.onQuestionDelete(questionId)} />}
+                    </div>
+                )}
+                </Draggable>
+            ))}
+            {provided.placeholder}
+            </div>
+        )}
+        </Droppable>
+    </DragDropContext>
+    );
+
+    const newQuestionButton = (
+        <div className="panel collapsible-question-editor no-select">
+            <p className="panel-heading is-flex">
+                <i style={{paddingLeft: "1rem"}}>New Question</i>
+                <span className="is-pulled-right is-flex collapsible-question-editor-button-group">
+                    <button className={"button" + (this.state.isAddingQuestion ? " is-loading" : "")} onClick={this.addQuestion}>
+                        <span className="icon"><i className="fas fa-plus"></i></span>
+                        <span>Add Question</span>
+                    </button>
+                </span>
+            </p>
+        </div>
+
+    )
+
+    let quiz = this.props.quizQuery.quiz;
 
     return (
         <section className="section">
@@ -279,11 +276,25 @@ export class QuizEditor extends Component {
                 Practice quiz (students can launch from wadayano dashboard or LMS)
             </label>
         </div>
+        <br />
+
+        <div className="field is-grouped">
+            <p className="control">
+                <button className="button is-danger" onClick={() => this.deleteQuiz(quiz)}>
+                Delete Quiz
+                </button>
+            </p>
+            <p className="control">
+                <button className="button is-link" onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz Info</button>
+            </p>
+        </div>
+        <hr />
 
         <label className="label is-medium" style={{marginTop: "0.4rem"}}>Questions</label>
         <Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} className="button">Import From Other Quizzes</Link>
         <br /><br />
-        {quiz.questions.length > 0 && questionScrubber}
+
+        {quiz.questions.length > 0 && questionNavbar}
         <br />
 
         {(quiz.quizAttempts.length > 0) &&
@@ -292,76 +303,9 @@ export class QuizEditor extends Component {
             </div>
         }
 
-        {quiz.questions.map((question, questionIndex)=>
-        <div className="panel" key={question.id} id={"container" + question.id}>
-            <p className="panel-heading">
-                Question {questionIndex + 1}
-                <a className="is-pulled-right button is-small">
-                    <span className="icon " onClick={this.deleteQuestion.bind(null,(question))}>
-                        <i className="fas fa-trash"></i>
-                    </span>
-                </a>
-            </p>
-            <div className="panel-block quiz-editor-question-prompt">
-                <textarea
-                    id={question.id}
-                    className="textarea is-medium"
-                    placeholder="Question Prompt"
-                    defaultValue={question.prompt} />
-            </div>
-            <p className="panel-block">
-                <label>
-                    <span className="is-inline" style={{verticalAlign: "-webkit-baseline-middle"}}>Concept &nbsp; &nbsp;</span>
-                    <input className="input is-inline" type="text" defaultValue={question.concept} id={"concept"+question.id} placeholder="concept" onFocus={() => this.conceptFilter(quiz, question)} onChange = {() => this.conceptFilter(quiz, question)}></input>
-                </label>
-                {(this.state.showConceptsForQuestion === question.id && this.state.concepts.length > 0) &&
-                    <span className="concept-suggestions-list" id={"suggestions"+question.id}>
-                    &nbsp; Suggestions: &nbsp;
-                    {this.state.concepts.map(concept => (
-                        <button id={concept} key={concept} className="concept-tag tag is-light" onClick={() => this.setConcept(question.id,concept)}>{concept}</button>
-                    ))}
-                    </span>
-                }
-            </p>
-            <form>
-                {question.options.map((option, optionIndex) =>
-                    <p className="panel-block is-flex quiz-editor-question-option" key={option.id}>
-                        <label className="radio is-flex">
-                            <input
-                                id={option.id + "radio"}
-                                key={option.id + "radio"}
-                                defaultChecked={option.isCorrect}
-                                name={"question" + questionIndex}
-                                type="radio" />
-                            <span>{ALPHABET[optionIndex]}</span>
-                        </label>
-                        <input
-                            type="text"
-                            id={option.id + "text"}
-                            className="input"
-                            placeholder="(Leave option blank to hide on quiz)"
-                            rows="2"
-                            defaultValue={option.text} />
-                    </p>
-                )}
-            </form>
-        </div>
-        )}
+        {questionList}
+        {newQuestionButton}
 
-            <p className="control">
-                <button className="button is-primary" onClick={() => this.addQuestion(quiz)}>Add Question</button>
-            </p>
-            <br />
-            <div className="field is-grouped">
-                <p className="control">
-                    <button className="button is-danger" onClick={() => this.deleteQuiz(quiz)}>
-                    Delete Quiz
-                    </button>
-                </p>
-                <p className="control">
-                    <button className="button is-link" onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz</button>
-                </p>
-            </div>
         </div>
       </section>
     )
@@ -385,14 +329,8 @@ export const QUIZ_QUERY = gql`
             id
         }
         questions{
-            concept
             id
             prompt
-            options{
-                id
-                text
-                isCorrect
-            }
         }
         quizAttempts {
             id
@@ -421,13 +359,6 @@ mutation quizDeleteMutation($id:ID!) {
     }
 }`
 
-export const QUESTION_DELETE = gql`
-    mutation questionDeleteMutation($id:ID!) {
-        deleteQuestion(id:$id){
-            id
-        }
-    }`
-
 export const ADD_QUESTION = gql`
 mutation addQuestionMutation($id:ID!)
     {
@@ -448,5 +379,4 @@ export default withAuthCheck(compose(
     graphql(QUIZ_SAVE, {name: 'saveQuizMutation'}),
     graphql(QUIZ_DELETE, {name:'quizDeleteMutation'}),
     graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),
-    graphql(QUESTION_DELETE, {name: 'questionDeleteMutation'}),
 ) (QuizEditor), { instructor: true });

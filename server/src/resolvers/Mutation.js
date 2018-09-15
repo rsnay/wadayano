@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const stripJs = require('strip-js');
 const { APP_SECRET, FEEDBACK_EMAIL_ADDRESS } = require('../../config');
 const { getUserInfo, instructorCheck, instructorCourseCheck, validateEmail } = require('../utils');
 const { postGrade } = require('../lti');
@@ -160,6 +161,23 @@ function deleteQuiz(root, args, context, info) {
             id: args.id
         }
     }, info)
+}
+
+function updateQuestion(root, args, context, info) {
+    instructorCheck(context);
+    // TODO make sure the question belongs to the logged-in instructor
+
+    // Sanitize HTML input for question prompt and options to remove any scripts and prevent XSS
+    let { data } = args;
+    data.prompt = stripJs(data.prompt);
+    for (let i = 0; i < data.options.update.length; i++) {
+        data.options.update[i].data.text = stripJs(data.options.update[i].data.text);
+    }
+
+    return context.db.mutation.updateQuestion({
+        data,
+        where: { id: args.id }
+    }, info)   
 }
 
 function deleteQuestion(root, args, context, info) {
@@ -715,6 +733,7 @@ module.exports = {
     deleteQuiz,
     addQuestion,
     deleteQuestion,
+    updateQuestion,
     importQuestions,
     updateSurvey,
     sendInstructorCourseInvite,
