@@ -156,9 +156,6 @@ export class CollapsibleQuestionEditor extends Component {
             concept: question.concept,
             options: { update: [] }
         };
-        // TODO
-            // Add concept to quiz concept list
-            //quizData.concepts.push(document.getElementById('concept' + question.id).value);
         // Get updated options for this question
         question.options.forEach(option => {
             let updatedOption = {
@@ -292,13 +289,6 @@ export class CollapsibleQuestionEditor extends Component {
                             onEditorChange={(newOption) => this._handleOptionChange(optionIndex, newOption)}
                             init={tinymceInlineConfig} />
                     </span>
-                    {/*<input
-                        type="text"
-                        id={option.id + "text"}
-                        className="input"
-                        placeholder="(Leave option blank to hide on quiz)"
-                        rows="2"
-                    defaultValue={option.text} />*/}
                 </div>
             )}
             </form>
@@ -308,17 +298,21 @@ export class CollapsibleQuestionEditor extends Component {
             <div className="panel collapsible-question-editor">
                 <p className="panel-heading is-flex">
                     {dragHandle}
-                    <span style={{textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden", paddingLeft: "1rem", cursor: "pointer", minWidth: "0%"}} onClick={this._loadQuestion}>
+
+                    <span className="collapsible-question-editor-title" onClick={this._loadQuestion}>
                         {this.props.questionIndex !== null && `${this.props.questionIndex + 1}. `}
                         {!isExpanded && stripTags(question ? question.prompt : this.props.defaultPrompt)}
                     </span>
-                    <span className="is-pulled-right is-flex" style={{margin: "-0.4rem -0.5rem 0 auto"}}>
+
+                    <span className="is-pulled-right is-flex collapsible-question-editor-button-group">
                         {deleteButton}
                         {editButton}
                         {cancelButton}
                         {saveButton}
                     </span>
+
                 </p>
+
                 {promptEditor}
                 {conceptSelector}
                 {optionsEditor}
