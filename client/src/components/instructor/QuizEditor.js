@@ -232,14 +232,10 @@ export class QuizEditor extends Component {
     const newQuestionButton = (
         <div className="panel collapsible-question-editor no-select">
             <p className="panel-heading is-flex">
-                <span style={{paddingLeft: "1rem"}}>
-                    <i>New Question</i>
-                </span>
-                <span className="is-pulled-right is-flex" style={{margin: "-0.4rem -0.5rem 0 auto"}}>
-                    <button className={"button is-link" + (this.state.isAddingQuestion ? " is-loading" : "")} onClick={this.addQuestion}>
-                        <span className="icon">
-                        <i className="fas fa-plus"></i>
-                        </span>
+                <i style={{paddingLeft: "1rem"}}>New Question</i>
+                <span className="is-pulled-right is-flex collapsible-question-editor-button-group">
+                    <button className={"button" + (this.state.isAddingQuestion ? " is-loading" : "")} onClick={this.addQuestion}>
+                        <span className="icon"><i className="fas fa-plus"></i></span>
                         <span>Add Question</span>
                     </button>
                 </span>
@@ -297,6 +293,7 @@ export class QuizEditor extends Component {
         <label className="label is-medium" style={{marginTop: "0.4rem"}}>Questions</label>
         <Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} className="button">Import From Other Quizzes</Link>
         <br /><br />
+
         {quiz.questions.length > 0 && questionNavbar}
         <br />
 
@@ -362,13 +359,6 @@ mutation quizDeleteMutation($id:ID!) {
     }
 }`
 
-export const QUESTION_DELETE = gql`
-    mutation questionDeleteMutation($id:ID!) {
-        deleteQuestion(id:$id){
-            id
-        }
-    }`
-
 export const ADD_QUESTION = gql`
 mutation addQuestionMutation($id:ID!)
     {
@@ -389,5 +379,4 @@ export default withAuthCheck(compose(
     graphql(QUIZ_SAVE, {name: 'saveQuizMutation'}),
     graphql(QUIZ_DELETE, {name:'quizDeleteMutation'}),
     graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),
-    graphql(QUESTION_DELETE, {name: 'questionDeleteMutation'}),
 ) (QuizEditor), { instructor: true });
