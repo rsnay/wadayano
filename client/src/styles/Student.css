@@ -218,8 +218,7 @@ progress::-webkit-progress-value {
     top: -5px;
     left: 0;
     margin: 0!important;
-    padding: 0.2rem;
-    padding-left: 1rem;
+    padding: 0.2rem 0.2rem 0 1rem;
     background-color: rgb(245, 245, 245);
     border-radius: 5px;
     box-shadow: 0px 0px 5px gray;
@@ -227,6 +226,9 @@ progress::-webkit-progress-value {
 .question-navbar-item {
     display: inline!important;
     color: #333!important;
+}
+.question-navbar > #editor-toolbar {
+    margin-bottom: -1px;
 }
 
 /* TinyMCE customizations */
@@ -238,6 +240,15 @@ progress::-webkit-progress-value {
     box-shadow: none!important;
     -webkit-box-shadow: none!important;
     -moz-box-shadow: none!important;
+}
+
+.mce-edit-focus {
+    outline: 1px solid #3273dc!important;
+    box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25)
+}
+
+.mce-floatpanel.mce-tinymce-inline {
+    margin-left: 200px!important;
 }
 
 /* Survey */

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+// https://reactjs.org/docs/update.html
+import update from 'immutability-helper';
 
 import { withAuthCheck } from '../shared/AuthCheck';
 import { ALPHABET } from '../../constants';
@@ -19,7 +21,7 @@ export class QuizEditor extends Component {
     
         this.state = {
             isLoading: false,
-            // Questions are stored in state once query loads, so that they can be reordered (query loads into read-only prop). Object 
+            // Questions are stored in state once query loads, so that they can be reordered (otherwise, query just loads into read-only prop).
             questions: new Map(),
             orderedQuestionIds: [],
             // TODO
@@ -39,7 +41,7 @@ export class QuizEditor extends Component {
         // Pre-bind this function, to make adding it to input fields easier
         this.saveQuiz = this.saveQuiz.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
-        this._onQuestionListSortEnd = this._onQuestionListSortEnd.bind(this);
+        this.onQuestionListSortEnd = this.onQuestionListSortEnd.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -252,7 +254,7 @@ export class QuizEditor extends Component {
     }
 
     // Called when a question is reordered
-    _onQuestionListSortEnd(result) {
+    onQuestionListSortEnd(result) {
         // Dropped outside the list
         if (!result.destination) {
           return;
@@ -271,6 +273,19 @@ export class QuizEditor extends Component {
         alert('Saving the question order is not yet implemented.');
     }
 
+    // Called after a question is deleted (the delete mutation was already sent; we just need to remove from display)
+    onQuestionDelete(questionId) {
+        // Just remove from the list of ordered questions, and it won’t be displayed
+        const index = this.state.orderedQuestionIds.indexOf(questionId);
+        if (index >= 0) {
+            const orderedQuestionIds = update(this.state.orderedQuestionIds, { $splice: [[index, 1]] });
+            console.log(questionId + ' was deleted');
+            console.log(orderedQuestionIds);
+            this.setState({ orderedQuestionIds });
+        }
+    }
+
+
   render() {
 
     if (this.state.isLoading || (this.props.quizQuery && this.props.quizQuery.loading)) {
@@ -283,7 +298,7 @@ export class QuizEditor extends Component {
     console.log(this.props);
     let quiz = this.props.quizQuery.quiz;
 
-    const questionScrubber = (
+    const questionNavbar = (
         <div id="question-navbar" className="question-navbar">
             <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Jump to Question:</span>
             {quiz.questions.map((question, index) => (
@@ -297,7 +312,7 @@ export class QuizEditor extends Component {
     );
 
     const questionList = (
-    <DragDropContext onDragEnd={this._onQuestionListSortEnd}>
+    <DragDropContext onDragEnd={this.onQuestionListSortEnd}>
         <Droppable droppableId="droppable">
         {(provided, snapshot) => (
             <div ref={provided.innerRef}>
@@ -313,7 +328,8 @@ export class QuizEditor extends Component {
                         questionIndex={index}
                         defaultPrompt={this.state.questions.get(questionId).prompt}
                         defaultExpanded={false}
-                        dragHandleProps={provided.dragHandleProps} />}
+                        dragHandleProps={provided.dragHandleProps}
+                        onDelete={() => this.onQuestionDelete(questionId)} />}
                     </div>
                 )}
                 </Draggable>
@@ -359,7 +375,7 @@ export class QuizEditor extends Component {
         <label className="label is-medium" style={{marginTop: "0.4rem"}}>Questions</label>
         <Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} className="button">Import From Other Quizzes</Link>
         <br /><br />
-        {quiz.questions.length > 0 && questionScrubber}
+        {quiz.questions.length > 0 && questionNavbar}
         <br />
 
         {(quiz.quizAttempts.length > 0) &&
@@ -372,7 +388,7 @@ export class QuizEditor extends Component {
         <hr />
 
         {quiz.questions.map((question, questionIndex)=>
-        <div className="panel" key={question.id} id={"container" + question.id}>
+        <div className="panel is-hidden" key={question.id} id={"container" + question.id}>
             <p className="panel-heading">
                 Question {questionIndex + 1}
                 <a className="is-pulled-right button is-small">
