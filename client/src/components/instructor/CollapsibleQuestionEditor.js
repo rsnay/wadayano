@@ -17,18 +17,26 @@ import 'tinymce/plugins/hr';
 import 'tinymce/plugins/image';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
+import 'tinymce/plugins/textcolor';
 import { Editor } from '@tinymce/tinymce-react';
 import { stripTags } from '../../utils';
 
+// Main editor configuration
 const tinymceConfig = {
     skin_url: '/tinymce/lightgray',
-    plugins: 'autoresize charmap hr image link lists',
-    toolbar: 'undo redo | formatselect | fontsizeselect | bold italic underline | align | bullist numlist | outdent indent | superscript subscript | removeformat | image link charmap',
+    plugins: 'autoresize charmap hr image link lists textcolor',
+    toolbar: 'undo redo | formatselect | fontsizeselect | bold italic underline | forecolor backcolor | align | bullist numlist | outdent indent | superscript subscript | removeformat | hr image link charmap',
     menubar: false,
     statusbar: false,
     branding: false,
-    autoresize_max_height: 500,
-    image_caption: true
+    autoresize_max_height: 500
+};
+
+// Smaller toolbar on inline editor for options
+const tinymceInlineConfig = {
+    ...tinymceConfig,
+    inline: true,
+    toolbar: 'undo redo | bold italic underline | forecolor backcolor | align | outdent indent | superscript subscript | removeformat | image charmap',
 };
 
 export class CollapsibleQuestionEditor extends Component {
@@ -279,10 +287,10 @@ export class CollapsibleQuestionEditor extends Component {
                         <span>{ALPHABET[optionIndex]}</span>
                     </label>
                     <span className="quiz-editor-question-option-tinymce-container">
-                        <Editor inline
+                        <Editor
                             value={option.text}
                             onEditorChange={(newOption) => this._handleOptionChange(optionIndex, newOption)}
-                            init={tinymceConfig} />
+                            init={tinymceInlineConfig} />
                     </span>
                     {/*<input
                         type="text"
