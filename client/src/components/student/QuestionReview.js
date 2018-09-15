@@ -46,9 +46,7 @@ export default class QuestionReview extends Component {
                 <span className="column is-1 question-option-letter level-left is-rounded button is-success">
                     <span>{correctIcon}</span>
                 </span>
-                <span className="column question-option-text level-left">
-                    {questionOptions.filter(o => o.id === attempt.option.id)[0].text}
-                </span>
+                <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: questionOptions.filter(o => o.id === attempt.option.id)[0].text}}></span>
             </div>
         );
     } else {
