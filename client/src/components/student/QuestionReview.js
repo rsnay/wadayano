@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ShowMore from 'react-show-more';
 
 import ErrorBox from '../shared/ErrorBox';
 import ConfidenceSelector from './ConfidenceSelector';
@@ -31,11 +30,7 @@ export default class QuestionReview extends Component {
     }
 
     let promptView = (
-        <div className="notification question-prompt">
-            <ShowMore>
-                {this.props.question.prompt}
-            </ShowMore>
-        </div>
+        <div className="notification question-prompt" dangerouslySetInnerHTML={{__html: this.props.question.prompt}}></div>
     );
 
     // Correct is if the student got it correct; actualCorrect is if the student got it wrong, to show what the actual correct answer was.
@@ -64,7 +59,6 @@ export default class QuestionReview extends Component {
             const icon = correct ? actualCorrectIcon : (incorrect ? incorrectIcon : ALPHABET[index]);
             const iconClass = correct ? "has-text-success" : (incorrect ? "has-text-danger" : "");
             const containerClass = correct ? "actual-correct" : "";
-            const answerPrefix = ""; //correct ? "Correct: " : (incorrect ? "Selected: " : "");
 
             // Hide empty options
             if (option.text.trim() === '') {
@@ -75,9 +69,7 @@ export default class QuestionReview extends Component {
                 <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
                     <span>{icon}</span>
                 </span>
-                <span className="column question-option-text level-left">
-                    {answerPrefix}{option.text}
-                </span>
+                <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: option.text}}></span>
             </div>);
         });
     }

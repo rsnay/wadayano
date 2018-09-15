@@ -88,9 +88,7 @@ class QuestionTaker extends Component {
     }
 
     let prompt = (
-        <div className="notification question-prompt">
-            {this.props.question.prompt}
-        </div>
+        <div className="notification question-prompt" dangerouslySetInnerHTML={{__html: this.props.question.prompt}}></div>
     );
 
     // Hide empty options
@@ -102,9 +100,7 @@ class QuestionTaker extends Component {
             <button className={"column is-1 question-option-letter level-left is-rounded button " + (this.state.selectedOption && this.state.selectedOption.id === option.id ? "is-link" : "")} >
                 <span>{ALPHABET[index]}</span>
             </button>
-            <span className="column question-option-text level-left">
-                {option.text}
-            </span>
+            <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: option.text}}></span>
         </div>);
     });
 
