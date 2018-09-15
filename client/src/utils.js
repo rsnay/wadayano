@@ -12,3 +12,10 @@ export function reorder(list, startIndex, endIndex) {
   
     return result;
 };
+
+// Strip HTML tags from a given string
+export function stripTags(html) {
+    const parser = new DOMParser();
+    let doc = parser.parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+}

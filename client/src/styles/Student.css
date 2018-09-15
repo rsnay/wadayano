@@ -17,6 +17,14 @@ input[type=radio] {
     margin-right: 0.5rem;
 }
 
+.fade-opacity {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    -webkit-transition: opacity 0.3s ease-in-out;
+    -moz-transition: opacity 0.3s ease-in-out;
+    -ms-transition: opacity 0.3s ease-in-out;
+}
+
 /* Hide firefox dotted focus on buttons */
 button::-moz-focus-inner { 
     border: 0; 
@@ -151,6 +159,12 @@ progress::-webkit-progress-value {
     vertical-align: middle;
 }
 
+/* In collapsed question, have the bottom corners of the header rounded as well */
+.collapsible-question-editor .panel-heading:only-child {
+    border-bottom-right-radius: 4px!important;
+    border-bottom-left-radius: 4px!important;
+}
+
 .collapsible-question-editor .drag-handle {
     padding: 1rem;
     margin-top: -1rem;
@@ -226,9 +240,6 @@ progress::-webkit-progress-value {
 .question-navbar-item {
     display: inline!important;
     color: #333!important;
-}
-.question-navbar > #editor-toolbar {
-    margin-bottom: -1px;
 }
 
 /* TinyMCE customizations */

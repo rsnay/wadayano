@@ -18,6 +18,7 @@ import 'tinymce/plugins/image';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import { Editor } from '@tinymce/tinymce-react';
+import { stripTags } from '../../utils';
 
 const tinymceConfig = {
     skin_url: '/tinymce/lightgray',
@@ -26,7 +27,8 @@ const tinymceConfig = {
     menubar: false,
     statusbar: false,
     branding: false,
-    autoresize_max_height: 500
+    autoresize_max_height: 500,
+    image_caption: true
 };
 
 export class CollapsibleQuestionEditor extends Component {
@@ -35,7 +37,7 @@ export class CollapsibleQuestionEditor extends Component {
         this.state = {
             isLoading: false,
             isDeleting: false,
-            isExpanded: props.defaultExpanded,
+            isExpanded: false,
             error: null,
             question: null,
         };
@@ -49,7 +51,7 @@ export class CollapsibleQuestionEditor extends Component {
     
     componentDidMount() {
         // If starting expanded, call the query immediately
-        if (this.state.isExpanded) {
+        if (this.props.defaultExpanded) {
             this._loadQuestion();
         }
     }
@@ -57,12 +59,14 @@ export class CollapsibleQuestionEditor extends Component {
     async _loadQuestion() {
         // Don’t reload question if already expanded
         if (this.state.isExpanded) { return; }
+        console.log('loading question');
         try {
             this.setState({ isLoading: true });
             const result = await this.props.client.query({
                 query: QUESTION_QUERY,
                 variables: { id: this.props.questionId }
             });
+            console.log('load result', result);
             this.setState({ isLoading: false, question: result.data.question, isExpanded: true });
         } catch (error) {
             console.error(error);
@@ -74,7 +78,7 @@ export class CollapsibleQuestionEditor extends Component {
         if (!window.confirm('Are you sure you want to delete this question? All students’ attempts for this question will also be deleted.')) { return; }
         this.setState({ isDeleting: true, isExpanded: false });
         try {
-            const result = await this.props.questionDeleteMutation({
+            const result = await this.props.deleteQuestionMutation({
                 variables:{
                     id: this.props.questionId
                 }
@@ -130,39 +134,43 @@ export class CollapsibleQuestionEditor extends Component {
     }
     
     async _saveQuestion() {
-        // TODO
+        this.setState({ isLoading: true });
         const valid = this._validateQuestion();
         if (valid !== true) {
             alert(`Please correct this error: ${valid}`);
+            this.setState({ isLoading: false });
             return;
         }
-        alert('todo');
-        return;
         const { question } = this.state;
         // Prisma-specific syntax for nested update mutation
         let updatedQuestion = {
-            where: { id: question.id },
-            data: {
-                prompt: question.prompt,
-                concept: document.getElementById('concept' + question.id).value,
-                options: { update: [] }
-            }
+            prompt: question.prompt,
+            concept: question.concept,
+            options: { update: [] }
         };
-        // Add concept to quiz concept list
-        //quizData.concepts.push(document.getElementById('concept' + question.id).value);
+        // TODO
+            // Add concept to quiz concept list
+            //quizData.concepts.push(document.getElementById('concept' + question.id).value);
         // Get updated options for this question
         question.options.forEach(option => {
             let updatedOption = {
                 where: { id: option.id },
                 data: {
-                    text: document.getElementById(option.id + 'text').value,
-                    isCorrect: document.getElementById(option.id + 'radio').checked
+                    text: option.text,
+                    isCorrect: option.isCorrect
                 }
             };
             // Add updated option to question mutation
-            updatedQuestion.data.options.update.push(updatedOption);
+            updatedQuestion.options.update.push(updatedOption);
+        });
+        await this.props.updateQuestionMutation({
+            variables:{
+                id: this.props.questionId,
+                data: updatedQuestion
+            }
         });
         // Collapse editor
+        this.setState({ isLoading: false, isExpanded: false });
     }
 
     _discardChanges() {
@@ -197,7 +205,6 @@ export class CollapsibleQuestionEditor extends Component {
 
     render() {
         const { isExpanded, isLoading, isDeleting, question, error } = this.state;
-        console.log(this.state);
 
         if (error || (isExpanded && !isLoading && !(question && question.id))) {
             return <ErrorBox><p>{error}</p></ErrorBox>;
@@ -248,10 +255,10 @@ export class CollapsibleQuestionEditor extends Component {
         );
 
         const conceptSelector = isExpanded && (
-            <div className="panel-block">
+            <div className="panel-block quiz-editor-question-concept">
                 <label>
                     <span className="is-inline" style={{verticalAlign: "-webkit-baseline-middle"}}>Concept &nbsp; &nbsp;</span>
-                    <input className="input is-inline" type="text" defaultValue={question.concept} id={"concept"+question.id} placeholder="concept"></input>
+                    <input className="input is-inline" type="text" value={question.concept} onChange={(e) => this._handleConceptChange(e.currentTarget.value)} id={"concept"+question.id} placeholder="Concept"></input>
                 </label>
             </div>
         );
@@ -295,7 +302,7 @@ export class CollapsibleQuestionEditor extends Component {
                     {dragHandle}
                     <span style={{textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden", paddingLeft: "1rem", cursor: "pointer", minWidth: "0%"}} onClick={this._loadQuestion}>
                         {this.props.questionIndex !== null && `${this.props.questionIndex + 1}. `}
-                        {!isExpanded && (question ? question.prompt : this.props.defaultPrompt)}
+                        {!isExpanded && stripTags(question ? question.prompt : this.props.defaultPrompt)}
                     </span>
                     <span className="is-pulled-right is-flex" style={{margin: "-0.4rem -0.5rem 0 auto"}}>
                         {deleteButton}
@@ -337,20 +344,16 @@ query questionQuery($id: ID!) {
 }
 `
 
-// TODO
-export const ADD_COURSE = gql`
-mutation addCourseMutation($title:String!)
-{
-    addCourse(
-        title:$title
-        ){
-            id
-        }
-    }`
-    
-export const QUESTION_DELETE = gql`
-mutation questionDeleteMutation($id:ID!) {
-    deleteQuestion(id:$id){
+export const UPDATE_QUESTION = gql`
+mutation updateQuestionMutation($id: ID!, $data: QuestionUpdateInput!) {
+    updateQuestion(id: $id, data: $data) {
+        id
+    }
+}`
+
+export const DELETE_QUESTION = gql`
+mutation deleteQuestionMutation($id: ID!) {
+    deleteQuestion(id: $id){
         id
     }
 }`
@@ -363,6 +366,6 @@ const WithApolloClient = (props) => (
     );
     
 export default compose(
-    graphql(ADD_COURSE, {name: 'addCourseMutation'}),
-    graphql(QUESTION_DELETE, {name: 'questionDeleteMutation'}),
+    graphql(UPDATE_QUESTION, {name: 'updateQuestionMutation'}),
+    graphql(DELETE_QUESTION, {name: 'deleteQuestionMutation'}),
     ) (WithApolloClient)

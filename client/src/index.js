@@ -33,7 +33,7 @@ const defaultOptions = {
       errorPolicy: 'all',
     },
     query: {
-      fetchPolicy: 'network',
+      fetchPolicy: 'network-only',
       errorPolicy: 'all',
     },
     mutate: {
