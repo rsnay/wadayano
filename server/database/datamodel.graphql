@@ -60,6 +60,7 @@ type Quiz {
     createdAt: DateTime!
     quizAttempts: [QuizAttempt!]! @relation(name: "QuizQuizAttempts", onDelete: CASCADE)
     questions: [Question!]! @relation(name: "QuizQuestions", onDelete: CASCADE)
+    orderedQuestionIds: [ID!]
     concepts: [String!]!
     course: Course  @relation(name: "CourseQuizzes", onDelete: SET_NULL)
     title: String!

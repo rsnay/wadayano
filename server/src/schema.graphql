@@ -64,6 +64,7 @@ input QuizUpdateInput {
   type: QuizType
   concepts: [String!] # Note this differs from Prisma's QuizUpdateconceptsInput
   questions: QuestionUpdateManyInput
+  orderedQuestionIds: [ID!]!
 }
 
 # Returned from instructor signup or login
