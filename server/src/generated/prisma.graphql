@@ -1,5 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Wed Aug 22 2018 19:36:37 GMT-0600 (Mountain Daylight Time)
+# timestamp: Sat Sep 15 2018 22:52:52 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -2750,6 +2750,7 @@ type Quiz implements Node {
   createdAt: DateTime!
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt!]
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
+  orderedQuestionIds: [ID!]!
   concepts: [String!]!
   course(where: CourseWhereInput): Course
   title: String!
@@ -3115,6 +3116,7 @@ input QuizCreateconceptsInput {
 input QuizCreateInput {
   title: String!
   type: QuizType!
+  orderedQuestionIds: QuizCreateorderedQuestionIdsInput
   concepts: QuizCreateconceptsInput
   quizAttempts: QuizAttemptCreateManyWithoutQuizInput
   questions: QuestionCreateManyInput
@@ -3131,9 +3133,14 @@ input QuizCreateOneWithoutQuizAttemptsInput {
   connect: QuizWhereUniqueInput
 }
 
+input QuizCreateorderedQuestionIdsInput {
+  set: [ID!]
+}
+
 input QuizCreateWithoutCourseInput {
   title: String!
   type: QuizType!
+  orderedQuestionIds: QuizCreateorderedQuestionIdsInput
   concepts: QuizCreateconceptsInput
   quizAttempts: QuizAttemptCreateManyWithoutQuizInput
   questions: QuestionCreateManyInput
@@ -3142,6 +3149,7 @@ input QuizCreateWithoutCourseInput {
 input QuizCreateWithoutQuizAttemptsInput {
   title: String!
   type: QuizType!
+  orderedQuestionIds: QuizCreateorderedQuestionIdsInput
   concepts: QuizCreateconceptsInput
   questions: QuestionCreateManyInput
   course: CourseCreateOneWithoutQuizzesInput
@@ -3172,6 +3180,7 @@ enum QuizOrderByInput {
 type QuizPreviousValues {
   id: ID!
   createdAt: DateTime!
+  orderedQuestionIds: [ID!]!
   concepts: [String!]!
   title: String!
   type: QuizType!
@@ -3228,6 +3237,7 @@ input QuizUpdateconceptsInput {
 input QuizUpdateInput {
   title: String
   type: QuizType
+  orderedQuestionIds: QuizUpdateorderedQuestionIdsInput
   concepts: QuizUpdateconceptsInput
   quizAttempts: QuizAttemptUpdateManyWithoutQuizInput
   questions: QuestionUpdateManyInput
@@ -3251,9 +3261,14 @@ input QuizUpdateOneWithoutQuizAttemptsInput {
   upsert: QuizUpsertWithoutQuizAttemptsInput
 }
 
+input QuizUpdateorderedQuestionIdsInput {
+  set: [ID!]
+}
+
 input QuizUpdateWithoutCourseDataInput {
   title: String
   type: QuizType
+  orderedQuestionIds: QuizUpdateorderedQuestionIdsInput
   concepts: QuizUpdateconceptsInput
   quizAttempts: QuizAttemptUpdateManyWithoutQuizInput
   questions: QuestionUpdateManyInput
@@ -3262,6 +3277,7 @@ input QuizUpdateWithoutCourseDataInput {
 input QuizUpdateWithoutQuizAttemptsDataInput {
   title: String
   type: QuizType
+  orderedQuestionIds: QuizUpdateorderedQuestionIdsInput
   concepts: QuizUpdateconceptsInput
   questions: QuestionUpdateManyInput
   course: CourseUpdateOneWithoutQuizzesInput
