@@ -4,6 +4,7 @@ import { ApolloConsumer, graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 // https://reactjs.org/docs/update.html
 import update from 'immutability-helper';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 import { ALPHABET } from '../../constants';
 import ErrorBox from '../shared/ErrorBox';
@@ -252,11 +253,11 @@ export class CollapsibleQuestionEditor extends Component {
         );
 
         const promptEditor = isExpanded && (
-            <div className="panel-block quiz-editor-question-prompt">
+            <ScrollIntoViewIfNeeded className="panel-block quiz-editor-question-prompt">
                 <Editor value={question.prompt}
                     onEditorChange={(newPrompt) => this._handlePromptChange(newPrompt)}
                     init={tinymceConfig} />
-            </div>
+            </ScrollIntoViewIfNeeded>
         );
 
         const conceptSelector = isExpanded && (
@@ -295,7 +296,7 @@ export class CollapsibleQuestionEditor extends Component {
         );
 
         return (
-            <div className="panel collapsible-question-editor">
+            <div className="panel collapsible-question-editor" id={this.props.elementId}>
                 <p className="panel-heading is-flex">
                     {dragHandle}
 
@@ -323,6 +324,7 @@ export class CollapsibleQuestionEditor extends Component {
 }
     
 CollapsibleQuestionEditor.propTypes = {
+    elementId: PropTypes.string,
     questionId: PropTypes.string.isRequired,
     questionIndex: PropTypes.number,
     defaultPrompt: PropTypes.string,
