@@ -122,7 +122,7 @@ export class CourseDetails extends Component {
                       <span className="is-hidden-touch">Questions</span>
                       <span className="is-hidden-desktop">?s</span>
                   </th>
-                  <th style={{width: "19rem"}}>Actions</th>
+                  <th style={{width: "24rem"}}>Actions</th>
               </tr>
           </thead>
           <tbody>
@@ -138,7 +138,7 @@ export class CourseDetails extends Component {
                             <span className="icon">
                             <i className="fas fa-edit"></i>
                             </span>
-                            <span>Edit/View</span>
+                            <span>Edit</span>
                         </Link>
                         <button className="button is-light"
                             onClick={() => this._showLTISetup('quiz', quiz.id)}>
@@ -147,6 +147,13 @@ export class CourseDetails extends Component {
                             </span>
                             <span>Add to LMS</span>
                         </button>
+                        <Link to={"/instructor/quiz/" + quiz.id}
+                            className="button is-light">
+                            <span className="icon">
+                            <i className="fas fa-chart-bar"></i>
+                            </span>
+                            <span>Scores</span>
+                        </Link>
                     </span>
                   </td>
               </tr>
