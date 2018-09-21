@@ -319,12 +319,13 @@ export const QUIZ_QUERY = gql`
     quiz(id:$id){
         id
         title
-        concepts
         type
         course{
             title
             quizzes {
-                concepts
+                questions {
+                    concept
+                }
             }
             id
         }

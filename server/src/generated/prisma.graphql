@@ -1,5 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Sat Sep 15 2018 22:52:52 GMT-0600 (Mountain Daylight Time)
+# timestamp: Fri Sep 21 2018 17:16:30 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -304,7 +304,6 @@ type Course implements Node {
   lmsUrl: String
   createdAt: DateTime!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz!]
-  concepts: [String!]!
   instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor!]
   students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student!]
   ltiSecret: String!
@@ -323,17 +322,12 @@ type CourseConnection {
   aggregate: AggregateCourse!
 }
 
-input CourseCreateconceptsInput {
-  set: [String!]
-}
-
 input CourseCreateInput {
   title: String!
   number: String
   lmsUrl: String
   ltiSecret: String!
   survey: Json
-  concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
@@ -372,7 +366,6 @@ input CourseCreateWithoutInstructorsInput {
   lmsUrl: String
   ltiSecret: String!
   survey: Json
-  concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
   students: StudentCreateManyWithoutCoursesInput
   surveyResults: SurveyResultCreateManyWithoutCourseInput
@@ -385,7 +378,6 @@ input CourseCreateWithoutPendingCourseInvitesInput {
   lmsUrl: String
   ltiSecret: String!
   survey: Json
-  concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
@@ -398,7 +390,6 @@ input CourseCreateWithoutQuizzesInput {
   lmsUrl: String
   ltiSecret: String!
   survey: Json
-  concepts: CourseCreateconceptsInput
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
   surveyResults: SurveyResultCreateManyWithoutCourseInput
@@ -411,7 +402,6 @@ input CourseCreateWithoutStudentsInput {
   lmsUrl: String
   ltiSecret: String!
   survey: Json
-  concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
   instructors: InstructorCreateManyWithoutCoursesInput
   surveyResults: SurveyResultCreateManyWithoutCourseInput
@@ -424,7 +414,6 @@ input CourseCreateWithoutSurveyResultsInput {
   lmsUrl: String
   ltiSecret: String!
   survey: Json
-  concepts: CourseCreateconceptsInput
   quizzes: QuizCreateManyWithoutCourseInput
   instructors: InstructorCreateManyWithoutCoursesInput
   students: StudentCreateManyWithoutCoursesInput
@@ -465,7 +454,6 @@ type CoursePreviousValues {
   number: String
   lmsUrl: String
   createdAt: DateTime!
-  concepts: [String!]!
   ltiSecret: String!
   survey: Json
 }
@@ -509,17 +497,12 @@ input CourseSubscriptionWhereInput {
   node: CourseWhereInput
 }
 
-input CourseUpdateconceptsInput {
-  set: [String!]
-}
-
 input CourseUpdateInput {
   title: String
   number: String
   lmsUrl: String
   ltiSecret: String
   survey: Json
-  concepts: CourseUpdateconceptsInput
   quizzes: QuizUpdateManyWithoutCourseInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
@@ -576,7 +559,6 @@ input CourseUpdateWithoutInstructorsDataInput {
   lmsUrl: String
   ltiSecret: String
   survey: Json
-  concepts: CourseUpdateconceptsInput
   quizzes: QuizUpdateManyWithoutCourseInput
   students: StudentUpdateManyWithoutCoursesInput
   surveyResults: SurveyResultUpdateManyWithoutCourseInput
@@ -589,7 +571,6 @@ input CourseUpdateWithoutPendingCourseInvitesDataInput {
   lmsUrl: String
   ltiSecret: String
   survey: Json
-  concepts: CourseUpdateconceptsInput
   quizzes: QuizUpdateManyWithoutCourseInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
@@ -602,7 +583,6 @@ input CourseUpdateWithoutQuizzesDataInput {
   lmsUrl: String
   ltiSecret: String
   survey: Json
-  concepts: CourseUpdateconceptsInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
   surveyResults: SurveyResultUpdateManyWithoutCourseInput
@@ -615,7 +595,6 @@ input CourseUpdateWithoutStudentsDataInput {
   lmsUrl: String
   ltiSecret: String
   survey: Json
-  concepts: CourseUpdateconceptsInput
   quizzes: QuizUpdateManyWithoutCourseInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   surveyResults: SurveyResultUpdateManyWithoutCourseInput
@@ -628,7 +607,6 @@ input CourseUpdateWithoutSurveyResultsDataInput {
   lmsUrl: String
   ltiSecret: String
   survey: Json
-  concepts: CourseUpdateconceptsInput
   quizzes: QuizUpdateManyWithoutCourseInput
   instructors: InstructorUpdateManyWithoutCoursesInput
   students: StudentUpdateManyWithoutCoursesInput
@@ -2751,7 +2729,6 @@ type Quiz implements Node {
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt!]
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
   orderedQuestionIds: [ID!]!
-  concepts: [String!]!
   course(where: CourseWhereInput): Course
   title: String!
   type: QuizType!
@@ -3109,15 +3086,10 @@ type QuizConnection {
   aggregate: AggregateQuiz!
 }
 
-input QuizCreateconceptsInput {
-  set: [String!]
-}
-
 input QuizCreateInput {
   title: String!
   type: QuizType!
   orderedQuestionIds: QuizCreateorderedQuestionIdsInput
-  concepts: QuizCreateconceptsInput
   quizAttempts: QuizAttemptCreateManyWithoutQuizInput
   questions: QuestionCreateManyInput
   course: CourseCreateOneWithoutQuizzesInput
@@ -3141,7 +3113,6 @@ input QuizCreateWithoutCourseInput {
   title: String!
   type: QuizType!
   orderedQuestionIds: QuizCreateorderedQuestionIdsInput
-  concepts: QuizCreateconceptsInput
   quizAttempts: QuizAttemptCreateManyWithoutQuizInput
   questions: QuestionCreateManyInput
 }
@@ -3150,7 +3121,6 @@ input QuizCreateWithoutQuizAttemptsInput {
   title: String!
   type: QuizType!
   orderedQuestionIds: QuizCreateorderedQuestionIdsInput
-  concepts: QuizCreateconceptsInput
   questions: QuestionCreateManyInput
   course: CourseCreateOneWithoutQuizzesInput
 }
@@ -3181,7 +3151,6 @@ type QuizPreviousValues {
   id: ID!
   createdAt: DateTime!
   orderedQuestionIds: [ID!]!
-  concepts: [String!]!
   title: String!
   type: QuizType!
 }
@@ -3230,15 +3199,10 @@ enum QuizType {
   GRADED
 }
 
-input QuizUpdateconceptsInput {
-  set: [String!]
-}
-
 input QuizUpdateInput {
   title: String
   type: QuizType
   orderedQuestionIds: QuizUpdateorderedQuestionIdsInput
-  concepts: QuizUpdateconceptsInput
   quizAttempts: QuizAttemptUpdateManyWithoutQuizInput
   questions: QuestionUpdateManyInput
   course: CourseUpdateOneWithoutQuizzesInput
@@ -3269,7 +3233,6 @@ input QuizUpdateWithoutCourseDataInput {
   title: String
   type: QuizType
   orderedQuestionIds: QuizUpdateorderedQuestionIdsInput
-  concepts: QuizUpdateconceptsInput
   quizAttempts: QuizAttemptUpdateManyWithoutQuizInput
   questions: QuestionUpdateManyInput
 }
@@ -3278,7 +3241,6 @@ input QuizUpdateWithoutQuizAttemptsDataInput {
   title: String
   type: QuizType
   orderedQuestionIds: QuizUpdateorderedQuestionIdsInput
-  concepts: QuizUpdateconceptsInput
   questions: QuestionUpdateManyInput
   course: CourseUpdateOneWithoutQuizzesInput
 }
