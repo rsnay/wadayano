@@ -34,7 +34,6 @@ type Course {
     lmsUrl: String
     createdAt: DateTime!
     quizzes: [Quiz!]! @relation(name: "CourseQuizzes", onDelete: CASCADE)
-    concepts: [String!]!
     instructors: [Instructor!]!
     students: [Student!]!
     ltiSecret: String!
@@ -61,7 +60,6 @@ type Quiz {
     quizAttempts: [QuizAttempt!]! @relation(name: "QuizQuizAttempts", onDelete: CASCADE)
     questions: [Question!]! @relation(name: "QuizQuestions", onDelete: CASCADE)
     orderedQuestionIds: [ID!]
-    concepts: [String!]!
     course: Course  @relation(name: "CourseQuizzes", onDelete: SET_NULL)
     title: String!
     type: QuizType!

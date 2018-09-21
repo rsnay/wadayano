@@ -9,7 +9,7 @@ import { formatScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
-import Logo from '../../logo_title.svg';
+import Logo from '../../logo_standalone.svg';
 
 import QuestionReview from './QuestionReview';
 
@@ -111,7 +111,12 @@ class QuizReview extends Component {
         console.log("WHY!!!!!");
         //console.log("qa")
         //console.log(quizAttempt);
-        var quizConcepts = quizAttempt.quiz.concepts;
+
+        // Get concepts from all questions in the quiz
+        var quizConcepts = quizAttempt.quiz.questions.map(q => q.concept);
+        // Remove duplicate concepts
+        quizConcepts = Array.from(new Set(quizConcepts));
+
         //console.log("quiz")
         //console.log(quizConcepts);
         var conceptConfidences = [];
@@ -284,10 +289,11 @@ class QuizReview extends Component {
         <div>
             <div className="columns">
                 <div className="column">
+                <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
                     <h2 className="subtitle is-2">Score: {formattedScore}</h2>
                     <div className="wadayano_line">
-                        <img id="wadayano_list" src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem"}} />&nbsp;
-                        <h2 className="subtitle is-2" id="wadayano_list">: {this.state.wadayano}%</h2>&nbsp;
+                        <img id="wadayano_list" src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem", margin: "10px"}} />&nbsp;
+                        <h2 className="subtitle is-2" id="wadayano_list">wadayano score&#8482;: {this.state.wadayano}%</h2>&nbsp;
                         <span id="emoji">{this.state.confidenceEmoji}</span>{this.state.confidenceText}
                     </div>
                 </div>
@@ -349,7 +355,6 @@ const QUIZ_ATTEMPT_QUERY = gql`
       quiz {
         id
         title
-        concepts
         questions {
           id
           prompt

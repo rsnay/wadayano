@@ -183,12 +183,7 @@ class Login extends Component {
         <section className="section no-select">
         <div className="container">
           <h1 className="title">Instructor {this.state.signupMode ? "Signup" : "Login"}</h1>
-          <i>If you are a student using wadayano in a course, simply launch it from your LMS (i.e. Canvas).</i>
-          <button className="button is-text" onClick={() => {localStorage.setItem("authRole", "student"); localStorage.setItem("authToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjamt2bGNqa3YwYW5xMDcyMndocXhqN3VzIiwiaXNJbnN0cnVjdG9yIjpmYWxzZSwiaWF0IjoxNTM0MzY1MjExfQ.WiREqvv4IbpyX-xtQrxNIxrL-tfWcrDvr9G1LwT2JBY"); this.props.history.push("/student/dashboard");}}>
-          <span className="icon">
-            <i className="fas fa-user-graduate"></i>
-          </span>
-           &nbsp; Or perform a fake student login</button>
+          <i>If you are a student using wadayano in a course, simply launch it from your LMS (e.g. Learning Suite or Canvas).</i>
           <form className="column is-one-third-desktop is-half-tablet" onSubmit={(e) => this._submit(e) }>
 
             {this.state.error && <p className="notification is-danger">{this.state.error}</p> }
@@ -268,6 +263,13 @@ class Login extends Component {
             <button className="button is-text" onClick={() => this._requestPasswordReset() }>Forgot Your Password?</button>
           </div>
 
+          <div className="field">
+            <button className="button is-text" onClick={() => {localStorage.setItem("authRole", "student"); localStorage.setItem("authToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjamt2bGNqa3YwYW5xMDcyMndocXhqN3VzIiwiaXNJbnN0cnVjdG9yIjpmYWxzZSwiaWF0IjoxNTM0MzY1MjExfQ.WiREqvv4IbpyX-xtQrxNIxrL-tfWcrDvr9G1LwT2JBY"); this.props.history.push("/student/dashboard");}}>
+            <span className="icon">
+              <i className="fas fa-user-graduate"></i>
+            </span>
+            <span>Demo Student Login</span></button>
+          </div>
         </div>
       </section>
     )

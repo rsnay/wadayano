@@ -294,7 +294,7 @@ export class QuizEditor extends Component {
         <Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} className="button">Import From Other Quizzes</Link>
         <br /><br />
 
-        {quiz.questions.length > 0 && questionNavbar}
+        {this.state.orderedQuestionIds.length > 0 && questionNavbar}
         <br />
 
         {(quiz.quizAttempts.length > 0) &&
@@ -319,12 +319,13 @@ export const QUIZ_QUERY = gql`
     quiz(id:$id){
         id
         title
-        concepts
         type
         course{
             title
             quizzes {
-                concepts
+                questions {
+                    concept
+                }
             }
             id
         }

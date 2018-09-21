@@ -143,7 +143,6 @@ function updateQuiz(root, args, context, info) {
         data: {
             title: args.data.title,
             type: args.data.type,
-            concepts: { set: args.data.concepts },
             questions: args.data.questions
         },
         where:{
