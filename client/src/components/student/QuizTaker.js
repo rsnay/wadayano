@@ -198,17 +198,17 @@ class QuizTaker extends Component {
       </ErrorBox>
     }
 
-    // TODO get actual concepts
-    //let concepts = [ 'Gene Expression', 'Genomics', 'Epigenetics', 'Gene Therapy' ];
-    let concepts = quiz.concepts;
-    console.log(concepts);
+    // Get concepts from all questions in the quiz
+    let concepts = quiz.questions.map(q => q.concept);
+    // Remove duplicate concepts
+    concepts = Array.from(new Set(concepts));
 
     let currentView;
     switch (this.state.phase) {
       case phases.CONCEPTS:
         currentView = <ConceptRater
           quizAttemptId={this.state.quizAttempt.id}
-          concepts={quiz.concepts}
+          concepts={concepts}
           onConceptsRated={() => this._onConceptsRated() }
         />;
         break;
@@ -285,7 +285,6 @@ const START_MUTATION = gql`
       quiz {
         id
         title
-        concepts
         questions {
           id
           prompt
@@ -329,7 +328,6 @@ const COMPLETE_MUTATION = gql`
         quiz {
           id
           title
-          concepts
           questions {
             id
             prompt

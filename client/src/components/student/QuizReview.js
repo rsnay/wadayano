@@ -111,7 +111,12 @@ class QuizReview extends Component {
         console.log("WHY!!!!!");
         //console.log("qa")
         //console.log(quizAttempt);
-        var quizConcepts = quizAttempt.quiz.concepts;
+
+        // Get concepts from all questions in the quiz
+        var quizConcepts = quizAttempt.quiz.questions.map(q => q.concept);
+        // Remove duplicate concepts
+        quizConcepts = Array.from(new Set(quizConcepts));
+
         //console.log("quiz")
         //console.log(quizConcepts);
         var conceptConfidences = [];
@@ -350,7 +355,6 @@ const QUIZ_ATTEMPT_QUERY = gql`
       quiz {
         id
         title
-        concepts
         questions {
           id
           prompt
