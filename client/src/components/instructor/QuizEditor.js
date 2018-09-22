@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 // https://reactjs.org/docs/update.html
 import update from 'immutability-helper';
 
@@ -22,7 +21,7 @@ export class QuizEditor extends Component {
         this.state = {
             isLoading: false,
             isAddingQuestion: false,
-            // Questions are stored in state once query loads, so that they can be reordered (otherwise, query just loads into read-only prop).
+            // Questions are stored in state once query loads, so that they can be reordered in the future (otherwise, query just loads into read-only prop).
             questions: new Map(),
             orderedQuestionIds: [],
             // Store a special flag for questions added during the editing session to auto-expand them
@@ -37,10 +36,10 @@ export class QuizEditor extends Component {
 
     componentWillReceiveProps(nextProps) {
         // Workaround for no callback after apollo query finishes loading.
-        if (nextProps.quizQuery && !nextProps.quizQuery.loading) {
+        if (nextProps.quizQuery && !nextProps.quizQuery.loading && !nextProps.quizQuery.error) {
             // Update order of question IDs
             const quiz = nextProps.quizQuery.quiz;
-            // Tweak structure so drag-and-drop reorder is easier
+            // Tweak structure so (future) drag-and-drop reorder is easier
             // Map of questions: key=questionId, value=question
             // Array of ordered question IDs that will be changed on reorder
             let questions = new Map();
@@ -198,36 +197,15 @@ export class QuizEditor extends Component {
         </div>
     );
 
-    const questionList = (
-    <DragDropContext onDragEnd={this.onQuestionListSortEnd}>
-        <Droppable droppableId="droppable">
-        {(provided, snapshot) => (
-            <div ref={provided.innerRef}>
-            {this.state.orderedQuestionIds.map((questionId, index) => (
-                <Draggable key={questionId} draggableId={questionId} index={index}>
-                {(provided, snapshot) => (
-                    <div
-                        id={"container" + questionId}
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                    >
-                    {<CollapsibleQuestionEditor
-                        questionId={questionId}
-                        questionIndex={index}
-                        defaultPrompt={this.state.questions.get(questionId).prompt}
-                        defaultExpanded={(this.state.autoExpandQuestionIds.indexOf(questionId) > -1)}
-                        dragHandleProps={provided.dragHandleProps}
-                        onDelete={() => this.onQuestionDelete(questionId)} />}
-                    </div>
-                )}
-                </Draggable>
-            ))}
-            {provided.placeholder}
-            </div>
-        )}
-        </Droppable>
-    </DragDropContext>
-    );
+    const questionList = this.state.orderedQuestionIds.map((questionId, index) => (
+        <CollapsibleQuestionEditor
+            elementId={"container" + questionId}
+            questionId={questionId}
+            questionIndex={index}
+            defaultPrompt={this.state.questions.get(questionId).prompt}
+            defaultExpanded={(this.state.autoExpandQuestionIds.indexOf(questionId) > -1)}
+            onDelete={() => this.onQuestionDelete(questionId)} />
+    ));
 
     const newQuestionButton = (
         <div className="panel collapsible-question-editor no-select">
