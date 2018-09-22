@@ -12,6 +12,7 @@ import LoadingBox from '../shared/LoadingBox';
 import Logo from '../../logo_standalone.svg';
 
 import QuestionReview from './QuestionReview';
+import Modal from '../shared/Modal';
 
 class QuizReview extends Component {
 
@@ -25,8 +26,9 @@ class QuizReview extends Component {
             conceptQuestions: [],
             savedScrollPosition: null,
             confidenceText:null,
+            confidenceEmoji:null,
             wadayano:null,
-
+            displayConceptReview:false,
         };
     
         // Pre-bind this function, to make adding it to input fields easier
@@ -71,6 +73,7 @@ class QuizReview extends Component {
 
     confidenceText(wadayano, quizAttempt){
         var quizConfidenceText;
+        var quizConfidenceEmoji;
         var quizOverC = 0;
         var quizUnderC = 0;
         for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
@@ -96,19 +99,23 @@ class QuizReview extends Component {
             } 
         }
         if(wadayano > 90){
-            quizConfidenceText = "🧘 accurate";
+            quizConfidenceText = "accurate";
+            quizConfidenceEmoji = "🧘";
         } else if(quizOverC === quizUnderC){
-            quizConfidenceText = "🤷‍ mixed";
+            quizConfidenceText = "mixed";
+            quizConfidenceEmoji = "🤷‍";
         } else if(quizOverC > quizUnderC){
-            quizConfidenceText = "🤦‍ overConfident";
+            quizConfidenceText = "overConfident";
+            quizConfidenceEmoji = "🤦‍";
         } else {
-            quizConfidenceText = "🙍‍ underConfidence";
+            quizConfidenceText = "underConfidence";
+            quizConfidenceEmoji = "🙍‍";
         }
         this.setState({confidenceText:quizConfidenceText});
+        this.setState({confidenceEmoji:quizConfidenceEmoji});
     }
     //go through each concept and calculate the confidence bias/error
     sortConcepts(quizAttempt){
-        console.log("WHY!!!!!");
         //console.log("qa")
         //console.log(quizAttempt);
 
@@ -123,7 +130,6 @@ class QuizReview extends Component {
         for(var i=0;i<quizConcepts.length;i++){
             
             //var confidence = 0;
-            var correct = 0;
             conceptConfidences.push({
                 concept:"",
                 confidence:0,
@@ -236,12 +242,8 @@ class QuizReview extends Component {
         } else {
             this.setState({concept:null,conceptQuestions: [],showReviewForConcept: null});
         }
-        modal.style.display = "block"; 
-        window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+        this.setState({displayConceptReview:true});
+
         //conceptQuestions: [],
     }
 
@@ -290,11 +292,11 @@ class QuizReview extends Component {
             <div className="columns">
                 <div className="column">
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
-                    <h2 className="subtitle is-2">Score: {formattedScore}</h2>
-                    <div className="wadayano_line">
-                        <img id="wadayano_list" src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem", margin: "10px"}} />&nbsp;
-                        <h2 className="subtitle is-2" id="wadayano_list">wadayano score&#8482;: {this.state.wadayano}%</h2>&nbsp;
-                        <span id="emoji">{this.state.confidenceEmoji}</span>{this.state.confidenceText}
+                    <h2 className="subtitle is-2">Score: {formattedScore}</h2>  <h2 id="numQ" className="subtitle is-2">{quizAttempt.quiz.questions.length} Questions</h2>
+                    <div className="columns">
+                        <span className = "column"><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem", margin: "10px"}} /></span>
+                        <span className="column"><h2 className="subtitle is-2">wadayano score&#8482;: {this.state.wadayano}%</h2>&nbsp;
+                        <span id="emoji">{this.state.confidenceEmoji}</span>{this.state.confidenceText} <i class="fas fa-question-circle" aria-hidden="true"></i></span>
                     </div>
                 </div>
             </div>
@@ -310,7 +312,6 @@ class QuizReview extends Component {
                             Score: {conceptConfidence.conceptScore}%
                         </p>
                         <div className="content">
-                            <span className="icon"><i className="fas fa-thumbs-up"></i> <i className="fas fa-thumbs-down"></i></span>&nbsp; Confidence: {conceptConfidence.confidence}/5
                             <br/><span id="emoji">{conceptConfidence.confidenceEmoji}</span>({conceptConfidence.confidenceText})
                         </div>
                         <div id={conceptConfidence.concept+ "review"}></div>
@@ -321,23 +322,19 @@ class QuizReview extends Component {
                 </div>
             )}
             </div>
-            <div id = "modal">
-                <div className = "modal-content">
-                    {(this.state.showReviewForConcept === this.state.concept && this.state.conceptQuestions.length > 0) &&
-                        <span className="concept-questions-list" id={"questionReview"+this.state.concept}>
-                        &nbsp; Questions about {this.state.concept}: &nbsp;
-                        {this.state.conceptQuestions.map(conceptQuestion => (
-                            <QuestionReview className = "question-review" id={conceptQuestion.id} questionAttempt={conceptQuestion} question={conceptQuestion.question} />
-                        ))}
-                        <br/>
-                        </span>
-                    }
-                </div>
-            </div>
-        </div>
-
-        
-    )
+            <Modal
+                modalState={this.state.displayConceptReview}
+                closeModal={() => this.setState({ displayConceptReview: false })}
+                title="Concept Review">
+                <span className="concept-questions-list" id={"questionReview"+this.state.concept}>
+                    &nbsp; Questions about {this.state.concept}: &nbsp;
+                    {this.state.conceptQuestions.map(conceptQuestion => (
+                        <QuestionReview className = "question-review" id={conceptQuestion.id} questionAttempt={conceptQuestion} question={conceptQuestion.question} />
+                    ))}
+                    <br/>
+                </span>
+            </Modal>
+        </div>)
   }
 }
 

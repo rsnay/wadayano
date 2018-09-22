@@ -36,13 +36,13 @@ button::-moz-focus-inner {
 }
 
 /* Quiz Review*/
-.wadayano_line {
+/*.wadayano_line {
     display:inline-block;
     width: 100%;
 }
-
-#wadayano_list {
-    float:left;
+*/
+.wadayano_list {
+    display:inline-block;
 }
 
 #emoji {
@@ -67,6 +67,25 @@ button::-moz-focus-inner {
     font-size:24px;
 }
 
+#numQ{
+    float:left;
+    font-weight:normal;
+}
+
+/*.item1 { grid-area: icon; }
+.item2 { grid-area: wadayano; }
+.item3 { grid-area: confidence; }
+
+
+.wadayano_line {
+    display:grid;
+    grid-template-areas:
+        'icon wadayano'
+        'icon confidence';
+    grid-gap: 5px;
+    padding: 20px;
+}*/
+
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
@@ -77,7 +96,7 @@ button::-moz-focus-inner {
 }
 
 .question-review {
-    border-top: 5px solid red;
+    margin-bottom: 10px;
 }
 
 /* Quiz Taker */
