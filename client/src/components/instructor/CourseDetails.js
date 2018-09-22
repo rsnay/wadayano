@@ -147,7 +147,7 @@ export class CourseDetails extends Component {
                             </span>
                             <span>Add to LMS</span>
                         </button>
-                        <Link to={"/instructor/quiz/" + quiz.id}
+                        <Link to={"/instructor/quiz/" + quiz.id + "/scores"}
                             className="button is-light">
                             <span className="icon">
                             <i className="fas fa-chart-bar"></i>

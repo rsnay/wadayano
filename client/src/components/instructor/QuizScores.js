@@ -13,9 +13,54 @@ import { formatScore } from '../../utils';
 class QuizScores extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
+            isLoading: true,
+            scores: []
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // Workaround for no callback after apollo query finishes loading.
+        if (nextProps.quizQuery && !nextProps.quizQuery.loading && !nextProps.quizQuery.error) {
+
+            // Prepare data for the sortable table
+            const quiz = nextProps.quizQuery.quiz;
+            const course = quiz.course;
+            // Sort students A–Z (use Array.from to shallow-copy, since source prop is read-only)
+            const students = Array.from(course.students).sort((a, b) => a.name > b.name);
+
+            let scores = students.map(student => {
+                // Determine if student took this quiz
+                let attempts = {};
+                let highestAttempt = null;
+                try {
+                    attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
+                    attempts = attempts.concat().sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+                    // Get highest-scoring attempt for this student
+                    highestAttempt = attempts[0];
+                    console.log(student, attempts, highestAttempt);
+                } catch (error) { }
+                // Output score for each student, if quiz was taken
+                if (highestAttempt !== null) {
+                    return {
+                        name: student.name,
+                        attempts: attempts.length,
+                        highestScore: highestAttempt.score,
+                        wadayanoScore: "TODO",
+                        confidenceAnalysis: "TODO"
+                    }
+                } else {
+                    return {
+                        name: student.name,
+                        attempts: 0,
+                        highestScore: "",
+                        wadayanoScore: "",
+                        confidenceAnalysis: ""
+                    }
+                }
+            })
+            this.setState({ isLoading: false, scores });
+        }
     }
 
     render() {
@@ -32,6 +77,27 @@ class QuizScores extends Component {
         const course = quiz.course;
         // Sort students A–Z (use Array.from to shallow-copy, since source prop is read-only)
         const students = Array.from(course.students).sort((a, b) => a.name > b.name);
+
+
+        const tableColumns = [
+            {
+                header: 'Student Name',
+                key: 'name',
+                defaultSorting: 'ASC',
+                headerProps: { className: 'align-left' },
+            },
+            {
+                header: 'Attempts',
+                key: 'attempts',
+                headerProps: { className: 'align-left' },
+            },
+            {
+                header: 'Highest Score',
+                key: 'highestScore',
+                headerStyle: { fontSize: '15px' },
+                sortable: false
+            }
+        ];
 
         let scoresTable;
         if (students.length === 0) {
@@ -56,7 +122,7 @@ class QuizScores extends Component {
                                 let highestAttempt = null;
                                 try {
                                     attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
-                                    attempts = attempts.concat().sort((a, b) => parseFloat(a.score) > parseFloat(b.score));
+                                    attempts = attempts.concat().sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
                                     // Get highest-scoring attempt for this student
                                     highestAttempt = attempts[0];
                                     console.log(student, attempts, highestAttempt);
@@ -100,6 +166,11 @@ class QuizScores extends Component {
                 </section>
 
                 {scoresTable}
+
+                {/*<SortableTable
+                    data={this.state.scores}
+                    columns={tableColumns}
+                    iconStyle={{ color: '#aaa', paddingLeft: '5px', paddingRight: '5px' }} />*/}
 
                 <hr />
                 <div className="field is-grouped">
