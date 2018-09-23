@@ -67,10 +67,19 @@ button::-moz-focus-inner {
     font-size:24px;
 }
 
+.question-review {
+    margin-bottom: 80px;
+}
+
 #numQ{
     float:left;
     font-weight:normal;
 }
+
+.wadayano-list{
+    float:right;
+}
+
 
 /*.item1 { grid-area: icon; }
 .item2 { grid-area: wadayano; }
@@ -95,9 +104,7 @@ button::-moz-focus-inner {
     width: 80%; /* Could be more or less, depending on screen size */
 }
 
-.question-review {
-    margin-bottom: 10px;
-}
+
 
 /* Quiz Taker */
 progress::-webkit-progress-value {

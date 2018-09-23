@@ -49,7 +49,8 @@ class QuizReview extends Component {
 
         for(i; i < quizAttempt.questionAttempts.length; i++){
             questionNum += 1;
-            if(quizAttempt.questionAttempts[i].isConfident && quizAttempt.questionAttempts[i].isCorrect){
+            if((quizAttempt.questionAttempts[i].isConfident && quizAttempt.questionAttempts[i].isCorrect) || 
+              (!quizAttempt.questionAttempts[i].isConfident && !quizAttempt.questionAttempts[i].isCorrect) ){
                 correctConfidence += 1;
             }
         }
@@ -108,7 +109,7 @@ class QuizReview extends Component {
             quizConfidenceText = "overConfident";
             quizConfidenceEmoji = "🤦‍";
         } else {
-            quizConfidenceText = "underConfidence";
+            quizConfidenceText = "underConfident";
             quizConfidenceEmoji = "🙍‍";
         }
         this.setState({confidenceText:quizConfidenceText});
@@ -213,7 +214,7 @@ class QuizReview extends Component {
                 conceptConfidences[i].confidenceText = "overConfident";
                 conceptConfidences[i].confidenceEmoji = "🤦‍";
             } else {
-                conceptConfidences[i].confidenceText = "underConfidence";
+                conceptConfidences[i].confidenceText = "underConfident";
                 conceptConfidences[i].confidenceEmoji = "🙍‍";
             }
             console.log(conceptConfidences[i].confidenceText);
@@ -292,11 +293,11 @@ class QuizReview extends Component {
             <div className="columns">
                 <div className="column">
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
-                    <h2 className="subtitle is-2">Score: {formattedScore}</h2>  <h2 id="numQ" className="subtitle is-2">{quizAttempt.quiz.questions.length} Questions</h2>
-                    <div className="columns">
-                        <span className = "column"><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem", margin: "10px"}} /></span>
-                        <span className="column"><h2 className="subtitle is-2">wadayano score&#8482;: {this.state.wadayano}%</h2>&nbsp;
-                        <span id="emoji">{this.state.confidenceEmoji}</span>{this.state.confidenceText} <i class="fas fa-question-circle" aria-hidden="true"></i></span>
+                    <h2 className="subtitle is-2">Score: {formattedScore}</h2>
+                    <div className="columns is-gapless is-multilin">
+                        <span className = "column is-2" width="80px"><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem", margin: "10px"}} /></span>
+                        <span className="column"><h2 className="subtitle is-4">wadayano score&#8482;: {this.state.wadayano}%</h2>&nbsp;
+                        <span className="subtitle is-4">{this.state.confidenceEmoji}{this.state.confidenceText}</span> <i class="fas fa-question-circle" aria-hidden="true"></i></span>
                     </div>
                 </div>
             </div>
@@ -329,7 +330,9 @@ class QuizReview extends Component {
                 <span className="concept-questions-list" id={"questionReview"+this.state.concept}>
                     &nbsp; Questions about {this.state.concept}: &nbsp;
                     {this.state.conceptQuestions.map(conceptQuestion => (
-                        <QuestionReview className = "question-review" id={conceptQuestion.id} questionAttempt={conceptQuestion} question={conceptQuestion.question} />
+                        <div className = "question-review">
+                        <QuestionReview id={conceptQuestion.id} questionAttempt={conceptQuestion} question={conceptQuestion.question} />
+                        </div>
                     ))}
                     <br/>
                 </span>
