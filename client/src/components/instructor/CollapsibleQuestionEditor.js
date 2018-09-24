@@ -8,6 +8,7 @@ import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 import { ALPHABET } from '../../constants';
 import ErrorBox from '../shared/ErrorBox';
+import ConceptSelector from './ConceptSelector';
 
 // TinyMCE imports and config
 import tinymce from 'tinymce/tinymce';
@@ -268,6 +269,7 @@ export class CollapsibleQuestionEditor extends Component {
                 <label>
                     <span className="is-inline" style={{verticalAlign: "-webkit-baseline-middle"}}>Concept &nbsp; &nbsp;</span>
                     <input className="input is-inline" type="text" value={question.concept} onChange={(e) => this._handleConceptChange(e.currentTarget.value)} id={"concept"+question.id} placeholder="Concept"></input>
+                    <ConceptSelector concept={question.concept} onChange={(c) => this._handleConceptChange(c)} courseId={this.props.courseId} />
                 </label>
             </div>
         );
@@ -329,6 +331,8 @@ export class CollapsibleQuestionEditor extends Component {
     
 CollapsibleQuestionEditor.propTypes = {
     elementId: PropTypes.string,
+    // courseId is needed for getting concept suggestions from the course
+    courseId: PropTypes.string,
     questionId: PropTypes.string.isRequired,
     questionIndex: PropTypes.number,
     defaultPrompt: PropTypes.string,

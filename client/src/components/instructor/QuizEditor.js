@@ -200,6 +200,7 @@ export class QuizEditor extends Component {
     const questionList = this.state.orderedQuestionIds.map((questionId, index) => (
         <CollapsibleQuestionEditor
             key={questionId}
+            courseId={this.props.quizQuery.quiz.course.id}
             elementId={"container" + questionId}
             questionId={questionId}
             questionIndex={index}
