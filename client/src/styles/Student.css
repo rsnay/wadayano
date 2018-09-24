@@ -224,6 +224,19 @@ progress::-webkit-progress-value {
     padding: 0!important;
 }
 
+.quiz-editor-question-prompt-placeholder {
+    position: relative;
+    width: 0;
+    overflow: visible;
+    z-index: 5;
+    vertical-align: top;
+    margin-top: -4rem;
+    margin-right: -1rem;
+    margin-left: 1rem;
+    color: #aaa;
+    pointer-events: none;
+}
+
 .quiz-editor-question-prompt > div {
     padding: 0.5rem;
     border: none;
@@ -233,6 +246,17 @@ progress::-webkit-progress-value {
 
 .quiz-editor-question-option {
     padding: 0!important;
+}
+
+.quiz-editor-question-option-placeholder {
+    display: block;
+    height: 0;
+    overflow: visible;
+    margin-left: 0.5rem;
+    color: #aaa;
+    font-size: 80%;
+    line-height: 250%;
+    pointer-events: none;
 }
 
 .quiz-editor-question-option-tinymce-container {

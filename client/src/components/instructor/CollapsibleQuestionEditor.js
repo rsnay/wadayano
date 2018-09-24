@@ -254,6 +254,9 @@ export class CollapsibleQuestionEditor extends Component {
 
         const promptEditor = isExpanded && (
             <ScrollIntoViewIfNeeded className="panel-block quiz-editor-question-prompt">
+                {question.prompt.trim() === "" && <span className="quiz-editor-question-prompt-placeholder">Question&nbsp;Prompt</span>}
+                {/* Another element needed so react won’t reinsert placeholder after tinymce editor, since tinymce modifies dom and react can only do its best to adjust */}
+                <span></span>
                 <Editor value={question.prompt}
                     onEditorChange={(newPrompt) => this._handlePromptChange(newPrompt)}
                     init={tinymceConfig} />
@@ -271,7 +274,6 @@ export class CollapsibleQuestionEditor extends Component {
 
         const optionsEditor = isExpanded && (
             <form>
-            <span id={`${question.id}-option-editor-toolbar`}></span>
             {question.options.map((option, optionIndex) =>
                 <div className="panel-block is-flex quiz-editor-question-option" key={option.id}>
                     <label className="radio is-flex">
@@ -281,10 +283,12 @@ export class CollapsibleQuestionEditor extends Component {
                             checked={option.isCorrect}
                             onChange={(e) => this._handleCorrectOptionChange(optionIndex, e.currentTarget.value)}
                             name={"question" + question.id}
+                            disabled={option.text.trim() === ""}
                             type="radio" />
                         <span>{ALPHABET[optionIndex]}</span>
                     </label>
                     <span className="quiz-editor-question-option-tinymce-container">
+                        {option.text.trim() === "" && <span className="quiz-editor-question-option-placeholder">(Leave option empty to hide on quiz)</span>}
                         <Editor
                             value={option.text}
                             onEditorChange={(newOption) => this._handleOptionChange(optionIndex, newOption)}
