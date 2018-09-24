@@ -142,7 +142,8 @@ class QuizReview extends Component {
                 conceptScore:0,
                 correctQuestions:0,
                 overCQuestions:0,
-                underCQuestions:0
+                underCQuestions:0,
+                wadayano:0
 
             });
             conceptConfidences[i].concept = quizConcepts[i];
@@ -199,12 +200,11 @@ class QuizReview extends Component {
             conceptConfidences[i].conceptScore = parseFloat((correct/conceptConfidences[i].questionCnt)*100).toFixed(1); //individual concept score
             conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
             conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
-            var conceptCorrectPercent;
-            conceptCorrectPercent = (conceptConfidences[i].correctQuestions/conceptConfidences[i].questionCnt)*100;
+            conceptConfidences[i].wadayano = (conceptConfidences[i].correctQuestions/conceptConfidences[i].questionCnt)*100;
             console.log(conceptConfidences[i].correctQuestions);
             console.log(conceptConfidences[i].questionCnt);
-            console.log(conceptCorrectPercent);
-            if(conceptCorrectPercent > 90){
+            console.log(conceptConfidences[i].wadayano);
+            if(conceptConfidences[i].wadayano > 90){
                 conceptConfidences[i].confidenceText = "accurate";
                 conceptConfidences[i].confidenceEmoji = "🧘";
             } else if(conceptConfidences[i].overCQuestions === conceptConfidences[i].underCQuestions){
@@ -313,8 +313,10 @@ class QuizReview extends Component {
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}%
                         </p>
-                        <div className="content">
-                            <br/><span id="emoji">{conceptConfidence.confidenceEmoji}</span>({conceptConfidence.confidenceText})
+                        <div className="columns is-gapless is-multiline">
+                            <div className = "column is-2" style={{width:"80px", margin:"5px"}}><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem", margin: "0px"}} /></div>
+                            <div className="column"><h2 className="subtitle is-4" style={{margin:"0px"}}>wadayano score&#8482;: {conceptConfidence.wadayano}%</h2>
+                            <div><span className="subtitle is-4">{conceptConfidence.confidenceEmoji}{conceptConfidence.confidenceText}</span> <i class="fas fa-question-circle" aria-hidden="true"></i></div></div>
                         </div>
                         <div id={conceptConfidence.concept+ "review"}></div>
                         <footer className="">
