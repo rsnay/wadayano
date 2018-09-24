@@ -307,7 +307,7 @@ class QuizReview extends Component {
                 <div className="tile is-4 is-parent" key={conceptConfidence.id}>
                     <div className="tile is-child box">
                         <p className="title">
-                            {conceptConfidence.concept} <span id="questionNum" >{conceptConfidence.questionCnt} Questions</span>
+                            {conceptConfidence.concept} <span id="questionNum" >{conceptConfidence.questionCnt === 1 ? '1 Question' : conceptConfidence.questionCnt} Questions</span>
                         </p>
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}%
