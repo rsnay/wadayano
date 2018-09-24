@@ -294,10 +294,10 @@ class QuizReview extends Component {
                 <div className="column">
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
                     <h2 className="subtitle is-2">Score: {formattedScore}</h2>
-                    <div className="columns is-gapless is-multilin">
-                        <span className = "column is-2" width="80px"><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "3rem", height: "3rem", margin: "10px"}} /></span>
-                        <span className="column"><h2 className="subtitle is-4">wadayano score&#8482;: {this.state.wadayano}%</h2>&nbsp;
-                        <span className="subtitle is-4">{this.state.confidenceEmoji}{this.state.confidenceText}</span> <i class="fas fa-question-circle" aria-hidden="true"></i></span>
+                    <div className="columns is-gapless is-multiline">
+                        <div className = "column is-2" style={{width:"80px", margin:"5px"}}><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem", margin: "0px"}} /></div>
+                        <div className="column"><h2 className="subtitle is-4" style={{margin:"0px"}}>wadayano score&#8482;: {this.state.wadayano}%</h2>
+                        <div><span className="subtitle is-4">{this.state.confidenceEmoji}{this.state.confidenceText}</span> <i class="fas fa-question-circle" aria-hidden="true"></i></div></div>
                     </div>
                 </div>
             </div>
@@ -307,7 +307,8 @@ class QuizReview extends Component {
                 <div className="tile is-4 is-parent" key={conceptConfidence.id}>
                     <div className="tile is-child box">
                         <p className="title">
-                            {conceptConfidence.concept} <span id="questionNum" >{conceptConfidence.questionCnt === 1 ? '1 Question' : conceptConfidence.questionCnt} Questions</span>
+
+                            {conceptConfidence.concept} <span id="questionNum" >{conceptConfidence.questionCnt === 1 ? '1 Question' : conceptConfidence.questionCnt + ' Questions'}</span>
                         </p>
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}%

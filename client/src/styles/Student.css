@@ -41,6 +41,20 @@ button::-moz-focus-inner {
     width: 100%;
 }
 */
+.flexbox-container{
+    display: flex;
+    flex-direction:row;
+}
+
+.flex-column-left{
+    width:80px;
+}
+
+.flex-column-right{
+    display:flex;
+    flex-direction:column;
+}
+
 .wadayano_list {
     display:inline-block;
 }
