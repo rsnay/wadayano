@@ -220,7 +220,6 @@ class QuizReview extends Component {
         var modal = document.getElementById("modal");
         
         if(this.state.concept !== concept){
-            this.setState({concept: concept});
             var conceptQuestions = [];
             var questionAttempt;
             //console.log("this");
@@ -231,11 +230,10 @@ class QuizReview extends Component {
                     conceptQuestions.push(questionAttempt);
                 }
             }
-            this.setState({conceptQuestions: conceptQuestions, showReviewForConcept: concept});
+            this.setState({conceptQuestions: conceptQuestions, showReviewForConcept: concept, concept, displayConceptReview:true});
         } else {
-            this.setState({concept:null,conceptQuestions: [],showReviewForConcept: null});
+            this.setState({concept:null,conceptQuestions: [],showReviewForConcept: null, displayConceptReview:true});
         }
-        this.setState({displayConceptReview:true});
     }
 
     helpText(show){
