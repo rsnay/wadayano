@@ -12,6 +12,7 @@ class ConceptSelector extends Component {
         this.state = {
             concept: "",
             showSuggestions: false,
+            conceptsLoaded: false,
             concepts: []
         };
         this._handleInputChange = this._handleInputChange.bind(this);
@@ -20,55 +21,73 @@ class ConceptSelector extends Component {
     componentWillReceiveProps(nextProps) {
         console.log(nextProps.concept)
         // Workaround for no callback after apollo query finishes loading.
-        if (nextProps.quizQuery && !nextProps.quizQuery.loading && !nextProps.quizQuery.error) {
-            // Update order of question IDs
-            const quiz = nextProps.quizQuery.quiz;
-            // Tweak structure so (future) drag-and-drop reorder is easier
-            // Map of questions: key=questionId, value=question
-            // Array of ordered question IDs that will be changed on reorder
-            let questions = new Map();
-            let orderedQuestionIds = [];
-            quiz.questions.forEach(q => {
-                questions.set(q.id, q);
-                orderedQuestionIds.push(q.id);
+        if (!this.state.conceptsLoaded && nextProps.courseQuery && !nextProps.courseQuery.loading && !nextProps.courseQuery.error) {
+            // Get concepts from all quizzes in the course
+            let concepts = new Set();
+
+            const course = nextProps.courseQuery.course;
+            course.quizzes.forEach(quiz => {
+                quiz.questions.forEach(question => {
+                    concepts.add(question.concept.trim());
+                })
             });
-            this.setState({ concept: nextProps.concept, questions, orderedQuestionIds });
+            // In case of an empty concept, remove it
+            concepts.delete('');
+            concepts = Array.from(concepts);
+            console.log(concepts);
+
+            this.setState({ concept: nextProps.concept, conceptsLoaded: true, concepts });
         } else {
             this.setState({ concept: nextProps.concept })
         }
     }
 
     _handleInputChange(event) {
-        this._setConcept(event.target.value);
+        console.log("input changed")
+        this._setConcept(event.target.value, true);
     }
 
-    _setConcept(concept) {
-        this.setState({ concept });
+    _setConcept(concept, showSuggestions = false) {
+        this.setState({ concept, showSuggestions });
         if (this.props.onChange) {
             this.props.onChange(concept);
         }
     }  
 
     render() {
+        // Filter all concepts
+        const filterText = this.state.concept.trim();
+        const lowerCaseFilterText = filterText.toLowerCase();
+        let filteredConcepts = this.state.concepts.filter(concept => (concept.toLowerCase().includes(lowerCaseFilterText)));
 
-        let suggestionsList = this.state.showSuggestions && this.state.concepts.length > 0 && (
+        // Add current filter text, if not empty or already present
+        if (this.state.concept.trim() !== '' && filteredConcepts.indexOf(this.state.concept.trim()) === -1) {
+            //filteredConcepts.push(this.state.concept.trim());
+        }
+
+
+        let suggestionsList = this.state.showSuggestions && (
             <span className="concept-suggestions-list">
-            &nbsp; Suggestions: &nbsp;
-            {this.state.concepts.map(concept => (
-                <button id={concept} key={concept} className="concept-tag tag is-light" onClick={() => this._setConcept(concept)}>{concept}</button>
+            {filteredConcepts.map(concept => (
+                <button key={concept} className="concept-tag tag is-light" onClick={() => this._setConcept(concept, false)}>{concept}</button>
             ))}
+            {/* Add current filter text, if not empty or already present */}
+            {(filterText !== '' && filteredConcepts.indexOf(filterText) === -1) && 
+                <button key={filterText} className="concept-tag tag is-link" onClick={() => this._setConcept(filterText, false)}>+ {filterText}</button>
+            }
             </span>
         );
 
         return (
-            <span>
+            <React.Fragment>
                 <input
                     value={this.state.concept}
                     onChange={this._handleInputChange}
                     className="input is-inline"
                     type="text"
-                    placeholder="Concept" />
-            </span>
+                    placeholder={this.props.placeholder} />
+                {suggestionsList}
+            </React.Fragment>
         );
 
     }
@@ -78,7 +97,12 @@ ConceptSelector.propTypes = {
     concept: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     // Concept suggestions will be fetched from all quizzes in the given course
-    courseId: PropTypes.string
+    courseId: PropTypes.string,
+    placeholder: PropTypes.string
+};
+
+ConceptSelector.defaultProps = {
+    placeholder: 'Concept'
 };
 
 // Get the concepts from the whole course
@@ -87,11 +111,10 @@ const COURSE_QUERY = gql`
     course(id:$id){
         id
         quizzes {
-            id {
-                questions {
-                    id
-                    concept
-                }
+            id
+            questions {
+                id
+                concept
             }
         }
     }

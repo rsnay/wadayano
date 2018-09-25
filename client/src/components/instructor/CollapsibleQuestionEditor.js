@@ -119,7 +119,7 @@ export class CollapsibleQuestionEditor extends Component {
             return 'Please enter a prompt for this question';
         }
         // Ensure the question has a non-empty concept
-        let concept = document.getElementById(('concept' + question.id)).value;
+        let concept = question.concept;
         if (concept === null || concept.trim() === '') {
             return 'Please enter a concept for this question';
         }
@@ -267,10 +267,9 @@ export class CollapsibleQuestionEditor extends Component {
         const conceptSelector = isExpanded && (
             <div className="panel-block quiz-editor-question-concept">
                 <label>
-                    <span className="is-inline" style={{verticalAlign: "-webkit-baseline-middle"}}>Concept &nbsp; &nbsp;</span>
-                    <input className="input is-inline" type="text" value={question.concept} onChange={(e) => this._handleConceptChange(e.currentTarget.value)} id={"concept"+question.id} placeholder="Concept"></input>
-                    <ConceptSelector concept={question.concept} onChange={(c) => this._handleConceptChange(c)} courseId={this.props.courseId} />
+                    <span className="is-inline">Concept &nbsp; &nbsp;</span>
                 </label>
+                <ConceptSelector concept={question.concept} onChange={(c) => this._handleConceptChange(c)} courseId={this.props.courseId} />
             </div>
         );
 
