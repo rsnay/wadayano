@@ -101,16 +101,16 @@ class QuizReview extends Component {
             } 
         }
         if(wadayano > 90){
-            quizConfidenceText = "accurate";
+            quizConfidenceText = "Accurate";
             quizConfidenceEmoji = "🧘";
         } else if(quizOverC === quizUnderC){
-            quizConfidenceText = "mixed";
+            quizConfidenceText = "Mixed";
             quizConfidenceEmoji = "🤷‍";
         } else if(quizOverC > quizUnderC){
-            quizConfidenceText = "overConfident";
+            quizConfidenceText = "Overconfident";
             quizConfidenceEmoji = "🤦‍";
         } else {
-            quizConfidenceText = "underConfident";
+            quizConfidenceText = "Underconfident";
             quizConfidenceEmoji = "🙍‍";
         }
         this.setState({confidenceText:quizConfidenceText});
@@ -199,16 +199,16 @@ class QuizReview extends Component {
             console.log(conceptConfidences[i].questionCnt);
             console.log(conceptConfidences[i].wadayano);
             if(conceptConfidences[i].wadayano > 90){
-                conceptConfidences[i].confidenceText = "accurate";
+                conceptConfidences[i].confidenceText = "Accurate";
                 conceptConfidences[i].confidenceEmoji = "🧘";
             } else if(conceptConfidences[i].overCQuestions === conceptConfidences[i].underCQuestions){
-                conceptConfidences[i].confidenceText = "mixed";
+                conceptConfidences[i].confidenceText = "Mixed";
                 conceptConfidences[i].confidenceEmoji = "🤷‍";
             } else if(conceptConfidences[i].overCQuestions > conceptConfidences[i].underCQuestions){
-                conceptConfidences[i].confidenceText = "overConfident";
+                conceptConfidences[i].confidenceText = "OverConfident";
                 conceptConfidences[i].confidenceEmoji = "🤦‍";
             } else {
-                conceptConfidences[i].confidenceText = "underConfident";
+                conceptConfidences[i].confidenceText = "UnderConfident";
                 conceptConfidences[i].confidenceEmoji = "🙍‍";
             }
             console.log(conceptConfidences[i].confidenceText);
