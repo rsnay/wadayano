@@ -29,6 +29,7 @@ class QuizReview extends Component {
             confidenceEmoji:null,
             wadayano:null,
             displayConceptReview:false,
+            helpTextShow:false,
         };
     
         // Pre-bind this function, to make adding it to input fields easier
@@ -117,16 +118,11 @@ class QuizReview extends Component {
     }
     //go through each concept and calculate the confidence bias/error
     sortConcepts(quizAttempt){
-        //console.log("qa")
-        //console.log(quizAttempt);
-
         // Get concepts from all questions in the quiz
         var quizConcepts = quizAttempt.quiz.questions.map(q => q.concept);
         // Remove duplicate concepts
         quizConcepts = Array.from(new Set(quizConcepts));
 
-        //console.log("quiz")
-        //console.log(quizConcepts);
         var conceptConfidences = [];
         for(var i=0;i<quizConcepts.length;i++){
             
@@ -156,8 +152,6 @@ class QuizReview extends Component {
                 var question = quizAttempt.questionAttempts[j].question;
                 var questionAttempt = quizAttempt.questionAttempts[j];
                 
-                //console.log(question.concept);
-                //console.log(quizConcepts[i]);
                 if(question.concept === quizConcepts[i]){
                     conceptConfidences[i].questionCnt +=1;
                     if(quizAttempt.questionAttempts[j].confidence){
@@ -200,7 +194,7 @@ class QuizReview extends Component {
             conceptConfidences[i].conceptScore = parseFloat((correct/conceptConfidences[i].questionCnt)*100).toFixed(1); //individual concept score
             conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
             conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
-            conceptConfidences[i].wadayano = (conceptConfidences[i].correctQuestions/conceptConfidences[i].questionCnt)*100;
+            conceptConfidences[i].wadayano = ((conceptConfidences[i].correctQuestions/conceptConfidences[i].questionCnt)*100).toFixed(1);
             console.log(conceptConfidences[i].correctQuestions);
             console.log(conceptConfidences[i].questionCnt);
             console.log(conceptConfidences[i].wadayano);
@@ -219,8 +213,6 @@ class QuizReview extends Component {
             }
             console.log(conceptConfidences[i].confidenceText);
         }
-        console.log("conceptConfidence:")
-        console.log(conceptConfidences);
         return conceptConfidences;
     }
 
@@ -244,8 +236,10 @@ class QuizReview extends Component {
             this.setState({concept:null,conceptQuestions: [],showReviewForConcept: null});
         }
         this.setState({displayConceptReview:true});
+    }
 
-        //conceptQuestions: [],
+    helpText(show){
+        this.setState({helpTextShow:show});
     }
 
     
@@ -297,7 +291,8 @@ class QuizReview extends Component {
                     <div className="columns is-gapless is-multiline">
                         <div className = "column is-2" style={{width:"80px", margin:"5px"}}><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem", margin: "0px"}} /></div>
                         <div className="column"><h2 className="subtitle is-4" style={{margin:"0px"}}>wadayano score&#8482;: {this.state.wadayano}%</h2>
-                        <div><span className="subtitle is-4">{this.state.confidenceEmoji}{this.state.confidenceText}</span> <i class="fas fa-question-circle" aria-hidden="true"></i></div></div>
+                        <div><span className="subtitle is-4">{this.state.confidenceEmoji}{this.state.confidenceText}</span> <i class="fas fa-question-circle" aria-hidden="true" onMouseEnter={this.helpText.bind(null,true)} onMouseLeave={this.helpText.bind(null,false)}></i>
+                        {this.state.helpTextShow && <div>test?</div>}</div></div>
                     </div>
                 </div>
             </div>
