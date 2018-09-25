@@ -277,7 +277,7 @@ class QuizReview extends Component {
     const gradePostMessage = isGraded && (quizAttempt.postSucceeded ?
             <span className="notification is-success is-inline-block">Score was posted successfully.</span>
         :
-            <span className="notification is-danger is-inline-block">There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.</span>
+            <span className="notification is-warning is-inline-block">There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.</span>
         );
 
     return (
@@ -322,9 +322,8 @@ class QuizReview extends Component {
             <Modal
                 modalState={this.state.displayConceptReview}
                 closeModal={() => this.setState({ displayConceptReview: false })}
-                title="Concept Review">
+                title={"Concept Review: " + this.state.concept}>
                 <span className="concept-questions-list" id={"questionReview"+this.state.concept}>
-                    &nbsp; Questions about {this.state.concept}: &nbsp;
                     {this.state.conceptQuestions.map(conceptQuestion => (
                         <div className = "question-review">
                         <QuestionReview id={conceptQuestion.id} questionAttempt={conceptQuestion} question={conceptQuestion.question} />
