@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
+import ButterToast from './Toast';
 import Logo from '../../logo_title.svg';
 
 import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR, AUTH_ROLE_STUDENT } from '../../constants';
@@ -24,7 +25,7 @@ class Header extends Component {
     // On mobile devices, the top menu disappears and is replaced by a hamburger menu button.
     // This toggles it. Note that it relies on the menu having id of "header-main-menu"
     _toggleMenu(e) {
-        e.preventDefault();
+        e.preventDefault()
         // Toggle the class on both the "navbar-burger" and the "navbar-menu"
         e.target.classList.toggle('is-active');
         document.getElementById('header-main-menu').classList.toggle('is-active');
@@ -64,6 +65,8 @@ class Header extends Component {
                 </div>
             </div>
         </div>
+
+        <ButterToast />
       </nav> 
     )
   }

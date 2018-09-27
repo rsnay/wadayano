@@ -35,6 +35,14 @@ button::-moz-focus-inner {
     max-height: calc(100% - 40px)!important;
 }
 
+/* Shift butter-toast toast notifications to below header */
+.butter-toast ul {
+}
+.butter-toast .notification {
+    min-width: 250px;
+    max-width: 500px;
+}
+
 /* Quiz Review*/
 /*.wadayano_line {
     display:inline-block;
