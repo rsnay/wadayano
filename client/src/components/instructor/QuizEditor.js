@@ -11,6 +11,7 @@ import { reorder } from '../../utils';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
 
@@ -20,6 +21,7 @@ export class QuizEditor extends Component {
     
         this.state = {
             isLoading: false,
+            isSaving: false,
             isAddingQuestion: false,
             // Questions are stored in state once query loads, so that they can be reordered in the future (otherwise, query just loads into read-only prop).
             questions: new Map(),
@@ -60,43 +62,78 @@ export class QuizEditor extends Component {
             // Updated questions will be added here
             questions: { update: [] },
         };
+        this.setState({ isSaving: true });
 
-        // Send the mutation
-        await this.props.saveQuizMutation({
-            variables:{
-                id: quiz.id,
-                data: quizData
+        try {
+            // Send the mutation
+            const result = await this.props.saveQuizMutation({
+                variables:{
+                    id: quiz.id,
+                    data: quizData
+                }
+            });
+            if (result.errors && result.errors.length > 0) {
+                throw result;
             }
-        });
+            ButterToast.raise({
+                content: <ToastTemplate content="Quiz info saved." className="is-success" />
+            });
+        } catch (error) {
+            ButterToast.raise({
+                content: <ToastTemplate content="Error saving quiz info." className="is-danger" />
+            });
+        }
+        this.setState({ isSaving: false });
 
         // Reload quiz data after it's done
         if (refetch) {
-            this.props.quizQuery.refetch();
+            //this.props.quizQuery.refetch();
         }
     }
 
     async deleteQuiz(quiz){
         if (!window.confirm('Are you sure you want to delete this quiz? All students’ attempts for this quiz will also be deleted.')) { return; }
         this.setState({ isLoading: true });
-        await this.props.quizDeleteMutation({
-            variables:{
-                id: quiz.id
+        try {
+            const result = await this.props.quizDeleteMutation({
+                variables:{
+                    id: quiz.id
+                }
+            });
+            if (result.errors && result.errors.length > 0) {
+                throw result;
             }
-        });
-        // Redirect to course details after successful deletion
-        this.props.history.push('/instructor/course/' + quiz.course.id);
+            // Redirect to course details after successful deletion
+            this.props.history.push('/instructor/course/' + quiz.course.id);
+        } catch (error) {
+            this.setState({ isLoading: false });
+            ButterToast.raise({
+                content: <ToastTemplate content="Error deleting quiz." className="is-danger" />
+            });
+        }
     }
 
     async addQuestion() {
         if (this.state.isAddingQuestion) { return; }
         this.setState({ isAddingQuestion: true });
-        console.log('adding questino');
-        // Send new question mutation
-        const result = await this.props.addQuestionMutation({
-            variables:{
-                id: this.props.match.params.quizId
+        let result;
+        try {
+            // Send new question mutation
+            result = await this.props.addQuestionMutation({
+                variables:{
+                    id: this.props.match.params.quizId
+                }
+            });
+            if (result.errors && result.errors.length > 0) {
+                throw result;
             }
-        });
+        } catch (error) {
+            ButterToast.raise({
+                content: <ToastTemplate content="Error adding question." className="is-danger" />
+            });
+            this.setState({ isAddingQuestion: false });
+            return;
+        }
 
         const newQuestionId = result.data.addQuestion.questions[result.data.addQuestion.questions.length - 1].id;
 
@@ -265,7 +302,7 @@ export class QuizEditor extends Component {
                 </button>
             </p>
             <p className="control">
-                <button className="button is-link" onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz Info</button>
+                <button className={"button is-link"+ (this.state.isSaving ? " is-loading" : "")} disabled={this.state.isSaving} onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz Info</button>
             </p>
         </div>
         <hr />

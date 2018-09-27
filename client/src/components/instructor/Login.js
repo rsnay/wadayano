@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
 import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR } from '../../constants';
@@ -135,12 +136,21 @@ class Login extends Component {
       }
     });
     if (result.errors && result.errors.length > 0) {
-      window.alert(result.errors[0].message);
+      ButterToast.raise({
+        content: <ToastTemplate content={result.errors[0].message} className="is-danger" />,
+        timeout: 12000
+      });
     } else {
       if (result.data.instructorRequestPasswordReset === true) {
-        window.alert(`An email was sent to ${email} with further instructions.`);
+        ButterToast.raise({
+          content: <ToastTemplate content={`An email was sent to ${email} with further instructions.`} className="is-success" />,
+          sticky: true
+        });
       } else {
-        window.alert(`No account was found for ${email}, or there was an unexpected error sending the password reset email.`);
+        ButterToast.raise({
+          content: <ToastTemplate content={`No account was found for ${email}, or there was an unexpected error sending the password reset email.`} className="is-danger" />,
+          timeout: 12000
+        });
       }
     }
   }

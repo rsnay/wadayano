@@ -12,6 +12,7 @@ import LoadingBox from '../shared/LoadingBox';
 import Modal from '../shared/Modal';
 import LTISetupModal from './LTISetupModal';
 import CourseInfoForm from './CourseInfoForm';
+import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 export class CourseDetails extends Component {
 
@@ -37,12 +38,21 @@ export class CourseDetails extends Component {
     async deleteCourse(course){
         let response = window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.')
         if (response && response.toLowerCase() === 'absolutely') {
-            await this.props.courseDelete({
-                variables:{
-                    id:course.id
+            try {
+                const result = await this.props.courseDelete({
+                    variables:{
+                        id:course.id
+                    }
+                });
+                if (result.errors && result.errors.length > 0) {
+                    throw result;
                 }
-            });
-            window.location.assign('/instructor/courses');
+                window.location.assign('/instructor/courses');
+            } catch (result) {
+                ButterToast.raise({
+                    content: <ToastTemplate content={"Error deleting course: " + result.errors[0].message} className="is-danger" />,
+                });
+            }
         } else {
             alert('Course will not be deleted.');
         }
@@ -68,9 +78,15 @@ export class CourseDetails extends Component {
         });
         // Show error, or success string from mutation
         if (result.errors && result.errors.length > 0) {
-            window.alert(result.errors[0].message);
+            ButterToast.raise({
+                content: <ToastTemplate content={result.errors[0].message} className="is-danger" />,
+                timeout: 12000
+            });
         } else {
-            window.alert(result.data.sendInstructorCourseInvite);
+            ButterToast.raise({
+                content: <ToastTemplate content={result.data.sendInstructorCourseInvite} className="is-success" />,
+                sticky: true
+            });
         }
         this.props.courseQuery.refetch();
     }
@@ -87,9 +103,14 @@ export class CourseDetails extends Component {
         });
         // Show error, or success string from mutation
         if (result.errors && result.errors.length > 0) {
-            window.alert(result.errors[0].message);
+            ButterToast.raise({
+                content: <ToastTemplate content={result.errors[0].message} className="is-danger" />,
+                timeout: 12000
+            });
         } else {
-            window.alert(result.data.removeInstructorFromCourse);
+            ButterToast.raise({
+                content: <ToastTemplate content={result.data.removeInstructorFromCourse} className="is-success" />,
+            });
         }
         this.props.courseQuery.refetch();
     }

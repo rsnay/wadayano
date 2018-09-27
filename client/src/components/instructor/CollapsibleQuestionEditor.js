@@ -170,14 +170,19 @@ export class CollapsibleQuestionEditor extends Component {
             // Add updated option to question mutation
             updatedQuestion.options.update.push(updatedOption);
         });
-        await this.props.updateQuestionMutation({
-            variables:{
-                id: this.props.questionId,
-                data: updatedQuestion
-            }
-        });
-        // Collapse editor
-        this.setState({ isLoading: false, isExpanded: false });
+        try {
+            await this.props.updateQuestionMutation({
+                variables:{
+                    id: this.props.questionId,
+                    data: updatedQuestion
+                }
+            });
+            // Collapse editor
+            this.setState({ isLoading: false, isExpanded: false });
+        } catch (error) {
+            alert('There was an error saving this question. Please copy the question to a document and try again later.');
+            this.setState({ isLoading: false });
+        }
     }
 
     _discardChanges() {
