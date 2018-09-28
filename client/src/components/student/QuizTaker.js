@@ -126,6 +126,7 @@ class QuizTaker extends Component {
   _onNextQuestion() {
     // If at the end of the quiz...
     let newIndex = this.state.currentQuestionIndex + 1;
+    //check if newIndex if there is a question attempt for the next question, skip?????
     // ... go to results (still set new currentQuestionIndex so progress bar fills up)
     if (newIndex >= this.state.quiz.questions.length) {
       this.setState({

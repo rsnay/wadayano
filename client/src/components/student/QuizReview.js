@@ -9,7 +9,7 @@ import { formatScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
-import Logo from '../../logo_standalone.svg';
+import Logo from '../../logo_boxed.svg';
 
 import QuestionReview from './QuestionReview';
 import Modal from '../shared/Modal';
@@ -300,8 +300,8 @@ class QuizReview extends Component {
                 <div className="tile is-4 is-parent" key={conceptConfidence.id}>
                     <div className="tile is-child box">
                         <p className="title">
-
-                            {conceptConfidence.concept} <span id="questionNum" >{conceptConfidence.questionCnt === 1 ? '1 Question' : conceptConfidence.questionCnt + ' Questions'}</span>
+                            <div>{conceptConfidence.concept}</div>
+                            <div id="questionNum" >{conceptConfidence.questionCnt === 1 ? '1 Question' : conceptConfidence.questionCnt + ' Questions'}</div>
                         </p>
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}%
