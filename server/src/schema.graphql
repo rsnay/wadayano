@@ -1,7 +1,6 @@
 #import Student, Course, Quiz, QuizType, Question, QuestionCreateInput, QuestionUpdateInput QuestionUpdateManyInput, Option, QuizAttempt, QuizAttemptOrderByInput, QuestionAttempt, ConceptConfidence, SurveyResult from "./generated/prisma.graphql"
 
 type Query {
-  quizzes: [Quiz!]!
   quiz(id:ID): Quiz!
   instructor: Instructor!
   courses: [Course!]!

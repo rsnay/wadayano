@@ -7,6 +7,7 @@ function validateEmail(email) {
 }
 
 // Extracts user ID and role (instructor or not) from the JWT. Returns { userId: "string", isInstructor: true/false }
+// If user is not authenticated, userId will be null
 function getUserInfo(context) {
     const Authorization = context.request.get('Authorization');
     if (Authorization) {
@@ -16,12 +17,13 @@ function getUserInfo(context) {
         return { userId, isInstructor };
       } catch (error) {
         // TODO if not authenticated or invalid token, should this return empty values, or throw an error?
-        //return { userId: null, isInstructor: false };
+        return { userId: null, isInstructor: false };
+        // TODO revise everything that relied on this previous behavior
         throw new Error('Not authenticated');
       }
     }
   
-    //return { userId: null, isInstructor: false };
+    return { userId: null, isInstructor: false };
     throw new Error('Not authenticated');
 }
 

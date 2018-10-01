@@ -1,10 +1,12 @@
 // GraphQL
 const { GraphQLServer } = require('graphql-yoga');
 const { Prisma } = require('prisma-binding');
+const { shield } = require('graphql-shield');
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const QuizGradePayload = require('./resolvers/QuizGradePayload');
 const Option = require('./resolvers/Option');
+const { Permissions } = require('./permissions/permissions');
 
 // App server (for static and LTI processing)
 const express = require('express');
@@ -50,6 +52,7 @@ const server = new GraphQLServer({
   resolverValidationOptions :{
     requireResolversForResolveType: false
   },
+  middlewares: [shield(Permissions)],
   context: req => ({
     ...req,
     // Allow this server's mutations and queries to access prisma server
@@ -71,4 +74,5 @@ server.use(express.static(appDir));
 
 server.start({
   port: config.APP_SERVER_PORT || 4000,
+  tracing: 'disabled',
 }, () => console.log(`Server is running on port ${config.APP_SERVER_PORT || 4000}`));

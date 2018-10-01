@@ -1,9 +1,5 @@
 const { getUserInfo } = require('../utils.js');
 
-function quizzes(root, args, context, info) {
-  return context.db.query.quizzes({}, info)
-}
-
 function course(root, args, context, info){
   return context.db.query.course({where:{id:args.id}}, info)
 }
@@ -72,7 +68,6 @@ async function currentStudentQuizAttempt(root, args, context, info) {
 }
 
 module.exports = {
-  quizzes,
   course,
   courses,
   instructor,

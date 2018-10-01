@@ -21,7 +21,7 @@ type Student {
     email: String!
     name: String!
     courses: [Course!]!
-    # If a student is deleted, delete their quiz and survey attempts (not that the other side of this relation, on quizAttempt or surveyResult is SET_NULL, e.g. deleting an attempt removes it from the student, but doesn't delete the student)
+    # If a student is deleted, delete their quiz and survey attempts (note that the other side of this relation, on quizAttempt or surveyResult is SET_NULL, e.g. deleting an attempt removes it from the student, but doesn't delete the student)
     quizAttempts: [QuizAttempt!]! @relation(name: "StudentQuizAttempts", onDelete: CASCADE)
     surveyResults: [SurveyResult!]! @relation(name: "StudentSurveyResults", onDelete: CASCADE)
 }
