@@ -306,7 +306,7 @@ class QuizReview extends Component {
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}%
                         </p>
-                        <div className="columns is-gapless is-multiline">
+                        <div className="columns is-gapless is-multiline" style={{margin:"0px"}}>
                             <div className = "column is-2" style={{width:"80px", margin:"5px"}}><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem", margin: "0px"}} /></div>
                             <div className="column"><h2 className="subtitle is-4" style={{margin:"0px"}}>wadayano score&#8482;: {conceptConfidence.wadayano}%</h2>
                             <div><span className="subtitle is-4">{conceptConfidence.confidenceEmoji}{conceptConfidence.confidenceText}</span> <i class="fas fa-question-circle" aria-hidden="true"></i></div></div>
