@@ -9,14 +9,20 @@ import { withAuthCheck } from '../shared/AuthCheck';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import { formatScore } from '../../utils';
+import QuizReviewPage from '../student/QuizReviewPage';
+import Modal from '../shared/Modal';
 
 class QuizScores extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
-            scores: []
+            sortColumn: 'name',
+            sortAscending: true,
+            studentScores: [],
+            currentStudentReview: null
         };
+        this.sortByColumn = this.sortByColumn.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -26,10 +32,10 @@ class QuizScores extends Component {
             // Prepare data for the sortable table
             const quiz = nextProps.quizQuery.quiz;
             const course = quiz.course;
-            // Sort students A–Z (use Array.from to shallow-copy, since source prop is read-only)
-            const students = Array.from(course.students).sort((a, b) => a.name > b.name);
+            // Use Array.from to shallow-copy, since source prop is read-only
+            // const students = Array.from(course.students);
 
-            let scores = students.map(student => {
+            let studentScores = course.students.map(student => {
                 // Determine if student took this quiz
                 let attempts = {};
                 let highestAttempt = null;
@@ -41,26 +47,59 @@ class QuizScores extends Component {
                     console.log(student, attempts, highestAttempt);
                 } catch (error) { }
                 // Output score for each student, if quiz was taken
-                if (highestAttempt !== null) {
+                if (highestAttempt) {
                     return {
+                        id: student.id,
                         name: student.name,
                         attempts: attempts.length,
                         highestScore: highestAttempt.score,
+                        highestAttemptId: highestAttempt.id,
                         wadayanoScore: "TODO",
                         confidenceAnalysis: "TODO"
                     }
                 } else {
                     return {
+                        id: student.id,
                         name: student.name,
                         attempts: 0,
                         highestScore: "",
+                        highestAttemptId: "",
                         wadayanoScore: "",
                         confidenceAnalysis: ""
                     }
                 }
             })
-            this.setState({ isLoading: false, scores });
+
+            // Sort scores according to selected column
+            studentScores = studentScores.sort((a, b) => a.name > b.name);
+
+            this.setState({ isLoading: false, studentScores });
         }
+    }
+
+    sortByColumn(e) {
+        // Get data-column prop from header that was clicked
+        const newSortColumn = e.target.dataset.column;
+        let { sortAscending, studentScores } = this.state;
+        
+        // Check if we're toggling sort direction
+        if (this.state.sortColumn === newSortColumn) {
+            sortAscending = !sortAscending;
+        }
+        console.log(studentScores);
+        // Sort data
+        studentScores = studentScores.sort(sortFunctions[newSortColumn]);
+        if (!sortAscending) {
+            studentScores.reverse();
+        }
+
+        console.log(studentScores);
+        // Update state
+        this.setState({ sortColumn: newSortColumn, sortAscending, studentScores });
+    }
+
+    showAttemptReview(student) {
+        this.setState({ currentStudentReview: student });
     }
 
     render() {
@@ -75,69 +114,46 @@ class QuizScores extends Component {
 
         const quiz = this.props.quizQuery.quiz;
         const course = quiz.course;
-        // Sort students A–Z (use Array.from to shallow-copy, since source prop is read-only)
-        const students = Array.from(course.students).sort((a, b) => a.name > b.name);
-
-
-        const tableColumns = [
-            {
-                header: 'Student Name',
-                key: 'name',
-                defaultSorting: 'ASC',
-                headerProps: { className: 'align-left' },
-            },
-            {
-                header: 'Attempts',
-                key: 'attempts',
-                headerProps: { className: 'align-left' },
-            },
-            {
-                header: 'Highest Score',
-                key: 'highestScore',
-                headerStyle: { fontSize: '15px' },
-                sortable: false
-            }
-        ];
 
         let scoresTable;
-        if (students.length === 0) {
+        if (this.state.studentScores.length === 0) {
             scoresTable = (<p className="notification is-light">There are no students enrolled in this course. When a student launches a quiz from the course’s LMS, he/she will be automatically enrolled.</p>);
         } else {
             scoresTable = (
                 <div className="table-wrapper">
                     <table className="table is-striped is-fullwidth survey-results-table">
                         <thead>
-                            <tr className="sticky-header">
-                                <th>Student Name</th>
-                                <th>Attempts</th>
-                                <th>Highest Score</th>
-                                <th>wadayano Score</th>
-                                <th>Confidence Analysis</th>
+                            <tr className="sticky-header sortable-header">
+                                <th data-column="name" onClick={this.sortByColumn}>Student Name</th>
+                                <th data-column="attempts" onClick={this.sortByColumn}>Attempts</th>
+                                <th data-column="highestScore" onClick={this.sortByColumn}>Highest Score</th>
+                                <th data-column="wadayanoScore" onClick={this.sortByColumn}>wadayano Score</th>
+                                <th data-column="confidenceAnalysis" onClick={this.sortByColumn}>Confidence Analysis</th>
+                                <th>View Review button TODO</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {students.map(student => {
-                                // Determine if student took this quiz
-                                let attempts = {};
-                                let highestAttempt = null;
-                                try {
-                                    attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
-                                    attempts = attempts.concat().sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
-                                    // Get highest-scoring attempt for this student
-                                    highestAttempt = attempts[0];
-                                    console.log(student, attempts, highestAttempt);
-                                } catch (error) { }
+                            {this.state.studentScores.map(student => {
                                 // Output score for each student, if quiz was taken
                                 return (<tr key={student.id}>
                                     <td style={{whiteSpace: "nowrap"}}>{student.name}</td>
-                                    <td>{attempts.length}</td>
-                                    {highestAttempt ? 
+                                    {(student.attempts > 0) ? 
                                         <React.Fragment>
-                                            <td>{highestAttempt.score}</td>
+                                            <td>{student.attempts}</td>
+                                            <td>{student.highestScore}</td>
                                             <td>TODO</td>
                                             <td>TODO</td>
+                                            <td>
+                                                <button className="button is-light"
+                                                    onClick={() => this.showAttemptReview(student)}>
+                                                    <span className="icon">
+                                                    <i className="fas fa-history"></i>
+                                                    </span>
+                                                    <span>View Report</span>
+                                                </button>
+                                            </td>
                                         </React.Fragment>
-                                    : <td colSpan="3"><i>Quiz not taken</i></td>
+                                    : <td colSpan="5"><i>Quiz not taken</i></td>
                                     }
                                 </tr>);
                             })}
@@ -167,6 +183,13 @@ class QuizScores extends Component {
 
                 {scoresTable}
 
+                {this.state.currentStudentReview && <Modal
+                    modalState={true}
+                    closeModal={() => this.setState({ currentStudentReview: null })}
+                    title={`Attempt from ${this.state.currentStudentReview.name}`}>
+                        <QuizReviewPage match={{ params: { quizAttemptId: this.state.currentStudentReview.highestAttemptId } }} />
+                </Modal>}
+
                 {/*<SortableTable
                     data={this.state.scores}
                     columns={tableColumns}
@@ -183,6 +206,29 @@ class QuizScores extends Component {
         );
     }
 }
+
+// Confidence analysis labels
+const MIXED = 'Mixed';
+const UNDER = 'Underconfident';
+const ACCURATE = 'Accurate';
+const OVER = 'Overconfident';
+
+// How to weight the confidence analysis labels for sorting
+const confidenceAnalysisWeights = {
+    MIXED: 1,
+    UNDER: 2,
+    ACCURATE: 3,
+    OVER: 4
+};
+
+// Functions to define sorting on the various columns
+const sortFunctions = {
+    name: (a, b) => a.name > b.name,
+    attempts: (a, b) => a.attempts > b.attempts,
+    highestScore: (a, b) => a.highestScore > b.highestScore,
+    wadayanoScore: (a, b) => a.wadayanoScore > b.wadayanoScore,
+    confidenceAnalysis: (a, b) => confidenceAnalysisWeights[a.confidenceAnalysis] > confidenceAnalysisWeights[b.confidenceAnalysis],
+};
 
 // Get the quiz and attempts
 export const QUIZ_QUERY = gql`

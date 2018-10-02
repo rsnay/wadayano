@@ -410,6 +410,9 @@ progress::-webkit-progress-value {
     z-index: 10;
     background-color: white;
 }
+.sortable-header th {
+    cursor: pointer;
+}
 
 @media screen and (max-width: 414px) {
     .table-wrapper {
