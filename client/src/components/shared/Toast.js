@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ButterToast from 'butter-toast/dist/lean.min.js';
+import ButterToast from 'butter-toast';
+// TODO: this breaks the production webpack build (fails to minify this file)
+// import ButterToast from 'butter-toast/dist/lean.min.js';
 
 // Export the lean ButterToast class, as well as our template
 // See ButterToast docs: https://github.com/ealush/butter-toast#controlling-the-bundle-size
