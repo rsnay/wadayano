@@ -418,4 +418,4 @@ export default withAuthCheck(compose(
         return { variables: { id: props.quizAttempt.id } }
       }
     }),
-  )(QuizReview), { student: true });
+  )(QuizReview), { student: true, instructor: true });

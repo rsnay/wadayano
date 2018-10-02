@@ -57,13 +57,10 @@ function currentStudentQuizAttempts(root, args, context, info) {
 
 async function currentStudentQuizAttempt(root, args, context, info) {
   const { userId, isInstructor } = getUserInfo(context);
-  if (isInstructor) {
-    throw Error('Not a student');
-  }
   // Check that quiz attempt belongs to current student
   try {
     const attempt = await context.db.query.quizAttempt({where: { id: args.id}}, `{ student { id } }`);
-    if (attempt.student.id !== userId) {
+    if (!(attempt.student.id === userId || isInstructor)) {
       throw Error('Quiz attempt belongs to a different student');
     }
   } catch (error) {
