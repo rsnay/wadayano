@@ -6,21 +6,22 @@ import gql from 'graphql-tag';
 import update from 'immutability-helper';
 
 import { withAuthCheck } from '../shared/AuthCheck';
-import { ALPHABET } from '../../constants';
 import { reorder } from '../../utils';
+import { QUIZ_TYPE_NAMES } from '../../constants';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
+import Modal from '../shared/Modal';
 
 export class QuizEditor extends Component {
     constructor(props) {
         super(props);
     
         this.state = {
-            isLoading: false,
+            isLoading: true,
             isSaving: false,
             isAddingQuestion: false,
             // Questions are stored in state once query loads, so that they can be reordered in the future (otherwise, query just loads into read-only prop).
@@ -50,7 +51,7 @@ export class QuizEditor extends Component {
                 questions.set(q.id, q);
                 orderedQuestionIds.push(q.id);
             });
-            this.setState({ questions, orderedQuestionIds });
+            this.setState({ isLoading: false, questions, orderedQuestionIds });
         }
     }
 
@@ -59,8 +60,6 @@ export class QuizEditor extends Component {
         let quizData = {
             title: document.getElementById(quiz.id).value,
             type: Array.from(document.getElementsByName('quizType')).find(r => r.checked).value,
-            // Updated questions will be added here
-            questions: { update: [] },
         };
         this.setState({ isSaving: true });
 
@@ -83,11 +82,11 @@ export class QuizEditor extends Component {
                 content: <ToastTemplate content="Error saving quiz info." className="is-danger" />
             });
         }
-        this.setState({ isSaving: false });
+        this.setState({ isSaving: false, showQuizInfoModal: false });
 
         // Reload quiz data after it's done
         if (refetch) {
-            //this.props.quizQuery.refetch();
+            this.props.quizQuery.refetch();
         }
     }
 
@@ -105,6 +104,9 @@ export class QuizEditor extends Component {
             }
             // Redirect to course details after successful deletion
             this.props.history.push('/instructor/course/' + quiz.course.id);
+            ButterToast.raise({
+                content: <ToastTemplate content="Quiz was deleted." className="is-success" />
+            });
         } catch (error) {
             this.setState({ isLoading: false });
             ButterToast.raise({
@@ -213,7 +215,7 @@ export class QuizEditor extends Component {
 
   render() {
 
-    if (this.state.isLoading || (this.props.quizQuery && this.props.quizQuery.loading)) {
+    if (this.state.isLoading) {
         return <LoadingBox />;
     }
 
@@ -258,10 +260,53 @@ export class QuizEditor extends Component {
                 </span>
             </p>
         </div>
-
-    )
+    );
 
     let quiz = this.props.quizQuery.quiz;
+
+    const quizInfoModal = (
+        <Modal
+            modalState={this.state.showQuizInfoModal}
+            closeModal={() => this.setState({ showQuizInfoModal: false})}
+            title="Edit Quiz Info">
+            <form>
+                <label className="label is-medium">
+                    Quiz Title<br />
+                    <input className="input" type="text" placeholder="e.g. Lipids Review" defaultValue={quiz.title} id={quiz.id} style={{maxWidth: "42rem"}} />
+                </label>
+
+                <label className="label is-medium">
+                    Quiz Type<br />
+                </label>
+                <div className="control">
+                    <label className="radio">
+                        <input type="radio" name="quizType" value="GRADED" defaultChecked={quiz.type === "GRADED"} />
+                        Graded quiz (must be launched from LMS)
+                    </label>
+                    <br />
+                    <label className="radio">
+                        <input type="radio" name="quizType" value="PRACTICE" defaultChecked={quiz.type === "PRACTICE"} />
+                        Practice quiz (students can launch from wadayano dashboard or LMS)
+                    </label>
+                </div>
+                <hr />
+
+                <div className="field is-grouped">
+                    <p className="control buttons">
+                        <button className="button" type="button" onClick={() => this.setState({ showQuizInfoModal: false})}>
+                            Cancel
+                        </button>
+                        <button className="button is-danger" type="button" onClick={() => this.deleteQuiz(quiz)}>
+                            Delete Quiz
+                        </button>
+                        <button className={"button is-primary"+ (this.state.isSaving ? " is-loading" : "")} type="submit" disabled={this.state.isSaving} onClick={() => this.saveQuiz(quiz, true)}>
+                            Save Changes
+                        </button>
+                    </p>
+                </div>
+            </form>
+        </Modal>
+    );
 
     return (
         <section className="section">
@@ -273,46 +318,32 @@ export class QuizEditor extends Component {
                 <li className="is-active"><Link to={"/instructor/quiz/" + quiz.id} aria-current="page">{quiz.title}</Link></li>
             </ul>
         </nav>
-        
-        <label className="label is-medium">
-            Quiz Title<br />
-            <input className="input" type="text" placeholder="e.g. Lipids Review" defaultValue={quiz.title} id={quiz.id} style={{maxWidth: "42rem"}} />
-        </label>
 
-        <label className="label is-medium">
-            Quiz Type<br />
-        </label>
-        <div className="control">
-            <label className="radio">
-                <input type="radio" name="quizType" value="GRADED" defaultChecked={quiz.type === "GRADED"} />
-                Graded quiz (must be launched from LMS)
-            </label>
-            <br />
-            <label className="radio">
-                <input type="radio" name="quizType" value="PRACTICE" defaultChecked={quiz.type === "PRACTICE"} />
-                Practice quiz (students can launch from wadayano dashboard or LMS)
-            </label>
-        </div>
-        <br />
-
-        <div className="field is-grouped">
-            <p className="control">
-                <button className="button is-danger" onClick={() => this.deleteQuiz(quiz)}>
-                Delete Quiz
+        <section>
+            <div className="is-flex-tablet">
+                <div style={{flex: 1}}>
+                    <h3 className="title is-3">{quiz.title}</h3>
+                    <h4 className="subtitle is-4">{QUIZ_TYPE_NAMES[quiz.type]} Quiz</h4>
+                </div>
+                <button className="button is-light" onClick={() => this.setState({ showQuizInfoModal: true})} style={{marginTop: "1rem"}}>
+                    <span className="icon">
+                        <i className="fas fa-edit"></i>
+                    </span>
+                    <span>Edit Quiz Info</span>
                 </button>
-            </p>
-            <p className="control">
-                <button className={"button is-link"+ (this.state.isSaving ? " is-loading" : "")} disabled={this.state.isSaving} onClick={this.saveQuiz.bind(null, quiz)}>Save Quiz Info</button>
-            </p>
+            </div>
+            <hr />
+        </section>
+
+        <div className="is-flex-tablet">
+            <h4 className="title is-4" style={{flex: 1}}>Questions</h4>
+            <Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} className="button is-light" style={{marginBottom: "1rem"}}>
+                <span className="icon">
+                    <i className="fas fa-file-import"></i>
+                </span>
+                <span>Import From Other Quizzes</span>
+            </Link>
         </div>
-        <hr />
-
-        <label className="label is-medium" style={{marginTop: "0.4rem"}}>Questions</label>
-        <Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} className="button">Import From Other Quizzes</Link>
-        <br /><br />
-
-        {this.state.orderedQuestionIds.length > 0 && questionNavbar}
-        <br />
 
         {(quiz.quizAttempts.length > 0) &&
             <div className="notification is-warning">
@@ -320,8 +351,13 @@ export class QuizEditor extends Component {
             </div>
         }
 
+        {this.state.orderedQuestionIds.length > 0 && questionNavbar}
+        <br />
+
         {questionList}
         {newQuestionButton}
+
+        {quizInfoModal}
 
         </div>
       </section>
