@@ -8,7 +8,7 @@ const LMS = {
     CANVAS: {
         id: 'CANVAS',
         displayName: 'Canvas',
-        hint: (<p>First, set up wadayano as an external tool in Canvas using the “Canvas External Tool URL” and the key and secret from below. The “Privacy” setting must be set to <b>Public</b>. When creating an assignment, select the external wadayano tool that you've configured, and change the launch URL to the one below.
+        hint: (<div>First, set up wadayano as an external tool in Canvas using the “Canvas External Tool URL” and the key and secret from below. The “Privacy” setting must be set to <b>Public</b>. When creating an assignment, select the external wadayano tool that you've configured, and change the launch URL to the one below.
             <br />
             <a 
             target="_blank"
@@ -17,12 +17,12 @@ const LMS = {
             className="button is-text">
                 <span className="icon is-small"><i className="fas fa-question-circle"></i></span>
                 <span>Help with Canvas integration</span></a>
-            <br /> <br /> <CopyableTextInput readOnly label="Canvas External Tool URL" value={LTI_LAUNCH_URL} /></p>)
+            <br /> <br /> <CopyableTextInput readOnly label="Canvas External Tool URL" value={LTI_LAUNCH_URL} /></div>)
     },
     LEARNING_SUITE: {
         id: 'LEARNING_SUITE',
         displayName: 'Learning Suite',
-        hint: (<p>When creating the assignment, select “Launch URL Configuration” and provide the following details.
+        hint: (<div>When creating the assignment, select “Launch URL Configuration” and provide the following details.
             <br />
             <a 
             target="_blank"
@@ -31,7 +31,7 @@ const LMS = {
             className="button is-text">
                 <span className="icon is-small"><i className="fas fa-question-circle"></i></span>
                 <span>Help with Learning Suite integration</span></a>
-        </p>)
+        </div>)
     }
 }
 
