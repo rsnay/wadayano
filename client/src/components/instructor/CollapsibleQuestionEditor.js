@@ -230,7 +230,7 @@ export class CollapsibleQuestionEditor extends Component {
         );
 
         const saveButton = isExpanded && (
-            <button className={"button is-link" + (isLoading ? " is-loading" : "")} onClick={this._saveQuestion}>
+            <button className={"button is-primary" + (isLoading ? " is-loading" : "")} onClick={this._saveQuestion}>
                 <span>Save</span>
             </button>
         );

@@ -206,7 +206,7 @@ class SurveyEditor extends Component {
                         </p>
                         <p className="control">
                             <button
-                                className={"button is-link" + (this.state.isSaving ? " is-loading" : "")}
+                                className={"button is-primary" + (this.state.isSaving ? " is-loading" : "")}
                                 onClick={() => this._saveSurvey()}>
                                 Save Survey
                             </button>

@@ -81,7 +81,7 @@ class SurveyTaker extends Component {
                         <div className="field is-grouped">
                             <p className="control">
                                 <button
-                                    className={"button is-link" + (this.state.isSubmitting ? " is-loading is-disabled" : "")}
+                                    className={"button is-primary" + (this.state.isSubmitting ? " is-loading is-disabled" : "")}
                                     onClick={() => this._submitSurvey()}>
                                     Submit Answers
                                 </button>

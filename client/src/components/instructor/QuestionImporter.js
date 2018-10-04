@@ -162,7 +162,7 @@ class QuestionImporter extends Component {
                         </p>
                         <p className="control">
                             <button
-                                className="button is-link"
+                                className="button is-primary"
                                 disabled={selectedIds.length === 0}
                                 onClick={() => this._importQuestions()}>
                                 Import {selectedIds.length || ""} Question{selectedIds.length !== 1 && "s"}

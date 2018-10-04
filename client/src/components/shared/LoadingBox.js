@@ -6,7 +6,7 @@ export default class LoadingBox extends Component {
         return (
             <div className="container section">
                 <center>
-                    <a className="button is-large is-info is-loading">Loading</a>
+                    <a className="button is-large is-primary is-loading">Loading</a>
                     {this.props.children}
                 </center>
             </div>
