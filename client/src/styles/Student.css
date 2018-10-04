@@ -39,8 +39,8 @@ button::-moz-focus-inner {
 .butter-toast ul {
 }
 .butter-toast .notification {
-    min-width: 250px;
-    max-width: 500px;
+    width: 300px;
+    max-width: 90vw;
 }
 
 /* Quiz Review*/

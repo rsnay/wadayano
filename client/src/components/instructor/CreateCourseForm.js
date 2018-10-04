@@ -3,6 +3,8 @@ import { Redirect } from 'react-router';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import ButterToast, { ToastTemplate } from '../shared/Toast';
+
 export class CreateCourseForm extends Component {
     constructor(props) {
         super(props);
@@ -26,7 +28,10 @@ export class CreateCourseForm extends Component {
     async _createNewCourse() {
         // Make sure there is a non-empty course title
         if (this.state.newTitle.trim() === '') {
-            alert('Please enter a title for the course.');
+            ButterToast.raise({
+                content: <ToastTemplate content="Please enter a title for the course." className="is-warning" />,
+                timeout: 3000
+            });
             return;
         }
         // Create the course

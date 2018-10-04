@@ -108,6 +108,11 @@ class Login extends Component {
       const { token } = result.data.instructorSignup;
       localStorage.setItem(AUTH_TOKEN, token);
       localStorage.setItem(AUTH_ROLE, AUTH_ROLE_INSTRUCTOR);
+      // Display a welcome toast
+      ButterToast.raise({
+        content: <ToastTemplate content="Welcome to wadayano! Create your first course to get started." className="is-success" />,
+        sticky: true
+      });
       // Continue
       this._redirect();
     } catch (e) {

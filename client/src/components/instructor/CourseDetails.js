@@ -37,7 +37,7 @@ export class CourseDetails extends Component {
 
     async deleteCourse(course){
         let response = window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.')
-        if (response && response.toLowerCase() === 'absolutely') {
+        if (response && (response.toLowerCase() === 'absolutely' || response.toLowerCase() === '\'absolutely\'')) {
             try {
                 const result = await this.props.courseDelete({
                     variables:{
@@ -47,7 +47,10 @@ export class CourseDetails extends Component {
                 if (result.errors && result.errors.length > 0) {
                     throw result;
                 }
-                window.location.assign('/instructor/courses');
+                ButterToast.raise({
+                    content: <ToastTemplate content={course.title + " was deleted."} className="is-info" />,
+                });
+                this.props.history.push('/instructor/courses');
             } catch (result) {
                 ButterToast.raise({
                     content: <ToastTemplate content={"Error deleting course: " + result.errors[0].message} className="is-danger" />,
@@ -122,7 +125,7 @@ export class CourseDetails extends Component {
     }
 
     if (this.props.courseQuery && this.props.courseQuery.error) {
-        return <ErrorBox>Couldn’t load courses</ErrorBox>;
+        return <ErrorBox><p>Couldn’t load course.</p></ErrorBox>;
     }
     let course = this.props.courseQuery.course;
 
@@ -337,6 +340,9 @@ export class CourseDetails extends Component {
                 onCancel={() => this.setState({ displayCourseInfoForm: false })}
                 onSave={() => {
                     this.setState({ displayCourseInfoForm: false });
+                    ButterToast.raise({
+                        content: <ToastTemplate content="Course info saved." className="is-success" />
+                    });
                     this.props.courseQuery.refetch();
                 }}
             />

@@ -24,6 +24,7 @@ export class QuizEditor extends Component {
             isLoading: true,
             isSaving: false,
             isAddingQuestion: false,
+            showQuizInfoModal: false,
             // Questions are stored in state once query loads, so that they can be reordered in the future (otherwise, query just loads into read-only prop).
             questions: new Map(),
             orderedQuestionIds: [],
@@ -31,7 +32,7 @@ export class QuizEditor extends Component {
             autoExpandQuestionIds: [],
         };
     
-        // Pre-bind this function, to make adding it to input fields easier
+        // Pre-bind these functions, to make adding it to input fields easier
         this.saveQuiz = this.saveQuiz.bind(this);
         this.addQuestion = this.addQuestion.bind(this);
         this.onQuestionListSortEnd = this.onQuestionListSortEnd.bind(this);

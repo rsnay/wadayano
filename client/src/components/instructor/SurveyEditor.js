@@ -10,6 +10,7 @@ import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import SurveyView from '../shared/SurveyView';
 import Modal from '../shared/Modal';
+import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 class SurveyEditor extends Component {
     constructor(props) {
@@ -26,7 +27,7 @@ class SurveyEditor extends Component {
 
     // This is kind of a react anti-pattern to seed state from props, but without a proper callback for when the apollo query finishes loading, it's the easiest way.
     componentWillReceiveProps(nextProps) {
-        if (!nextProps.courseQuery.loading && !this.state.surveyLoaded) {
+        if (!nextProps.courseQuery.error && !nextProps.courseQuery.loading && !this.state.surveyLoaded) {
             this.setState({
                 newSurveyText: this._stringifySurvey(nextProps.courseQuery.course.survey),
                 surveyLoaded: true
@@ -141,11 +142,17 @@ class SurveyEditor extends Component {
                 throw result;
             }
             this.setState({ isSaving: false, isDirty: false }, () => {
+                ButterToast.raise({
+                    content: <ToastTemplate content="Survey saved successfully." className="is-success" />
+                });
                 // Redirect to course details after successful save
                 this.props.history.push('/instructor/course/' + courseId);
             });
         } catch (error) {
-            alert('There was an error saving the survey. Please copy the text somewhere safe and try again later.');
+            ButterToast.raise({
+                content: <ToastTemplate content="There was an error saving the survey. Please copy the text somewhere safe and try again later." className="is-danger" />
+            });
+            this.setState({ isSaving: false });
         }
     }
 

@@ -66,7 +66,7 @@ class Header extends Component {
             </div>
         </div>
 
-        <ButterToast />
+        <ButterToast timeout={4000} />
       </nav> 
     )
   }
