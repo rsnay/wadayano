@@ -10,6 +10,7 @@ import QuestionTaker from './QuestionTaker';
 import QuizReview from './QuizReview';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 // Different phases or stages of the quiz-taking experience
 const phases = {
@@ -162,8 +163,18 @@ class QuizTaker extends Component {
       const quizGradePayload = result.data.completeQuizAttempt;
 
       // If it was graded, check if the LTI grade passback was successful or not
-      if (quizGradePayload.isGraded && !quizGradePayload.postSucceeded) {
-        alert('There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.');
+      if (quizGradePayload.isGraded) {
+
+        if (quizGradePayload.postSucceeded) {
+          ButterToast.raise({
+            content: <ToastTemplate content="Your score was posted successfully." className="is-success" />
+          });
+        } else {
+          ButterToast.raise({
+            content: <ToastTemplate content="There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually." className="is-warning" />,
+            sticky: true
+          });
+        } 
       }
         
       // Store quizGradePayload info in state
