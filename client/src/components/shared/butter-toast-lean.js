@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* From https://www.npmjs.com/package/butter-toast */
 /* Package is listed as unlicensed */
 

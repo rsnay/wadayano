@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 // The lean build of butter-toast is simply copied into our src directory, since using the npm package was causing production build issues.
 import ButterToast from './butter-toast-lean';

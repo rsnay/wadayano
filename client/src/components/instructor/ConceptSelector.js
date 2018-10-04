@@ -127,5 +127,5 @@ export default withAuthCheck(
         options: (props) => {
             return { variables: { id: props.courseId } }
         }
-    })
-(ConceptSelector), { instructor: true });
+    }
+) (ConceptSelector), { instructor: true });
