@@ -8,6 +8,7 @@ import { withAuthCheck } from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+import { stripTags } from '../../utils';
 
 class QuestionImporter extends Component {
     constructor(props) {
@@ -127,7 +128,7 @@ class QuestionImporter extends Component {
                                     </button>
                                 </td>
                                 <td>
-                                    {question.prompt}
+                                    {stripTags(question.prompt)}
                                 </td>
                             </tr>
                             )
