@@ -62,9 +62,20 @@ const courseInviteNotification = function(courseTitle, courseId) {
     `;
 }
 
+const passbackFailedNotification = function(error, ltiInfo) {
+    return `
+    ${header('wadayano')}
+    <p>Grade passback failed on ${new Date().toLocaleString()}</p>
+    <pre>${error}</pre>
+    <pre>${JSON.stringify(ltiInfo)}</pre>
+    ${footer}
+    `;
+}
+
 module.exports = {
     requestPasswordReset,
     feedback,
     courseAddedNotification,
-    courseInviteNotification
+    courseInviteNotification,
+    passbackFailedNotification
 };

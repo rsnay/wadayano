@@ -674,6 +674,10 @@ async function completeQuizAttempt(root, args, context, info) {
             postSucceeded = false;
             error = JSON.stringify(err) || 'Error sending score';
             console.log('LTI grade passback failed', err);
+            console.log(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.ltiSessionInfo));
+            // Send email notifying us if passback failed
+            sendEmail(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.ltiSessionInfo));
+
         }
     }
 
