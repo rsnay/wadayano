@@ -7,7 +7,7 @@ import { withAuthCheck } from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-import { formatScore } from '../../utils';
+import { formatScore, wadayanoScore, confidenceAnalysis } from '../../utils';
 import QuizReviewPage from '../student/QuizReviewPage';
 import Modal from '../shared/Modal';
 
@@ -47,14 +47,16 @@ class QuizScores extends Component {
                 } catch (error) { }
                 // Output score for each student, if quiz was taken
                 if (highestAttempt) {
+                    const attemptWadayanoScore = wadayanoScore(highestAttempt);
+                    const attemptConfidenceAnalysis = confidenceAnalysis(attemptWadayanoScore, highestAttempt);
                     return {
                         id: student.id,
                         name: student.name,
                         attempts: attempts.length,
                         highestScore: highestAttempt.score,
-                        highestAttemptId: highestAttempt.id,
-                        wadayanoScore: "TODO",
-                        confidenceAnalysis: "TODO"
+                        highestAttempt,
+                        wadayanoScore: attemptWadayanoScore,
+                        confidenceAnalysis: attemptConfidenceAnalysis
                     }
                 } else {
                     return {
@@ -62,9 +64,9 @@ class QuizScores extends Component {
                         name: student.name,
                         attempts: 0,
                         highestScore: "",
-                        highestAttemptId: "",
+                        highestAttempt: null,
                         wadayanoScore: "",
-                        confidenceAnalysis: ""
+                        confidenceAnalysis: null
                     }
                 }
             })
@@ -81,6 +83,7 @@ class QuizScores extends Component {
         const newSortColumn = e.target.dataset.column;
         let { sortAscending, studentScores } = this.state;
         
+        console.log(newSortColumn, this.state.sortColumn);
         // Check if we're toggling sort direction
         if (this.state.sortColumn === newSortColumn) {
             sortAscending = !sortAscending;
@@ -118,17 +121,27 @@ class QuizScores extends Component {
         if (this.state.studentScores.length === 0) {
             scoresTable = (<p className="notification is-light">There are no students enrolled in this course. When a student launches a quiz from the course’s LMS, he/she will be automatically enrolled.</p>);
         } else {
+            const columns = [
+                { title: 'Student Name', columnId: 'name', sortable: true },
+                { title: 'Attempts', columnId: 'attempts', sortable: true },
+                { title: 'Highest Score', columnId: 'highestScore', sortable: true },
+                { title: 'wadayano Score', columnId: 'wadayanoScore', sortable: true },
+                { title: 'Confidence Analysis', columnId: 'confidenceAnalysis', sortable: true },
+                { title: 'View Report', columnId: 'viewReport', sortable: false }
+            ];
             scoresTable = (
                 <div className="table-wrapper">
                     <table className="table is-striped is-fullwidth survey-results-table">
                         <thead>
                             <tr className="sticky-header sortable-header">
-                                <th data-column="name" onClick={this.sortByColumn}>Student Name</th>
-                                <th data-column="attempts" onClick={this.sortByColumn}>Attempts</th>
-                                <th data-column="highestScore" onClick={this.sortByColumn}>Highest Score</th>
-                                <th data-column="wadayanoScore" onClick={this.sortByColumn}>wadayano Score</th>
-                                <th data-column="confidenceAnalysis" onClick={this.sortByColumn}>Confidence Analysis</th>
-                                <th>View Review button TODO</th>
+                                {columns.map(col => (
+                                    <th key={col.columnId} data-column={col.columnId} onClick={col.sortable ? this.sortByColumn : () => {}}>
+                                        {col.title}
+                                        {(this.state.sortColumn === col.columnId) && (
+                                            <span className="icon" style={{width:0, float: 'right'}}><i className="fas fa-sort"></i></span>
+                                        )}
+                                    </th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
@@ -139,9 +152,9 @@ class QuizScores extends Component {
                                     {(student.attempts > 0) ? 
                                         <React.Fragment>
                                             <td>{student.attempts}</td>
-                                            <td>{student.highestScore}</td>
-                                            <td>TODO</td>
-                                            <td>TODO</td>
+                                            <td>{formatScore(student.highestScore)}</td>
+                                            <td>{formatScore(student.wadayanoScore)}</td>
+                                            <td>{student.confidenceAnalysis.emoji}&nbsp;{student.confidenceAnalysis.text}</td>
                                             <td>
                                                 <button className="button is-light"
                                                     onClick={() => this.showAttemptReview(student)}>
@@ -185,20 +198,14 @@ class QuizScores extends Component {
                 {this.state.currentStudentReview && <Modal
                     modalState={true}
                     closeModal={() => this.setState({ currentStudentReview: null })}
-                    title={`Attempt from ${this.state.currentStudentReview.name}`}>
-                        <QuizReviewPage match={{ params: { quizAttemptId: this.state.currentStudentReview.highestAttemptId } }} />
+                    title={`Attempt from ${this.state.currentStudentReview.name}`}
+                    cardClassName="quiz-scores-report-modal">
+                        <QuizReviewPage hideFooter={true} match={{ params: { quizAttemptId: this.state.currentStudentReview.highestAttempt.id } }} />
                 </Modal>}
 
-                {/*<SortableTable
-                    data={this.state.scores}
-                    columns={tableColumns}
-                    iconStyle={{ color: '#aaa', paddingLeft: '5px', paddingRight: '5px' }} />*/}
-
                 <hr />
-                <div className="field is-grouped">
-                    <p className="control">
-                        <Link className="button" to={"/instructor/course/" + course.id}>Return to Course</Link>
-                    </p>
+                <div className="container" style={{paddingLeft: "1rem"}}>
+                    <Link className="button" to={"/instructor/course/" + course.id}>Return to Course</Link>
                 </div>
                 <br />
             </div>
@@ -214,10 +221,10 @@ const OVER = 'Overconfident';
 
 // How to weight the confidence analysis labels for sorting
 const confidenceAnalysisWeights = {
-    MIXED: 1,
-    UNDER: 2,
-    ACCURATE: 3,
-    OVER: 4
+    'Mixed': 1,
+    'Underconfident': 2,
+    'Accurate': 3,
+    'Overconfident': 4
 };
 
 // Functions to define sorting on the various columns
@@ -226,7 +233,7 @@ const sortFunctions = {
     attempts: (a, b) => a.attempts > b.attempts,
     highestScore: (a, b) => a.highestScore > b.highestScore,
     wadayanoScore: (a, b) => a.wadayanoScore > b.wadayanoScore,
-    confidenceAnalysis: (a, b) => confidenceAnalysisWeights[a.confidenceAnalysis] > confidenceAnalysisWeights[b.confidenceAnalysis],
+    confidenceAnalysis: (a, b) => { console.log(a.confidenceAnalysis.text , confidenceAnalysisWeights[b.confidenceAnalysis.text]); return confidenceAnalysisWeights[a.confidenceAnalysis.text] > confidenceAnalysisWeights[b.confidenceAnalysis.text]},
 };
 
 // Get the quiz and attempts
@@ -257,6 +264,11 @@ export const QUIZ_QUERY = gql`
             createdAt
             completed
             score
+            questionAttempts {
+                id
+                isCorrect
+                isConfident
+            }
         }
     }
   }
