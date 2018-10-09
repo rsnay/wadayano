@@ -48,7 +48,7 @@ class QuizScores extends Component {
                 // Output score for each student, if quiz was taken
                 if (highestAttempt) {
                     const attemptWadayanoScore = wadayanoScore(highestAttempt);
-                    const attemptConfidenceAnalysis = confidenceAnalysis(attemptWadayanoScore, highestAttempt);
+                    const attemptConfidenceAnalysis = confidenceAnalysis(highestAttempt);
                     return {
                         id: student.id,
                         name: student.name,

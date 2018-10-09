@@ -35,7 +35,7 @@ export function wadayanoScore(quizAttempt) {
 
 // Analyze a student’s confidence for a given quiz attempt
 // Returns an object: { text: "Accurate", emoji: "🧘" }
-export function confidenceAnalysis(wadayano, quizAttempt){
+export function confidenceAnalysis(quizAttempt){
     var quizConfidenceText;
     var quizConfidenceEmoji;
     var quizOverC = 0;
@@ -62,7 +62,11 @@ export function confidenceAnalysis(wadayano, quizAttempt){
                 break;
         } 
     }
-    if(wadayano > 90){
+
+    let wadayano = wadayanoScore(quizAttempt);
+
+    // wadayanoScore() returns a float in range 0-1
+    if(wadayano > 0.9){
         quizConfidenceText = "Accurate";
         quizConfidenceEmoji = "🧘";
     } else if(quizOverC === quizUnderC){
