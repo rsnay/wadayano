@@ -19,7 +19,6 @@ class ConceptSelector extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps.concept)
         // Workaround for no callback after apollo query finishes loading.
         if (!this.state.conceptsLoaded && nextProps.courseQuery && !nextProps.courseQuery.loading && !nextProps.courseQuery.error) {
             // Get concepts from all quizzes in the course
@@ -34,7 +33,6 @@ class ConceptSelector extends Component {
             // In case of an empty concept, remove it
             concepts.delete('');
             concepts = Array.from(concepts);
-            console.log(concepts);
 
             this.setState({ concept: nextProps.concept, conceptsLoaded: true, concepts });
         } else {
@@ -43,7 +41,6 @@ class ConceptSelector extends Component {
     }
 
     _handleInputChange(event) {
-        console.log("input changed")
         this._setConcept(event.target.value, true);
     }
 
