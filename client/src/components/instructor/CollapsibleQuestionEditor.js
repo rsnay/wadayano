@@ -48,6 +48,8 @@ export class CollapsibleQuestionEditor extends Component {
             isLoading: false,
             isDeleting: false,
             isExpanded: false,
+            // Flag if the question hasn’t been saved to server and doesn’t have a permanant ID
+            isNew: false,
             error: null,
             question: null,
         };
@@ -60,6 +62,27 @@ export class CollapsibleQuestionEditor extends Component {
     }
     
     componentDidMount() {
+        // If question is new and has a temporary ID, set the flag and autoexpand
+        if (/^_new[0-9]*/.test(this.props.questionId)) {
+            // Create fake question
+            const question = {
+                id: this.props.questionId,
+                concept: '',
+                prompt: '',
+                options: [
+                    {id: '_newOption1', text: '', isCorrect: true},
+                    {id: '_newOption2', text: '', isCorrect: false},
+                    {id: '_newOption3', text: '', isCorrect: false},
+                    {id: '_newOption4', text: '', isCorrect: false},
+                    {id: '_newOption5', text: '', isCorrect: false},
+                    {id: '_newOption6', text: '', isCorrect: false},
+                    {id: '_newOption7', text: '', isCorrect: false},
+                    {id: '_newOption8', text: '', isCorrect: false}
+                ]
+            };
+            this.setState({ isLoading: false, question, isExpanded: true, isNew: true });
+            return;
+        }
         // If starting expanded, call the query immediately
         if (this.props.defaultExpanded) {
             this._loadQuestion();
@@ -77,6 +100,9 @@ export class CollapsibleQuestionEditor extends Component {
                 variables: { id: this.props.questionId }
             });
             console.log('load result', result);
+            if (!(result.data && result.data.question)) {
+                throw 'Question not found';
+            }
             this.setState({ isLoading: false, question: result.data.question, isExpanded: true });
         } catch (error) {
             console.error(error);
@@ -186,7 +212,20 @@ export class CollapsibleQuestionEditor extends Component {
     }
 
     _discardChanges() {
-        this.setState({ question:null, isExpanded: false });
+        // If it’s a new question, it hasn’t been saved to server, so ‘delete’ the question to remove it entirely
+        if (this.state.isNew) {
+            // If there is content in the prompt, confirm deletion
+            if (this.state.question.prompt.trim() !== '') {
+                if (!window.confirm('This question has never been saved, so any content will be lost. Remove this question?')) { return; }
+            }
+            // Remove the question
+            this.setState({ isDeleting: true, isExpanded: false });
+            if (this.props.onDelete) {
+                this.props.onDelete();
+            }
+        } else {
+            this.setState({ question:null, isExpanded: false });
+        }
     }
 
     _handlePromptChange(newPrompt) {
@@ -337,6 +376,7 @@ CollapsibleQuestionEditor.propTypes = {
     elementId: PropTypes.string,
     // courseId is needed for getting concept suggestions from the course
     courseId: PropTypes.string,
+    // questionId can be _new([0-9]*) for new questions that are added to quiz, but not saved yet
     questionId: PropTypes.string.isRequired,
     questionIndex: PropTypes.number,
     defaultPrompt: PropTypes.string,

@@ -30,6 +30,8 @@ export class QuizEditor extends Component {
             orderedQuestionIds: [],
             // Store a special flag for questions added during the editing session to auto-expand them
             autoExpandQuestionIds: [],
+            // Each new question needs a temporary ID before it gets saved to server. Keep a simple count
+            newQuestionCount: 0
         };
     
         // Pre-bind these functions, to make adding it to input fields easier
@@ -117,6 +119,7 @@ export class QuizEditor extends Component {
     }
 
     async addQuestion() {
+        /*
         if (this.state.isAddingQuestion) { return; }
         this.setState({ isAddingQuestion: true });
         let result;
@@ -136,9 +139,11 @@ export class QuizEditor extends Component {
             });
             this.setState({ isAddingQuestion: false });
             return;
-        }
+        }*/
 
-        const newQuestionId = result.data.addQuestion.questions[result.data.addQuestion.questions.length - 1].id;
+        //const newQuestionId = result.data.addQuestion.questions[result.data.addQuestion.questions.length - 1].id;
+        // Add a new question with a temporary ID
+        const newQuestionId = '_new' + this.state.newQuestionCount++;
 
         // Manually add new (empty) question to question Map and ordered ID array
         // See immutability-helper syntax for adding to Map (array of [key, value] arrays)
@@ -170,7 +175,9 @@ export class QuizEditor extends Component {
     // Scroll to a particular question, taking into account the sticky question navbar
     scrollToQuestionId(questionId) {
         // Scroll to question
-        document.getElementById('container' + questionId).scrollIntoView(true);
+        let questionElement = document.getElementById('container' + questionId);
+        if (questionElement === null) { return; }
+        questionElement.scrollIntoView(true);
         // Scroll up to account for sticky question navbar, if not at bottom of page already
         // https://stackoverflow.com/a/44422472/702643
         if ((window.innerHeight + Math.ceil(window.pageYOffset)) < document.body.offsetHeight) {
