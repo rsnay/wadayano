@@ -151,19 +151,24 @@ export class CollapsibleQuestionEditor extends Component {
         }
         // Ensure there are at least 2 non-empty options
         let optionCount = 0;
+        let noCorrectOption = true;
         let correctOptionEmpty = false;
         question.options.forEach(option => {
             const { text, isCorrect } = option;
             const isEmpty = text === null || text.trim() === '';
             if (!isEmpty) { optionCount++; }
+            if (isCorrect) { noCorrectOption = false; }
             // Ensure that the correct option is non-empty
             if (isCorrect && isEmpty) { correctOptionEmpty = true; }
         });
+        if (noCorrectOption) {
+            return 'There must be a correct option (choose with the radio button to the left of the option).';
+        }
         if (correctOptionEmpty) {
             return 'The correct option must not be be blank';
         }
         if (optionCount < 2) {
-            return 'The quetion must have 2 or more non-blank options';
+            return 'The question must have 2 or more non-blank options';
         }
         // Question is valid
         return true;
