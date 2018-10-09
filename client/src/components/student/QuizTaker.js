@@ -33,6 +33,7 @@ class QuizTaker extends Component {
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
       questionAttempts: [],
+      randomOrder: [],
       quizAttempt: null,
       quizGradePayload: null
     };
@@ -85,6 +86,7 @@ class QuizTaker extends Component {
         isLoading: false
       });
       console.log('Quiz attempt: ', quizAttempt);
+      this.randomGen();
 
     } catch (e) {
       // Catch errors
@@ -95,6 +97,21 @@ class QuizTaker extends Component {
       this.setState({ error: message, isLoading: false });
       console.error('Quiz attempt load error: ' + JSON.stringify(e));
     }
+  }
+
+  randomGen(){
+    var len = this.state.quiz.questions.length;
+    var filled = 0;
+    var remainingNum = new Array(len);
+    while(len != filled){
+      var num = Math.floor(Math.random() * len);     // returns a random integer from 0 to length
+      if(remainingNum[num] == null){
+        remainingNum[num] = filled;
+        filled++;
+      }
+    }
+    console.log(remainingNum);
+    //setState({randomOrder:remainingNum});
   }
 
   componentDidUpdate() {
@@ -127,8 +144,18 @@ class QuizTaker extends Component {
   _onNextQuestion() {
     // If at the end of the quiz...
     let newIndex = this.state.currentQuestionIndex + 1;
+    //let newIndex = this.state.randomOrder[this.state.currentQuestionIndex + 1];
     // Change to Random
-    
+    //Check if there is a question Attempt for this question
+    /*while(notDone){
+      notDone = false;
+      for(var i = 0; i < this.state.quizAttempt.quiz.length; i++){
+        if(quizAttempt.quiz.question[i] === quizAttempt.questionAttempts[newIndex].question){
+          newIndex = this.state.randomOrder[this.state.currentQuestionIndex + 1];
+          notDone = true;
+        }
+      }
+    }*/
     
     //check if newIndex if there is a question attempt for the next question, skip?????
     // ... go to results (still set new currentQuestionIndex so progress bar fills up)

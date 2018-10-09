@@ -56,8 +56,9 @@ class QuizReview extends Component {
             }
         }
         if(this.state.wadayano === null){
-            this.setState({wadayano : parseFloat((correctConfidence / questionNum * 100)).toFixed(1)});
-            this.confidenceText(this.state.wadayano,quizAttempt);
+            var wadayano = parseFloat((correctConfidence / questionNum * 100)).toFixed(1);
+            this.setState({wadayano});
+            this.confidenceText(wadayano,quizAttempt);
         }
     }
 
