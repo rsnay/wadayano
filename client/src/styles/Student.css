@@ -36,8 +36,6 @@ button::-moz-focus-inner {
 }
 
 /* Shift butter-toast toast notifications to below header */
-.butter-toast ul {
-}
 .butter-toast .notification {
     width: 300px;
     max-width: 90vw;
@@ -126,7 +124,9 @@ button::-moz-focus-inner {
     width: 80%; /* Could be more or less, depending on screen size */
 }
 
-
+.quiz-scores-report-modal {
+    width: 95vw!important;
+}
 
 /* Quiz Taker */
 progress::-webkit-progress-value {

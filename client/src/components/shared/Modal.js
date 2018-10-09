@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Modal = ({ children, closeModal, modalState, title, showFooter }) => {
+const Modal = ({ children, closeModal, modalState, title, showFooter, cardClassName }) => {
     if(!modalState) {
       return null;
     }
@@ -9,7 +9,7 @@ const Modal = ({ children, closeModal, modalState, title, showFooter }) => {
     return(
       <div className="modal is-active">
         <div className="modal-background" onClick={closeModal} />
-        <div className="modal-card">
+        <div className={"modal-card " + cardClassName}>
           <header className="modal-card-head">
             <p className="modal-card-title">{title}</p>
             <button className="delete" onClick={closeModal} />
@@ -31,7 +31,8 @@ Modal.propTypes = {
     closeModal: PropTypes.func.isRequired,
     modalState: PropTypes.bool.isRequired,
     title: PropTypes.string,
-    showFooter: PropTypes.bool
+    showFooter: PropTypes.bool,
+    cardClassName: PropTypes.string
 }
 
 export default Modal;
