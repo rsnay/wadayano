@@ -19,3 +19,61 @@ export function stripTags(html) {
     let doc = parser.parseFromString(html, 'text/html');
     return doc.body.textContent || '';
 }
+
+// Calculate wadayano score for a given quiz attempt
+// Returns a float ranging from 0 to 1
+export function wadayanoScore(quizAttempt) {
+    if (!quizAttempt || !quizAttempt.questionAttempts || quizAttempt.questionAttempts.length === 0) { 
+        return 0;
+    }
+    const questionCount = quizAttempt.questionAttempts.length;
+    // wadayano score is the percentage of questions where the student accurately assessed their confidence (confident and correct are either both true, or both false)
+    const accurateConfidenceCount = quizAttempt.questionAttempts.filter(q => q.isConfident === q.isCorrect).length;
+
+    return (accurateConfidenceCount / questionCount);
+}
+
+// Analyze a student’s confidence for a given quiz attempt
+// Returns an object: { text: "Accurate", emoji: "🧘" }
+export function confidenceAnalysis(wadayano, quizAttempt){
+    var quizConfidenceText;
+    var quizConfidenceEmoji;
+    var quizOverC = 0;
+    var quizUnderC = 0;
+    for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
+        var correct = 0;
+        var confident = 0;
+        var compare = 0;
+        if(quizAttempt.questionAttempts[i].isConfident){
+            confident = 1;
+        }
+        if(quizAttempt.questionAttempts[i].isCorrect){
+            correct = 1;
+        }
+        compare = confident - correct;
+        switch(compare){
+            case -1:
+                quizUnderC += 1;
+                break;
+            case 0:
+                break;
+            case 1:
+            quizOverC += 1;
+                break;
+        } 
+    }
+    if(wadayano > 90){
+        quizConfidenceText = "Accurate";
+        quizConfidenceEmoji = "🧘";
+    } else if(quizOverC === quizUnderC){
+        quizConfidenceText = "Mixed";
+        quizConfidenceEmoji = "🤷‍";
+    } else if(quizOverC > quizUnderC){
+        quizConfidenceText = "Overconfident";
+        quizConfidenceEmoji = "🤦‍";
+    } else {
+        quizConfidenceText = "Underconfident";
+        quizConfidenceEmoji = "🙍‍";
+    }
+    return { text: quizConfidenceText, emoji: quizConfidenceEmoji };
+}
