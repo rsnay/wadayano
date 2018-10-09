@@ -70,7 +70,7 @@ export class CollapsibleQuestionEditor extends Component {
                 concept: '',
                 prompt: '',
                 options: [
-                    {id: '_newOption1', text: '', isCorrect: true},
+                    {id: '_newOption1', text: '', isCorrect: false},
                     {id: '_newOption2', text: '', isCorrect: false},
                     {id: '_newOption3', text: '', isCorrect: false},
                     {id: '_newOption4', text: '', isCorrect: false},
