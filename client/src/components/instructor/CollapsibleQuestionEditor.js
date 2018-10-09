@@ -50,6 +50,8 @@ export class CollapsibleQuestionEditor extends Component {
             isExpanded: false,
             // Flag if the question hasn’t been saved to server and doesn’t have a permanant ID
             isNew: false,
+            // If the question was new, but has since been saved, don’t rely from props.questionId
+            wasNew: false,
             error: null,
             question: null,
         };
@@ -92,14 +94,12 @@ export class CollapsibleQuestionEditor extends Component {
     async _loadQuestion() {
         // Don’t reload question if already expanded
         if (this.state.isExpanded) { return; }
-        console.log('loading question');
         try {
             this.setState({ isLoading: true });
             const result = await this.props.client.query({
                 query: QUESTION_QUERY,
-                variables: { id: this.props.questionId }
+                variables: { id: (this.state.wasNew ? this.state.question.id : this.props.questionId) }
             });
-            console.log('load result', result);
             if (!(result.data && result.data.question)) {
                 throw 'Question not found';
             }
@@ -116,7 +116,7 @@ export class CollapsibleQuestionEditor extends Component {
         try {
             const result = await this.props.deleteQuestionMutation({
                 variables:{
-                    id: this.props.questionId
+                    id: (this.state.wasNew ? this.state.question.id : this.props.questionId)
                 }
             });
             if (result.errors && result.errors.length > 0) {
@@ -202,15 +202,36 @@ export class CollapsibleQuestionEditor extends Component {
             updatedQuestion.options.update.push(updatedOption);
         });
         try {
-            await this.props.updateQuestionMutation({
-                variables:{
-                    id: this.props.questionId,
-                    data: updatedQuestion
-                }
-            });
-            // Collapse editor
-            this.setState({ isLoading: false, isExpanded: false });
+            if (this.state.isNew) {
+                // If this is a new question, restructure the data
+                let newQuestion = { ...updatedQuestion };
+                // Create options with only text and isCorrect (not ID)
+                newQuestion.options.create = newQuestion.options.update.map(o => { return { text: o.data.text, isCorrect: o.data.isCorrect } });
+                // Remove updated options list
+                delete newQuestion.options.update;
+                // Send addQuestion mutation
+                const result = await this.props.addQuestionMutation({
+                    variables: {
+                        quizId: this.props.quizId,
+                        question: newQuestion
+                    }
+                });
+                // Put the newly-added question (now with IDs) in the state
+                // Collapse editor, and mark as not new
+                this.setState({ question: result.data.addQuestion, isNew: false, wasNew: true, isLoading: false, isExpanded: false });
+            } else {
+                // Otherwise update it
+                await this.props.updateQuestionMutation({
+                    variables:{
+                        id: (this.state.wasNew ? this.state.question.id : this.props.questionId),
+                        data: updatedQuestion
+                    }
+                });
+                // Collapse editor
+                this.setState({ isLoading: false, isExpanded: false });
+            }
         } catch (error) {
+            console.log(error);
             alert('There was an error saving this question. Please copy the question to a document and try again later.');
             this.setState({ isLoading: false });
         }
@@ -224,7 +245,7 @@ export class CollapsibleQuestionEditor extends Component {
                 if (!window.confirm('This question has never been saved, so any content will be lost. Remove this question?')) { return; }
             }
             // Remove the question
-            this.setState({ isDeleting: true, isExpanded: false });
+            this.setState({ isDeleting: true });
             if (this.props.onDelete) {
                 this.props.onDelete();
             }
@@ -249,18 +270,25 @@ export class CollapsibleQuestionEditor extends Component {
     }
 
     _handleCorrectOptionChange(optionIndex, checked) {
-        console.log(optionIndex, checked);
-        // Set previously-correct option as not correct
         const previousCorrectIndex = this.state.question.options.findIndex(o => o.isCorrect === true);
+
+        // Update correct option
         let question = update(this.state.question, { options: {
-            [previousCorrectIndex]: { $merge: { isCorrect: false } },
-            [optionIndex]: { $merge: { isCorrect: true } },
+            [optionIndex]: { $merge: { isCorrect: true } }
         } } );
+
+        // Set previously-correct option as not correct, if there was one
+        if (previousCorrectIndex > -1) {
+            question = update(question, { options: {
+                [previousCorrectIndex]: { $merge: { isCorrect: false } }
+            } } );
+        }
+
         this.setState({ question });
     }
 
     render() {
-        const { isExpanded, isLoading, isDeleting, question, error } = this.state;
+        const { isExpanded, isLoading, isDeleting, isNew, question, error } = this.state;
 
         if (error || (isExpanded && !isLoading && !(question && question.id))) {
             return <ErrorBox><p>{error}</p></ErrorBox>;
@@ -294,7 +322,7 @@ export class CollapsibleQuestionEditor extends Component {
             </button>
         );
 
-        const deleteButton = (
+        const deleteButton = !isNew && (
             <button className={"button" + (isDeleting ? " is-loading" : "")} onClick={this._deleteQuestion} title="Delete Question">
                 <span className="icon">
                     <i className="fas fa-trash-alt"></i>
@@ -381,6 +409,8 @@ CollapsibleQuestionEditor.propTypes = {
     elementId: PropTypes.string,
     // courseId is needed for getting concept suggestions from the course
     courseId: PropTypes.string,
+    // quizId is needed for adding the new question to the correct quiz
+    quizId: PropTypes.string.isRequired,
     // questionId can be _new([0-9]*) for new questions that are added to quiz, but not saved yet
     questionId: PropTypes.string.isRequired,
     questionIndex: PropTypes.number,
@@ -404,11 +434,31 @@ query questionQuery($id: ID!) {
     }
 }
 `
+export const ADD_QUESTION = gql`
+mutation addQuestionMutation($quizId: ID!, $question: QuestionCreateInput!) {
+    addQuestion(quizId: $quizId, question: $question) {
+        concept
+        id
+        prompt
+        options{
+            id
+            text
+            isCorrect
+        }
+    }
+}`
 
 export const UPDATE_QUESTION = gql`
 mutation updateQuestionMutation($id: ID!, $data: QuestionUpdateInput!) {
     updateQuestion(id: $id, data: $data) {
+        concept
         id
+        prompt
+        options{
+            id
+            text
+            isCorrect
+        }
     }
 }`
 
@@ -427,6 +477,7 @@ const WithApolloClient = (props) => (
     );
     
 export default compose(
+    graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),
     graphql(UPDATE_QUESTION, {name: 'updateQuestionMutation'}),
     graphql(DELETE_QUESTION, {name: 'deleteQuestionMutation'}),
     ) (WithApolloClient)

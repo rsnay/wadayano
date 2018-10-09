@@ -37,30 +37,6 @@ function addCourse (root, args, context, info) {
                     id: userId
                 }
             },
-            /*quizzes:{
-                create:[{
-                    title:"Example Quiz",
-                    type:"GRADED",
-                    questions:{
-                        create:[{
-                            prompt: "Enter Prompt Here",
-                            concept: "Example Concept",
-                            options: {
-                                create:[
-                                    { isCorrect: true, text: "OptionA" },
-                                    { isCorrect: false, text: "OptionB" },
-                                    { isCorrect: false, text: "OptionC" },
-                                    { isCorrect: false, text: "OptionD" },
-                                    { isCorrect: false, text: "" },
-                                    { isCorrect: false, text: "" },
-                                    { isCorrect: false, text: "" },
-                                    { isCorrect: false, text: "" }
-                                ]
-                            }
-                        }]
-                    }
-                }]
-            }*/
         },
     }, info)
 }
@@ -105,34 +81,33 @@ async function createQuiz (root, args, context, info) {
     }, info);
 }
 
-function addQuestion (root, args, context, info) {
+async function addQuestion (root, args, context, info) {
     instructorCheck(context);
     // TODO how to most easily verify instructor permission where we receive a quiz id, not a course id?
-    return context.db.mutation.updateQuiz({
+
+    // Sanitize HTML input for question prompt and options to remove any scripts and prevent XSS
+    let { question } = args;
+    question.prompt = stripJs(question.prompt);
+
+    for (let i = 0; i < question.options.create.length; i++) {
+        question.options.create[i].text = stripJs(question.options.create[i].text);
+    }
+
+    const updatedQuiz = await context.db.mutation.updateQuiz({
         data: {
             questions: {
-            create: [{
-                prompt: "",
-                concept: "",
-                options: {
-                    create:[
-                            { isCorrect: true, text: "" },
-                            { isCorrect: false, text: "" },
-                            { isCorrect: false, text: "" },
-                            { isCorrect: false, text: "" },
-                            { isCorrect: false, text: "" },
-                            { isCorrect: false, text: "" },
-                            { isCorrect: false, text: "" },
-                            { isCorrect: false, text: "" }
-                    ]
-                }
-            }]
-        }
+                create: [question]
+            }
         },
-        where:{
-            id:args.id
+        where:{ id: args.quizId }
+    }, `{ questions { id } }`);
+
+    // Return query for newly-added question (which will be at end)
+    return context.db.query.question({
+        where: {
+            id: updatedQuiz.questions[updatedQuiz.questions.length - 1].id
         }
-    },info);
+    }, info);
 }
 
 function updateQuiz(root, args, context, info) {

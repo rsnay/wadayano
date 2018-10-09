@@ -31,7 +31,8 @@ export class QuizEditor extends Component {
             // Store a special flag for questions added during the editing session to auto-expand them
             autoExpandQuestionIds: [],
             // Each new question needs a temporary ID before it gets saved to server. Keep a simple count
-            newQuestionCount: 0
+            newQuestionCount: 0,
+            newQuestionIds: []
         };
     
         // Pre-bind these functions, to make adding it to input fields easier
@@ -53,6 +54,10 @@ export class QuizEditor extends Component {
             quiz.questions.forEach(q => {
                 questions.set(q.id, q);
                 orderedQuestionIds.push(q.id);
+            });
+            // Add in unsaved questions (if any) to the questions map (not to orderedQuestionIds, since newQuestionIds are rendered following orderedQuestionIds)
+            this.state.newQuestionIds.forEach(qId => {
+               questions.set(qId, { id: qId, prompt: '' });
             });
             this.setState({ isLoading: false, questions, orderedQuestionIds });
         }
@@ -119,56 +124,27 @@ export class QuizEditor extends Component {
     }
 
     async addQuestion() {
-        /*
-        if (this.state.isAddingQuestion) { return; }
-        this.setState({ isAddingQuestion: true });
-        let result;
-        try {
-            // Send new question mutation
-            result = await this.props.addQuestionMutation({
-                variables:{
-                    id: this.props.match.params.quizId
-                }
-            });
-            if (result.errors && result.errors.length > 0) {
-                throw result;
-            }
-        } catch (error) {
-            ButterToast.raise({
-                content: <ToastTemplate content="Error adding question." className="is-danger" />
-            });
-            this.setState({ isAddingQuestion: false });
-            return;
-        }*/
-
-        //const newQuestionId = result.data.addQuestion.questions[result.data.addQuestion.questions.length - 1].id;
         // Add a new question with a temporary ID
         const newQuestionId = '_new' + this.state.newQuestionCount++;
 
         // Manually add new (empty) question to question Map and ordered ID array
-        // See immutability-helper syntax for adding to Map (array of [key, value] arrays)
         const questions = update(this.state.questions, {
             $add: [[newQuestionId, { id: newQuestionId, prompt: '' }]]
         });
-        const orderedQuestionIds = update(this.state.orderedQuestionIds, {
-            $push: [newQuestionId]
-        });
 
-        // Auto-expand new questions. Store a separate flag for them
-        const autoExpandQuestionIds = update(this.state.autoExpandQuestionIds, {
+        // Store new, unsaved questions separately
+        const newQuestionIds = update(this.state.newQuestionIds, {
             $push: [newQuestionId]
         });
 
         this.setState({
             isAddingQuestion: false,
             questions,
-            autoExpandQuestionIds,
-            orderedQuestionIds
+            newQuestionIds
          });
 
-        // Scroll to new question after render and question load have hopefully finished
+        // Scroll to new question after render has hopefully finished
         window.setTimeout(() => this.scrollToQuestionId(newQuestionId), 100);
-        window.setTimeout(() => this.scrollToQuestionId(newQuestionId), 400);
         return false;
     }
 
@@ -178,6 +154,7 @@ export class QuizEditor extends Component {
         let questionElement = document.getElementById('container' + questionId);
         if (questionElement === null) { return; }
         questionElement.scrollIntoView(true);
+
         // Scroll up to account for sticky question navbar, if not at bottom of page already
         // https://stackoverflow.com/a/44422472/702643
         if ((window.innerHeight + Math.ceil(window.pageYOffset)) < document.body.offsetHeight) {
@@ -212,10 +189,17 @@ export class QuizEditor extends Component {
         document.getElementById('container' + questionId).classList.add('fade-opacity');
         // After fade animation finishes, remove this question from the list of ordered question IDs, and it won’t be displayed
         window.setTimeout(() => {
-            const index = this.state.orderedQuestionIds.indexOf(questionId);
+            let index = this.state.orderedQuestionIds.indexOf(questionId);
             if (index >= 0) {
                 const orderedQuestionIds = update(this.state.orderedQuestionIds, { $splice: [[index, 1]] });
                 this.setState({ orderedQuestionIds });
+            } else {
+                // It might have been a new question, which are stored separately
+                index = this.state.newQuestionIds.indexOf(questionId);
+                if (index >= 0) {
+                    const newQuestionIds = update(this.state.newQuestionIds, { $splice: [[index, 1]] });
+                    this.setState({ newQuestionIds });
+                }
             }
         }, 300);
     }
@@ -231,10 +215,12 @@ export class QuizEditor extends Component {
         return <ErrorBox><p>Couldn’t load quiz.</p></ErrorBox>;
     }
 
+    const allQuestions = this.state.orderedQuestionIds.concat(this.state.newQuestionIds);
+
     const questionNavbar = (
         <div id="question-navbar" className="question-navbar no-select">
             <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Jump to Question:</span>
-            {this.state.orderedQuestionIds.map((questionId, index) => (
+            {allQuestions.map((questionId, index) => (
                 <button key={questionId} onClick={() => this.scrollToQuestionId(questionId)} className="question-navbar-item button is-text">{index + 1}</button>
             ))}
             <button className={"button is-text question-navbar-item"+ (this.state.isAddingQuestion ? " is-loading" : "")} title="Add Question" onClick={this.addQuestion}>
@@ -244,10 +230,11 @@ export class QuizEditor extends Component {
         </div>
     );
 
-    const questionList = this.state.orderedQuestionIds.map((questionId, index) => (
+    const questionList = allQuestions.map((questionId, index) => (
         <CollapsibleQuestionEditor
             key={questionId}
             courseId={this.props.quizQuery.quiz.course.id}
+            quizId={this.props.quizQuery.quiz.id}
             elementId={"container" + questionId}
             questionId={questionId}
             questionIndex={index}
@@ -359,7 +346,7 @@ export class QuizEditor extends Component {
             </div>
         }
 
-        {this.state.orderedQuestionIds.length > 0 && questionNavbar}
+        {allQuestions.length > 0 && questionNavbar}
         <br />
 
         {questionList}
@@ -421,16 +408,6 @@ mutation quizDeleteMutation($id:ID!) {
     }
 }`
 
-export const ADD_QUESTION = gql`
-mutation addQuestionMutation($id:ID!)
-    {
-        addQuestion(
-            id:$id
-        ){
-            questions { id }
-        }
-    }`
-
 export default withAuthCheck(compose(
     graphql(QUIZ_QUERY, {name: 'quizQuery',
         options: (props) => {
@@ -440,5 +417,4 @@ export default withAuthCheck(compose(
     }),
     graphql(QUIZ_SAVE, {name: 'saveQuizMutation'}),
     graphql(QUIZ_DELETE, {name:'quizDeleteMutation'}),
-    graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),
 ) (QuizEditor), { instructor: true });
