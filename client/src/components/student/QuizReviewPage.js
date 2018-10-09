@@ -30,12 +30,16 @@ class QuizReviewPage extends Component {
 
             <QuizReview quizAttempt={quizAttempt} />
 
-            <hr />
-            <p className="control">
-                  <Link to="/student" className="button is-medium">
-                      Return to Dashboard
-                  </Link>
-            </p>
+            {!this.props.hideFooter &&
+              <React.Fragment>
+              <hr />
+              <p className="control">
+                    <Link to="/student" className="button is-medium">
+                        Return to Dashboard
+                    </Link>
+              </p>
+              </React.Fragment>
+            }
           </div>
 
         </div>
