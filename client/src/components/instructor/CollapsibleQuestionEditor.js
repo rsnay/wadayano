@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Prompt } from 'react-router';
 import { ApolloConsumer, graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 // https://reactjs.org/docs/update.html
@@ -41,6 +42,8 @@ const tinymceInlineConfig = {
     toolbar: 'undo redo | bold italic underline | forecolor backcolor | align | outdent indent | superscript subscript | removeformat | image charmap',
 };
 
+const unsavedAlertMessage = 'You have unsaved questions in this quiz. Do you want to discard these changes?';
+
 export class CollapsibleQuestionEditor extends Component {
     constructor(props) {
         super(props);
@@ -48,6 +51,7 @@ export class CollapsibleQuestionEditor extends Component {
             isLoading: false,
             isDeleting: false,
             isExpanded: false,
+            isDirty: false,
             // Flag if the question hasn’t been saved to server and doesn’t have a permanant ID
             isNew: false,
             // If the question was new, but has since been saved, don’t rely from props.questionId
@@ -61,9 +65,13 @@ export class CollapsibleQuestionEditor extends Component {
         this._deleteQuestion = this._deleteQuestion.bind(this);
         this._saveQuestion = this._saveQuestion.bind(this);
         this._discardChanges = this._discardChanges.bind(this);
+        this._onBeforeUnload = this._onBeforeUnload.bind(this);
     }
     
     componentDidMount() {
+        // Add beforeunload listener to alert user of unsaved changes
+        window.addEventListener('beforeunload', this._onBeforeUnload);
+
         // If question is new and has a temporary ID, set the flag and autoexpand
         if (/^_new[0-9]*/.test(this.props.questionId)) {
             // Create fake question
@@ -83,11 +91,23 @@ export class CollapsibleQuestionEditor extends Component {
                 ]
             };
             this.setState({ isLoading: false, question, isExpanded: true, isNew: true });
-            return;
+        } else {
+            // Otherwise, if starting expanded, call the query immediately
+            if (this.props.defaultExpanded) {
+                this._loadQuestion();
+            }
         }
-        // If starting expanded, call the query immediately
-        if (this.props.defaultExpanded) {
-            this._loadQuestion();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('beforeunload', this._onBeforeUnload);
+    }
+
+    _onBeforeUnload(e) {
+        // Warn of any unsaved changes before navigating away
+        if (this.state.isDirty) {
+            e.returnValue = unsavedAlertMessage;
+            return unsavedAlertMessage;
         }
     }
     
@@ -112,7 +132,7 @@ export class CollapsibleQuestionEditor extends Component {
 
     async _deleteQuestion() {
         if (!window.confirm('Are you sure you want to delete this question? All students’ attempts for this question will also be deleted.')) { return; }
-        this.setState({ isDeleting: true, isExpanded: false });
+        this.setState({ isDeleting: true, isExpanded: false, isDirty: false });
         try {
             const result = await this.props.deleteQuestionMutation({
                 variables:{
@@ -218,7 +238,7 @@ export class CollapsibleQuestionEditor extends Component {
                 });
                 // Put the newly-added question (now with IDs) in the state
                 // Collapse editor, and mark as not new
-                this.setState({ question: result.data.addQuestion, isNew: false, wasNew: true, isLoading: false, isExpanded: false });
+                this.setState({ question: result.data.addQuestion, isNew: false, wasNew: true, isLoading: false, isExpanded: false, isDirty: false });
             } else {
                 // Otherwise update it
                 await this.props.updateQuestionMutation({
@@ -228,7 +248,7 @@ export class CollapsibleQuestionEditor extends Component {
                     }
                 });
                 // Collapse editor
-                this.setState({ isLoading: false, isExpanded: false });
+                this.setState({ isLoading: false, isExpanded: false, isDirty: false });
             }
         } catch (error) {
             console.log(error);
@@ -245,28 +265,28 @@ export class CollapsibleQuestionEditor extends Component {
                 if (!window.confirm('This question has never been saved, so any content will be lost. Remove this question?')) { return; }
             }
             // Remove the question
-            this.setState({ isDeleting: true });
+            this.setState({ isDeleting: true, isDirty: false });
             if (this.props.onDelete) {
                 this.props.onDelete();
             }
         } else {
-            this.setState({ question:null, isExpanded: false });
+            this.setState({ question:null, isExpanded: false, isDirty: false });
         }
     }
 
     _handlePromptChange(newPrompt) {
         let question = update(this.state.question, { $merge: { prompt: newPrompt } });
-        this.setState({ question });
+        this.setState({ question, isDirty: true });
     }
     
     _handleConceptChange(newConcept) {
         let question = update(this.state.question, { $merge: { concept: newConcept } });
-        this.setState({ question });
+        this.setState({ question, isDirty: true });
     }
 
     _handleOptionChange(optionIndex, newOption) {
         let question = update(this.state.question, { options: { [optionIndex]: { $merge: { text: newOption } } } } );
-        this.setState({ question });
+        this.setState({ question, isDirty: true });
     }
 
     _handleCorrectOptionChange(optionIndex, checked) {
@@ -284,7 +304,7 @@ export class CollapsibleQuestionEditor extends Component {
             } } );
         }
 
-        this.setState({ question });
+        this.setState({ question, isDirty: true });
     }
 
     render() {
@@ -399,6 +419,12 @@ export class CollapsibleQuestionEditor extends Component {
                 {promptEditor}
                 {conceptSelector}
                 {optionsEditor}
+
+                {/* If the question has been modified, have react router confirm before user navigates away */}
+                <Prompt
+                    when={this.state.isDirty}
+                    message={unsavedAlertMessage}
+                />
             </div>
         );
 
