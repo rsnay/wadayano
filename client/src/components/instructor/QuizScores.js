@@ -66,7 +66,7 @@ class QuizScores extends Component {
                         highestScore: "",
                         highestAttempt: null,
                         wadayanoScore: "",
-                        confidenceAnalysis: null
+                        confidenceAnalysis: { text: '0' }
                     }
                 }
             })
@@ -135,7 +135,7 @@ class QuizScores extends Component {
                         <thead>
                             <tr className="sticky-header sortable-header">
                                 {columns.map(col => (
-                                    <th key={col.columnId} data-column={col.columnId} onClick={col.sortable ? this.sortByColumn : () => {}}>
+                                    <th key={col.columnId} className={(this.state.sortColumn === col.columnId) ? "has-background-light" : ""} data-column={col.columnId} onClick={col.sortable ? this.sortByColumn : () => {}}>
                                         {col.title}
                                         {(this.state.sortColumn === col.columnId) && (
                                             <span className="icon" style={{width:0, float: 'right'}}><i className="fas fa-sort"></i></span>
@@ -221,6 +221,8 @@ const OVER = 'Overconfident';
 
 // How to weight the confidence analysis labels for sorting
 const confidenceAnalysisWeights = {
+    // '0' denotes quiz not taken
+    '0': 0,
     'Mixed': 1,
     'Underconfident': 2,
     'Accurate': 3,
@@ -233,7 +235,7 @@ const sortFunctions = {
     attempts: (a, b) => a.attempts > b.attempts,
     highestScore: (a, b) => a.highestScore > b.highestScore,
     wadayanoScore: (a, b) => a.wadayanoScore > b.wadayanoScore,
-    confidenceAnalysis: (a, b) => { console.log(a.confidenceAnalysis.text , confidenceAnalysisWeights[b.confidenceAnalysis.text]); return confidenceAnalysisWeights[a.confidenceAnalysis.text] > confidenceAnalysisWeights[b.confidenceAnalysis.text]},
+    confidenceAnalysis: (a, b) => { return confidenceAnalysisWeights[a.confidenceAnalysis.text] > confidenceAnalysisWeights[b.confidenceAnalysis.text]},
 };
 
 // Get the quiz and attempts

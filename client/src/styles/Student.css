@@ -412,6 +412,8 @@ progress::-webkit-progress-value {
 }
 .sortable-header th {
     cursor: pointer;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 @media screen and (max-width: 414px) {
