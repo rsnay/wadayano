@@ -19,7 +19,7 @@ const ownsCourse = rule({ cache: 'strict', fragment: 'fragment CourseId on Cours
     // TODO: integrate fragment replacement middleware so that ID will always be in parent
     if (!parent.id) { return false; }
     const userInfo = getUserInfo(context);
-    console.log('SHIELD: OwnsCourse?', args);
+    console.log('SHIELD: OwnsCourse?');
 
     return userInfo.isInstructor && context.db.exists.Course({
         id: parent.id,
@@ -33,7 +33,7 @@ const enrolledInCourse = rule({ cache: 'strict', fragment: 'fragment CourseId on
     // TODO: integrate fragment replacement middleware so that ID will always be in parent
     if (!parent.id) { return false; }
     const userInfo = getUserInfo(context);
-    console.log('SHIELD: EnrolledInCourse?', parent, args, info);
+    console.log('SHIELD: EnrolledInCourse?');
 
     return (!userInfo.isInstructor) && context.db.exists.Course({
         id: parent.id,
@@ -45,11 +45,28 @@ const enrolledInCourse = rule({ cache: 'strict', fragment: 'fragment CourseId on
 
 const canAccessCourse = or(enrolledInCourse, ownsCourse);
 
+const canAccessQuiz = rule({ cache: 'strict', fragment: 'fragment QuizId on Quiz { id }' })((parent, args, context, info) => {
+    // TODO actual implementation
+    console.log('SHIELD: CanAccessQuiz?');
+    return true;
+    // TODO: integrate fragment replacement middleware so that ID will always be in parent
+    if (!parent.id) { return false; }
+    const userInfo = getUserInfo(context);
+
+    return (!userInfo.isInstructor) && context.db.exists.Course({
+        id: parent.id,
+        students_some: { 
+            id: userInfo.userId
+        }
+    });
+});
+
 module.exports = {
     isStudent,
     isInstructor,
     isAuthenticated,
     ownsCourse,
     enrolledInCourse,
-    canAccessCourse
+    canAccessCourse,
+    canAccessQuiz
 };

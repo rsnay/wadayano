@@ -22,6 +22,12 @@ const Permissions = {
         surveyResults: rules.ownsCourse,
         pendingCourseInvites: rules.ownsCourse
     },
+    Question: {
+        options: rules.canAccessQuiz,
+        prompt: rules.canAccessQuiz,
+        concept: rules.canAccessQuiz
+    },
+
 };
 
 module.exports = {
