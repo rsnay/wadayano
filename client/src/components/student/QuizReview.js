@@ -218,23 +218,15 @@ class QuizReview extends Component {
     }
 
     selectReview(concept, quizAttempt){
-        var modal = document.getElementById("modal");
-        
-        if(this.state.concept !== concept){
-            var conceptQuestions = [];
-            var questionAttempt;
-            //console.log("this");
-            //console.log(quizAttempt);
-            for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
-                questionAttempt = quizAttempt.questionAttempts[i];
-                if(questionAttempt.question.concept === concept){
-                    conceptQuestions.push(questionAttempt);
-                }
+        var conceptQuestions = [];
+        var questionAttempt;
+        for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
+            questionAttempt = quizAttempt.questionAttempts[i];
+            if(questionAttempt.question.concept === concept){
+                conceptQuestions.push(questionAttempt);
             }
-            this.setState({conceptQuestions: conceptQuestions, showReviewForConcept: concept, concept, displayConceptReview:true});
-        } else {
-            this.setState({concept:null,conceptQuestions: [],showReviewForConcept: null, displayConceptReview:true});
         }
+        this.setState({conceptQuestions: conceptQuestions, showReviewForConcept: concept, concept, displayConceptReview:true});
     }
 
     helpText(show){
