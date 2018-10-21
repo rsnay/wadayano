@@ -58,7 +58,8 @@ class QuizTaker extends Component {
 
       // Get current location of quiz attempt, and resume at that point
       // It looks like the list order is guaranteed from prisma, so this should be fine: https://www.prisma.io/forum/t/list-array-order-guaranteed/2235
-      const currentQuestionIndex = quizAttempt.questionAttempts.length;
+      //const currentQuestionIndex = quizAttempt.questionAttempts.length;
+      const currentQuestionIndex = 0;
 
       // If concepts have been rated, jump to the questions
       let phase = phases.CONCEPTS;
@@ -86,7 +87,6 @@ class QuizTaker extends Component {
         isLoading: false
       });
       console.log('Quiz attempt: ', quizAttempt);
-      this.randomGen();
 
     } catch (e) {
       // Catch errors
@@ -111,6 +111,7 @@ class QuizTaker extends Component {
       }
     }
     console.log(remainingNum);
+    return remainingNum;
     //setState({randomOrder:remainingNum});
   }
 
@@ -142,33 +143,41 @@ class QuizTaker extends Component {
 
   // Called when the next question/continue button is clicked in a question
   _onNextQuestion() {
+    //console.log(this.state.newIndex);
+    console.log(this.state.currentQuestionIndex);
     // If at the end of the quiz...
     let newIndex = this.state.currentQuestionIndex + 1;
     //let newIndex = this.state.randomOrder[this.state.currentQuestionIndex + 1];
     // Change to Random
     //Check if there is a question Attempt for this question
-    /*while(notDone){
+    var notDone = true;
+    while(notDone){
       notDone = false;
+      //go through each question and check if there is a question attempt that matches it
       for(var i = 0; i < this.state.quizAttempt.quiz.length; i++){
-        if(quizAttempt.quiz.question[i] === quizAttempt.questionAttempts[newIndex].question){
+        if(this.state.quizAttempt.quiz.question[i] === this.state.quizAttempt.questionAttempts[newIndex].question){
           newIndex = this.state.randomOrder[this.state.currentQuestionIndex + 1];
           notDone = true;
         }
       }
-    }*/
+    }
     
     //check if newIndex if there is a question attempt for the next question, skip?????
     // ... go to results (still set new currentQuestionIndex so progress bar fills up)
-    if (newIndex >= this.state.quiz.questions.length) {
+    
+    //if (newIndex >= this.state.quiz.questions.length) { //if current
+    if(this.state.currentQuestionIndex >= this.state.randomOrder.length){
       this.setState({
         phase: phases.RESULTS,
-        currentQuestionIndex: newIndex
+        //currentQuestionIndex: newIndex //currentQuestionIndex + 1
+        currentQuestionIndex: this.state.currentQuestionIndex
       });
       this._completeQuiz();
     } else {
       // Otherwise go to next question
+      var next = this.state.currentQuestionIndex + 1;
       this.setState({
-        currentQuestionIndex: newIndex,
+        currentQuestionIndex: next,
         currentQuestionCompleted: false
       });
     }
@@ -256,9 +265,12 @@ class QuizTaker extends Component {
         break;
         
       case phases.QUESTIONS:
+        var randomOrder = this.randomGen();
+        var index = randomOrder[this.state.currentQuestionIndex];
+        console.log(index);
         currentView = <QuestionTaker
           quizAttemptId={this.state.quizAttempt.id}
-          question={quiz.questions[this.state.currentQuestionIndex]}
+          question={quiz.questions[index]}
           key={quiz.questions[this.state.currentQuestionIndex].id}
           onQuestionCompleted={() => this._onQuestionCompleted() }
           onNextQuestion={() => this._onNextQuestion() }

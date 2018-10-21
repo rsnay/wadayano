@@ -206,10 +206,10 @@ class QuizReview extends Component {
                 conceptConfidences[i].confidenceText = "Mixed";
                 conceptConfidences[i].confidenceEmoji = "🤷‍";
             } else if(conceptConfidences[i].overCQuestions > conceptConfidences[i].underCQuestions){
-                conceptConfidences[i].confidenceText = "OverConfident";
+                conceptConfidences[i].confidenceText = "Overconfident";
                 conceptConfidences[i].confidenceEmoji = "🤦‍";
             } else {
-                conceptConfidences[i].confidenceText = "UnderConfident";
+                conceptConfidences[i].confidenceText = "Underconfident";
                 conceptConfidences[i].confidenceEmoji = "🙍‍";
             }
             console.log(conceptConfidences[i].confidenceText);
@@ -282,15 +282,14 @@ class QuizReview extends Component {
                     <div className="columns is-gapless is-multiline">
                         <div className = "column is-2" style={{width:"80px", margin:"5px"}}><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem", margin: "0px"}} /></div>
                         <div className="column"><h2 className="subtitle is-4" style={{margin:"0px"}}>wadayano score&#8482;: {this.state.wadayano}%</h2>
-                        <div><span className="subtitle is-4">{this.state.confidenceEmoji}{this.state.confidenceText}</span> <i class="fas fa-question-circle" aria-hidden="true" onMouseEnter={this.helpText.bind(null,true)} onMouseLeave={this.helpText.bind(null,false)}></i>
+                        <div><span className="subtitle is-4">{this.state.confidenceEmoji}{this.state.confidenceText}</span><span id="q-mark">?</span>
                         {this.state.helpTextShow && <div>test?</div>}</div></div>
                     </div>
                 </div>
             </div>
-            {gradePostMessage}
             <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
             {conceptConfidences.map((conceptConfidence, index) => 
-                <div className="tile is-4 is-parent" key={conceptConfidence.id}>
+                <div className="tile is-6 is-parent" key={conceptConfidence.id}>
                     <div className="tile is-child box">
                         <p className="title">
                             <div>{conceptConfidence.concept}</div>
@@ -383,25 +382,6 @@ const QUIZ_ATTEMPT_QUERY = gql`
     }
   }
 `
-
-/*export const QUIZ_ATTEMPT_QUERY = gql`
-    query {
-        quizzes {
-            id
-            title
-            questions {
-                id
-            }
-        }
-    }
-`
-export default graphql(QUIZ_ATTEMPT_QUERY, {
-    name: 'query',
-    options: (props) => {
-        // Pass the quiz ID from the route into the query
-        return { variables: { id: props.quizAttemptId } }
-    }
-}) (QuizReview)*/
 
 export default withAuthCheck(compose(
     graphql(QUIZ_ATTEMPT_QUERY, {
