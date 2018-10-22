@@ -81,3 +81,13 @@ export function confidenceAnalysis(quizAttempt){
     }
     return { text: quizConfidenceText, emoji: quizConfidenceEmoji };
 }
+
+// Returns -1, 0, or 1 based on the values of strings a and b
+// For use in sorting comparison functions (a compare function for Array.sort() needs numerical, not boolean, values)
+export function stringCompare(a, b, caseSensitive = false) {
+    if (!caseSensitive) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+    }
+    return (a < b ? -1 : (a > b ? 1 : 0))
+}
