@@ -15,6 +15,7 @@ import LoadingBox from './shared/LoadingBox';
 
 import CourseList from './instructor/CourseList';
 import CourseDetails from './instructor/CourseDetails';
+import CourseScores from './instructor/CourseScores';
 import QuizScores from './instructor/QuizScores';
 import SurveyEditor from './instructor/SurveyEditor';
 import SurveyResults from './instructor/SurveyResults';
@@ -50,6 +51,7 @@ class App extends Component {
 
           <Route exact path="/instructor" component={CourseList} />
           <Route exact path="/instructor/courses" component={CourseList} />
+          <Route path="/instructor/course/:courseId/scores" component={CourseScores} />
           <Route path="/instructor/course/:courseId" component={CourseDetails} />
           <Route path="/instructor/quiz/:quizId/import-questions" component={QuestionImporter} />
           <Route path="/instructor/quiz/:quizId/scores" component={QuizScores} />
