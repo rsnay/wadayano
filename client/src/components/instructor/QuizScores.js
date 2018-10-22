@@ -7,7 +7,7 @@ import { withAuthCheck } from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-import { formatScore, wadayanoScore, confidenceAnalysis } from '../../utils';
+import { formatScore, wadayanoScore, confidenceAnalysis, stringCompare } from '../../utils';
 import QuizReviewPage from '../student/QuizReviewPage';
 import Modal from '../shared/Modal';
 
@@ -72,7 +72,7 @@ class QuizScores extends Component {
             })
 
             // Sort scores according to selected column
-            studentScores = studentScores.sort((a, b) => a.name > b.name);
+            studentScores.sort(sortFunctions['name']);
 
             this.setState({ isLoading: false, studentScores });
         }
@@ -83,19 +83,17 @@ class QuizScores extends Component {
         const newSortColumn = e.target.dataset.column;
         let { sortAscending, studentScores } = this.state;
         
-        console.log(newSortColumn, this.state.sortColumn);
         // Check if we're toggling sort direction
         if (this.state.sortColumn === newSortColumn) {
             sortAscending = !sortAscending;
         }
-        console.log(studentScores);
+
         // Sort data
         studentScores = studentScores.sort(sortFunctions[newSortColumn]);
         if (!sortAscending) {
             studentScores.reverse();
         }
 
-        console.log(studentScores);
         // Update state
         this.setState({ sortColumn: newSortColumn, sortAscending, studentScores });
     }
@@ -125,7 +123,7 @@ class QuizScores extends Component {
                 { title: 'Student Name', columnId: 'name', sortable: true },
                 { title: 'Attempts', columnId: 'attempts', sortable: true },
                 { title: 'Highest Score', columnId: 'highestScore', sortable: true },
-                { title: 'wadayano Score', columnId: 'wadayanoScore', sortable: true },
+                { title: 'Wadayano Score', columnId: 'wadayanoScore', sortable: true },
                 { title: 'Confidence Analysis', columnId: 'confidenceAnalysis', sortable: true },
                 { title: 'View Report', columnId: 'viewReport', sortable: false }
             ];
@@ -231,11 +229,11 @@ const confidenceAnalysisWeights = {
 
 // Functions to define sorting on the various columns
 const sortFunctions = {
-    name: (a, b) => a.name > b.name,
-    attempts: (a, b) => a.attempts > b.attempts,
-    highestScore: (a, b) => a.highestScore > b.highestScore,
-    wadayanoScore: (a, b) => a.wadayanoScore > b.wadayanoScore,
-    confidenceAnalysis: (a, b) => { return confidenceAnalysisWeights[a.confidenceAnalysis.text] > confidenceAnalysisWeights[b.confidenceAnalysis.text]},
+    name: (a, b) => stringCompare(a.name, b.name),
+    attempts: (a, b) => a.attempts - b.attempts,
+    highestScore: (a, b) => a.highestScore - b.highestScore,
+    wadayanoScore: (a, b) => a.wadayanoScore - b.wadayanoScore,
+    confidenceAnalysis: (a, b) => confidenceAnalysisWeights[a.confidenceAnalysis.text] - confidenceAnalysisWeights[b.confidenceAnalysis.text],
 };
 
 // Get the quiz and attempts
