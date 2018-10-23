@@ -14,6 +14,8 @@ import Logo from '../../logo_boxed.svg';
 import QuestionReview from './QuestionReview';
 import Modal from '../shared/Modal';
 
+import WadayanoScore from '../shared/WadayanoScore';
+
 class QuizReview extends Component {
 
     constructor(props) {
@@ -279,6 +281,7 @@ class QuizReview extends Component {
                 <div className="column">
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
                     <h2 className="subtitle is-2">Score: {formattedScore}</h2>
+                    <WadayanoScore wadayano={this.state.wadayano} confidenceText={this.state.confidenceText}/>
                     <div className="columns is-gapless is-multiline">
                         <div className = "column is-2" style={{width:"80px", margin:"5px"}}><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem", margin: "0px"}} /></div>
                         <div className="column"><h2 className="subtitle is-4" style={{margin:"0px"}}>wadayano score&#8482;: {this.state.wadayano}%</h2>
