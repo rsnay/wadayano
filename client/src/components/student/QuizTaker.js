@@ -24,7 +24,7 @@ class QuizTaker extends Component {
 
   constructor(props) {
     super(props);
-
+    // var randomOrder = this.randomGen();
     this.state = {
       isLoading: true,
       error: '',
@@ -33,7 +33,7 @@ class QuizTaker extends Component {
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
       questionAttempts: [],
-      randomOrder: [],
+      randomOrder: null,
       quizAttempt: null,
       quizGradePayload: null
     };
@@ -59,6 +59,8 @@ class QuizTaker extends Component {
       // Get current location of quiz attempt, and resume at that point
       // It looks like the list order is guaranteed from prisma, so this should be fine: https://www.prisma.io/forum/t/list-array-order-guaranteed/2235
       //const currentQuestionIndex = quizAttempt.questionAttempts.length;
+    
+      
       const currentQuestionIndex = 0;
 
       // If concepts have been rated, jump to the questions
@@ -78,12 +80,15 @@ class QuizTaker extends Component {
         return;
       }
 
+      var randomOrder = this.randomGen(quiz.questions.length);
+
       // Otherwise store the data, and go to current question
       this.setState({
         quizAttempt,
         quiz,
         phase,
         currentQuestionIndex,
+        randomOrder,
         isLoading: false
       });
       console.log('Quiz attempt: ', quizAttempt);
@@ -99,11 +104,11 @@ class QuizTaker extends Component {
     }
   }
 
-  randomGen(){
-    var len = this.state.quiz.questions.length;
+  randomGen(len){
+    //var len = this.state.quiz.questions.length;
     var filled = 0;
     var remainingNum = new Array(len);
-    while(len != filled){
+    while(len > filled){
       var num = Math.floor(Math.random() * len);     // returns a random integer from 0 to length
       if(remainingNum[num] == null){
         remainingNum[num] = filled;
@@ -111,8 +116,9 @@ class QuizTaker extends Component {
       }
     }
     console.log(remainingNum);
+    //this.setState({randomOrder:remainingNum});
     return remainingNum;
-    //setState({randomOrder:remainingNum});
+    //
   }
 
   componentDidUpdate() {
@@ -144,9 +150,18 @@ class QuizTaker extends Component {
   // Called when the next question/continue button is clicked in a question
   _onNextQuestion() {
     //console.log(this.state.newIndex);
+    console.log("currentQuestionIndex:");
     console.log(this.state.currentQuestionIndex);
     // If at the end of the quiz...
-    let newIndex = this.state.currentQuestionIndex + 1;
+    //let newIndex = this.state.currentQuestionIndex + 1;
+    var next = 0;
+    next = this.state.currentQuestionIndex + 1;
+    
+    var newIndex = 0;
+    // = this.state.randomOrder[next];
+    if(next < this.state.randomOrder.length){
+      newIndex = this.state.randomOrder[next];
+    }
     //let newIndex = this.state.randomOrder[this.state.currentQuestionIndex + 1];
     // Change to Random
     //Check if there is a question Attempt for this question
@@ -154,9 +169,18 @@ class QuizTaker extends Component {
     while(notDone){
       notDone = false;
       //go through each question and check if there is a question attempt that matches it
-      for(var i = 0; i < this.state.quizAttempt.quiz.length; i++){
-        if(this.state.quizAttempt.quiz.question[i] === this.state.quizAttempt.questionAttempts[newIndex].question){
-          newIndex = this.state.randomOrder[this.state.currentQuestionIndex + 1];
+      console.log("qa:");
+      console.log(this.state.quizAttempt);
+      for(var i = 0; i < this.state.quizAttempt.questionAttempts.length; i++){
+        if(this.state.quizAttempt.quiz.questions[newIndex].id === this.state.quizAttempt.questionAttempts[i].question.id){
+          console.log("here");
+          next += 1;
+          if(next < this.state.randomOrder.length){
+            newIndex = this.state.randomOrder[next];
+          } else {
+            notDone = false;
+            break;
+          }
           notDone = true;
         }
       }
@@ -166,7 +190,7 @@ class QuizTaker extends Component {
     // ... go to results (still set new currentQuestionIndex so progress bar fills up)
     
     //if (newIndex >= this.state.quiz.questions.length) { //if current
-    if(this.state.currentQuestionIndex >= this.state.randomOrder.length){
+    if(next >= this.state.randomOrder.length){
       this.setState({
         phase: phases.RESULTS,
         //currentQuestionIndex: newIndex //currentQuestionIndex + 1
@@ -175,7 +199,7 @@ class QuizTaker extends Component {
       this._completeQuiz();
     } else {
       // Otherwise go to next question
-      var next = this.state.currentQuestionIndex + 1;
+      //var next = this.state.currentQuestionIndex + 1;
       this.setState({
         currentQuestionIndex: next,
         currentQuestionCompleted: false
@@ -238,6 +262,10 @@ class QuizTaker extends Component {
       </ErrorBox>
     }
 
+    /*if(this.state.randomOrder === null){
+      this.randomGen();
+    }*/
+
     // Quiz loaded from apollo/graphql mutation
     let { quiz } = this.state;
 
@@ -265,13 +293,31 @@ class QuizTaker extends Component {
         break;
         
       case phases.QUESTIONS:
-        var randomOrder = this.randomGen();
-        var index = randomOrder[this.state.currentQuestionIndex];
+        var index = this.state.randomOrder[this.state.currentQuestionIndex];
+        var next = 0;
+        var notDone = true;
+        while(notDone){
+          notDone = false;
+          //go through each question and check if there is a question attempt that matches it
+          for(var i = 0; i < this.state.quizAttempt.questionAttempts.length; i++){
+            if(this.state.quizAttempt.quiz.questions[index].id === this.state.quizAttempt.questionAttempts[i].question.id){
+              next += 1;
+              //index = this.state.randomOrder[next];
+              if(next < this.state.randomOrder.length){
+                index = this.state.randomOrder[next];
+              } else {
+                notDone = false;
+                break;
+              }
+              notDone = true;
+            }
+          }
+        }
         console.log(index);
         currentView = <QuestionTaker
           quizAttemptId={this.state.quizAttempt.id}
           question={quiz.questions[index]}
-          key={quiz.questions[this.state.currentQuestionIndex].id}
+          key={quiz.questions[index].id}
           onQuestionCompleted={() => this._onQuestionCompleted() }
           onNextQuestion={() => this._onNextQuestion() }
         />;
