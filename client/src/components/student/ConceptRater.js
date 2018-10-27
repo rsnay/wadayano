@@ -60,12 +60,17 @@ class ConceptRater extends Component {
         this.props.conceptQuestionCounts.forEach((questionCount, concept) => {
             conceptSliders.push(
                 <div className="" key={concept}>
-                    <h4 className="subtitle is-4" style={{marginBottom: "0.5rem"}}>{concept} – {questionCount === 1 ? '1 Question' : questionCount + ' Questions'}</h4>
-                    <ConceptRatingSlider
+                    <h4 className="subtitle is-4">
+                        {concept}
+                        <span className="question-count">
+                            {questionCount === 1 ? '1 Question' : questionCount + ' Questions'}
+                        </span>
+                    </h4>
+                    <NumericRater
                         minRating={0}
                         maxRating={questionCount}
                         onChange={(newConfidence) => this._setRating(concept, newConfidence)}
-                    />
+                        />
                     <br />
                 </div>
             );
@@ -83,8 +88,7 @@ class ConceptRater extends Component {
             <div>
                 <p className="notification">
                     This quiz includes the following topics.<br />
-                    How confident are you in your mastery of each?<br />
-                    <b>Updated copy here!</b>
+                    For each topic, mark how many questions you expect to answer correctly.<br />
                 </p>
                 {conceptSliders}
                 <br />
@@ -111,56 +115,6 @@ const RATE_CONCEPTS_MUTATION = gql`
 `;
 
 export default graphql(RATE_CONCEPTS_MUTATION, { name: 'rateConceptsMutation' })(ConceptRater)
-
-class ConceptRatingSlider extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            currentValue: props.intialRating
-        };
-        this._handleSliderChange = this._handleSliderChange.bind(this);
-    }
-
-    _handleSliderChange(e) {
-        console.log(e);
-        this.setState({ currentValue: e.currentTarget.value })
-        this.props.onChange(e.currentTarget.value);
-    }
-
-    render() {
-        return (
-            <div className="control">
-                <input
-                    autoFocus={this.props.autoFocus}
-                    type="range"
-                    className=""
-                    style={{width: "100%", maxWidth: "250px"}}
-                    min={this.props.minRating}
-                    max={this.props.maxRating}
-                    onChange={this._handleSliderChange}
-                    value={this.state.currentValue}
-                    />
-                <label className="tag is-light" style={{marginLeft: "1rem"}}>{formatScore(this.state.currentValue / this.props.maxRating)}</label>
-            </div>
-        );
-    }
-}
-
-ConceptRatingSlider.defaultProps = {
-    minRating: 0,
-    maxRating: 100,
-    intialRating: 0,
-    onChange: (val) => alert(val),
-    autoFocus: false
-};
-
-ConceptRatingSlider.propTypes = {
-    minRating: PropTypes.number,
-    maxRating: PropTypes.number,
-    intialRating: PropTypes.number,
-    onChange: PropTypes.func,
-    autoFocus: PropTypes.bool
-};
 
 // Component to display the group of numeric rating buttons, and pass up the current value when the selection changes
 class NumericRater extends Component {

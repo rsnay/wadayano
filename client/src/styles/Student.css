@@ -143,6 +143,13 @@ progress::-webkit-progress-value {
     transition: width 0.3s ease-out;
 }
 
+/* Concept Rater */
+.question-count {
+    margin-left: 1.3rem;
+    font-weight: 250!important;
+    color: rgba(0,0,0,0.5);
+}
+
 /* QuestionView */
 .question-prompt {
     font-size: 1.2rem;
