@@ -239,6 +239,12 @@ export class CollapsibleQuestionEditor extends Component {
                 // Put the newly-added question (now with IDs) in the state
                 // Collapse editor, and mark as not new
                 this.setState({ question: result.data.addQuestion, isNew: false, wasNew: true, isLoading: false, isExpanded: false, isDirty: false });
+
+                // Tell the quiz editor that this question is now saved in the database
+                if (this.props.onNewSave) {
+                    // Pass in the temp "_new0" ID, as well as the saved question, which will contain the actual ID from the database
+                    this.props.onNewSave(this.props.questionId, result.data.addQuestion);
+                }
             } else {
                 // Otherwise update it
                 await this.props.updateQuestionMutation({
@@ -443,7 +449,8 @@ CollapsibleQuestionEditor.propTypes = {
     defaultPrompt: PropTypes.string,
     defaultExpanded: PropTypes.bool,
     dragHandleProps: PropTypes.object,
-    onDelete: PropTypes.func
+    onDelete: PropTypes.func,
+    onNewSave: PropTypes.func
 };
 
 const QUESTION_QUERY = gql`

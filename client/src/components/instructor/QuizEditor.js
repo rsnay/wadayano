@@ -39,6 +39,7 @@ export class QuizEditor extends Component {
         this.saveQuiz = this.saveQuiz.bind(this);
         this.addQuestion = this.addQuestion.bind(this);
         this.onQuestionListSortEnd = this.onQuestionListSortEnd.bind(this);
+        this.onNewQuestionSaved = this.onNewQuestionSaved.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -204,6 +205,28 @@ export class QuizEditor extends Component {
         }, 300);
     }
 
+    // Called after a new question is saved to the database for the first time. Switch from the "_new0" temp ID to actual ID
+    onNewQuestionSaved(tempQuestionId, newQuestion) {
+        // Remove temp new ID
+        const tempIdIndex = this.state.newQuestionIds.indexOf(tempQuestionId);
+        if (tempIdIndex >= 0) {
+            const newQuestionIds = update(this.state.newQuestionIds, { $splice: [[tempIdIndex, 1]] });
+
+            // Add actual ID, if not already in array
+            const actualIdIndex = this.state.orderedQuestionIds.indexOf(newQuestion.id);
+            if (actualIdIndex < 0) {
+                const orderedQuestionIds = update(this.state.orderedQuestionIds, {
+                    $push: [newQuestion.id]
+                });
+                // Add the newly-saved question to the questions Map
+                const questions = update(this.state.questions, {
+                    $add: [[newQuestion.id, newQuestion]]
+                });
+                this.setState({ newQuestionIds, orderedQuestionIds, questions });
+            }
+        }
+    }
+
 
   render() {
 
@@ -240,7 +263,8 @@ export class QuizEditor extends Component {
             questionIndex={index}
             defaultPrompt={this.state.questions.get(questionId).prompt}
             defaultExpanded={(this.state.autoExpandQuestionIds.indexOf(questionId) > -1)}
-            onDelete={() => this.onQuestionDelete(questionId)} />
+            onDelete={() => this.onQuestionDelete(questionId)}
+            onNewSave={this.onNewQuestionSaved} />
     ));
 
     const newQuestionButton = (
