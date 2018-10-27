@@ -14,9 +14,9 @@ class CourseInfoForm extends Component {
         // List of fields to edit
         // New fields to be edited need to be added here, passed in as part of the `course` prop, and added to the CourseInfoUpdateInput input type in the server’s schema.graphql
         this.fields = [
-            {id: 'title', title: 'Course Title', required: true, placeholder: 'e.g. Introduction to Pathophysiology', hint: ''},
-            {id: 'number', title: 'Course Number', required: false, placeholder: 'e.g. CS 101', hint: ''},
-            {id: 'lmsUrl', title: 'Course LMS URL', required: false, placeholder: 'e.g. https://canvas.instructure.com/courses/123456', hint: 'Since students must launch graded quizzes from the LMS, wadayano can provide a link to the LMS to make it easier for students. Enter a course-specific URL that works for students, perhaps pointing to the assignments page.'}
+            {id: 'title', type: 'text', title: 'Course Title', required: true, placeholder: 'e.g. Introduction to Pathophysiology', hint: ''},
+            {id: 'number', type: 'text', title: 'Course Number', required: false, placeholder: 'e.g. CS 101', hint: ''},
+            {id: 'lmsUrl', type: 'url', title: 'Course LMS URL', required: false, placeholder: 'e.g. https://canvas.instructure.com/courses/123456', hint: 'Since students must launch graded quizzes from the LMS, wadayano can provide a link to the LMS to make it easier for students. Enter a course-specific URL that works for students, perhaps pointing to the assignments page.'}
         ];
         // Load default value for each field from props (if undefined, set to '' to keep the form fields as controlled components)
         this.fields.forEach(field => { this.state[field.id] = props.course[field.id] || '' });
@@ -29,6 +29,8 @@ class CourseInfoForm extends Component {
         if (e) { e.preventDefault(); }
         // Prevent re-submission while loading
         if (this.state.isLoading) { return; }
+        // Check that form is valid (e.g. for URL validation)
+        if (!this.formElement.reportValidity()) { return; }
         // Clear existing error, and set loading
         this.setState({ error: '', isLoading: true });
 
@@ -84,7 +86,7 @@ class CourseInfoForm extends Component {
 
     render() {
         return (
-          <form onSubmit={(e) => this._submit(e) }>
+          <form onSubmit={(e) => this._submit(e) } ref={(el) => this.formElement = el}>
 
             {this.state.error && <p className="notification is-danger">{this.state.error}</p> }
 
@@ -97,7 +99,8 @@ class CourseInfoForm extends Component {
                             name={field.id}
                             onChange={this._handleInputChange}
                             className="input"
-                            type="text"
+                            type={field.type}
+                            required={field.required}
                             placeholder={field.placeholder}
                         />
                     </div>
