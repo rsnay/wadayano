@@ -25,7 +25,7 @@ try {
 const config = configLoader;
 
 // Directory to serve static files from
-const appDir = '../client/build';
+const appDir = '../client/build-prod';
 
 // GraphQL queries and mutations
 const resolvers = {
