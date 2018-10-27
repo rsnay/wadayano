@@ -9,7 +9,7 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import { withAuthCheck } from '../shared/AuthCheck';
-import { formatScore } from '../../utils';
+import { formatScore, wadayanoScore } from '../../utils';
 
 class Dashboard extends Component {
 
@@ -125,6 +125,7 @@ class Dashboard extends Component {
                         </th>
                         <th>Type</th>
                         <th>Score</th>
+                        <th style={{whiteSpace: "nowrap"}}>Wadayano Score</th>
                         <th>Review</th>
                     </tr>
                 </thead>
@@ -139,6 +140,7 @@ class Dashboard extends Component {
                             <td data-title="Questions">{attempt.quiz.questions.length}</td>
                             <td data-title="Type">{QUIZ_TYPE_NAMES[attempt.quiz.type]}</td>
                             <td data-title="Score">{attempt.completed ? formatScore(attempt.score) : "n/a"}</td>
+                            <td data-title="Score">{attempt.completed ? formatScore(wadayanoScore(attempt)) : "n/a"}</td>
                             <td data-title="Review">
                                 <Link to={"/student/quiz/review/" + attempt.id}
                                 className="button is-info is-outlined">
@@ -231,6 +233,8 @@ const QUIZ_ATTEMPTS_QUERY = gql`
             completed
             questionAttempts {
                 id
+                isCorrect
+                isConfident
             }
             score
         }
