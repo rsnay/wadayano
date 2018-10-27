@@ -277,17 +277,22 @@ class QuizTaker extends Component {
       </ErrorBox>
     }
 
-    // Get concepts from all questions in the quiz
-    let concepts = quiz.questions.map(q => q.concept);
-    // Remove duplicate concepts
-    concepts = Array.from(new Set(concepts));
+    // Get concepts (and respective question count) from all questions in the quiz
+    let conceptQuestionCounts = new Map();
+    quiz.questions.forEach(q => {
+      if (conceptQuestionCounts.has(q.concept)) {
+        conceptQuestionCounts.set(q.concept, conceptQuestionCounts.get(q.concept) + 1);
+      } else {
+        conceptQuestionCounts.set(q.concept, 1);
+      }
+    });
 
     let currentView;
     switch (this.state.phase) {
       case phases.CONCEPTS:
         currentView = <ConceptRater
           quizAttemptId={this.state.quizAttempt.id}
-          concepts={concepts}
+          conceptQuestionCounts={conceptQuestionCounts}
           onConceptsRated={() => this._onConceptsRated() }
         />;
         break;

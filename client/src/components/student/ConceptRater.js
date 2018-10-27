@@ -4,6 +4,8 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
+import { formatScore } from '../../utils';
+
 const MIN_RATING = 1;
 const MAX_RATING = 5;
 
@@ -13,7 +15,7 @@ class ConceptRater extends Component {
         super(props);
         this.state = {
             ratings: [],
-            isLoading: false
+            isSubmitting: false
         };
     }
 
@@ -38,37 +40,40 @@ class ConceptRater extends Component {
     // Sends the concept confidences/ratings to the server
     async _submitConceptRatings() {
         // Prevent re-submission while loading
-        if (this.state.isLoading) { return; }
-        this.setState({ isLoading: true });
+        if (this.state.isSubmitting) { return; }
+        this.setState({ isSubmitting: true });
         await this.props.rateConceptsMutation({
             variables: {
                 quizAttemptId: this.props.quizAttemptId,
                 conceptConfidences: this.state.ratings
             }
         });
-        // TODO pass actual ratings
-        this.props.onConceptsRated();
+        // Tell QuizTaker to continue
         this.props.onConceptsRated();
     }
 
     render() {
         console.log(this.props);
-        let concepts = this.props.concepts.map((concept, index) =>
-            <div className="" key={concept}>
-                <h4 className="subtitle is-4">{concept}</h4>
-                <NumericRater
-                    autoFocus={index === 0}
-                    minRating={MIN_RATING}
-                    maxRating={MAX_RATING}
-                    onChange={(newConfidence) => this._setRating(concept, newConfidence)}
-                />
-                <br />
-            </div>
-        );
+
+        let conceptSliders = [];
+
+        this.props.conceptQuestionCounts.forEach((questionCount, concept) => {
+            conceptSliders.push(
+                <div className="" key={concept}>
+                    <h4 className="subtitle is-4" style={{marginBottom: "0.5rem"}}>{concept} – {questionCount === 1 ? '1 Question' : questionCount + ' Questions'}</h4>
+                    <ConceptRatingSlider
+                        minRating={0}
+                        maxRating={questionCount}
+                        onChange={(newConfidence) => this._setRating(concept, newConfidence)}
+                    />
+                    <br />
+                </div>
+            );
+        });
 
         let submitButton = (
             <ScrollIntoViewIfNeeded>
-                <button autoFocus className={"button is-primary" + (this.state.isLoading ? " is-loading" : "")} onClick={() => {
+                <button autoFocus className={"button is-primary" + (this.state.isSubmitting ? " is-loading" : "")} onClick={() => {
                     this._submitConceptRatings();
                 }}>Start Quiz</button>
             </ScrollIntoViewIfNeeded>
@@ -79,18 +84,20 @@ class ConceptRater extends Component {
                 <p className="notification">
                     This quiz includes the following topics.<br />
                     How confident are you in your mastery of each?<br />
-                    1 = least confident; 5 = most confident
+                    <b>Updated copy here!</b>
                 </p>
-                {concepts}
+                {conceptSliders}
                 <br />
-                {this.state.ratings.length === this.props.concepts.length && submitButton}
+                {this.state.ratings.length === this.props.conceptQuestionCounts.size && submitButton}
             </div>
         )
     }
 }
 
 ConceptRater.propTypes = {
-    concepts: PropTypes.array.isRequired,
+    // Required { key: conceptName --> value: questionCount} Map object
+    // TODO implement custom checker to ensure this is a Map
+    conceptQuestionCounts: PropTypes.object.isRequired,
     quizAttemptId: PropTypes.string.isRequired,
     onConceptsRated: PropTypes.func.isRequired
 };
@@ -104,6 +111,53 @@ const RATE_CONCEPTS_MUTATION = gql`
 `;
 
 export default graphql(RATE_CONCEPTS_MUTATION, { name: 'rateConceptsMutation' })(ConceptRater)
+
+class ConceptRatingSlider extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            currentValue: 0
+        };
+        this._handleSliderChange = this._handleSliderChange.bind(this);
+    }
+
+    _handleSliderChange(e) {
+        console.log(e);
+        this.setState({ currentValue: e.currentTarget.value })
+        this.props.onChange(e.currentTarget.value);
+    }
+
+    render() {
+        return (
+            <div className="control">
+                <input
+                    autoFocus={this.props.autoFocus}
+                    type="range"
+                    className=""
+                    style={{width: "100%", maxWidth: "250px"}}
+                    min={this.props.minRating}
+                    max={this.props.maxRating}
+                    onChange={this._handleSliderChange}
+                    />
+                <label className="tag is-light" style={{marginLeft: "1rem"}}>{formatScore(this.state.currentValue / this.props.maxRating)}</label>
+            </div>
+        );
+    }
+}
+
+ConceptRatingSlider.defaultProps = {
+    minRating: 0,
+    maxRating: 100,
+    onChange: (val) => alert(val),
+    autoFocus: false
+};
+
+ConceptRatingSlider.propTypes = {
+    minRating: PropTypes.number,
+    maxRating: PropTypes.number,
+    onChange: PropTypes.func,
+    autoFocus: PropTypes.bool
+};
 
 // Component to display the group of numeric rating buttons, and pass up the current value when the selection changes
 class NumericRater extends Component {
