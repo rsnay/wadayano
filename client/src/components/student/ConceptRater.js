@@ -116,7 +116,7 @@ class ConceptRatingSlider extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentValue: 0
+            currentValue: props.intialRating
         };
         this._handleSliderChange = this._handleSliderChange.bind(this);
     }
@@ -138,6 +138,7 @@ class ConceptRatingSlider extends Component {
                     min={this.props.minRating}
                     max={this.props.maxRating}
                     onChange={this._handleSliderChange}
+                    value={this.state.currentValue}
                     />
                 <label className="tag is-light" style={{marginLeft: "1rem"}}>{formatScore(this.state.currentValue / this.props.maxRating)}</label>
             </div>
@@ -148,6 +149,7 @@ class ConceptRatingSlider extends Component {
 ConceptRatingSlider.defaultProps = {
     minRating: 0,
     maxRating: 100,
+    intialRating: 0,
     onChange: (val) => alert(val),
     autoFocus: false
 };
@@ -155,6 +157,7 @@ ConceptRatingSlider.defaultProps = {
 ConceptRatingSlider.propTypes = {
     minRating: PropTypes.number,
     maxRating: PropTypes.number,
+    intialRating: PropTypes.number,
     onChange: PropTypes.func,
     autoFocus: PropTypes.bool
 };
