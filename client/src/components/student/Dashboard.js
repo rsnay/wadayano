@@ -30,8 +30,7 @@ class Dashboard extends Component {
     const unfinishedAttempts = quizAttempts.filter(attempt => attempt.completed === null);
     const pastAttempts = quizAttempts.filter(attempt => attempt.completed !== null);
 
-    console.log(quizAttempts);
-
+    const lmsUrlLink = (actionText) => (course.lmsUrl !== '') ? <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>click here to {actionText}</a> : actionText;
 
     let practiceQuizzesTable = <div className="notification has-text-centered">No practice quizzes are currently available for this course.</div>;
     if (practiceQuizzes.length > 0) {
@@ -111,7 +110,7 @@ class Dashboard extends Component {
 
     );
 
-    let pastAttemptsTable = <div className="notification has-text-centered">No quiz attempts yet. Choose a practice quiz from the list above, or <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>click here to launch a quiz from your learning management system</a> to get started.</div>;
+    let pastAttemptsTable = <div className="notification has-text-centered">No quiz attempts yet. Choose a practice quiz from the list above, or {lmsUrlLink('launch a quiz from your learning management system')} to get started.</div>;
     if (pastAttempts.length > 0) {
         pastAttemptsTable = (
         <div className="table-wrapper">
@@ -171,12 +170,11 @@ class Dashboard extends Component {
 
             </div>
                 {unfinishedAttemptsTable}
-            <hr />
           </section>}
 
           <section>
             <h4 className="title is-4">Practice Quizzes</h4>
-            <p>Take a practice quiz below. To take a quiz that is graded for this course, please <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>click here to launch it from your course’s learning management system</a> (i.e. Canvas or Learning Suite).<br /><br /></p>
+            <p>Take a practice quiz below. To take a quiz that is graded for this course, please {lmsUrlLink('launch it from your course’s learning management system')} (i.e. Canvas or Learning Suite).<br /><br /></p>
 
             {practiceQuizzesTable}
 
