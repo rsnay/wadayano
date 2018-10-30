@@ -32,6 +32,7 @@ class QuizReview extends Component {
             wadayano:null,
             displayConceptReview:false,
             helpTextShow:false,
+            displayhelpText:false,
         };
     
         // Pre-bind this function, to make adding it to input fields easier
@@ -231,10 +232,9 @@ class QuizReview extends Component {
         this.setState({conceptQuestions: conceptQuestions, showReviewForConcept: concept, concept, displayConceptReview:true});
     }
 
-    helpText(show){
-        this.setState({helpTextShow:show});
+    helpText(){
+        this.setState({displayhelpText: true});
     }
-
     
 
   render() {
@@ -316,6 +316,16 @@ class QuizReview extends Component {
                     ))}
                     <br/>
                 </span>
+            </Modal>
+            <Modal
+                modalState={this.state.displayhelpText}
+                closeModal={() => this.setState({ displayhelpText: false })}
+                title={"Help:"}>
+                <div>Wadayano Score measures how well you know what you know.
+
+-Higher scores mean you are only confident about things you actually know.
+
+-Lower scores may indicate that you are over- or under-confident.</div>
             </Modal>
         </div>)
   }

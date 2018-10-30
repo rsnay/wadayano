@@ -44,14 +44,16 @@ button::-moz-focus-inner {
 /* Quiz Review*/
 
 #q-mark{
-    width: 22px;
-    line-height: 22px;
+    width: 20px;
+    line-height: 20px;
     border-radius: 50%;
     text-align: center;
-    font-size: 20px;
+    font-size: 18px;
     display:inline-block;
-    border: 2px solid #666;
+    margin-left: 50px;
+    border: 1px solid #666;
 }
+
 .flexbox-container{
     display: flex;
     flex-direction:row;
