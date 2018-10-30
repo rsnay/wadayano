@@ -203,7 +203,6 @@ const COURSE_QUERY = gql`
     course(id:$id){
         id
         title
-        survey
         lmsUrl
         quizzes {
             id

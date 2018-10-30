@@ -1,4 +1,4 @@
-// Score format of 33.3%
+// Format a 0–1 float score to 33.3%
 export function formatScore(score) {
     return `${Math.round(score * 1000) / 10}%`;
 }

@@ -9,7 +9,7 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import { formatScore, wadayanoScore, stringCompare } from '../../utils';
-import QuizReviewPage from '../student/QuizReviewPage';
+import AggregatedQuizReview from './AggregatedQuizReview';
 import Modal from '../shared/Modal';
 
 class CourseScores extends Component {
@@ -19,7 +19,8 @@ class CourseScores extends Component {
             isLoading: true,
             sortColumn: 'title',
             sortAscending: true,
-            aggregatedQuizScores: []
+            aggregatedQuizScores: [],
+            currentQuizReview: null
         };
         this.sortByColumn = this.sortByColumn.bind(this);
     }
@@ -134,7 +135,7 @@ class CourseScores extends Component {
                 { title: 'Average Score', columnId: 'averageScore', sortable: true },
                 { title: 'High Score', columnId: 'highScore', sortable: true },
                 { title: 'Average Wadayano Score', columnId: 'averageWadayanoScore', sortable: true },
-                { title: 'View Stats', columnId: 'id', sortable: false }
+                { title: 'View Report', columnId: 'id', sortable: false }
             ];
             scoresTable = (
                 <div className="table-wrapper">
@@ -166,11 +167,11 @@ class CourseScores extends Component {
                                             <td>{formatScore(quiz.averageWadayanoScore)}</td>
                                             <td>
                                                 <button className="button is-light"
-                                                    onClick={() => alert('Not yet implemented\n' + quiz.id)}>
+                                                    onClick={() => this.setState({ currentQuizReview: quiz })}>
                                                     <span className="icon">
                                                     <i className="fas fa-chart-bar"></i>
                                                     </span>
-                                                    <span>Stats</span>
+                                                    <span>View Report</span>
                                                 </button>
                                             </td>
                                         </React.Fragment>
@@ -203,12 +204,12 @@ class CourseScores extends Component {
 
                 {scoresTable}
 
-                {this.state.currentStudentReview && <Modal
+                {this.state.currentQuizReview && <Modal
                     modalState={true}
-                    closeModal={() => this.setState({ currentStudentReview: null })}
-                    title={`Attempt from ${this.state.currentStudentReview.name}`}
+                    closeModal={() => this.setState({ currentQuizReview: null })}
+                    title={`Aggregated results from ${this.state.currentQuizReview.title}`}
                     cardClassName="quiz-scores-report-modal">
-                        <QuizReviewPage hideFooter={true} match={{ params: { quizAttemptId: this.state.currentStudentReview.highestAttempt.id } }} />
+                        <AggregatedQuizReview quizInfo={this.state.currentQuizReview} />
                 </Modal>}
 
                 <hr />
