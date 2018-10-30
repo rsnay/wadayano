@@ -170,7 +170,7 @@ class AggregatedQuizReview extends Component {
                                 <p className="title">
                                     Score: {formatScore(Math.random())}
                                 </p>
-                                {/*<WadayanoScore wadayano={conceptConfidence.wadayano} confidenceText={conceptConfidence.confidenceText}/>*/}
+                                <WadayanoScore wadayano={Math.round(Math.random() * 100)} confidenceText={"Mixed"}/>
                                 <footer className="">
                                     <button className="button is-primary is-block" style={{width: "100%"}} onClick={() => alert('Not yet implemented')}>View Details</button>
                                 </footer>
