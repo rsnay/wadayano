@@ -282,12 +282,6 @@ class QuizReview extends Component {
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
                     <h2 className="subtitle is-2">Score: {formattedScore}</h2>
                     <WadayanoScore wadayano={this.state.wadayano} confidenceText={this.state.confidenceText}/>
-                    <div className="columns is-gapless is-multiline">
-                        <div className = "column is-2" style={{width:"80px", margin:"5px"}}><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem", margin: "0px"}} /></div>
-                        <div className="column"><h2 className="subtitle is-4" style={{margin:"0px"}}>wadayano score&#8482;: {this.state.wadayano}%</h2>
-                        <div><span className="subtitle is-4">{this.state.confidenceEmoji}{this.state.confidenceText}</span><span id="q-mark">?</span>
-                        {this.state.helpTextShow && <div>test?</div>}</div></div>
-                    </div>
                 </div>
             </div>
             <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
@@ -301,11 +295,7 @@ class QuizReview extends Component {
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}%
                         </p>
-                        <div className="columns is-gapless is-multiline" style={{margin:"0px"}}>
-                            <div className = "column is-2" style={{width:"80px", margin:"5px"}}><img className="wadayano-list" src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem", margin: "0px"}} /></div>
-                            <div className="column"><h2 className="subtitle is-4" style={{margin:"0px"}}>wadayano score&#8482;: {conceptConfidence.wadayano}%</h2>
-                            <div><span className="subtitle is-4">{conceptConfidence.confidenceEmoji}{conceptConfidence.confidenceText}</span> <i class="fas fa-question-circle" aria-hidden="true"></i></div></div>
-                        </div>
+                        <WadayanoScore wadayano={conceptConfidence.wadayano} confidenceText={conceptConfidence.confidenceText}/>
                         <div id={conceptConfidence.concept+ "review"}></div>
                         <footer className="">
                             <button className="button is-primary is-block" style={{width: "100%"}} onClick = {this.selectReview.bind(null,conceptConfidence.concept, quizAttempt)}>View Details</button>
