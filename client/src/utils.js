@@ -1,3 +1,5 @@
+import { CONFIDENCES } from "./constants";
+
 // Format a 0–1 float score to 33.3%
 export function formatScore(score) {
     return `${Math.round(score * 1000) / 10}%`;
@@ -67,19 +69,14 @@ export function confidenceAnalysis(quizAttempt){
 
     // wadayanoScore() returns a float in range 0-1
     if(wadayano > 0.9){
-        quizConfidenceText = "Accurate";
-        quizConfidenceEmoji = "🧘";
+        return CONFIDENCES.ACCURATE;
     } else if(quizOverC === quizUnderC){
-        quizConfidenceText = "Mixed";
-        quizConfidenceEmoji = "🤷‍";
+        return CONFIDENCES.MIXED;
     } else if(quizOverC > quizUnderC){
-        quizConfidenceText = "Overconfident";
-        quizConfidenceEmoji = "🤦‍";
+        return CONFIDENCES.OVERCONFIDENT;
     } else {
-        quizConfidenceText = "Underconfident";
-        quizConfidenceEmoji = "🙍‍";
+        return CONFIDENCES.UNDERCONFIDENT;
     }
-    return { text: quizConfidenceText, emoji: quizConfidenceEmoji };
 }
 
 // Returns -1, 0, or 1 based on the values of strings a and b

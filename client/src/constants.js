@@ -15,3 +15,26 @@ export const AUTH_ROLE_INSTRUCTOR = 'instructor';
 export const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export const QUIZ_TYPE_NAMES = { 'PRACTICE': 'Practice', 'GRADED': 'Graded' };
+
+export const CONFIDENCES = {
+    'OVERCONFIDENT': {
+        key: 'OVERCONFIDENT',
+        text: 'Overconfident',
+        emoji: '🤦‍'
+    },
+    'ACCURATE': {
+        key: 'ACCURATE',
+        text: 'Accurate',
+        emoji: '🧘'
+    },
+    'UNDERCONFIDENT': {
+        key: 'UNDERCONFIDENT',
+        text: 'Underconfident',
+        emoji: '🙍'
+    },
+    'MIXED': {
+        key: 'MIXED',
+        text: 'Mixed',
+        emoji: '🤷'
+    }
+};
