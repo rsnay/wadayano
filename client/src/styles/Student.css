@@ -465,3 +465,37 @@ progress::-webkit-progress-value {
 	/* Label the data */
 	.responsive-table td:before { content: attr(data-title); }
 }
+
+/* Bar graphs */
+.chart-bar {
+    display: inline-block;
+    background: #64C5D8;
+    border-radius: 3px;
+}
+/* Aggregated confidence analysis bar graph */
+.confidence-bar-graph {
+    width: 370px!important;
+}
+.confidence-bar-graph td {
+    padding: 0.25rem;
+    vertical-align: middle!important;
+    border: none!important;
+}
+.confidence-bar-graph td:first-child {
+    text-align: right;
+    color: #222;
+}
+.confidence-bar-graph td:last-child {
+    text-align: left;
+}
+.confidence-bar-graph .chart-bar {
+    width: 100px;
+    height: 1rem;
+    vertical-align: -10%;
+    margin-right: 0.5rem;
+}
+.confidence-bar-graph .emoji-cell {
+    font-size: 2rem;
+    width: 3rem;
+    padding: 0 0.5rem 0 0.5rem;
+}

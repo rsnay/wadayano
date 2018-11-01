@@ -5,16 +5,18 @@ import PropTypes from 'prop-types';
 
 import { withAuthCheck } from '../shared/AuthCheck';
 
-import { formatScore } from '../../utils';
+import { formatScore, confidenceAnalysis, wadayanoScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
 import Logo from '../../logo_boxed.svg';
 
+import ConfidenceBarGraph from './ConfidenceBarGraph';
 import QuestionReview from '../student/QuestionReview';
 import Modal from '../shared/Modal';
 
 import WadayanoScore from '../shared/WadayanoScore';
+import { CONFIDENCES } from '../../constants';
 
 class AggregatedQuizReview extends Component {
 
@@ -22,166 +24,157 @@ class AggregatedQuizReview extends Component {
         super(props);
     
         this.state = {
+            isLoading: true,
+            scores: null,
+            lowScore: null,
+            averageScore: null,
+            highScore: null,
+            wadayanoScores: null,
+            averageWadayanoScore: null,
+            confidenceAnalysisCounts: null
         };
     
         // Pre-bind this function, to make adding it to input fields easier
     }
 
-    //go through each concept and calculate the confidence bias/error
-    sortConcepts(quizAttempt){
-        // Get concepts from all questions in the quiz
-        var quizConcepts = quizAttempt.quiz.questions.map(q => q.concept);
-        // Remove duplicate concepts
-        quizConcepts = Array.from(new Set(quizConcepts));
+    componentWillReceiveProps(nextProps) {
+        // Workaround for no callback after apollo query finishes loading.
+        if (nextProps.quizQuery && !nextProps.quizQuery.loading && !nextProps.quizQuery.error) {
 
-        var conceptConfidences = [];
-        for(var i=0;i<quizConcepts.length;i++){
-            
-            //var confidence = 0;
-            conceptConfidences.push({
-                concept:"",
-                confidence:0,
-                confidenceError:0.0,
-                confidenceBias:0.0,
-                questionCnt:0,
-                confidenceText:"",
-                confidenceEmoji:"",
-                conceptScore:0,
-                correctQuestions:0,
-                overCQuestions:0,
-                underCQuestions:0,
-                wadayano:0
+            // Prepare data for the review
+            const quiz = nextProps.quizQuery.quiz;
+            const course = quiz.course;
 
-            });
-            conceptConfidences[i].concept = quizConcepts[i];
-            conceptConfidences[i].confidence = quizAttempt.conceptConfidences[i].confidence;
-            var confNum = 0;
-            var corNum = 0;
-            var correct = 0;
-            for(var j=0; j<quizAttempt.questionAttempts.length; j++){
-                conceptConfidences[i].id = i;
-                var question = quizAttempt.questionAttempts[j].question;
-                var questionAttempt = quizAttempt.questionAttempts[j];
-                
-                if(question.concept === quizConcepts[i]){
-                    conceptConfidences[i].questionCnt +=1;
-                    if(quizAttempt.questionAttempts[j].confidence){
-                        conceptConfidences[i].confidence += 1;
+            // Get highest completed quiz attempt for each student, and calculate wadayano score
+            let studentScores = new Map();
+            quiz.quizAttempts.forEach(attempt => {
+                if (attempt.completed) {
+                    const studentId = attempt.student.id;
+                    // Save score, wadayano score, and confidence analysis for this student if not already in the Map, or if previously-saved score is lower (if this is slow in the future, only calculate wadayano and confidence after we’ve found the highest)
+                    if (studentScores.get(studentId) === undefined || studentScores.get(studentId).score < attempt.score) {
+                        studentScores.set(studentId, {
+                            score: attempt.score,
+                            wadayanoScore: wadayanoScore(attempt),
+                            confidenceAnalysis: confidenceAnalysis(attempt)
+                        });
                     }
-    
-                    if(questionAttempt.isCorrect){
-                        correct+=1;
-                    }
-                    
-                    if(questionAttempt.isConfident){
-                        confNum = 1;
-                    } else {
-                        confNum = 0;
-                    }
-                    if(questionAttempt.isCorrect){
-                        corNum = 1;
-                    } else {
-                        corNum = 0;
-                    }
-                    var compare = confNum - corNum; //get over/under/accurate confidence for single concept
-                    console.log(compare);
-                    switch(compare){
-                        case -1:
-                            console.log("A?");
-                            conceptConfidences[i].underCQuestions += 1;
-                            break;
-                        case 0:
-                            console.log("B?");
-                            conceptConfidences[i].correctQuestions += 1;
-                            break;
-                        case 1:
-                            console.log("C?");
-                            conceptConfidences[i].overCQuestions += 1;
-                            break;
-                    }  
                 }
+            });
+
+            // Calculate average score and wadayano score
+            let scores = [];
+            let lowScore = 2; // Start higher than possible low
+            let averageScore = 0;
+            let highScore = -1; // Start lower than possible high
+
+            let wadayanoScores = [];
+            let averageWadayanoScore = 0;
+
+            let confidenceAnalysisCounts = {
+                [CONFIDENCES.OVERCONFIDENT.key]: 0,
+                [CONFIDENCES.ACCURATE.key]: 0,
+                [CONFIDENCES.UNDERCONFIDENT.key]: 0,
+                [CONFIDENCES.MIXED.key]: 0
             }
-            //
-            conceptConfidences[i].conceptScore = parseFloat((correct/conceptConfidences[i].questionCnt)*100).toFixed(1); //individual concept score
-            conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
-            conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
-            conceptConfidences[i].wadayano = ((conceptConfidences[i].correctQuestions/conceptConfidences[i].questionCnt)*100).toFixed(1);
-            console.log(conceptConfidences[i].correctQuestions);
-            console.log(conceptConfidences[i].questionCnt);
-            console.log(conceptConfidences[i].wadayano);
-            if(conceptConfidences[i].wadayano > 90){
-                conceptConfidences[i].confidenceText = "Accurate";
-                conceptConfidences[i].confidenceEmoji = "🧘";
-            } else if(conceptConfidences[i].overCQuestions === conceptConfidences[i].underCQuestions){
-                conceptConfidences[i].confidenceText = "Mixed";
-                conceptConfidences[i].confidenceEmoji = "🤷‍";
-            } else if(conceptConfidences[i].overCQuestions > conceptConfidences[i].underCQuestions){
-                conceptConfidences[i].confidenceText = "Overconfident";
-                conceptConfidences[i].confidenceEmoji = "🤦‍";
-            } else {
-                conceptConfidences[i].confidenceText = "Underconfident";
-                conceptConfidences[i].confidenceEmoji = "🙍‍";
+
+            const studentCount = studentScores.size;
+            if (studentCount > 0) {
+                studentScores.forEach(({ score, wadayanoScore, confidenceAnalysis }) => {
+                    scores.push(score);
+                    averageScore += score;
+
+                    wadayanoScores.push(wadayanoScore);
+                    averageWadayanoScore += wadayanoScore;
+
+                    // Increase counter for this confidence analysis type
+                    confidenceAnalysisCounts[confidenceAnalysis.key]++;
+
+                    if (score > highScore) {
+                        highScore = score;
+                    }
+                    if (score < lowScore) {
+                        lowScore = score;
+                    }
+                });
+                averageScore /= studentCount;
+                averageWadayanoScore /= studentCount;
             }
-            console.log(conceptConfidences[i].confidenceText);
+
+            console.log(scores, wadayanoScores, confidenceAnalysisCounts);
+
+            this.setState({ isLoading: false, scores, lowScore, averageScore, highScore, wadayanoScores, averageWadayanoScore, confidenceAnalysisCounts });
         }
-        return conceptConfidences;
     }
 
-  render() {
+    render() {
 
-    if (this.props.quizQuery && this.props.quizQuery.error) {
-        return <ErrorBox>Couldn’t load quiz</ErrorBox>;
-    }
+        if (this.props.quizQuery && this.props.quizQuery.error) {
+            return <ErrorBox>Couldn’t load quiz</ErrorBox>;
+        }
 
-    if (this.props.quizQuery && this.props.quizQuery.loading) {
-        return <LoadingBox />;
-    }
+        if (this.state.isLoading || (this.props.quizQuery && this.props.quizQuery.loading)) {
+            return <LoadingBox />;
+        }
 
-    // Contains some quiz metadata, as well as precomputed average score and average wadayano score
-    const quizInfo = this.props.quizInfo;
-    // Quiz object from database
-    const quiz = this.props.quizQuery.quiz;
+        // Contains some quiz metadata, as well as precomputed average score and average wadayano score
+        const quizInfo = this.props.quizInfo;
+        // Quiz object from database
+        const quiz = this.props.quizQuery.quiz;
 
-    console.log(quiz);
+        console.log(quiz);
 
-    // Get all unique concepts in the quiz
-    const concepts = Array.from(new Set(quiz.questions.map(q => q.concept)));
-    console.log(concepts);
+        // Get all unique concepts in the quiz
+        const concepts = Array.from(new Set(quiz.questions.map(q => q.concept)));
+        console.log(concepts);
 
-    return (
-        <div>
-            <div className="columns">
-                <div className="column">
-                    <h2 className="subtitle is-2">Average Score: {formatScore(quizInfo.averageScore)}</h2>
-                    <WadayanoScore wadayano={Math.round(quizInfo.averageWadayanoScore * 100)} confidenceText="Mixed" />
-                </div>
-            </div>
+        const { scores, confidenceAnalysisCounts } = this.state;
 
-            <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
-                {concepts.map(concept => {
-                    const questionCount = quiz.questions.filter(q => q.concept === concept).length;
-                    return (
-                        <div className="tile is-6 is-parent" key={concept}>
-                            <div className="tile is-child box">
-                                <p className="title">
-                                    <span>{concept}</span>
-                                    <span className="question-count">{questionCount === 1 ? '1 Question' : questionCount + ' Questions'}</span>
-                                </p>
-                                <p className="title">
-                                    Score: {formatScore(Math.random())}
-                                </p>
-                                <WadayanoScore wadayano={Math.round(Math.random() * 100)} confidenceText={"Mixed"}/>
-                                <footer className="">
-                                    <button className="button is-primary is-block" style={{width: "100%"}} onClick={() => alert('Not yet implemented')}>View Details</button>
-                                </footer>
-                            </div>
+        return (
+            <div>
+                <div className="columns">
+                    <div className="column">
+                        <div className="box is-inline-block" style={{marginLeft: "24px", height: "280px"}}>
+                            <img className="wadayano-list" src={Logo} alt="wadayano logo" style={{height: "2rem"}} />
+                            <h4 className="subtitle is-pulled-left" style={{padding: "0.3rem 0 0 1rem"}}>
+                                Average Wadayano Score: {formatScore(quizInfo.averageWadayanoScore)}
+                            </h4>
+                            <br />
+                            <ConfidenceBarGraph
+                                overconfident={confidenceAnalysisCounts.OVERCONFIDENT}
+                                accurate={confidenceAnalysisCounts.ACCURATE}
+                                underconfident={confidenceAnalysisCounts.UNDERCONFIDENT}
+                                mixed={confidenceAnalysisCounts.MIXED}
+                                />
                         </div>
-                    )
-                })}
-            </div>
+                    </div>
+                </div>
 
-        </div>)
-  }
+                <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
+                    {concepts.map(concept => {
+                        const questionCount = quiz.questions.filter(q => q.concept === concept).length;
+                        return (
+                            <div className="tile is-6 is-parent" key={concept}>
+                                <div className="tile is-child box">
+                                    <p className="title">
+                                        <span>{concept}</span>
+                                        <span className="question-count">{questionCount === 1 ? '1 Question' : questionCount + ' Questions'}</span>
+                                    </p>
+                                    <p className="title">
+                                        Score: {formatScore(Math.random())}
+                                    </p>
+                                    <WadayanoScore wadayano={Math.round(Math.random() * 100)} confidenceText={"Mixed"}/>
+                                    <footer className="">
+                                        <button className="button is-primary is-block" style={{width: "100%"}} onClick={() => alert('Not yet implemented')}>View Details</button>
+                                    </footer>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+
+            </div>
+        );
+    }
 }
 
 AggregatedQuizReview.propTypes = {
