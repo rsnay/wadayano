@@ -35,7 +35,7 @@ class CourseScores extends Component {
             // const students = Array.from(course.students);
 
             let aggregatedQuizScores = course.quizzes.map(quiz => {
-                // Get highest completed quiz attempt for eaech student, and calculate wadayano score
+                // Get highest completed quiz attempt for each student, and calculate wadayano score
                 let studentScores = new Map();
                 quiz.quizAttempts.forEach(attempt => {
                     if (attempt.completed) {
