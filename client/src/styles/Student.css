@@ -472,6 +472,44 @@ progress::-webkit-progress-value {
     background: #64C5D8;
     border-radius: 3px;
 }
+
+/* Aggregated scores bar graph */
+.scores-bar-graph {
+    width: 370px!important;
+}
+.scores-bar-graph td {
+    text-align: center;
+    vertical-align: bottom!important;
+    border-bottom: none!important;
+    border-top: none!important;
+}
+.scores-bar-graph .chart-bar {
+    width: 1rem;
+    height: 0px;
+    clear: both;
+}
+.scores-bar-graph .chart-bar-label {
+    display: block;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 0.2rem;
+}
+.scores-bar-graph .tick-marks td {
+    height: 0px;
+    position: relative;
+    top: -35px;
+    font-size: 50%;
+}
+.scores-bar-graph .tick-marks td:not(:first-child):not(:last-child) {
+    border: solid #ccc 1px;
+}
+.scores-bar-graph .tick-mark-labels td {
+    position: relative;
+    padding: 0;
+    top: -7px;
+    font-size: 50%;
+}
+
 /* Aggregated confidence analysis bar graph */
 .confidence-bar-graph {
     width: 370px!important;
