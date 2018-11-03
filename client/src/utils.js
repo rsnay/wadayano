@@ -88,3 +88,36 @@ export function stringCompare(a, b, caseSensitive = false) {
     }
     return (a < b ? -1 : (a > b ? 1 : 0))
 }
+
+// The following helper functions are from https://codereview.stackexchange.com/a/150016
+// Creates a random number generator function.
+export function createRandomGenerator(seed) {
+    const a = 5486230734;  // some big numbers
+    const b = 6908969830; 
+    const m = 9853205067;
+    var x = seed;
+    // returns a random value 0 <= num < 1
+    return function(seed = x){  // seed is optional. If supplied sets a new seed
+        x = (seed  * a + b) % m;
+        return x / m;
+    }
+}
+
+// Creates a 32bit hash of a string    
+export function stringTo32BitHash(str) {
+    var v = 0;
+    for(var i = 0; i < str.length; i += 1){
+        v += str.charCodeAt(i) << (i % 24);
+    }
+    return v % 0xFFFFFFFF;
+}
+// Shuffle array using the given seed (to shuffle the same way every time for a given seed)
+export function shuffleArray(seed, arr) {
+    var rArr = [];
+    var random = createRandomGenerator(stringTo32BitHash(seed));        
+    while(arr.length > 1) {
+        rArr.push(arr.splice(Math.floor(random() * arr.length), 1)[0]);
+    }
+    rArr.push(arr[0]);
+    return rArr;
+}
