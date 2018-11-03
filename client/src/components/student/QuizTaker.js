@@ -81,7 +81,7 @@ class QuizTaker extends Component {
       }
 
       // Otherwise randomize the questions, store the data, and go to current question
-      let randomizedQuestions = shuffleArray(quiz.id, [...quiz.questions]);
+      let randomizedQuestions = shuffleArray(quizAttempt.id, [...quiz.questions]);
 
       this.setState({
         quizAttempt,
