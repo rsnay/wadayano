@@ -12,6 +12,8 @@ import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
+import { shuffleArray } from '../../utils';
+
 // Different phases or stages of the quiz-taking experience
 const phases = {
   CONCEPTS: 'concepts',
@@ -24,7 +26,7 @@ class QuizTaker extends Component {
 
   constructor(props) {
     super(props);
-    // var randomOrder = this.randomGen();
+
     this.state = {
       isLoading: true,
       error: '',
@@ -33,7 +35,8 @@ class QuizTaker extends Component {
       currentQuestionIndex: 0,
       currentQuestionCompleted: false,
       questionAttempts: [],
-      randomOrder: null,
+      quiz: null,
+      randomizedQuestions: null,
       quizAttempt: null,
       quizGradePayload: null
     };
@@ -58,10 +61,7 @@ class QuizTaker extends Component {
 
       // Get current location of quiz attempt, and resume at that point
       // It looks like the list order is guaranteed from prisma, so this should be fine: https://www.prisma.io/forum/t/list-array-order-guaranteed/2235
-      //const currentQuestionIndex = quizAttempt.questionAttempts.length;
-    
-      
-      const currentQuestionIndex = 0;
+      const currentQuestionIndex = quizAttempt.questionAttempts.length;
 
       // If concepts have been rated, jump to the questions
       let phase = phases.CONCEPTS;
@@ -80,15 +80,15 @@ class QuizTaker extends Component {
         return;
       }
 
-      var randomOrder = this.randomGen(quiz.questions.length);
+      // Otherwise randomize the questions, store the data, and go to current question
+      let randomizedQuestions = shuffleArray(quiz.id, [...quiz.questions]);
 
-      // Otherwise store the data, and go to current question
       this.setState({
         quizAttempt,
         quiz,
+        randomizedQuestions,
         phase,
         currentQuestionIndex,
-        randomOrder,
         isLoading: false
       });
       console.log('Quiz attempt: ', quizAttempt);
@@ -102,23 +102,6 @@ class QuizTaker extends Component {
       this.setState({ error: message, isLoading: false });
       console.error('Quiz attempt load error: ' + JSON.stringify(e));
     }
-  }
-
-  randomGen(len){
-    //var len = this.state.quiz.questions.length;
-    var filled = 0;
-    var remainingNum = new Array(len);
-    while(len > filled){
-      var num = Math.floor(Math.random() * len);     // returns a random integer from 0 to length
-      if(remainingNum[num] == null){
-        remainingNum[num] = filled;
-        filled++;
-      }
-    }
-    console.log(remainingNum);
-    //this.setState({randomOrder:remainingNum});
-    return remainingNum;
-    //
   }
 
   componentDidUpdate() {
@@ -149,59 +132,23 @@ class QuizTaker extends Component {
 
   // Called when the next question/continue button is clicked in a question
   _onNextQuestion() {
-    //console.log(this.state.newIndex);
-    console.log("currentQuestionIndex:");
-    console.log(this.state.currentQuestionIndex);
     // If at the end of the quiz...
-    //let newIndex = this.state.currentQuestionIndex + 1;
-    var next = 0;
-    next = this.state.currentQuestionIndex + 1;
-    
-    var newIndex = 0;
-    // = this.state.randomOrder[next];
-    if(next < this.state.randomOrder.length){
-      newIndex = this.state.randomOrder[next];
-    }
-    //let newIndex = this.state.randomOrder[this.state.currentQuestionIndex + 1];
+    let newIndex = this.state.currentQuestionIndex + 1;
     // Change to Random
-    //Check if there is a question Attempt for this question
-    var notDone = true;
-    while(notDone){
-      notDone = false;
-      //go through each question and check if there is a question attempt that matches it
-      console.log("qa:");
-      console.log(this.state.quizAttempt);
-      for(var i = 0; i < this.state.quizAttempt.questionAttempts.length; i++){
-        if(this.state.quizAttempt.quiz.questions[newIndex].id === this.state.quizAttempt.questionAttempts[i].question.id){
-          console.log("here");
-          next += 1;
-          if(next < this.state.randomOrder.length){
-            newIndex = this.state.randomOrder[next];
-          } else {
-            notDone = false;
-            break;
-          }
-          notDone = true;
-        }
-      }
-    }
+    
     
     //check if newIndex if there is a question attempt for the next question, skip?????
     // ... go to results (still set new currentQuestionIndex so progress bar fills up)
-    
-    //if (newIndex >= this.state.quiz.questions.length) { //if current
-    if(next >= this.state.randomOrder.length){
+    if (newIndex >= this.state.quiz.questions.length) {
       this.setState({
         phase: phases.RESULTS,
-        //currentQuestionIndex: newIndex //currentQuestionIndex + 1
-        currentQuestionIndex: this.state.currentQuestionIndex
+        currentQuestionIndex: newIndex
       });
       this._completeQuiz();
     } else {
       // Otherwise go to next question
-      //var next = this.state.currentQuestionIndex + 1;
       this.setState({
-        currentQuestionIndex: next,
+        currentQuestionIndex: newIndex,
         currentQuestionCompleted: false
       });
     }
@@ -262,10 +209,6 @@ class QuizTaker extends Component {
       </ErrorBox>
     }
 
-    /*if(this.state.randomOrder === null){
-      this.randomGen();
-    }*/
-
     // Quiz loaded from apollo/graphql mutation
     let { quiz } = this.state;
 
@@ -277,19 +220,19 @@ class QuizTaker extends Component {
       </ErrorBox>
     }
 
-    // Get concepts (and respective question count) from all questions in the quiz
-    let conceptQuestionCounts = new Map();
-    quiz.questions.forEach(q => {
-      if (conceptQuestionCounts.has(q.concept)) {
-        conceptQuestionCounts.set(q.concept, conceptQuestionCounts.get(q.concept) + 1);
-      } else {
-        conceptQuestionCounts.set(q.concept, 1);
-      }
-    });
-
     let currentView;
     switch (this.state.phase) {
       case phases.CONCEPTS:
+        // Get concepts (and respective question count) from all questions in the quiz
+        let conceptQuestionCounts = new Map();
+        quiz.questions.forEach(q => {
+          if (conceptQuestionCounts.has(q.concept)) {
+            conceptQuestionCounts.set(q.concept, conceptQuestionCounts.get(q.concept) + 1);
+          } else {
+            conceptQuestionCounts.set(q.concept, 1);
+          }
+        });
+
         currentView = <ConceptRater
           quizAttemptId={this.state.quizAttempt.id}
           conceptQuestionCounts={conceptQuestionCounts}
@@ -298,31 +241,10 @@ class QuizTaker extends Component {
         break;
         
       case phases.QUESTIONS:
-        var index = this.state.randomOrder[this.state.currentQuestionIndex];
-        var next = 0;
-        var notDone = true;
-        while(notDone){
-          notDone = false;
-          //go through each question and check if there is a question attempt that matches it
-          for(var i = 0; i < this.state.quizAttempt.questionAttempts.length; i++){
-            if(this.state.quizAttempt.quiz.questions[index].id === this.state.quizAttempt.questionAttempts[i].question.id){
-              next += 1;
-              //index = this.state.randomOrder[next];
-              if(next < this.state.randomOrder.length){
-                index = this.state.randomOrder[next];
-              } else {
-                notDone = false;
-                break;
-              }
-              notDone = true;
-            }
-          }
-        }
-        console.log(index);
         currentView = <QuestionTaker
           quizAttemptId={this.state.quizAttempt.id}
-          question={quiz.questions[index]}
-          key={quiz.questions[index].id}
+          question={this.state.randomizedQuestions[this.state.currentQuestionIndex]}
+          key={this.state.randomizedQuestions[this.state.currentQuestionIndex].id}
           onQuestionCompleted={() => this._onQuestionCompleted() }
           onNextQuestion={() => this._onNextQuestion() }
         />;
