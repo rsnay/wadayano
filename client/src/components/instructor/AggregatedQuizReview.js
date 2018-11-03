@@ -132,9 +132,9 @@ class AggregatedQuizReview extends Component {
 
         return (
             <div>
-                <div className="columns">
+                <div className="columns is-desktop">
                     <div className="column">
-                        <div className="box is-inline-block" style={{height: "280px"}}>
+                        <div className="box" style={{height: "280px"}}>
                             <span className="icon is-medium is-pulled-left has-text-primary">
                                 <i className="fas fa-2x fa-chart-bar"></i>
                             </span>
@@ -144,7 +144,9 @@ class AggregatedQuizReview extends Component {
                             <br />
                             <ScoresBarGraph scores={scores} />
                         </div>
-                        <div className="box is-inline-block" style={{marginLeft: "24px", height: "280px"}}>
+                    </div>
+                    <div className="column">
+                        <div className="box" style={{height: "280px"}}>
                             <img className="wadayano-list" src={Logo} alt="wadayano logo" style={{height: "2rem"}} />
                             <h4 className="subtitle is-pulled-left" style={{padding: "0.3rem 0 0 1rem"}}>
                                 Average Wadayano Score: {formatScore(quizInfo.averageWadayanoScore)}
@@ -159,6 +161,8 @@ class AggregatedQuizReview extends Component {
                         </div>
                     </div>
                 </div>
+
+                <h3 className="title">Concepts</h3>
 
                 <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
                     {concepts.map(concept => {

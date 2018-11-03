@@ -103,6 +103,7 @@ button::-moz-focus-inner {
 
 .quiz-scores-report-modal {
     width: 95vw!important;
+    max-width: 1400px;
 }
 
 /* Quiz Taker */
@@ -475,7 +476,6 @@ progress::-webkit-progress-value {
 
 /* Aggregated scores bar graph */
 .scores-bar-graph {
-    width: 370px!important;
 }
 .scores-bar-graph td {
     text-align: center;
@@ -512,16 +512,17 @@ progress::-webkit-progress-value {
 
 /* Aggregated confidence analysis bar graph */
 .confidence-bar-graph {
-    width: 370px!important;
 }
 .confidence-bar-graph td {
     padding: 0.25rem;
     vertical-align: middle!important;
     border: none!important;
+    white-space: nowrap;
 }
 .confidence-bar-graph td:first-child {
     text-align: right;
     color: #222;
+    padding-left: 0;
 }
 .confidence-bar-graph td:last-child {
     text-align: left;

@@ -169,7 +169,7 @@ class CourseScores extends Component {
                                                 <button className="button is-light"
                                                     onClick={() => this.setState({ currentQuizReview: quiz })}>
                                                     <span className="icon">
-                                                    <i className="fas fa-chart-bar"></i>
+                                                        <i className="fas fa-chart-bar"></i>
                                                     </span>
                                                     <span>View Report</span>
                                                 </button>
