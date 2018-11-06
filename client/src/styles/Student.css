@@ -34,6 +34,10 @@ button::-moz-focus-inner {
 .modal-card {
     max-height: calc(100% - 40px)!important;
 }
+/* Make sure long modal title doesn't hide the close button */
+.modal-card-title {
+    max-width: calc(100% - 15px);
+}
 
 /* Shift butter-toast toast notifications to below header */
 .butter-toast .notification {
