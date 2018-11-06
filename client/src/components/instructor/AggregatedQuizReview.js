@@ -156,8 +156,6 @@ class AggregatedQuizReview extends Component {
             return <LoadingBox />;
         }
 
-        // Contains some quiz metadata, as well as precomputed average score and average wadayano score
-        const quizInfo = this.props.quizInfo;
         // Quiz object from database
         const quiz = this.props.quizQuery.quiz;
 
@@ -167,7 +165,7 @@ class AggregatedQuizReview extends Component {
         const concepts = Array.from(new Set(quiz.questions.map(q => q.concept)));
         console.log(concepts);
 
-        const { scores, confidenceAnalysisCounts, conceptAverageScores, conceptAverageWadayanoScores } = this.state;
+        const { scores, averageScore, averageWadayanoScore, confidenceAnalysisCounts, conceptAverageScores, conceptAverageWadayanoScores } = this.state;
 
         const averageScoreLabel = (score) => (
             <React.Fragment>
@@ -194,14 +192,14 @@ class AggregatedQuizReview extends Component {
                 <div className="columns is-desktop">
                     <div className="column">
                         <div className="box" style={{height: "280px"}}>
-                            {averageScoreLabel(quizInfo.averageScore)}
+                            {averageScoreLabel(averageScore)}
                             <br />
                             <ScoresBarGraph scores={scores} />
                         </div>
                     </div>
                     <div className="column">
                         <div className="box" style={{height: "280px"}}>
-                            {averageWadayanoScoreLabel(quizInfo.averageWadayanoScore)}
+                            {averageWadayanoScoreLabel(averageWadayanoScore)}
                             <br />
                             <ConfidenceBarGraph
                                 overconfident={confidenceAnalysisCounts.OVERCONFIDENT}
@@ -243,7 +241,7 @@ class AggregatedQuizReview extends Component {
 }
 
 AggregatedQuizReview.propTypes = {
-    quizInfo: PropTypes.object.isRequired
+    quizId: PropTypes.string.isRequired
 };
 
 // Get the quiz and attempts
@@ -294,7 +292,7 @@ export default withAuthCheck(compose(
       name: 'quizQuery',
       options: (props) => {
         console.log(props);
-        return { variables: { id: props.quizInfo.id } }
+        return { variables: { id: props.quizId } }
       }
     }),
   )(AggregatedQuizReview), { instructor: true });

@@ -8,7 +8,9 @@ import { withAuthCheck } from '../shared/AuthCheck';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import { formatScore, wadayanoScore, confidenceAnalysis, stringCompare } from '../../utils';
+import { QUIZ_TYPE_NAMES } from '../../constants';
 import QuizReviewPage from '../student/QuizReviewPage';
+import AggregatedQuizReview from './AggregatedQuizReview';
 import Modal from '../shared/Modal';
 
 class QuizScores extends Component {
@@ -187,7 +189,18 @@ class QuizScores extends Component {
                             </ul>
                         </nav>
 
-                        <h3 className="title is-3 is-inline">Quiz Scores</h3>
+                        <div className="is-flex-tablet">
+                            <div style={{flex: 1}}>
+                                <h3 className="title is-3">{quiz.title}</h3>
+                                <h4 className="subtitle is-4">{QUIZ_TYPE_NAMES[quiz.type]} Quiz</h4>
+                            </div>
+                            <button className="button is-light" onClick={() => this.setState({ isAggregatedReportVisible: true})} style={{marginTop: "1rem"}}>
+                                <span className="icon">
+                                    <i className="fas fa-chart-bar"></i>
+                                </span>
+                                <span>View Aggregated Report</span>
+                            </button>
+                        </div>
                     </div>
                 </section>
 
@@ -199,6 +212,14 @@ class QuizScores extends Component {
                     title={`Attempt from ${this.state.currentStudentReview.name}`}
                     cardClassName="quiz-scores-report-modal">
                         <QuizReviewPage hideFooter={true} match={{ params: { quizAttemptId: this.state.currentStudentReview.highestAttempt.id } }} />
+                </Modal>}
+
+                {this.state.isAggregatedReportVisible && <Modal
+                    modalState={true}
+                    closeModal={() => this.setState({ isAggregatedReportVisible: null })}
+                    title={`Aggregated results from ${quiz.title}`}
+                    cardClassName="quiz-scores-report-modal">
+                        <AggregatedQuizReview quizId={quiz.id} />
                 </Modal>}
 
                 <hr />
