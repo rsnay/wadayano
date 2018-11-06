@@ -135,7 +135,7 @@ class CourseScores extends Component {
                 { title: 'Average Score', columnId: 'averageScore', sortable: true },
                 { title: 'High Score', columnId: 'highScore', sortable: true },
                 { title: 'Average Wadayano Score', columnId: 'averageWadayanoScore', sortable: true },
-                { title: 'View Report', columnId: 'id', sortable: false }
+                { title: 'Aggregated Report', columnId: 'id', sortable: false }
             ];
             scoresTable = (
                 <div className="table-wrapper">
@@ -160,7 +160,7 @@ class CourseScores extends Component {
                                     <td>{QUIZ_TYPE_NAMES[quiz.type]}</td>
                                     {(quiz.studentCount > 0) ? 
                                         <React.Fragment>
-                                            <td>{quiz.studentCount} / {course.students.length}</td>
+                                            <td><Link to={"/instructor/quiz/" + quiz.id + "/scores"}>{quiz.studentCount} / {course.students.length}</Link></td>
                                             <td>{formatScore(quiz.lowScore)}</td>
                                             <td>{formatScore(quiz.averageScore)}</td>
                                             <td>{formatScore(quiz.highScore)}</td>
@@ -209,7 +209,7 @@ class CourseScores extends Component {
                     closeModal={() => this.setState({ currentQuizReview: null })}
                     title={`Aggregated results from ${this.state.currentQuizReview.title}`}
                     cardClassName="quiz-scores-report-modal">
-                        <AggregatedQuizReview quizInfo={this.state.currentQuizReview} />
+                        <AggregatedQuizReview quizId={this.state.currentQuizReview.id} />
                 </Modal>}
 
                 <hr />
