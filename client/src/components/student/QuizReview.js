@@ -220,6 +220,12 @@ class QuizReview extends Component {
         return conceptConfidences;
     }
 
+    predictedScore(numQuestions, numPredict){
+        var finalPercent;
+        finalPercent = numQuestions / numPredict;
+        return finalPercent;
+    }
+
     selectReview(concept, quizAttempt){
         var conceptQuestions = [];
         var questionAttempt;
@@ -257,6 +263,12 @@ class QuizReview extends Component {
 
     this.wadayanoScore(quizAttempt);
 
+    var predictedConcepts = 0;
+    for(var concept in conceptConfidences){
+        predictedConcepts += concept.conceptScore;
+    }
+    console.log(predictedConcepts + "sdhakjhfdalhd");
+    
     //this.sortConcepts(quizAttempt);
     //this.overallScore(quizAttempt);
     
@@ -280,7 +292,7 @@ class QuizReview extends Component {
             <div className="columns">
                 <div className="column">
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
-                    <h2 className="subtitle is-2">Score: {formattedScore}</h2>
+                    <h2 className="subtitle is-2">Score: {formattedScore}</h2><h4 className="subtitle is-2">({this.predictedScore(quizAttempt.quiz.length,predictedConcepts)}%)</h4>
                     <WadayanoScore wadayano={this.state.wadayano} confidenceText={this.state.confidenceText}/>
                 </div>
             </div>
@@ -316,16 +328,6 @@ class QuizReview extends Component {
                     ))}
                     <br/>
                 </span>
-            </Modal>
-            <Modal
-                modalState={this.state.displayhelpText}
-                closeModal={() => this.setState({ displayhelpText: false })}
-                title={"Help:"}>
-                <div>Wadayano Score measures how well you know what you know.
-
--Higher scores mean you are only confident about things you actually know.
-
--Lower scores may indicate that you are over- or under-confident.</div>
             </Modal>
         </div>)
   }
