@@ -52,8 +52,12 @@ class QuestionTaker extends Component {
             optionIndex = e.keyCode - 65;
             console.log(e.keyCode, optionIndex);
         }
-        if (optionIndex >= 0 && this.props.question.options.length > optionIndex) {
-            this.setState({ selectedOption: this.props.question.options[optionIndex] });
+        // Filter to non-empty options
+        const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '')
+        // Make sure there are this many options (If C was pressed, make sure there are ≥ 3 non-empty options)
+        if (optionIndex >= 0 && questionOptions.length > optionIndex) {
+            // Make sure that the selected option is non-empty
+            this.setState({ selectedOption: questionOptions[optionIndex] });
             e.preventDefault();
         }
     }
