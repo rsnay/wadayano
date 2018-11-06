@@ -148,6 +148,8 @@ class QuizReview extends Component {
             });
             conceptConfidences[i].concept = quizConcepts[i];
             conceptConfidences[i].confidence = quizAttempt.conceptConfidences[i].confidence;
+            console.log(conceptConfidences[i].confidence)
+            //conceptConfidences[i].confidenceScore = quizAttempt.conceptConfidence[i].confidenceScore;
             var confNum = 0;
             var corNum = 0;
             var correct = 0;
@@ -221,8 +223,10 @@ class QuizReview extends Component {
     }
 
     predictedScore(numQuestions, numPredict){
+        console.log("number of Questions :" + numQuestions);
+        console.log("number predicted :" + numPredict);
         var finalPercent;
-        finalPercent = numQuestions / numPredict;
+        finalPercent = ((numPredict / numQuestions)*100).toFixed(1);
         return finalPercent;
     }
 
@@ -236,10 +240,6 @@ class QuizReview extends Component {
             }
         }
         this.setState({conceptQuestions: conceptQuestions, showReviewForConcept: concept, concept, displayConceptReview:true});
-    }
-
-    helpText(){
-        this.setState({displayhelpText: true});
     }
     
 
@@ -264,8 +264,11 @@ class QuizReview extends Component {
     this.wadayanoScore(quizAttempt);
 
     var predictedConcepts = 0;
-    for(var concept in conceptConfidences){
-        predictedConcepts += concept.conceptScore;
+    var x;
+    for(x in quizAttempt.conceptConfidences){
+        console.log("hey");
+        console.log(quizAttempt.conceptConfidences[x].confidence);
+        predictedConcepts += quizAttempt.conceptConfidences[x].confidence;
     }
     console.log(predictedConcepts + "sdhakjhfdalhd");
     
@@ -292,7 +295,7 @@ class QuizReview extends Component {
             <div className="columns">
                 <div className="column">
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
-                    <h2 className="subtitle is-2">Score: {formattedScore}</h2><h4 className="subtitle is-2">({this.predictedScore(quizAttempt.quiz.length,predictedConcepts)}%)</h4>
+                    <h2 className="subtitle is-2">Score: {formattedScore} ({this.predictedScore(quizAttempt.quiz.questions.length,predictedConcepts)}% Predicted)</h2>
                     <WadayanoScore wadayano={this.state.wadayano} confidenceText={this.state.confidenceText}/>
                 </div>
             </div>

@@ -50,7 +50,9 @@ button::-moz-focus-inner {
     text-align: center;
     font-size: 18px;
     display:inline-block;
-    margin-left: 50px;
+    float:right;
+    margin-right: 250px;
+    margin-top:5px;
     border: 1px solid #666;
 }
 
@@ -73,7 +75,7 @@ button::-moz-focus-inner {
 }
 
 #emoji {
-    font-size: 2.5em;
+    font-size: 2.7em;
 }
 
 #questionNum {

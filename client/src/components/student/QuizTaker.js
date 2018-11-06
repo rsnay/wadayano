@@ -336,6 +336,7 @@ const START_MUTATION = gql`
       conceptConfidences {
         id
         concept
+        confidence
       }
     }
   }
