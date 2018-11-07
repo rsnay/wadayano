@@ -28,6 +28,8 @@
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
+    <div id="browser-support-warning" class="notification is-warning" style="margin: 0px; display: none;">You are using an unsupported browser. We recommend that you use a recent version of Chrome, Edge, Safari, or Firefox.</div>
+    <script>/* Show warning on IE 11 */ if (!!window.MSInputMethodContext && !!document.documentMode) { document.getElementById('browser-support-warning').style.display = 'block'; }</script>
     <div id="root">
       <div style="margin: 0px auto; width: 115px;"><div id="initial-spinner" style="font-family: sans-serif!important; font-size: 24px; text-align: center; margin-top: 100px; padding: 12px 5px 12px 5px; background-color: #68C5D7; border-radius: 4px; color: transparent; display: inline-flex">Loading</div></div>
     </div>
