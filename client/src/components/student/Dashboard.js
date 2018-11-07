@@ -140,7 +140,7 @@ class Dashboard extends Component {
                             <td data-title="Questions">{attempt.quiz.questions.length}</td>
                             <td data-title="Type">{QUIZ_TYPE_NAMES[attempt.quiz.type]}</td>
                             <td data-title="Score">{attempt.completed ? formatScore(attempt.score) : "n/a"}</td>
-                            <td data-title="Score">{attempt.completed ? formatScore(wadayanoScore(attempt)) : "n/a"}</td>
+                            <td data-title="Wadayano Score">{attempt.completed ? formatScore(wadayanoScore(attempt)) : "n/a"}</td>
                             <td data-title="Review">
                                 <Link to={"/student/quiz/review/" + attempt.id}
                                 className="button is-info is-outlined">
