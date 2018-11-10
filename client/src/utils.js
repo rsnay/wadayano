@@ -22,6 +22,20 @@ export function stripTags(html) {
     return doc.body.textContent || '';
 }
 
+// Calculate predicted score for a given quiz attempt
+// Returns a float ranging from 0 to 1
+export function predictedScore(quizAttempt) {
+    if (!quizAttempt || !quizAttempt.questionAttempts || quizAttempt.questionAttempts.length === 0 || !quizAttempt.conceptConfidences || quizAttempt.conceptConfidences.length === 0) { 
+        return 0;
+    }
+    const questionCount = quizAttempt.questionAttempts.length;
+    // Predicted score is the percentage of questions that the student predicted they would get correct (in the pre-quiz confidence assessment)
+    let predictedCount = 0;
+    quizAttempt.conceptConfidences.forEach(c => predictedCount += c.confidence);
+
+    return (predictedCount / questionCount);
+}
+
 // Calculate wadayano score for a given quiz attempt
 // Returns a float ranging from 0 to 1
 export function wadayanoScore(quizAttempt) {
