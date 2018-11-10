@@ -5,9 +5,10 @@ import PropTypes from 'prop-types';
 
 import { withAuthCheck } from '../shared/AuthCheck';
 
-import { formatScore, confidenceAnalysis, wadayanoScore } from '../../utils';
+import { formatScore, confidenceAnalysis, predictedScore, wadayanoScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import Logo from '../../logo_boxed.svg';
 
@@ -28,10 +29,13 @@ class AggregatedQuizReview extends Component {
             error: null,
             scores: null,
             averageScore: null,
+            predictedScores: null,
+            averagePredictedScore: null,
             wadayanoScores: null,
             averageWadayanoScore: null,
             confidenceAnalysisCounts: null,
             conceptAverageScores: null,
+            conceptAveragePredictedScores: null,
             conceptAverageWadayanoScores: null
         };
     
@@ -41,109 +45,143 @@ class AggregatedQuizReview extends Component {
     componentWillReceiveProps(nextProps) {
         // Workaround for no callback after apollo query finishes loading.
         if (nextProps.quizQuery && !nextProps.quizQuery.loading && !nextProps.quizQuery.error) {
-            // Prepare data for the review
-            const quiz = nextProps.quizQuery.quiz;
-            const concepts = Array.from(new Set(quiz.questions.map(q => q.concept)));
-
-            // Get highest completed quiz attempt for each student
-            let studentHighestAttempts = new Map();
-            quiz.quizAttempts.forEach(attempt => {
-                if (attempt.completed) {
-                    const studentId = attempt.student.id;
-                    // Add to map if new student, of replace student’s lower attempt
-                    if (studentHighestAttempts.get(studentId) === undefined || studentHighestAttempts.get(studentId).score < attempt.score) {
-                        studentHighestAttempts.set(studentId, attempt);
-                    }
-                }
-            });
-
-            const studentCount = studentHighestAttempts.size;
-            // Make sure we have student data to display
-            if (studentCount === 0) {
-                this.setState({ error: 'No students have taken this quiz.' });
-                return;
+            try {
+                this.processData(nextProps);
+            } catch (error) {
+                ButterToast.raise({
+                    content: <ToastTemplate content="There was an error generating the aggregated report for this quiz. Please contact us if this problem persists." className="is-danger" />
+                });
             }
-
-            // Set up objects to hold data
-            let scores = [];
-            let averageScore = 0;
-
-            let wadayanoScores = [];
-            let averageWadayanoScore = 0;
-
-            let confidenceAnalysisCounts = {
-                [CONFIDENCES.OVERCONFIDENT.key]: 0,
-                [CONFIDENCES.ACCURATE.key]: 0,
-                [CONFIDENCES.UNDERCONFIDENT.key]: 0,
-                [CONFIDENCES.MIXED.key]: 0
-            }
-
-            // ConceptName -> Array of (wadayano) scores
-            let conceptScores = new Map(concepts.map(c => [c, [] ]));
-            let conceptWadayanoScores = new Map(concepts.map(c => [c, [] ]));
-            // ConceptName -> average (wadayano) score
-            let conceptAverageScores = new Map(concepts.map(c => [c, 0]));
-            let conceptAverageWadayanoScores = new Map(concepts.map(c => [c, 0]));
-
-            // Go through highest attempt for each student
-            studentHighestAttempts.forEach((attempt) => {
-                // Overall score, wadayano score, and confidence analysis
-                const attemptWadayanoScore = wadayanoScore(attempt);
-                const attemptConfidenceAnalysis = confidenceAnalysis(attempt);
-
-                scores.push(attempt.score);
-                averageScore += attempt.score;
-
-                wadayanoScores.push(attemptWadayanoScore);
-                averageWadayanoScore += attemptWadayanoScore;
-
-                // Increase counter for this confidence analysis type
-                confidenceAnalysisCounts[attemptConfidenceAnalysis.key]++;
-                
-                // Concept-level score and wadayano score
-                concepts.forEach(concept => {
-                    const conceptQuestionAttempts = attempt.questionAttempts.filter(questionAttempt => questionAttempt.question.concept === concept);
-
-                    const conceptScore = conceptQuestionAttempts.filter(questionAttempt => questionAttempt.isCorrect).length / conceptQuestionAttempts.length;
-                    (conceptScores.get(concept)).push(conceptScore);
-
-                    const conceptWadayanoScore = conceptQuestionAttempts.filter(questionAttempt => questionAttempt.isConfident === questionAttempt.isCorrect).length / conceptQuestionAttempts.length;
-                    (conceptWadayanoScores.get(concept)).push(conceptWadayanoScore);
-                })
-            });
-
-            // Find average overall score and Wadayano Score
-            averageScore /= studentCount;
-            averageWadayanoScore /= studentCount;
-
-            // Find average concept-level score and Wadayano Score
-            concepts.forEach(concept => {
-                let conceptAverageScore = 0;
-                let conceptAverageWadayanoScore = 0;
-
-                (conceptScores.get(concept)).forEach(score => conceptAverageScore += score );
-                (conceptWadayanoScores.get(concept)).forEach(score => conceptAverageWadayanoScore += score );
-
-                conceptAverageScore /= studentCount;
-                conceptAverageWadayanoScore /= studentCount;
-
-                conceptAverageScores.set(concept, conceptAverageScore);
-                conceptAverageWadayanoScores.set(concept, conceptAverageWadayanoScore);
-            });
-
-            console.log(scores, wadayanoScores, confidenceAnalysisCounts);
-
-            this.setState({
-                isLoading: false,
-                scores,
-                averageScore,
-                wadayanoScores,
-                averageWadayanoScore,
-                confidenceAnalysisCounts,
-                conceptAverageScores,
-                conceptAverageWadayanoScores
-            });
         }
+    }
+
+    // Processes all the quiz attempt data. Wrapped in this function for easier error catching
+    processData(nextProps) {
+        // Prepare data for the review
+        const quiz = nextProps.quizQuery.quiz;
+        const concepts = Array.from(new Set(quiz.questions.map(q => q.concept)));
+
+        // Get highest completed quiz attempt for each student
+        let studentHighestAttempts = new Map();
+        quiz.quizAttempts.forEach(attempt => {
+            if (attempt.completed) {
+                const studentId = attempt.student.id;
+                // Add to map if new student, of replace student’s lower attempt
+                if (studentHighestAttempts.get(studentId) === undefined || studentHighestAttempts.get(studentId).score < attempt.score) {
+                    studentHighestAttempts.set(studentId, attempt);
+                }
+            }
+        });
+
+        const studentCount = studentHighestAttempts.size;
+        // Make sure we have student data to display
+        if (studentCount === 0) {
+            this.setState({ error: 'No students have taken this quiz.' });
+            return;
+        }
+
+        // Set up objects to hold data
+        let scores = [];
+        let averageScore = 0;
+
+        let predictedScores = [];
+        let averagePredictedScore = 0;
+
+        let wadayanoScores = [];
+        let averageWadayanoScore = 0;
+
+        let confidenceAnalysisCounts = {
+            [CONFIDENCES.OVERCONFIDENT.key]: 0,
+            [CONFIDENCES.ACCURATE.key]: 0,
+            [CONFIDENCES.UNDERCONFIDENT.key]: 0,
+            [CONFIDENCES.MIXED.key]: 0
+        }
+
+        // ConceptName -> Array of (wadayano) scores
+        // (Weird `concepts.map(c => [c, [] ])` syntax just initializes it to map each concept name to an empty array)
+        let conceptScores = new Map(concepts.map(c => [c, [] ]));
+        let conceptPredictedScores = new Map(concepts.map(c => [c, [] ]));
+        let conceptWadayanoScores = new Map(concepts.map(c => [c, [] ]));
+        // ConceptName -> average (wadayano) score
+        let conceptAverageScores = new Map(concepts.map(c => [c, 0]));
+        let conceptAveragePredictedScores = new Map(concepts.map(c => [c, 0]));
+        let conceptAverageWadayanoScores = new Map(concepts.map(c => [c, 0]));
+
+        // Go through highest attempt for each student
+        studentHighestAttempts.forEach((attempt) => {
+            // Overall score, wadayano score, and confidence analysis
+            const attemptPredictedScore = predictedScore(attempt);
+            const attemptWadayanoScore = wadayanoScore(attempt);
+            const attemptConfidenceAnalysis = confidenceAnalysis(attempt);
+
+            scores.push(attempt.score);
+            averageScore += attempt.score;
+
+            predictedScores.push(attemptPredictedScore);
+            averagePredictedScore += attemptPredictedScore;
+
+            wadayanoScores.push(attemptWadayanoScore);
+            averageWadayanoScore += attemptWadayanoScore;
+
+            // Increase counter for this confidence analysis type
+            confidenceAnalysisCounts[attemptConfidenceAnalysis.key]++;
+            
+            // Concept-level score and wadayano score
+            concepts.forEach(concept => {
+                const conceptQuestionAttempts = attempt.questionAttempts.filter(questionAttempt => questionAttempt.question.concept === concept);
+
+                const conceptScore = conceptQuestionAttempts.filter(questionAttempt => questionAttempt.isCorrect).length / conceptQuestionAttempts.length;
+                (conceptScores.get(concept)).push(conceptScore);
+
+                console.log(attempt.conceptConfidences, concepts, concept);
+                const conceptConfidence = attempt.conceptConfidences.find(cc => cc.concept === concept);
+                const conceptPredictedScore = conceptConfidence.confidence / conceptQuestionAttempts.length;
+                (conceptPredictedScores.get(concept)).push(conceptPredictedScore);
+
+                const conceptWadayanoScore = conceptQuestionAttempts.filter(questionAttempt => questionAttempt.isConfident === questionAttempt.isCorrect).length / conceptQuestionAttempts.length;
+                (conceptWadayanoScores.get(concept)).push(conceptWadayanoScore);
+            })
+        });
+
+        // Find average overall score and Wadayano Score
+        averageScore /= studentCount;
+        averagePredictedScore /= studentCount;
+        averageWadayanoScore /= studentCount;
+
+        // Find average concept-level score, predicted score, and Wadayano Score
+        concepts.forEach(concept => {
+            let conceptAverageScore = 0;
+            let conceptAveragePredictedScore = 0;
+            let conceptAverageWadayanoScore = 0;
+
+            (conceptScores.get(concept)).forEach(score => conceptAverageScore += score );
+            (conceptPredictedScores.get(concept)).forEach(score => conceptAveragePredictedScore += score );
+            (conceptWadayanoScores.get(concept)).forEach(score => conceptAverageWadayanoScore += score );
+
+            conceptAverageScore /= studentCount;
+            conceptAveragePredictedScore /= studentCount;
+            conceptAverageWadayanoScore /= studentCount;
+
+            conceptAverageScores.set(concept, conceptAverageScore);
+            conceptAveragePredictedScores.set(concept, conceptAveragePredictedScore);
+            conceptAverageWadayanoScores.set(concept, conceptAverageWadayanoScore);
+        });
+
+        console.log(scores, wadayanoScores, confidenceAnalysisCounts);
+
+        this.setState({
+            isLoading: false,
+            scores,
+            averageScore,
+            predictedScores,
+            averagePredictedScore,
+            wadayanoScores,
+            averageWadayanoScore,
+            confidenceAnalysisCounts,
+            conceptAverageScores,
+            conceptAveragePredictedScores,
+            conceptAverageWadayanoScores
+        });
     }
 
     render() {
@@ -165,7 +203,7 @@ class AggregatedQuizReview extends Component {
         const concepts = Array.from(new Set(quiz.questions.map(q => q.concept)));
         console.log(concepts);
 
-        const { scores, averageScore, averageWadayanoScore, confidenceAnalysisCounts, conceptAverageScores, conceptAverageWadayanoScores } = this.state;
+        const { scores, averageScore, predictedScores, averagePredictedScore, averageWadayanoScore, confidenceAnalysisCounts, conceptAverageScores, conceptAveragePredictedScores, conceptAverageWadayanoScores } = this.state;
 
         const averageScoreLabel = (score) => (
             <React.Fragment>
@@ -174,6 +212,17 @@ class AggregatedQuizReview extends Component {
                 </span>
                 <h4 className="subtitle is-inline-block" style={{padding: "0.3rem 0 0 1rem"}}>
                     Average Score: {formatScore(score)}
+                </h4>
+            </React.Fragment>
+        );
+
+        const averagePredictedScoreLabel = (score) => (
+            <React.Fragment>
+                <span className="icon is-medium is-pulled-left has-text-primary">
+                    <i className="fas fa-2x fa-chart-line"></i>
+                </span>
+                <h4 className="subtitle is-inline-block" style={{padding: "0.3rem 0 0 1rem"}}>
+                    Average Predicted Score: {formatScore(score)}
                 </h4>
             </React.Fragment>
         );
@@ -210,6 +259,15 @@ class AggregatedQuizReview extends Component {
                         </div>
                     </div>
                 </div>
+                <div className="columns is-desktop">
+                    <div className="column is-6">
+                        <div className="box" style={{height: "280px"}}>
+                            {averagePredictedScoreLabel(averagePredictedScore)}
+                            <br />
+                            <ScoresBarGraph scores={predictedScores} />
+                        </div>
+                    </div>
+                </div>
 
                 <h3 className="title">Concepts</h3>
 
@@ -224,6 +282,8 @@ class AggregatedQuizReview extends Component {
                                         <span className="question-count">{questionCount === 1 ? '1 Question' : questionCount + ' Questions'}</span>
                                     </p>
                                     {averageScoreLabel(conceptAverageScores.get(concept))}
+                                    <br style={{clear: "both"}} />
+                                    {averagePredictedScoreLabel(conceptAveragePredictedScores.get(concept))}
                                     <br style={{clear: "both"}} />
                                     {averageWadayanoScoreLabel(conceptAverageWadayanoScores.get(concept))}
                                     {/*<footer className="">
@@ -281,6 +341,11 @@ export const QUIZ_QUERY = gql`
                     id
                     concept
                 }
+            }
+            conceptConfidences {
+                id
+                concept
+                confidence
             }
         }
     }
