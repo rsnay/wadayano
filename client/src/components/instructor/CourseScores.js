@@ -168,7 +168,7 @@ class CourseScores extends Component {
                                                 </button>
                                             </td>
                                         </React.Fragment>
-                                    : <td colSpan="6"><i>Quiz not taken</i></td>
+                                    : <td colSpan="5"><i>Quiz not taken</i></td>
                                     }
                                 </tr>);
                             })}
