@@ -7,7 +7,7 @@ import { withAuthCheck } from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-import { formatScore, wadayanoScore, confidenceAnalysis, stringCompare } from '../../utils';
+import { formatScore, predictedScore, wadayanoScore, confidenceAnalysis, stringCompare } from '../../utils';
 import { QUIZ_TYPE_NAMES } from '../../constants';
 import QuizReviewPage from '../student/QuizReviewPage';
 import AggregatedQuizReview from './AggregatedQuizReview';
@@ -49,6 +49,7 @@ class QuizScores extends Component {
                 } catch (error) { }
                 // Output score for each student, if quiz was taken
                 if (highestAttempt) {
+                    const attemptPredictedScore = predictedScore(highestAttempt);
                     const attemptWadayanoScore = wadayanoScore(highestAttempt);
                     const attemptConfidenceAnalysis = confidenceAnalysis(highestAttempt);
                     return {
@@ -57,6 +58,7 @@ class QuizScores extends Component {
                         attempts: attempts.length,
                         highestScore: highestAttempt.score,
                         highestAttempt,
+                        predictedScore: attemptPredictedScore,
                         wadayanoScore: attemptWadayanoScore,
                         confidenceAnalysis: attemptConfidenceAnalysis
                     }
@@ -125,6 +127,7 @@ class QuizScores extends Component {
                 { title: 'Student Name', columnId: 'name', sortable: true },
                 { title: 'Attempts', columnId: 'attempts', sortable: true },
                 { title: 'Highest Score', columnId: 'highestScore', sortable: true },
+                { title: 'Predicted Score', columnId: 'predictedScore', sortable: true },
                 { title: 'Wadayano Score', columnId: 'wadayanoScore', sortable: true },
                 { title: 'Confidence Analysis', columnId: 'confidenceAnalysis', sortable: true },
                 { title: 'View Report', columnId: 'viewReport', sortable: false }
@@ -153,6 +156,7 @@ class QuizScores extends Component {
                                         <React.Fragment>
                                             <td>{student.attempts}</td>
                                             <td>{formatScore(student.highestScore)}</td>
+                                            <td>{formatScore(student.predictedScore)}</td>
                                             <td>{formatScore(student.wadayanoScore)}</td>
                                             <td>{student.confidenceAnalysis.emoji}&nbsp;{student.confidenceAnalysis.text}</td>
                                             <td>
@@ -253,6 +257,7 @@ const sortFunctions = {
     name: (a, b) => stringCompare(a.name, b.name),
     attempts: (a, b) => a.attempts - b.attempts,
     highestScore: (a, b) => a.highestScore - b.highestScore,
+    predictedScore: (a, b) => a.predictedScore - b.predictedScore,
     wadayanoScore: (a, b) => a.wadayanoScore - b.wadayanoScore,
     confidenceAnalysis: (a, b) => confidenceAnalysisWeights[a.confidenceAnalysis.text] - confidenceAnalysisWeights[b.confidenceAnalysis.text],
 };
@@ -289,6 +294,10 @@ export const QUIZ_QUERY = gql`
                 id
                 isCorrect
                 isConfident
+            }
+            conceptConfidences {
+                id
+                confidence
             }
         }
     }
