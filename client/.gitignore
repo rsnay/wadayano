@@ -9,6 +9,7 @@
 # production
 /build
 /build-prod
+/build-prod-old
 
 # misc
 .DS_Store
