@@ -8,7 +8,7 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-import { formatScore, wadayanoScore, stringCompare } from '../../utils';
+import { formatScore, predictedScore, wadayanoScore, stringCompare } from '../../utils';
 import AggregatedQuizReview from './AggregatedQuizReview';
 import Modal from '../shared/Modal';
 
@@ -44,31 +44,27 @@ class CourseScores extends Component {
                         if (studentScores.get(studentId) === undefined || studentScores.get(studentId).score < attempt.score) {
                             studentScores.set(studentId, {
                                 score: attempt.score,
+                                predictedScore: predictedScore(attempt),
                                 wadayanoScore: wadayanoScore(attempt)
                             });
                         }
                     }
                 });
 
-                // Calculate average score and wadayano score
-                let lowScore = 2; // Start higher than possible low
+                // Calculate average scores
                 let averageScore = 0;
-                let highScore = -1; // Start lower than possible high
+                let averagePredictedScore = 0;
                 let averageWadayanoScore = 0;
 
                 const studentCount = studentScores.size;
                 if (studentCount > 0) {
-                    studentScores.forEach(({ score, wadayanoScore }) => {
+                    studentScores.forEach(({ score, predictedScore, wadayanoScore }) => {
                         averageScore += score;
+                        averagePredictedScore += predictedScore;
                         averageWadayanoScore += wadayanoScore;
-                        if (score > highScore) {
-                            highScore = score;
-                        }
-                        if (score < lowScore) {
-                            lowScore = score;
-                        }
                     });
                     averageScore /= studentCount;
+                    averagePredictedScore /= studentCount;
                     averageWadayanoScore /= studentCount;
                 }
 
@@ -77,9 +73,8 @@ class CourseScores extends Component {
                     title: quiz.title,
                     type: quiz.type,
                     studentCount,
-                    lowScore,
                     averageScore,
-                    highScore,
+                    averagePredictedScore,
                     averageWadayanoScore
                 };
             });
@@ -131,9 +126,8 @@ class CourseScores extends Component {
                 { title: 'Quiz Title', columnId: 'title', sortable: true },
                 { title: 'Type', columnId: 'type', sortable: true },
                 { title: 'Number of Students', columnId: 'studentCount', sortable: true },
-                { title: 'Low Score', columnId: 'lowScore', sortable: true },
                 { title: 'Average Score', columnId: 'averageScore', sortable: true },
-                { title: 'High Score', columnId: 'highScore', sortable: true },
+                { title: 'Average Predicted Score', columnId: 'averagePredictedScore', sortable: true },
                 { title: 'Average Wadayano Score', columnId: 'averageWadayanoScore', sortable: true },
                 { title: 'Aggregated Report', columnId: 'id', sortable: false }
             ];
@@ -161,9 +155,8 @@ class CourseScores extends Component {
                                     {(quiz.studentCount > 0) ? 
                                         <React.Fragment>
                                             <td><Link to={"/instructor/quiz/" + quiz.id + "/scores"}>{quiz.studentCount} / {course.students.length}</Link></td>
-                                            <td>{formatScore(quiz.lowScore)}</td>
                                             <td>{formatScore(quiz.averageScore)}</td>
-                                            <td>{formatScore(quiz.highScore)}</td>
+                                            <td>{formatScore(quiz.averagePredictedScore)}</td>
                                             <td>{formatScore(quiz.averageWadayanoScore)}</td>
                                             <td>
                                                 <button className="button is-light"
@@ -227,9 +220,8 @@ const sortFunctions = {
     title: (a, b) => stringCompare(a.title, b.title),
     type: (a, b) => stringCompare(a.type, b.type),
     studentCount: (a, b) => a.studentCount - b.studentCount,
-    lowScore: (a, b) => a.lowScore - b.lowScore,
     averageScore: (a, b) => a.averageScore - b.averageScore,
-    highScore: (a, b) => a.highScore - b.highScore,
+    averagePredictedScore: (a, b) => a.averagePredictedScore - b.averagePredictedScore,
     averageWadayanoScore: (a, b) => a.averageWadayanoScore - b.averageWadayanoScore
 };
 
@@ -259,6 +251,10 @@ export const COURSE_QUERY = gql`
                     id
                     isCorrect
                     isConfident
+                }
+                conceptConfidences {
+                    id
+                    confidence
                 }
             }
         }
