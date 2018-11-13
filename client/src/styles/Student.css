@@ -25,6 +25,10 @@ input[type=radio] {
     -ms-transition: opacity 0.3s ease-in-out;
 }
 
+.flex-1 {
+    flex: 1;
+}
+
 /* Hide firefox dotted focus on buttons */
 button::-moz-focus-inner { 
     border: 0; 
@@ -115,7 +119,7 @@ button::-moz-focus-inner {
 }
 
 /* Quiz Taker */
-progress::-webkit-progress-value {
+progress::-webkit-progress-value, progress::-moz-progress-bar {
     transition: width 0.3s ease-out;
 }
 
@@ -473,6 +477,14 @@ progress::-webkit-progress-value {
  
 	/* Label the data */
 	.responsive-table td:before { content: attr(data-title); }
+}
+
+/* Aggregated report labels */
+.aggregated-score-label {
+    display: flex;
+}
+.aggregated-score-label h4 {
+    padding: 0.3rem 0 0 1rem;
 }
 
 /* Bar graphs */

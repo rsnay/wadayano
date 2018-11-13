@@ -206,34 +206,43 @@ class AggregatedQuizReview extends Component {
         const { scores, averageScore, predictedScores, averagePredictedScore, averageWadayanoScore, confidenceAnalysisCounts, conceptAverageScores, conceptAveragePredictedScores, conceptAverageWadayanoScores } = this.state;
 
         const averageScoreLabel = (score) => (
-            <React.Fragment>
+            <div className="is-flex aggregated-score-label">
                 <span className="icon is-medium is-pulled-left has-text-primary">
                     <i className="fas fa-2x fa-chart-bar"></i>
                 </span>
-                <h4 className="subtitle is-inline-block" style={{padding: "0.3rem 0 0 1rem"}}>
-                    Average Score: {formatScore(score)}
+                <h4 className="subtitle is-flex flex-1">
+                    Average Score
                 </h4>
-            </React.Fragment>
+                <h4 className="subtitle is-flex">
+                    {formatScore(score)}
+                </h4>
+            </div>
         );
 
         const averagePredictedScoreLabel = (score) => (
-            <React.Fragment>
+            <div className="is-flex aggregated-score-label">
                 <span className="icon is-medium is-pulled-left has-text-primary">
                     <i className="fas fa-2x fa-chart-line"></i>
                 </span>
-                <h4 className="subtitle is-inline-block" style={{padding: "0.3rem 0 0 1rem"}}>
-                    Average Predicted Score: {formatScore(score)}
+                <h4 className="subtitle is-flex flex-1">
+                    Average Predicted Score
                 </h4>
-            </React.Fragment>
+                <h4 className="subtitle is-flex">
+                    {formatScore(score)}
+                </h4>
+            </div>
         );
 
         const averageWadayanoScoreLabel = (score) => (
-            <React.Fragment>
+            <div className="is-flex aggregated-score-label">
                 <img className="wadayano-list" src={Logo} alt="wadayano logo" style={{height: "2rem"}} />
-                <h4 className="subtitle is-inline-block" style={{padding: "0.3rem 0 0 1rem"}}>
-                    Average Wadayano Score: {formatScore(score)}
+                <h4 className="subtitle is-flex flex-1">
+                    Average Wadayano Score
                 </h4>
-            </React.Fragment>
+                <h4 className="subtitle is-flex">
+                    {formatScore(score)}
+                </h4>
+            </div>
         );
 
         return (
@@ -242,14 +251,12 @@ class AggregatedQuizReview extends Component {
                     <div className="column">
                         <div className="box" style={{height: "280px"}}>
                             {averageScoreLabel(averageScore)}
-                            <br />
                             <ScoresBarGraph scores={scores} />
                         </div>
                     </div>
                     <div className="column">
                         <div className="box" style={{height: "280px"}}>
                             {averageWadayanoScoreLabel(averageWadayanoScore)}
-                            <br />
                             <ConfidenceBarGraph
                                 overconfident={confidenceAnalysisCounts.OVERCONFIDENT}
                                 accurate={confidenceAnalysisCounts.ACCURATE}
@@ -260,10 +267,9 @@ class AggregatedQuizReview extends Component {
                     </div>
                 </div>
                 <div className="columns is-desktop">
-                    <div className="column is-6">
+                    <div className="column is-half-desktop">
                         <div className="box" style={{height: "280px"}}>
                             {averagePredictedScoreLabel(averagePredictedScore)}
-                            <br />
                             <ScoresBarGraph scores={predictedScores} />
                         </div>
                     </div>
@@ -282,9 +288,7 @@ class AggregatedQuizReview extends Component {
                                         <span className="question-count">{questionCount === 1 ? '1 Question' : questionCount + ' Questions'}</span>
                                     </p>
                                     {averageScoreLabel(conceptAverageScores.get(concept))}
-                                    <br style={{clear: "both"}} />
                                     {averagePredictedScoreLabel(conceptAveragePredictedScores.get(concept))}
-                                    <br style={{clear: "both"}} />
                                     {averageWadayanoScoreLabel(conceptAverageWadayanoScores.get(concept))}
                                     {/*<footer className="">
                                         <button className="button is-primary is-block" style={{width: "100%"}} onClick={() => alert('Not yet implemented')}>View Details</button>
