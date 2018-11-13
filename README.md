@@ -1,4 +1,4 @@
-# knowledge-monitoring-dashboard
+# [wadayano](https://www.wadayano.com)
 Online quiz tool with knowledge monitoring support
 
 # Setup
