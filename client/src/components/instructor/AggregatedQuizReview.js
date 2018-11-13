@@ -12,7 +12,7 @@ import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import Logo from '../../logo_boxed.svg';
 
-import QuestionReview from '../student/QuestionReview';
+import AggregatedQuestionReview from './AggregatedQuestionReview';
 import Modal from '../shared/Modal';
 
 import { CONFIDENCES } from '../../constants';
@@ -36,7 +36,8 @@ class AggregatedQuizReview extends Component {
             confidenceAnalysisCounts: null,
             conceptAverageScores: null,
             conceptAveragePredictedScores: null,
-            conceptAverageWadayanoScores: null
+            conceptAverageWadayanoScores: null,
+            showConceptModal: null
         };
     
         // Pre-bind this function, to make adding it to input fields easier
@@ -133,7 +134,6 @@ class AggregatedQuizReview extends Component {
                 const conceptScore = conceptQuestionAttempts.filter(questionAttempt => questionAttempt.isCorrect).length / conceptQuestionAttempts.length;
                 (conceptScores.get(concept)).push(conceptScore);
 
-                console.log(attempt.conceptConfidences, concepts, concept);
                 const conceptConfidence = attempt.conceptConfidences.find(cc => cc.concept === concept);
                 const conceptPredictedScore = conceptConfidence.confidence / conceptQuestionAttempts.length;
                 (conceptPredictedScores.get(concept)).push(conceptPredictedScore);
@@ -187,7 +187,7 @@ class AggregatedQuizReview extends Component {
     render() {
 
         if (this.state.error || (this.props.quizQuery && this.props.quizQuery.error)) {
-            return <ErrorBox>Couldn’t load quiz</ErrorBox>;
+            return <ErrorBox><p>Couldn’t load quiz report.</p></ErrorBox>;
         }
 
         if (this.state.isLoading || (this.props.quizQuery && this.props.quizQuery.loading)) {
@@ -290,14 +290,28 @@ class AggregatedQuizReview extends Component {
                                     {averageScoreLabel(conceptAverageScores.get(concept))}
                                     {averagePredictedScoreLabel(conceptAveragePredictedScores.get(concept))}
                                     {averageWadayanoScoreLabel(conceptAverageWadayanoScores.get(concept))}
-                                    {/*<footer className="">
-                                        <button className="button is-primary is-block" style={{width: "100%"}} onClick={() => alert('Not yet implemented')}>View Details</button>
-                                    </footer>*/}
+                                    <footer>
+                                        <button
+                                            className="button is-primary is-block"
+                                            style={{width: "100%"}}
+                                            onClick={() => this.setState({showConceptModal: concept})}
+                                        >View Questions</button>
+                                    </footer>
                                 </div>
                             </div>
                         )
                     })}
                 </div>
+
+                <Modal
+                    modalState={this.state.showConceptModal !== null}
+                    closeModal={() => this.setState({ showConceptModal: null })}
+                    title={"Concept Review: " + this.state.showConceptModal}>
+                        {quiz.questions.map(conceptQuestion => (
+                            <AggregatedQuestionReview key={conceptQuestion.id} question={conceptQuestion} />
+                        ))}
+                        <br/>
+                </Modal>
 
             </div>
         );
@@ -327,6 +341,11 @@ export const QUIZ_QUERY = gql`
             id
             concept
             prompt
+            options {
+                id
+                isCorrect
+                text
+            }
         }
         quizAttempts {
             id
