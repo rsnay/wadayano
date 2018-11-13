@@ -230,12 +230,12 @@ export class QuizEditor extends Component {
 
   render() {
 
-    if (this.state.isLoading) {
-        return <LoadingBox />;
-    }
-
     if (this.props.quizQuery && this.props.quizQuery.error) {
         return <ErrorBox><p>Couldn’t load quiz.</p></ErrorBox>;
+    }
+
+    if (this.state.isLoading) {
+        return <LoadingBox />;
     }
 
     const allQuestions = this.state.orderedQuestionIds.concat(this.state.newQuestionIds);

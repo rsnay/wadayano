@@ -107,13 +107,13 @@ class CourseScores extends Component {
     }
 
     render() {
-
-        if (this.state.isLoading || (this.props.courseQuery && this.props.courseQuery.loading)) {
-            return <LoadingBox />;
-        }
     
         if (this.props.courseQuery && this.props.courseQuery.error) {
             return <ErrorBox><p>Couldn’t load quizzes for this course.</p></ErrorBox>;
+        }
+
+        if (this.state.isLoading || (this.props.courseQuery && this.props.courseQuery.loading)) {
+            return <LoadingBox />;
         }
 
         const course = this.props.courseQuery.course;
