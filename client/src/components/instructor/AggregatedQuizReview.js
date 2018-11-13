@@ -307,7 +307,7 @@ class AggregatedQuizReview extends Component {
                     modalState={this.state.showConceptModal !== null}
                     closeModal={() => this.setState({ showConceptModal: null })}
                     title={"Concept Review: " + this.state.showConceptModal}>
-                        {quiz.questions.map(conceptQuestion => (
+                        {quiz.questions.filter(q => q.concept === this.state.showConceptModal).map(conceptQuestion => (
                             <AggregatedQuestionReview key={conceptQuestion.id} question={conceptQuestion} />
                         ))}
                         <br/>

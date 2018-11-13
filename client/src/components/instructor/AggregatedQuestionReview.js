@@ -39,7 +39,7 @@ export default class AggregatedQuestionReview extends Component {
 
     let confidenceSelector = <ConfidenceSelector disabled />;
 
-    let feedbackView = <p className="question-option-text">TODO</p>;
+    let feedbackView = <p className="question-option-text"></p>;
 
     return (
         <div>
