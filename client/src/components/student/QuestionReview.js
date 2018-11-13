@@ -51,17 +51,12 @@ export default class QuestionReview extends Component {
         );
     } else {
         // Otherwise, display all options (selected is incorrect), and indicate which *was* correct
-        optionsView = questionOptions.map((option, index) => {
+        optionsView = questionOptions.filter(option => option.text.trim() !== '').map((option, index) => {
             const correct = (attempt.correctOption.id === option.id);
             const incorrect = (attempt.option.id === option.id);
             const icon = correct ? actualCorrectIcon : (incorrect ? incorrectIcon : ALPHABET[index]);
             const iconClass = correct ? "has-text-success" : (incorrect ? "has-text-danger" : "");
             const containerClass = correct ? "actual-correct" : "";
-
-            // Hide empty options
-            if (option.text.trim() === '') {
-                return null;
-            }
 
             return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={option.id}>
                 <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
