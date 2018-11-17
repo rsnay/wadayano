@@ -257,7 +257,7 @@ class QuizReview extends Component {
     }
     //console.log(this.props.quizAttemptQuery);
 
-    const quizAttempt = this.props.quizAttemptQuery.currentStudentQuizAttempt;
+    const quizAttempt = this.props.quizAttemptQuery.quizAttempt;
     
     //console.log(quizAttempt.questionAttempts[0].question.title);
 
@@ -342,7 +342,7 @@ QuizReview.propTypes = {
 
 const QUIZ_ATTEMPT_QUERY = gql`
   query quizAttemptQuery($id: ID!) {
-    currentStudentQuizAttempt(id: $id) {
+    quizAttempt(id: $id) {
       id
       completed
       score

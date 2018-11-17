@@ -388,20 +388,15 @@ export class QuizEditor extends Component {
 // Get the quiz
 export const QUIZ_QUERY = gql`
   query quizQuery($id: ID!) {
-    quiz(id:$id){
+    quiz(id:$id) {
         id
         title
         type
-        course{
-            title
-            quizzes {
-                questions {
-                    concept
-                }
-            }
+        course {
             id
+            title
         }
-        questions{
+        questions {
             id
             prompt
         }

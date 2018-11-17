@@ -4,12 +4,7 @@ function course(root, args, context, info){
   return context.db.query.course({where:{id:args.id}}, info)
 }
 
-function courses(root, args, context, info){
-  console.log(getUserInfo(context).userId);
-  return context.db.query.courses({}, info)
-}
-
-function instructor(root, args, context, info){
+function currentInstructor(root, args, context, info){
   return context.db.query.instructor({where:{id:getUserInfo(context).userId}},info)
 }
 
@@ -19,10 +14,6 @@ function quiz(root, args, context, info) {
 
 function question(root, args, context, info){
   return context.db.query.question({where:{id:args.id}}, info)
-}
-
-function option(root, args, context, info){
-  return context.db.query.option({where:{id:args.id}}, info)
 }
 
 function currentStudent(root, args, context, info) {
@@ -51,7 +42,7 @@ function currentStudentQuizAttempts(root, args, context, info) {
   }, info);
 }
 
-async function currentStudentQuizAttempt(root, args, context, info) {
+async function quizAttempt(root, args, context, info) {
   const { userId, isInstructor } = getUserInfo(context);
   // Check that quiz attempt belongs to current student
   try {
@@ -69,12 +60,10 @@ async function currentStudentQuizAttempt(root, args, context, info) {
 
 module.exports = {
   course,
-  courses,
-  instructor,
+  currentInstructor,
   quiz,
   question,
-  option,
   currentStudent,
   currentStudentQuizAttempts,
-  currentStudentQuizAttempt
+  quizAttempt
 }

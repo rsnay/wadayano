@@ -2,14 +2,12 @@
 
 type Query {
   quiz(id:ID): Quiz!
-  instructor: Instructor!
-  courses: [Course!]!
+  currentInstructor: Instructor!
   course(id:ID): Course!
   question(id:ID): Question!
-  option(id:ID): Option!
   currentStudent: Student!
   currentStudentQuizAttempts(orderBy: QuizAttemptOrderByInput, courseId: ID): [QuizAttempt!]!
-  currentStudentQuizAttempt(id: ID!): QuizAttempt!
+  quizAttempt(id: ID!): QuizAttempt!
 }
 
 type Mutation {
@@ -23,7 +21,6 @@ type Mutation {
   updateQuestion(id: ID!, data: QuestionUpdateInput!): Question!
   deleteQuestion(id:ID): Question!
   importQuestions(quizId: ID!, questionIds: [ID!]!): Quiz!
-  updateOption(id:ID, text:String!, isCorrect:Boolean): Option!
   updateSurvey(courseId: ID!, survey: Json!): Course!
   sendInstructorCourseInvite(courseId: ID!, email: String!): String!
   removeInstructorFromCourse(courseId: ID!, email: String!): String!

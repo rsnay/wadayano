@@ -65,7 +65,7 @@ class ProfileEditor extends Component {
             return <ErrorBox><p>Couldn’t load instructor profile</p></ErrorBox>;
         }
 
-        const instructor = this.props.instructorQuery.instructor;
+        const instructor = this.props.instructorQuery.currentInstructor;
 
         return (
             <section className="section">
@@ -101,7 +101,7 @@ class ProfileEditor extends Component {
 // Get the instructor’s profile
 const INSTRUCTOR_QUERY = gql`
   query instructorQuery {
-    instructor {
+    currentInstructor {
         id
         email
         createdAt

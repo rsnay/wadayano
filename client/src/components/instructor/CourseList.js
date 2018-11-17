@@ -28,7 +28,7 @@ export class CourseList extends Component {
         return <ErrorBox><p>Couldn’t load courses.</p></ErrorBox>;
     }
 
-    let courses = this.props.instructorQuery.instructor.courses;
+    let courses = this.props.instructorQuery.currentInstructor.courses;
 
     return (
         <section className="section">
@@ -82,7 +82,7 @@ export class CourseList extends Component {
 // Get all courses for current instructor
 export const INSTRUCTOR_QUERY = gql`
   query instructorQuery {
-    instructor{
+    currentInstructor{
         id
       courses{
           id

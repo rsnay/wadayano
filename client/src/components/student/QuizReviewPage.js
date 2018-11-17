@@ -20,7 +20,7 @@ class QuizReviewPage extends Component {
       return <ErrorBox><p>Couldn’t load quiz results. Please try again later.</p></ErrorBox>;
     }
 
-    const quizAttempt = this.props.quizAttemptQuery.currentStudentQuizAttempt;
+    const quizAttempt = this.props.quizAttemptQuery.quizAttempt;
 
     return (
       <section className="section">
@@ -52,7 +52,7 @@ class QuizReviewPage extends Component {
 // TODO what is retrieved here is duplicated from QuizTaker.js and should be extracted into an Apollo fragment to reduce duplication
 const QUIZ_ATTEMPT_QUERY = gql`
   query quizAttemptQuery($id: ID!) {
-    currentStudentQuizAttempt(id: $id) {
+    quizAttempt(id: $id) {
       id
       completed
       score
