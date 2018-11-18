@@ -182,6 +182,60 @@ const enrolledInQuestion = rule({
 
 const canAccessQuestion = or(enrolledInQuestion, ownsQuestion);
 
+// Unlike other entities in datamodel, a student “owns” a QuizAttempt
+const ownsQuizAttempt = rule({
+    cache: 'strict',
+    fragment: 'fragment QuizAttemptId on QuizAttempt { id }'
+}) ((parent, args, context, info) => {
+    console.log('SHIELD: ownsQuizAttempt?');
+    // ID to check could be parent object (from resolver), or `id` or similar argument from query
+    let id = null;
+    if (parent && parent.id) {
+        id = parent.id;
+    } else if (args) {
+        id = args.id || args.quizAttemptId;
+    }
+    if (!id) { return false; }
+
+    const userInfo = getUserInfo(context);
+
+    return (!userInfo.isInstructor && context.db.exists.QuizAttempt({
+        student: { 
+            id: userInfo.userId
+        }
+    }));
+});
+
+const instructorForQuizAttempt = rule({
+    cache: 'strict',
+    fragment: 'fragment QuizAttemptId on QuizAttempt { id }'
+}) ((parent, args, context, info) => {
+    console.log('SHIELD: instructorForQuizAttempt?');
+    // ID to check could be parent object (from resolver), or `id` or similar argument from query
+    let id = null;
+    if (parent && parent.id) {
+        id = parent.id;
+    } else if (args) {
+        id = args.id || args.quizAttemptId;
+    }
+    if (!id) { return false; }
+
+    const userInfo = getUserInfo(context);
+
+    // Is there a better way to resolve this?
+    return (userInfo.isInstructor && context.db.exists.QuizAttempt({
+        quiz: {
+            course: {
+                instructors_some: {
+                    id: userInfo.userId
+                }
+            }
+        }
+    }));
+});
+
+const canAccessQuizAttempt = or(ownsQuizAttempt, instructorForQuizAttempt);
+
 module.exports = {
     isStudent,
     isInstructor,
@@ -197,5 +251,9 @@ module.exports = {
 
     ownsQuestion,
     enrolledInQuestion,
-    canAccessQuestion
+    canAccessQuestion,
+
+    ownsQuizAttempt,
+    instructorForQuizAttempt,
+    canAccessQuizAttempt
 };
