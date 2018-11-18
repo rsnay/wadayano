@@ -22,6 +22,7 @@ const isAuthenticated = or(isStudent, isInstructor);
 
 // TODO: integrate fragment replacement middleware so that ID will always be in parent
 
+// For the current permissions setup, any member instructor of a course “owns” the course and can perform any actions on it, including adding/removing other instructors and deleting the course
 const ownsCourse = rule({
     cache: 'strict',
     fragment: 'fragment CourseId on Course { id }'

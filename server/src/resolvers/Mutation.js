@@ -9,10 +9,9 @@ const emailTemplates = require('../emailTemplates');
 
 const MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
-async function deleteCourse (root, args, context, info){
-    // Check that user is an instructor and belongs to this course
-    const { isInstructor, userId } = await instructorCourseCheck(context, args.id);
+// See the permissions.js file to see what rules are applied before these mutations even get executed. There are only a few mutations in here that handle their own permissions (startOrResumeQuizAttempt, completeQuizAttempt, rateConcepts, and attemptQuestion)
 
+async function deleteCourse (root, args, context, info){
     return context.db.mutation.deleteCourse({
         where:{
             id:args.id
@@ -21,8 +20,8 @@ async function deleteCourse (root, args, context, info){
 }
 
 function addCourse (root, args, context, info) {
-    // Make sure user is logged in and an instructor
-    const { isInstructor, userId } = instructorCheck(context);
+    // Get user ID of instructor
+    const { userId } = getUserInfo(context);
 
     // Generate the LTI/oauth secret for this course.
     const ltiSecret = require('crypto').randomBytes(16).toString('hex');
@@ -42,9 +41,6 @@ function addCourse (root, args, context, info) {
 }
 
 async function updateCourse (root, args, context, info) {
-    // Check that user is an instructor and belongs to this course
-    const { isInstructor, userId } = await instructorCourseCheck(context, args.id);
-
     // args.info is CourseInfoUpdateInput, which is a subset of CourseUpdateInput
     return context.db.mutation.updateCourse({
         data: args.info,
@@ -55,9 +51,6 @@ async function updateCourse (root, args, context, info) {
 }
 
 async function updateSurvey (root, args, context, info) {
-    // Check that user is an instructor and belongs to this course
-    const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
-
     return context.db.mutation.updateCourse({
         data: {
             survey: args.survey
@@ -69,9 +62,6 @@ async function updateSurvey (root, args, context, info) {
 }
 
 async function createQuiz (root, args, context, info) {
-    // Check that user is an instructor and belongs to this course
-    const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
-
     return context.db.mutation.createQuiz({
         data: {
             title: "Untitled Quiz",
@@ -82,9 +72,6 @@ async function createQuiz (root, args, context, info) {
 }
 
 async function addQuestion (root, args, context, info) {
-    instructorCheck(context);
-    // TODO how to most easily verify instructor permission where we receive a quiz id, not a course id?
-
     // Sanitize HTML input for question prompt and options to remove any scripts and prevent XSS
     let { question } = args;
     question.prompt = stripJs(question.prompt);
@@ -111,14 +98,12 @@ async function addQuestion (root, args, context, info) {
 }
 
 function updateQuiz(root, args, context, info) {
-    instructorCheck(context);
-    // TODO make sure the quiz belongs to the logged-in instructor
-
     return context.db.mutation.updateQuiz({
         data: {
             title: args.data.title,
             type: args.data.type,
-            questions: args.data.questions
+            // TODO the quiz editor currently uses the addQuestion and updateQuestion mutations which sanitize question and option HTML, but that should be added in here as well, if the editor were to use this. So updating questions through this mutation is being disabled for now:
+            // questions: args.data.questions
         },
         where:{
             id:args.id
@@ -127,9 +112,6 @@ function updateQuiz(root, args, context, info) {
 }
 
 function deleteQuiz(root, args, context, info) {
-    instructorCheck(context);
-    // TODO make sure the quiz belongs to the logged-in instructor
-
     return context.db.mutation.deleteQuiz({
         where:{
             id: args.id
@@ -138,9 +120,6 @@ function deleteQuiz(root, args, context, info) {
 }
 
 function updateQuestion(root, args, context, info) {
-    instructorCheck(context);
-    // TODO make sure the question belongs to the logged-in instructor
-
     // Sanitize HTML input for question prompt and options to remove any scripts and prevent XSS
     let { data } = args;
     data.prompt = stripJs(data.prompt);
@@ -155,9 +134,6 @@ function updateQuestion(root, args, context, info) {
 }
 
 function deleteQuestion(root, args, context, info) {
-    instructorCheck(context);
-    // TODO make sure the quiz belongs to the logged-in instructor
-
     return context.db.mutation.deleteQuestion({
         where:{
             id: args.id
@@ -166,10 +142,6 @@ function deleteQuestion(root, args, context, info) {
 }
 
 async function importQuestions(root, args, context, info) {
-    //importQuestions(quizId: ID!, questionIds: [ID!]!): Quiz!
-    instructorCheck(context);
-    // TODO make sure the quiz belongs to the logged-in instructor
-
     let newQuestions = [];
 
     for (let i = 0; i < args.questionIds.length; i++) {
@@ -201,9 +173,6 @@ async function importQuestions(root, args, context, info) {
 }
 
 async function sendInstructorCourseInvite(root, args, context, info) {
-    // Check that user is an instructor and belongs to this course
-    const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
-
     // Lower-case email
     const email = args.email.toLowerCase();
     // Validate email
@@ -253,9 +222,6 @@ async function sendInstructorCourseInvite(root, args, context, info) {
 
 // This takes email, rather than instructor ID, to handle both removing an instructor and cancel a pending invite in one mutation
 async function removeInstructorFromCourse(root, args, context, info) {
-    // Check that user is an instructor and belongs to this course
-    const { isInstructor, userId } = await instructorCourseCheck(context, args.courseId);
-
     // Lower-case email
     const email = args.email.toLowerCase();
 
@@ -530,8 +496,6 @@ async function attemptQuestion(root, args, context, info) {
     // Check for valid student login
     const studentId = getUserInfo(context).userId;
 
-    console.log('Attempt question', args);
-
     // Check that this question hasn't already been attempted in this QuizAttempt
     const existingQuizAttempt = await context.db.query.quizAttempt({
         where: {
@@ -680,9 +644,6 @@ async function submitSurveyResult(root, args, context, info) {
     // Check for valid student login
     const studentId = getUserInfo(context).userId;
     const { courseId, answers } = args;
-
-    // Check that student has access to the course that this survey is for
-    // TODO
 
     // Students can take a survey for a course multiple times, but we only store the latest submission
     await context.db.mutation.deleteManySurveyResults({

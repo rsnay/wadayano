@@ -34,10 +34,14 @@ const Permissions = {
         instructorResetPassword: allow,
         sendFeedback: rules.isAuthenticated,
       
-        startOrResumeQuizAttempt: rules.enrolledInQuiz,
-        // completeQuizAttempt: rules.ownsQuizAttempt,
-        // rateConcepts: rules.ownsQuizAttempt,
-        // attemptQuestion: rules.ownsQuizAttempt,
+        /* The following mutations handle their own permissions already.
+           That could be moved into a rule here, but it would require an extra
+           query and result in less-specific error messages.
+            startOrResumeQuizAttempt: rules.enrolledInQuiz,
+            completeQuizAttempt: rules.ownsQuizAttempt,
+            rateConcepts: rules.ownsQuizAttempt,
+            attemptQuestion: rules.ownsQuizAttempt,
+        */
       
         submitSurveyResult: rules.enrolledInCourse
     },
