@@ -120,7 +120,7 @@ button::-moz-focus-inner {
 }
 
 /* Quiz Taker */
-progress::-webkit-progress-value, progress::-moz-progress-bar {
+progress::-webkit-progress-value {
     transition: width 0.3s ease-out;
 }
 
