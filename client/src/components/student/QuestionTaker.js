@@ -16,6 +16,7 @@ class QuestionTaker extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        error: null,
         isLoading: false,
         selectedOption: null,
         confident: null,
@@ -68,19 +69,29 @@ class QuestionTaker extends Component {
         if (this._submitted) { return; }
         this._submitted = true;
         this.setState({ isLoading: true });
-        const result = await this.props.attemptQuestionMutation({
-            variables: {
-                quizAttemptId: this.props.quizAttemptId,
-                questionId: this.props.question.id,
-                optionId: this.state.selectedOption.id,
-                isConfident: this.state.confident
+        try {
+            const result = await this.props.attemptQuestionMutation({
+                variables: {
+                    quizAttemptId: this.props.quizAttemptId,
+                    questionId: this.props.question.id,
+                    optionId: this.state.selectedOption.id,
+                    isConfident: this.state.confident
+                }
+            });
+            if (result.errors && result.errors.length > 0) {
+                throw result;
             }
-        });
-        // TODO catch errors
-        console.log("question attempt", result.data.attemptQuestion);
-        this.setState({ questionAttempt: result.data.attemptQuestion, submitted: true });
-        if (this.props.onQuestionCompleted) {
-            this.props.onQuestionCompleted();
+            console.log("question attempt", result.data.attemptQuestion);
+            this.setState({ questionAttempt: result.data.attemptQuestion, submitted: true });
+            if (this.props.onQuestionCompleted) {
+                this.props.onQuestionCompleted();
+            }
+        } catch (e) {
+            let message = 'Please try again later.';
+            if (e.errors && e.errors.length > 0) {
+                message = e.errors[0].message;
+            }
+            this.setState({ error: 'Error saving answer: ' + message, isLoading: false });
         }
   }
 
@@ -89,6 +100,10 @@ class QuestionTaker extends Component {
     
     if (questionOptions.length === 0) {
         return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
+    }
+
+    if (this.state.error) {
+        return <ErrorBox><p>{this.state.error}</p></ErrorBox>;
     }
 
     let prompt = (

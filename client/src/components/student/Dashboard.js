@@ -30,7 +30,7 @@ class Dashboard extends Component {
     const unfinishedAttempts = quizAttempts.filter(attempt => attempt.completed === null);
     const pastAttempts = quizAttempts.filter(attempt => attempt.completed !== null);
 
-    const lmsUrlLink = (actionText) => (course.lmsUrl !== '') ? <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>click here to {actionText}</a> : actionText;
+    const lmsUrlLink = (actionText) => (course.lmsUrl && course.lmsUrl !== '') ? <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>click here to {actionText}</a> : actionText;
 
     let practiceQuizzesTable = <div className="notification has-text-centered">No practice quizzes are currently available for this course.</div>;
     if (practiceQuizzes.length > 0) {
