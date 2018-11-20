@@ -11,7 +11,7 @@ export default class AggregatedQuestionReview extends Component {
   render() {
       console.log(this.props);
     const questionOptions = this.props.question.options;
-    const attempt = this.props.aggregatedQuestionAttempt;
+    //const attempt = this.props.aggregatedQuestionAttempt;
     
     if (questionOptions.length === 0) {
         return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;

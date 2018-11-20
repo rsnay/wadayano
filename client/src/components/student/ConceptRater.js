@@ -4,11 +4,6 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
-import { formatScore } from '../../utils';
-
-const MIN_RATING = 1;
-const MAX_RATING = 5;
-
 class ConceptRater extends Component {
 
     constructor(props) {
