@@ -11,8 +11,6 @@ import { formatScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
-import Logo from '../../logo_boxed.svg';
-
 import QuestionReview from './QuestionReview';
 import Modal from '../shared/Modal';
 
@@ -65,18 +63,6 @@ class QuizReview extends Component {
             this.setState({wadayano});
             this.confidenceText(wadayano,quizAttempt);
         }
-    }
-
-    overallScore(quizAttempt){
-        var correct = 0;
-        for(var i=0;i<quizAttempt.questionAttempts.length; i++){
-            if(quizAttempt.questionAttempts[i].isCorrect){
-                correct+=1;
-            }
-        }
-        var numQuestion = quizAttempt.questionAttempts.length;
-        var percent = correct/numQuestion*10;
-        //console.log("percent:"+percent+"%");
     }
 
     confidenceText(wadayano, quizAttempt){
@@ -314,8 +300,8 @@ class QuizReview extends Component {
                 <div className="tile is-6 is-parent" key={conceptConfidence.id}>
                     <div className="tile is-child box">
                         <p className="title">
-                            <div>{conceptConfidence.concept}</div>
-                            <div id="questionNum" >{conceptConfidence.questionCnt === 1 ? '1 Question' : conceptConfidence.questionCnt + ' Questions'}</div>
+                            <span>{conceptConfidence.concept}</span>
+                            <span className="question-count">{conceptConfidence.questionCnt === 1 ? '1 Question' : conceptConfidence.questionCnt + ' Questions'}</span>
                         </p>
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}%
@@ -335,8 +321,9 @@ class QuizReview extends Component {
                 title={"Concept Review: " + this.state.concept}>
                 <span className="concept-questions-list" id={"questionReview"+this.state.concept}>
                     {this.state.conceptQuestions.map(conceptQuestion => (
-                        <div className = "question-review">
+                        <div className="question-review" key={conceptQuestion.id}>
                         <QuestionReview id={conceptQuestion.id} questionAttempt={conceptQuestion} question={conceptQuestion.question} />
+                        <hr />
                         </div>
                     ))}
                     <br/>

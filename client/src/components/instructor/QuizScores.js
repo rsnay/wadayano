@@ -236,12 +236,6 @@ class QuizScores extends Component {
     }
 }
 
-// Confidence analysis labels
-const MIXED = 'Mixed';
-const UNDER = 'Underconfident';
-const ACCURATE = 'Accurate';
-const OVER = 'Overconfident';
-
 // How to weight the confidence analysis labels for sorting
 const confidenceAnalysisWeights = {
     // '0' denotes quiz not taken

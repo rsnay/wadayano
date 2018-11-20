@@ -52,8 +52,6 @@ export function wadayanoScore(quizAttempt) {
 // Analyze a student’s confidence for a given quiz attempt
 // Returns an object: { text: "Accurate", emoji: "🧘" }
 export function confidenceAnalysis(quizAttempt){
-    var quizConfidenceText;
-    var quizConfidenceEmoji;
     var quizOverC = 0;
     var quizUnderC = 0;
     for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
