@@ -121,7 +121,7 @@ export class CollapsibleQuestionEditor extends Component {
                 variables: { id: (this.state.wasNew ? this.state.question.id : this.props.questionId) }
             });
             if (!(result.data && result.data.question)) {
-                throw 'Question not found';
+                throw Error('Question not found');
             }
             this.setState({ isLoading: false, question: result.data.question, isExpanded: true });
         } catch (error) {

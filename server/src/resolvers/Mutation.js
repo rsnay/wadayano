@@ -529,6 +529,10 @@ async function attemptQuestion(root, args, context, info) {
         }
     }, `{ id }`))[0];
 
+    if (!correctOption) {
+        throw Error('There is no correct option for this question. Please contact your instructor.');
+    }
+
     // Find out if this option was correct
     const isCorrect = args.optionId === correctOption.id;
 

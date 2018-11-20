@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
 import { withAuthCheck } from '../shared/AuthCheck';
+import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import { formatScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
@@ -253,7 +255,7 @@ class QuizReview extends Component {
     }
 
     if (this.props.quizAttemptQuery && this.props.quizAttemptQuery.error) {
-        return <ErrorBox>Couldn’t load quiz</ErrorBox>;
+        return <ErrorBox><p>Couldn’t load quiz.</p></ErrorBox>;
     }
     //console.log(this.props.quizAttemptQuery);
 
@@ -273,22 +275,30 @@ class QuizReview extends Component {
     console.log(predictedConcepts + "sdhakjhfdalhd");
     
     //this.sortConcepts(quizAttempt);
-    //this.overallScore(quizAttempt);
     
     // Use conceptConfidences from the quizAttempt prop
     //const conceptConfidences = quizAttempt.conceptConfidences;
-    const conceptConfidences = this.sortConcepts(quizAttempt);
+    let conceptConfidences;
+    try {
+        conceptConfidences = this.sortConcepts(quizAttempt);
+    } catch (error) {
+        console.error(error);
+        ButterToast.raise({
+            content: <ToastTemplate content="There was an error generating the report for this quiz. Please contact us if this problem persists." className="is-danger" />
+        });
+        return (
+            <p className="control">
+                <Link to="/student" className="button is-medium">
+                    Return to Dashboard
+                </Link>
+            </p>);
+    }
 
     // Score format of 33.3%
     const formattedScore = formatScore(quizAttempt.score);
 
     // If postSucceeded is null, then it was not a graded attempt
     const isGraded = (quizAttempt.postSucceeded !== null);
-    const gradePostMessage = isGraded && (quizAttempt.postSucceeded ?
-            <span className="notification is-success is-inline-block">Score was posted successfully.</span>
-        :
-            <span className="notification is-warning is-inline-block">There was an error posting your score to your learning management system. Your instructor will be notified of your score and will enter it manually.</span>
-        );
 
     return (
         <div>
