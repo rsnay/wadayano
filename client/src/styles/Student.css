@@ -59,10 +59,17 @@ button::-moz-focus-inner {
     text-align: center;
     font-size: 18px;
     display:inline-block;
-    float:right;
-    margin-right: 250px;
-    margin-top:5px;
+    margin-left: 10px;
+    margin-top: 13px;
     border: 1px solid #666;
+}
+
+#notBold{
+    font-weight:lighter;
+}
+
+.column{
+    font-size: 1.7rem;
 }
 
 .flexbox-container{
