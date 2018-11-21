@@ -287,11 +287,11 @@ class QuizReview extends Component {
     const isGraded = (quizAttempt.postSucceeded !== null);
 
     return (
-        <div>
+        <div className="quiz-review-container">
             <div className="columns">
                 <div className="column is-6">
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
-                    <h2 className="subtitle is-2">Score: {formattedScore} <span id="notBold">({this.predictedScore(quizAttempt.quiz.questions.length,predictedConcepts)}% Predicted)</span></h2>
+                    <h2 className="subtitle is-2">Score: {formattedScore} <span className="has-text-weight-light">({this.predictedScore(quizAttempt.quiz.questions.length,predictedConcepts)}% Predicted)</span></h2>
                     <WadayanoScore wadayano={this.state.wadayano} confidenceText={this.state.confidenceText}/>
                 </div>
             </div>
@@ -304,7 +304,7 @@ class QuizReview extends Component {
                             <span className="question-count">{conceptConfidence.questionCnt === 1 ? '1 Question' : conceptConfidence.questionCnt + ' Questions'}</span>
                         </p>
                         <p className="title">
-                            Score: {conceptConfidence.conceptScore}% <span id="notBold">({this.predictedScore(conceptConfidence.questionCnt,conceptConfidence.confidence)}% Predicted)</span>
+                            Score: {conceptConfidence.conceptScore}% <span className="has-text-weight-light">({this.predictedScore(conceptConfidence.questionCnt,conceptConfidence.confidence)}% Predicted)</span>
                         </p>
                         <WadayanoScore wadayano={conceptConfidence.wadayano} confidenceText={conceptConfidence.confidenceText}/>
                         <div id={conceptConfidence.concept+ "review"}></div>
