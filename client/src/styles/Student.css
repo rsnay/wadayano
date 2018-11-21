@@ -64,11 +64,7 @@ button::-moz-focus-inner {
     border: 1px solid #666;
 }
 
-#notBold{
-    font-weight:lighter;
-}
-
-.column{
+.quiz-review-container .column{
     font-size: 1.7rem;
 }
 
