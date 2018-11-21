@@ -289,9 +289,9 @@ class QuizReview extends Component {
     return (
         <div>
             <div className="columns">
-                <div className="column">
+                <div className="column is-6">
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
-                    <h2 className="subtitle is-2">Score: {formattedScore} ({this.predictedScore(quizAttempt.quiz.questions.length,predictedConcepts)}% Predicted)</h2>
+                    <h2 className="subtitle is-2">Score: {formattedScore} <span id="notBold">({this.predictedScore(quizAttempt.quiz.questions.length,predictedConcepts)}% Predicted)</span></h2>
                     <WadayanoScore wadayano={this.state.wadayano} confidenceText={this.state.confidenceText}/>
                 </div>
             </div>
@@ -304,7 +304,7 @@ class QuizReview extends Component {
                             <span className="question-count">{conceptConfidence.questionCnt === 1 ? '1 Question' : conceptConfidence.questionCnt + ' Questions'}</span>
                         </p>
                         <p className="title">
-                            Score: {conceptConfidence.conceptScore}%
+                            Score: {conceptConfidence.conceptScore}% <span id="notBold">({this.predictedScore(conceptConfidence.questionCnt,conceptConfidence.confidence)}% Predicted)</span>
                         </p>
                         <WadayanoScore wadayano={conceptConfidence.wadayano} confidenceText={conceptConfidence.confidenceText}/>
                         <div id={conceptConfidence.concept+ "review"}></div>
