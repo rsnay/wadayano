@@ -62,6 +62,7 @@ button::-moz-focus-inner {
     margin-left: 10px;
     margin-top: 13px;
     border: 1px solid #666;
+    cursor:pointer;
 }
 
 .quiz-review-container .column{
