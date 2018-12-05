@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /$
+Allow: /login$
+Allow: /signup$
+Disallow: /
+# For more information, see https://developers.google.com/search/reference/robots_txt#order-of-precedence-for-group-member-records
