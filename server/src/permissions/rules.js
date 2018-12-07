@@ -200,6 +200,7 @@ const ownsQuizAttempt = rule({
     const userInfo = getUserInfo(context);
 
     return (!userInfo.isInstructor && context.db.exists.QuizAttempt({
+        id,
         student: { 
             id: userInfo.userId
         }
