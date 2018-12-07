@@ -630,9 +630,9 @@ async function completeQuizAttempt(root, args, context, info) {
                     postSucceeded = false;
                     error = JSON.stringify(err) || 'Error sending score';
                     console.log('LTI grade passback failed; not retrying', err);
-                    console.log(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.ltiSessionInfo));
+                    console.log(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.id, attempt.ltiSessionInfo));
                     // Send email notifying us if passback failed
-                    sendEmail(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.ltiSessionInfo));
+                    sendEmail(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.id, attempt.ltiSessionInfo));
                     // Break out of otherwise-infinite loop
                     break;
                 }
