@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const stripJs = require('strip-js');
 const { APP_SECRET, FEEDBACK_EMAIL_ADDRESS } = require('../../config');
-const { getUserInfo, instructorCheck, instructorCourseCheck, validateEmail } = require('../utils');
+const { getUserInfo, instructorCheck, instructorCourseCheck, validateEmail, delay } = require('../utils');
 const { postGrade } = require('../lti');
 const { sendEmail } = require('../email');
 const emailTemplates = require('../emailTemplates');
@@ -609,18 +609,34 @@ async function completeQuizAttempt(root, args, context, info) {
     if (attempt.ltiSessionInfo && attempt.ltiSessionInfo.lis_outcome_service_url) {
         isGraded = true;
         postSucceeded = false;
-        try {
-            let result = await postGrade(attempt.ltiSessionInfo, attempt.quiz.course.id, attempt.quiz.course.ltiSecret, score);
-            postSucceeded = true;
-            console.log('LTI grade passback successful!');
-        } catch (err) {
-            postSucceeded = false;
-            error = JSON.stringify(err) || 'Error sending score';
-            console.log('LTI grade passback failed', err);
-            console.log(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.ltiSessionInfo));
-            // Send email notifying us if passback failed
-            sendEmail(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.ltiSessionInfo));
-
+        // Try posting the grade up to three times (intial, and two retries)
+        let triesRemaining = 3;
+        while (true) {
+            triesRemaining--;
+            try {
+                let result = await postGrade(attempt.ltiSessionInfo, attempt.quiz.course.id, attempt.quiz.course.ltiSecret, score);
+                postSucceeded = true;
+                console.log('LTI grade passback successful!');
+                break;
+            } catch (err) {
+                if (triesRemaining > 0) {
+                    // Try posting grade again if there are remaining tries
+                    console.log('LTI grade passback failed; retrying');
+                    // Wait 2 seconds if last retry, otherwise 1
+                    await delay(triesRemaining === 1 ? 2000 : 1000);
+                    continue;
+                } else {
+                    // Otherwise mark it as failed, and send us a notification
+                    postSucceeded = false;
+                    error = JSON.stringify(err) || 'Error sending score';
+                    console.log('LTI grade passback failed; not retrying', err);
+                    console.log(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.ltiSessionInfo));
+                    // Send email notifying us if passback failed
+                    sendEmail(FEEDBACK_EMAIL_ADDRESS, 'wadayano Grade Passback Failure', emailTemplates.passbackFailedNotification(error, attempt.ltiSessionInfo));
+                    // Break out of otherwise-infinite loop
+                    break;
+                }
+            }
         }
     }
 

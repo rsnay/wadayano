@@ -63,9 +63,17 @@ async function instructorCourseCheck(context, courseId) {
   return userInfo;
 }
 
+/**
+ * Returns a promise that resolves after the given number of milliseconds
+ * Can be used to delay a given amount, e.g. await delay(2000)
+ * @param {*} ms
+ */
+const delay = ms => new Promise(res => setTimeout(res, ms))
+
 module.exports = {
     validateEmail,
     getUserInfo,
     instructorCheck,
-    instructorCourseCheck
+    instructorCourseCheck,
+    delay
 };
