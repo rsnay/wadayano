@@ -348,48 +348,6 @@ const COMPLETE_MUTATION = gql`
       isGraded
       postSucceeded
       error
-      quizAttempt {
-        id
-        completed
-        score
-        postSucceeded
-        quiz {
-          id
-          title
-          questions {
-            id
-            prompt
-            concept
-            options {
-              id
-              text
-            }
-          }
-        }
-        questionAttempts {
-          id
-          question {
-            id
-            prompt
-            concept
-          }
-          option {
-            id
-            text
-          }
-          correctOption {
-            id
-            text
-          }
-          isCorrect
-          isConfident
-        }
-        conceptConfidences {
-          id
-          concept
-          confidence
-        }
-      }
     }
   }
 `;
