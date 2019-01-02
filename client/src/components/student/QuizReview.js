@@ -241,7 +241,7 @@ class QuizReview extends Component {
     }
 
     if (this.props.quizAttemptQuery && this.props.quizAttemptQuery.error) {
-        return <ErrorBox><p>Couldn’t load quiz.</p></ErrorBox>;
+        return <ErrorBox><p>Couldn’t load quiz results. Please try again later.</p></ErrorBox>;
     }
     //console.log(this.props.quizAttemptQuery);
 
@@ -393,7 +393,7 @@ export default withAuthCheck(compose(
       name: 'quizAttemptQuery',
       options: (props) => {
         console.log(props);
-        return { variables: { id: props.quizAttempt.id } }
+        return { variables: { id: props.quizAttemptId } }
       }
     }),
   )(QuizReview), { student: true, instructor: true });

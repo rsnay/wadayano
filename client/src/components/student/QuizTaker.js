@@ -253,7 +253,7 @@ class QuizTaker extends Component {
       case phases.RESULTS:
         currentView = (
           <div>
-            <QuizReview quizAttempt={this.state.quizGradePayload.quizAttempt} />
+            <QuizReview quizAttemptId={this.state.quizAttempt.id} />
             <hr />
             <p className="control">
                   <Link to="/student" className="button is-medium">
