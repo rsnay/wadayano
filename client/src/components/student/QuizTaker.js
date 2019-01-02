@@ -277,9 +277,9 @@ class QuizTaker extends Component {
         <div className="container">
           {/* Bigger header with title, and progress bar for tablet and larger */}
           <div className="columns is-hidden-mobile">
-            <div className="column">
+            { this.state.phase !== phases.RESULTS && <div className="column">
               <h1 className="title is-1">{quiz.title}</h1>
-            </div>
+            </div>}
             <div className="column no-select" style={{margin: "1rem 0 0 0"}}>
               {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
                 <div style={{margin: "-.3rem 1rem .5rem 0", flexShrink: 0}}>Question {this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
