@@ -142,22 +142,20 @@ function deleteQuestion(root, args, context, info) {
 }
 
 async function importQuestions(root, args, context, info) {
-    let newQuestions = [];
+    
+    const questions = await context.db.query.questions({
+        where: { id_in: args.questionIds }
+    }, `{ id, prompt, concept, options { isCorrect, text } }`);
 
-    for (let i = 0; i < args.questionIds.length; i++) {
-        // TODO optimize so we don’t query separately for each question
-        const question = await context.db.query.question({
-            where: { id: args.questionIds[i] }
-        }, `{ id, prompt, concept, options { isCorrect, text } }`);
-
-        newQuestions.push({
+    let newQuestions = questions.map(question => {
+        return {
             prompt: question.prompt,
             concept: question.concept,
             options: {
                 create: question.options
             }
-        });
-    }
+        }
+    });
 
     // Create new copied questions in the quiz
     return context.db.mutation.updateQuiz({
