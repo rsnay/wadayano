@@ -125,8 +125,6 @@ class QuizTaker extends Component {
 
   // Called from a QuestionTaker after its question has been answered, confidence-rated, and reviewed
   _onQuestionCompleted(questionAttempt) {
-    // Add this questionAttempt to our quizAttempt
-    // TODO
     this.setState({currentQuestionCompleted: true});
   }
 
@@ -277,6 +275,7 @@ class QuizTaker extends Component {
         <div className="container">
           {/* Bigger header with title, and progress bar for tablet and larger */}
           <div className="columns is-hidden-mobile">
+            {/* QuizReview already displays the quiz title, so hide the other one */}
             { this.state.phase !== phases.RESULTS && <div className="column">
               <h1 className="title is-1">{quiz.title}</h1>
             </div>}

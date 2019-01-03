@@ -104,22 +104,6 @@ class SurveyResults extends Component {
                                     }
                                 </tr>);
                             })}
-                            {/*quizzes.map((quiz, index) => 
-                                <tr key={quiz.id}>
-                                    <td>
-                                        <Link className="has-text-black is-block" to={"/student/quiz/" + quiz.id}>
-                                        {quiz.title}</Link>
-                                    </td>
-                                    <td>{quiz.questions.length}</td>
-                                    <td>
-                                        <Link to={"/student/quiz/" + quiz.id}
-                                        className="button is-primary is-outlined">
-                                            <span className="icon"><i className="fas fa-rocket"></i></span>
-                                            <span>Practice Quiz</span>
-                                        </Link>
-                                    </td>
-                                </tr>
-                            )*/}
                         </tbody>
                     </table>
                 </div>

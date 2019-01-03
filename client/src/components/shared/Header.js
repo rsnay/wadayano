@@ -15,10 +15,9 @@ class Header extends Component {
         // Remove auth token and role
         localStorage.removeItem(AUTH_TOKEN);
         localStorage.removeItem(AUTH_ROLE);
-        // Clear apollo cache
-        // TODO
         // Redirect to welcome page
         this.props.history.push('/');
+        // Reload page to clear apollo cache
         window.location.reload();
     }
 
