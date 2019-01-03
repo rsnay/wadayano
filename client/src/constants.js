@@ -13,6 +13,9 @@ export const AUTH_ROLE_STUDENT = 'student';
 export const AUTH_ROLE_INSTRUCTOR = 'instructor';
 
 export const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+// Letters are key codes 65–90: https://keycode.info/
+export const KEY_CODE_A = 65;
+export const KEY_CODE_Z = 90;
 
 export const QUIZ_TYPE_NAMES = { 'PRACTICE': 'Practice', 'GRADED': 'Graded' };
 

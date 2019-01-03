@@ -9,7 +9,7 @@ import ErrorBox from '../shared/ErrorBox';
 import ConfidenceSelector from './ConfidenceSelector';
 import QuestionReview from './QuestionReview';
 
-import { ALPHABET } from '../../constants';
+import { ALPHABET, KEY_CODE_A, KEY_CODE_Z } from '../../constants';
 
 class QuestionTaker extends Component {
 
@@ -47,11 +47,9 @@ class QuestionTaker extends Component {
     // Check that the question is loaded and has options
     if (this.props.question && this.props.question.options) {
         let optionIndex = -1;
-        // 65 is a, and the letters are sequential afterwards
-        // TODO get rid of magic number
-        if (e.keyCode >= 65 && e.keyCode <= 90) {
-            optionIndex = e.keyCode - 65;
-            console.log(e.keyCode, optionIndex);
+        // 65 is A, and the letters are sequential afterwards through Z
+        if (e.keyCode >= KEY_CODE_A && e.keyCode <= KEY_CODE_Z) {
+            optionIndex = e.keyCode - KEY_CODE_A;
         }
         // Filter to non-empty options
         const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '')
