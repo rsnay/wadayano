@@ -95,8 +95,15 @@ class ConceptRater extends Component {
 
 ConceptRater.propTypes = {
     // Required { key: conceptName --> value: questionCount} Map object
-    // TODO implement custom checker to ensure this is a Map
-    conceptQuestionCounts: PropTypes.object.isRequired,
+    // Implement custom checker to ensure this is a Map
+    conceptQuestionCounts: function(props, propName, componentName) {
+        if (!(props[propName] instanceof Map)) {
+            return new Error(
+              'Invalid prop `' + propName + '` supplied to' +
+              ' `' + componentName + '`. Validation failed: must be a Map.'
+            );
+          }
+    },
     quizAttemptId: PropTypes.string.isRequired,
     onConceptsRated: PropTypes.func.isRequired
 };
