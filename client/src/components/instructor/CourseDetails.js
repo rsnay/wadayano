@@ -13,6 +13,7 @@ import Modal from '../shared/Modal';
 import LTISetupModal from './LTISetupModal';
 import CourseInfoForm from './CourseInfoForm';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
+import Breadcrumbs from '../shared/Breadcrumbs';
 
 export class CourseDetails extends Component {
 
@@ -191,12 +192,11 @@ export class CourseDetails extends Component {
     return (
         <section className="section">
         <div className="container">
-        <nav className="breadcrumb" aria-label="breadcrumbs">
-            <ul>
-                <li><Link to="/instructor/courses">Course List</Link></li>
-                <li className="is-active"><Link to={"/instructor/course/"+course.id} aria-current="page">{course.title}</Link></li>
-            </ul>
-        </nav>
+
+          <Breadcrumbs links={[
+            { to: "/instructor/courses", title: "Course List" },
+            { to: "/instructor/course/"+course.id, title: course.title, active: true },
+          ]} />
 
           <section>
             <h4 className="title is-4">Course Info</h4>

@@ -12,6 +12,7 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 import QuizReviewPage from '../student/QuizReviewPage';
 import AggregatedQuizReview from './AggregatedQuizReview';
 import Modal from '../shared/Modal';
+import Breadcrumbs from '../shared/Breadcrumbs';
 
 class QuizScores extends Component {
     constructor(props) {
@@ -184,14 +185,12 @@ class QuizScores extends Component {
                 <section className="section">
                     <div className="container">
 
-                        <nav className="breadcrumb" aria-label="breadcrumbs">
-                            <ul>
-                                <li><Link to="/instructor/courses">Course List</Link></li>
-                                <li><Link to={"/instructor/course/" + course.id}>{course.title}</Link></li>
-                                <li><Link to={"/instructor/quiz/" + quiz.id} aria-current="page">{quiz.title}</Link></li>
-                                <li className="is-active"><Link to={"/instructor/quiz/" + quiz.id + "/scores"} aria-current="page">View Scores</Link></li>
-                            </ul>
-                        </nav>
+                        <Breadcrumbs links={[
+                            { to: "/instructor/courses", title: "Course List" },
+                            { to: "/instructor/course/" + course.id, title: course.title },
+                            { to: "/instructor/quiz/" + quiz.id, title: quiz.title },
+                            { to: "/instructor/quiz/" + quiz.id + "/score", title: "View Scores", active: true }
+                        ]} />
 
                         <div className="is-flex-tablet">
                             <div style={{flex: 1}}>

@@ -11,6 +11,7 @@ import LoadingBox from '../shared/LoadingBox';
 import { formatScore, predictedScore, wadayanoScore, stringCompare } from '../../utils';
 import AggregatedQuizReview from './AggregatedQuizReview';
 import Modal from '../shared/Modal';
+import Breadcrumbs from '../shared/Breadcrumbs';
 
 class CourseScores extends Component {
     constructor(props) {
@@ -183,13 +184,11 @@ class CourseScores extends Component {
                 <section className="section">
                     <div className="container">
 
-                        <nav className="breadcrumb" aria-label="breadcrumbs">
-                            <ul>
-                                <li><Link to="/instructor/courses">Course List</Link></li>
-                                <li><Link to={"/instructor/course/" + course.id}>{course.title}</Link></li>
-                                <li className="is-active"><Link to={"/instructor/course/" + course.id + "/scores"} aria-current="page">Course Scores</Link></li>
-                            </ul>
-                        </nav>
+                        <Breadcrumbs links={[
+                            { to: "/instructor/courses", title: "Course List" },
+                            { to: "/instructor/course/"+course.id, title: course.title },
+                            { to: "/instructor/course/" + course.id + "/scores", title: "Course Scores", active: true },
+                        ]} />
 
                         <h3 className="title is-3 is-inline">Quizzes in {course.title}</h3>
                     </div>

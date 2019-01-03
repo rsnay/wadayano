@@ -15,6 +15,7 @@ import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
 import Modal from '../shared/Modal';
+import Breadcrumbs from '../shared/Breadcrumbs';
 
 export class QuizEditor extends Component {
     constructor(props) {
@@ -330,13 +331,12 @@ export class QuizEditor extends Component {
     return (
         <section className="section">
         <div className="container">
-        <nav className="breadcrumb" aria-label="breadcrumbs">
-            <ul>
-                <li><Link to="/instructor/courses">Course List</Link></li>
-                <li><Link to={"/instructor/course/" + quiz.course.id}>{quiz.course.title}</Link></li>
-                <li className="is-active"><Link to={"/instructor/quiz/" + quiz.id} aria-current="page">{quiz.title}</Link></li>
-            </ul>
-        </nav>
+
+        <Breadcrumbs links={[
+            { to: "/instructor/courses", title: "Course List" },
+            { to: "/instructor/course/" + quiz.course.id, title: quiz.course.title },
+            { to: "/instructor/quiz/" + quiz.id, title: quiz.title, active: true }
+        ]} />
 
         <section>
             <div className="is-flex-tablet">

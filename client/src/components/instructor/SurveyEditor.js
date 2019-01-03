@@ -11,6 +11,7 @@ import LoadingBox from '../shared/LoadingBox';
 import SurveyView from '../shared/SurveyView';
 import Modal from '../shared/Modal';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
+import Breadcrumbs from '../shared/Breadcrumbs';
 
 class SurveyEditor extends Component {
     constructor(props) {
@@ -172,13 +173,11 @@ class SurveyEditor extends Component {
             <section className="section">
                 <div className="container">
 
-                    <nav className="breadcrumb" aria-label="breadcrumbs">
-                        <ul>
-                            <li><Link to="/instructor/courses">Course List</Link></li>
-                            <li><Link to={"/instructor/course/" + course.id}>{course.title}</Link></li>
-                            <li className="is-active"><Link to={"/instructor/survey/edit/" + course.id} aria-current="page">Edit Course Survey</Link></li>
-                        </ul>
-                    </nav>
+                    <Breadcrumbs links={[
+                        { to: "/instructor/courses", title: "Course List" },
+                        { to: "/instructor/course/" + course.id, title: course.title },
+                        { to: "/instructor/survey/edit/" + course.id, title: "Edit Course Survey", active: true },
+                    ]} />
 
                     <h3 className="title is-3">Course Survey</h3>
                     <i className="">Note: modifying the survey (except for adding new questions to the very end) after students have taken it will invalidate existing student responses.</i>

@@ -9,6 +9,7 @@ import { withAuthCheck } from '../shared/AuthCheck';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import { stripTags } from '../../utils';
+import Breadcrumbs from '../shared/Breadcrumbs';
 
 class QuestionImporter extends Component {
     constructor(props) {
@@ -142,14 +143,12 @@ class QuestionImporter extends Component {
             <section className="section">
               <div className="container">
 
-                <nav className="breadcrumb" aria-label="breadcrumbs">
-                    <ul>
-                        <li><Link to="/instructor/courses">Course List</Link></li>
-                        <li><Link to={"/instructor/course/" + quiz.course.id}>{quiz.course.title}</Link></li>
-                        <li><Link to={"/instructor/quiz/" + quiz.id} aria-current="page">{quiz.title}</Link></li>
-                        <li className="is-active"><Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} aria-current="page">Import Questions</Link></li>
-                    </ul>
-                </nav>
+                <Breadcrumbs links={[
+                    { to: "/instructor/courses", title: "Course List" },
+                    { to: "/instructor/course/" + quiz.course.id, title: quiz.course.title },
+                    { to: "/instructor/quiz/" + quiz.id, title: quiz.title },
+                    { to: "/instructor/quiz/" + quiz.id + "/import-questions", title: "Import Questions", active: true }
+                ]} />
 
                 <h4 className="title is-4">Select questions from other quizzes in this course to copy to “{quiz.title}”</h4>
 

@@ -9,6 +9,7 @@ import CsvGenerator from './CsvGenerator';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+import Breadcrumbs from '../shared/Breadcrumbs';
 
 class SurveyResults extends Component {
     constructor(props) {
@@ -130,13 +131,11 @@ class SurveyResults extends Component {
                 <section className="section">
                     <div className="container">
 
-                        <nav className="breadcrumb" aria-label="breadcrumbs">
-                            <ul>
-                                <li><Link to="/instructor/courses">Course List</Link></li>
-                                <li><Link to={"/instructor/course/" + course.id}>{course.title}</Link></li>
-                                <li className="is-active"><Link to={"/instructor/survey/edit/" + course.id} aria-current="page">Survey Results</Link></li>
-                            </ul>
-                        </nav>
+                        <Breadcrumbs links={[
+                            { to: "/instructor/courses", title: "Course List" },
+                            { to: "/instructor/course/" + course.id, title: course.title },
+                            { to: "/instructor/survey/results/" + course.id, title: "Survey Results", active: true },
+                        ]} />
 
                         <h3 className="title is-3 is-inline">Survey Results</h3>
 
