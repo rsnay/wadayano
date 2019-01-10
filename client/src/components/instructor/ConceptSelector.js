@@ -63,9 +63,9 @@ class ConceptSelector extends Component {
         }
 
 
-        let suggestionsList = this.state.showSuggestions && (
+        let suggestionsList = this.state.showSuggestions ? (
             <span className="concept-suggestions-list">
-            {filteredConcepts.map(concept => (
+            {filteredConcepts.slice(0,10).map(concept => (
                 <button key={concept} className="concept-tag tag is-light" onClick={() => this._setConcept(concept, false)}>{concept}</button>
             ))}
             {/* Add current filter text, if not empty or already present */}
@@ -73,7 +73,7 @@ class ConceptSelector extends Component {
                 <button key={filterText} className="concept-tag tag is-link" onClick={() => this._setConcept(filterText, false)}>+ {filterText}</button>
             }
             </span>
-        );
+        ) : (<span className="concept-suggestions-list"></span>);
 
         return (
             <React.Fragment>
