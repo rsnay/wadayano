@@ -23,6 +23,7 @@ import 'tinymce/plugins/lists';
 import 'tinymce/plugins/textcolor';
 import { Editor } from '@tinymce/tinymce-react';
 import { stripTags } from '../../utils';
+import fragments from '../../fragments';
 
 // Main editor configuration
 const tinymceConfig = {
@@ -90,7 +91,7 @@ export class CollapsibleQuestionEditor extends Component {
                     {id: '_newOption7', text: '', isCorrect: false},
                     {id: '_newOption8', text: '', isCorrect: false}
                 ],
-                correctShortAnswers: ["a","b"]
+                correctShortAnswers: []
             };
             this.setState({ isLoading: false, question, isExpanded: true, isNew: true });
         } else {
@@ -199,7 +200,7 @@ export class CollapsibleQuestionEditor extends Component {
                 // Ensure there is at least 1 non-empty correct short answer
                 const shortAnswers = question.correctShortAnswers.filter(answer => answer.trim() !== '');
                 if (shortAnswers.length === 0) {
-                    return 'There must be at least one correct short answer.';
+                    return 'There must be at least one non-blank correct short answer.';
                 }
                 break;
             default:
@@ -440,7 +441,8 @@ export class CollapsibleQuestionEditor extends Component {
             </form>
         );
 
-        // Always displya an empty answer at the end to easily add
+        // Always display an empty answer textbox at the end to easily add another
+        // Add the empty to a copy of the correctShortAnswers array to not actually store in question
         let correctShortAnswers = question ? question.correctShortAnswers.slice() : [];
         correctShortAnswers.push('');
         const shortAnswersEditor = (isExpanded && question.type === SHORT_ANSWER) && (
@@ -511,56 +513,35 @@ CollapsibleQuestionEditor.propTypes = {
 };
 
 const QUESTION_QUERY = gql`
-query questionQuery($id: ID!) {
-    question(id:$id){
-        id
-        concept
-        prompt
-        type
-        correctShortAnswers
-        options{
-            id
-            text
-            isCorrect
+    query questionQuery($id: ID!) {
+        question(id:$id) {
+            ...InstructorFullQuestion
         }
     }
-}
-`
+    ${fragments.instructorFullQuestion}
+`;
+
 export const ADD_QUESTION = gql`
-mutation addQuestionMutation($quizId: ID!, $question: QuestionCreateInput!) {
-    addQuestion(quizId: $quizId, question: $question) {
-        id
-        concept
-        prompt
-        type
-        correctShortAnswers
-        options{
-            id
-            text
-            isCorrect
+    mutation addQuestionMutation($quizId: ID!, $question: QuestionCreateInput!) {
+        addQuestion(quizId: $quizId, question: $question) {
+            ...InstructorFullQuestion
         }
     }
-}`
+    ${fragments.instructorFullQuestion}
+`;
 
 export const UPDATE_QUESTION = gql`
-mutation updateQuestionMutation($id: ID!, $data: QuestionUpdateInput!) {
-    updateQuestion(id: $id, data: $data) {
-        id
-        concept
-        prompt
-        type
-        correctShortAnswers
-        options{
-            id
-            text
-            isCorrect
+    mutation updateQuestionMutation($id: ID!, $data: QuestionUpdateInput!) {
+        updateQuestion(id: $id, data: $data) {
+            ...InstructorFullQuestion
         }
     }
-}`
+    ${fragments.instructorFullQuestion}
+`;
 
 export const DELETE_QUESTION = gql`
 mutation deleteQuestionMutation($id: ID!) {
-    deleteQuestion(id: $id){
+    deleteQuestion(id: $id) {
         id
     }
 }`
