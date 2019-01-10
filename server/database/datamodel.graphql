@@ -65,11 +65,18 @@ type Quiz {
     type: QuizType!
 }
 
+enum QuestionType {
+    MULTIPLE_CHOICE
+    SHORT_ANSWER
+}
+
 type Question {
     id: ID! @unique
-    options: [Option!]! @relation(name: "QuestionOptions", onDelete: CASCADE)
+    options: [Option!] @relation(name: "QuestionOptions", onDelete: CASCADE)
+    correctShortAnswers: [String!]
     prompt: String!
     concept: String
+    type: QuestionType!
 }
 
 type Option {
@@ -101,9 +108,11 @@ type QuestionAttempt {
     id: ID! @unique
     createdAt: DateTime!
     question: Question!
-    option: Option! @relation(name: "SelectedAnswerAttemptRelation", onDelete: SET_NULL)
-    isCorrect: Boolean! # Yes, this is duplicating isCorrect from Option, but student should be able to review their past attempts without us always having to expose isCorrect on Options
-    correctOption: Option! @relation(name: "CorrectAnswerAttemptRelation", onDelete: SET_NULL) # See note for isCorrect
+    option: Option @relation(name: "SelectedAnswerAttemptRelation", onDelete: SET_NULL)
+    shortAnswer: String # Original student-inputted short answer
+    isCorrect: Boolean! # Yes, this is duplicating isCorrect from Option, but student should be able to review their past attempts without us always having to expose isCorrect on Options or the correctShortAnswers
+    correctOption: Option @relation(name: "CorrectAnswerAttemptRelation", onDelete: SET_NULL) # See note for isCorrect
+    correctShortAnswer: String  # See note for isCorrect
     isConfident: Boolean!
 }
 

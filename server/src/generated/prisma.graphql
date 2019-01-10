@@ -1,5 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Fri Sep 21 2018 17:16:30 GMT-0600 (Mountain Daylight Time)
+# timestamp: Wed Jan 09 2019 19:06:34 GMT-0700 (Mountain Standard Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -108,6 +108,119 @@ type ConceptConfidencePreviousValues {
   confidence: Int
 }
 
+input ConceptConfidenceScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ConceptConfidenceScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ConceptConfidenceScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ConceptConfidenceScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  concept: String
+
+  """All values that are not equal to given value."""
+  concept_not: String
+
+  """All values that are contained in given list."""
+  concept_in: [String!]
+
+  """All values that are not contained in given list."""
+  concept_not_in: [String!]
+
+  """All values less than the given value."""
+  concept_lt: String
+
+  """All values less than or equal the given value."""
+  concept_lte: String
+
+  """All values greater than the given value."""
+  concept_gt: String
+
+  """All values greater than or equal the given value."""
+  concept_gte: String
+
+  """All values containing the given string."""
+  concept_contains: String
+
+  """All values not containing the given string."""
+  concept_not_contains: String
+
+  """All values starting with the given string."""
+  concept_starts_with: String
+
+  """All values not starting with the given string."""
+  concept_not_starts_with: String
+
+  """All values ending with the given string."""
+  concept_ends_with: String
+
+  """All values not ending with the given string."""
+  concept_not_ends_with: String
+  confidence: Int
+
+  """All values that are not equal to given value."""
+  confidence_not: Int
+
+  """All values that are contained in given list."""
+  confidence_in: [Int!]
+
+  """All values that are not contained in given list."""
+  confidence_not_in: [Int!]
+
+  """All values less than the given value."""
+  confidence_lt: Int
+
+  """All values less than or equal the given value."""
+  confidence_lte: Int
+
+  """All values greater than the given value."""
+  confidence_gt: Int
+
+  """All values greater than or equal the given value."""
+  confidence_gte: Int
+}
+
 type ConceptConfidenceSubscriptionPayload {
   mutation: MutationType!
   node: ConceptConfidence
@@ -157,13 +270,30 @@ input ConceptConfidenceUpdateInput {
   confidence: Int
 }
 
+input ConceptConfidenceUpdateManyDataInput {
+  concept: String
+  confidence: Int
+}
+
 input ConceptConfidenceUpdateManyInput {
   create: [ConceptConfidenceCreateInput!]
   connect: [ConceptConfidenceWhereUniqueInput!]
   disconnect: [ConceptConfidenceWhereUniqueInput!]
   delete: [ConceptConfidenceWhereUniqueInput!]
   update: [ConceptConfidenceUpdateWithWhereUniqueNestedInput!]
+  updateMany: [ConceptConfidenceUpdateManyWithWhereNestedInput!]
+  deleteMany: [ConceptConfidenceScalarWhereInput!]
   upsert: [ConceptConfidenceUpsertWithWhereUniqueNestedInput!]
+}
+
+input ConceptConfidenceUpdateManyMutationInput {
+  concept: String
+  confidence: Int
+}
+
+input ConceptConfidenceUpdateManyWithWhereNestedInput {
+  where: ConceptConfidenceScalarWhereInput!
+  data: ConceptConfidenceUpdateManyDataInput!
 }
 
 input ConceptConfidenceUpdateWithWhereUniqueNestedInput {
@@ -288,9 +418,6 @@ input ConceptConfidenceWhereInput {
 
   """All values greater than or equal the given value."""
   confidence_gte: Int
-  _MagicalBackRelation_QuizAttemptConceptConfidences_every: QuizAttemptWhereInput
-  _MagicalBackRelation_QuizAttemptConceptConfidences_some: QuizAttemptWhereInput
-  _MagicalBackRelation_QuizAttemptConceptConfidences_none: QuizAttemptWhereInput
 }
 
 input ConceptConfidenceWhereUniqueInput {
@@ -458,6 +585,239 @@ type CoursePreviousValues {
   survey: Json
 }
 
+input CourseScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CourseScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CourseScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CourseScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  number: String
+
+  """All values that are not equal to given value."""
+  number_not: String
+
+  """All values that are contained in given list."""
+  number_in: [String!]
+
+  """All values that are not contained in given list."""
+  number_not_in: [String!]
+
+  """All values less than the given value."""
+  number_lt: String
+
+  """All values less than or equal the given value."""
+  number_lte: String
+
+  """All values greater than the given value."""
+  number_gt: String
+
+  """All values greater than or equal the given value."""
+  number_gte: String
+
+  """All values containing the given string."""
+  number_contains: String
+
+  """All values not containing the given string."""
+  number_not_contains: String
+
+  """All values starting with the given string."""
+  number_starts_with: String
+
+  """All values not starting with the given string."""
+  number_not_starts_with: String
+
+  """All values ending with the given string."""
+  number_ends_with: String
+
+  """All values not ending with the given string."""
+  number_not_ends_with: String
+  lmsUrl: String
+
+  """All values that are not equal to given value."""
+  lmsUrl_not: String
+
+  """All values that are contained in given list."""
+  lmsUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  lmsUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  lmsUrl_lt: String
+
+  """All values less than or equal the given value."""
+  lmsUrl_lte: String
+
+  """All values greater than the given value."""
+  lmsUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  lmsUrl_gte: String
+
+  """All values containing the given string."""
+  lmsUrl_contains: String
+
+  """All values not containing the given string."""
+  lmsUrl_not_contains: String
+
+  """All values starting with the given string."""
+  lmsUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  lmsUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  lmsUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  lmsUrl_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  ltiSecret: String
+
+  """All values that are not equal to given value."""
+  ltiSecret_not: String
+
+  """All values that are contained in given list."""
+  ltiSecret_in: [String!]
+
+  """All values that are not contained in given list."""
+  ltiSecret_not_in: [String!]
+
+  """All values less than the given value."""
+  ltiSecret_lt: String
+
+  """All values less than or equal the given value."""
+  ltiSecret_lte: String
+
+  """All values greater than the given value."""
+  ltiSecret_gt: String
+
+  """All values greater than or equal the given value."""
+  ltiSecret_gte: String
+
+  """All values containing the given string."""
+  ltiSecret_contains: String
+
+  """All values not containing the given string."""
+  ltiSecret_not_contains: String
+
+  """All values starting with the given string."""
+  ltiSecret_starts_with: String
+
+  """All values not starting with the given string."""
+  ltiSecret_not_starts_with: String
+
+  """All values ending with the given string."""
+  ltiSecret_ends_with: String
+
+  """All values not ending with the given string."""
+  ltiSecret_not_ends_with: String
+}
+
 type CourseSubscriptionPayload {
   mutation: MutationType!
   node: Course
@@ -510,12 +870,30 @@ input CourseUpdateInput {
   pendingCourseInvites: PendingCourseInviteUpdateManyWithoutCourseInput
 }
 
+input CourseUpdateManyDataInput {
+  title: String
+  number: String
+  lmsUrl: String
+  ltiSecret: String
+  survey: Json
+}
+
+input CourseUpdateManyMutationInput {
+  title: String
+  number: String
+  lmsUrl: String
+  ltiSecret: String
+  survey: Json
+}
+
 input CourseUpdateManyWithoutInstructorsInput {
   create: [CourseCreateWithoutInstructorsInput!]
   connect: [CourseWhereUniqueInput!]
   disconnect: [CourseWhereUniqueInput!]
   delete: [CourseWhereUniqueInput!]
   update: [CourseUpdateWithWhereUniqueWithoutInstructorsInput!]
+  updateMany: [CourseUpdateManyWithWhereNestedInput!]
+  deleteMany: [CourseScalarWhereInput!]
   upsert: [CourseUpsertWithWhereUniqueWithoutInstructorsInput!]
 }
 
@@ -525,15 +903,28 @@ input CourseUpdateManyWithoutStudentsInput {
   disconnect: [CourseWhereUniqueInput!]
   delete: [CourseWhereUniqueInput!]
   update: [CourseUpdateWithWhereUniqueWithoutStudentsInput!]
+  updateMany: [CourseUpdateManyWithWhereNestedInput!]
+  deleteMany: [CourseScalarWhereInput!]
   upsert: [CourseUpsertWithWhereUniqueWithoutStudentsInput!]
 }
 
-input CourseUpdateOneWithoutPendingCourseInvitesInput {
+input CourseUpdateManyWithWhereNestedInput {
+  where: CourseScalarWhereInput!
+  data: CourseUpdateManyDataInput!
+}
+
+input CourseUpdateOneRequiredWithoutPendingCourseInvitesInput {
   create: CourseCreateWithoutPendingCourseInvitesInput
   connect: CourseWhereUniqueInput
-  delete: Boolean
   update: CourseUpdateWithoutPendingCourseInvitesDataInput
   upsert: CourseUpsertWithoutPendingCourseInvitesInput
+}
+
+input CourseUpdateOneRequiredWithoutSurveyResultsInput {
+  create: CourseCreateWithoutSurveyResultsInput
+  connect: CourseWhereUniqueInput
+  update: CourseUpdateWithoutSurveyResultsDataInput
+  upsert: CourseUpsertWithoutSurveyResultsInput
 }
 
 input CourseUpdateOneWithoutQuizzesInput {
@@ -543,14 +934,6 @@ input CourseUpdateOneWithoutQuizzesInput {
   delete: Boolean
   update: CourseUpdateWithoutQuizzesDataInput
   upsert: CourseUpsertWithoutQuizzesInput
-}
-
-input CourseUpdateOneWithoutSurveyResultsInput {
-  create: CourseCreateWithoutSurveyResultsInput
-  connect: CourseWhereUniqueInput
-  delete: Boolean
-  update: CourseUpdateWithoutSurveyResultsDataInput
-  upsert: CourseUpsertWithoutSurveyResultsInput
 }
 
 input CourseUpdateWithoutInstructorsDataInput {
@@ -968,7 +1351,7 @@ enum InstructorOrderByInput {
 type InstructorPasswordResetToken implements Node {
   id: ID!
   createdAt: DateTime!
-  instructor(where: InstructorWhereInput): Instructor!
+  instructor: Instructor!
 }
 
 """A connection to a list of items."""
@@ -1048,7 +1431,7 @@ input InstructorPasswordResetTokenSubscriptionWhereInput {
 }
 
 input InstructorPasswordResetTokenUpdateInput {
-  instructor: InstructorUpdateOneInput
+  instructor: InstructorUpdateOneRequiredInput
 }
 
 input InstructorPasswordResetTokenWhereInput {
@@ -1136,6 +1519,159 @@ type InstructorPreviousValues {
   createdAt: DateTime!
 }
 
+input InstructorScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InstructorScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InstructorScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InstructorScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+}
+
 type InstructorSubscriptionPayload {
   mutation: MutationType!
   node: Instructor
@@ -1187,19 +1723,35 @@ input InstructorUpdateInput {
   courses: CourseUpdateManyWithoutInstructorsInput
 }
 
+input InstructorUpdateManyDataInput {
+  email: String
+  password: String
+}
+
+input InstructorUpdateManyMutationInput {
+  email: String
+  password: String
+}
+
 input InstructorUpdateManyWithoutCoursesInput {
   create: [InstructorCreateWithoutCoursesInput!]
   connect: [InstructorWhereUniqueInput!]
   disconnect: [InstructorWhereUniqueInput!]
   delete: [InstructorWhereUniqueInput!]
   update: [InstructorUpdateWithWhereUniqueWithoutCoursesInput!]
+  updateMany: [InstructorUpdateManyWithWhereNestedInput!]
+  deleteMany: [InstructorScalarWhereInput!]
   upsert: [InstructorUpsertWithWhereUniqueWithoutCoursesInput!]
 }
 
-input InstructorUpdateOneInput {
+input InstructorUpdateManyWithWhereNestedInput {
+  where: InstructorScalarWhereInput!
+  data: InstructorUpdateManyDataInput!
+}
+
+input InstructorUpdateOneRequiredInput {
   create: InstructorCreateInput
   connect: InstructorWhereUniqueInput
-  delete: Boolean
   update: InstructorUpdateDataInput
   upsert: InstructorUpsertNestedInput
 }
@@ -1379,9 +1931,6 @@ input InstructorWhereInput {
   courses_every: CourseWhereInput
   courses_some: CourseWhereInput
   courses_none: CourseWhereInput
-  _MagicalBackRelation_InstructorToInstructorPasswordResetToken_every: InstructorPasswordResetTokenWhereInput
-  _MagicalBackRelation_InstructorToInstructorPasswordResetToken_some: InstructorPasswordResetTokenWhereInput
-  _MagicalBackRelation_InstructorToInstructorPasswordResetToken_none: InstructorPasswordResetTokenWhereInput
 }
 
 input InstructorWhereUniqueInput {
@@ -1447,18 +1996,17 @@ type Mutation {
   upsertQuestionAttempt(where: QuestionAttemptWhereUniqueInput!, create: QuestionAttemptCreateInput!, update: QuestionAttemptUpdateInput!): QuestionAttempt!
   upsertConceptConfidence(where: ConceptConfidenceWhereUniqueInput!, create: ConceptConfidenceCreateInput!, update: ConceptConfidenceUpdateInput!): ConceptConfidence!
   upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
-  updateManyInstructorPasswordResetTokens(data: InstructorPasswordResetTokenUpdateInput!, where: InstructorPasswordResetTokenWhereInput): BatchPayload!
-  updateManyStudents(data: StudentUpdateInput!, where: StudentWhereInput): BatchPayload!
-  updateManyCourses(data: CourseUpdateInput!, where: CourseWhereInput): BatchPayload!
-  updateManyPendingCourseInvites(data: PendingCourseInviteUpdateInput!, where: PendingCourseInviteWhereInput): BatchPayload!
-  updateManyQuizzes(data: QuizUpdateInput!, where: QuizWhereInput): BatchPayload!
-  updateManyOptions(data: OptionUpdateInput!, where: OptionWhereInput): BatchPayload!
-  updateManyQuizAttempts(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereInput): BatchPayload!
-  updateManySurveyResults(data: SurveyResultUpdateInput!, where: SurveyResultWhereInput): BatchPayload!
-  updateManyInstructors(data: InstructorUpdateInput!, where: InstructorWhereInput): BatchPayload!
-  updateManyQuestionAttempts(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereInput): BatchPayload!
-  updateManyConceptConfidences(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereInput): BatchPayload!
-  updateManyQuestions(data: QuestionUpdateInput!, where: QuestionWhereInput): BatchPayload!
+  updateManyStudents(data: StudentUpdateManyMutationInput!, where: StudentWhereInput): BatchPayload!
+  updateManyCourses(data: CourseUpdateManyMutationInput!, where: CourseWhereInput): BatchPayload!
+  updateManyPendingCourseInvites(data: PendingCourseInviteUpdateManyMutationInput!, where: PendingCourseInviteWhereInput): BatchPayload!
+  updateManyQuizzes(data: QuizUpdateManyMutationInput!, where: QuizWhereInput): BatchPayload!
+  updateManyOptions(data: OptionUpdateManyMutationInput!, where: OptionWhereInput): BatchPayload!
+  updateManyQuizAttempts(data: QuizAttemptUpdateManyMutationInput!, where: QuizAttemptWhereInput): BatchPayload!
+  updateManySurveyResults(data: SurveyResultUpdateManyMutationInput!, where: SurveyResultWhereInput): BatchPayload!
+  updateManyInstructors(data: InstructorUpdateManyMutationInput!, where: InstructorWhereInput): BatchPayload!
+  updateManyQuestionAttempts(data: QuestionAttemptUpdateManyMutationInput!, where: QuestionAttemptWhereInput): BatchPayload!
+  updateManyConceptConfidences(data: ConceptConfidenceUpdateManyMutationInput!, where: ConceptConfidenceWhereInput): BatchPayload!
+  updateManyQuestions(data: QuestionUpdateManyMutationInput!, where: QuestionWhereInput): BatchPayload!
   deleteManyInstructorPasswordResetTokens(where: InstructorPasswordResetTokenWhereInput): BatchPayload!
   deleteManyStudents(where: StudentWhereInput): BatchPayload!
   deleteManyCourses(where: CourseWhereInput): BatchPayload!
@@ -1487,7 +2035,7 @@ interface Node {
 
 type Option implements Node {
   id: ID!
-  question(where: QuestionWhereInput): Question
+  question: Question
   isCorrect: Boolean
   text: String!
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt!]
@@ -1576,6 +2124,101 @@ type OptionPreviousValues {
   text: String!
 }
 
+input OptionScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [OptionScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [OptionScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [OptionScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  isCorrect: Boolean
+
+  """All values that are not equal to given value."""
+  isCorrect_not: Boolean
+  text: String
+
+  """All values that are not equal to given value."""
+  text_not: String
+
+  """All values that are contained in given list."""
+  text_in: [String!]
+
+  """All values that are not contained in given list."""
+  text_not_in: [String!]
+
+  """All values less than the given value."""
+  text_lt: String
+
+  """All values less than or equal the given value."""
+  text_lte: String
+
+  """All values greater than the given value."""
+  text_gt: String
+
+  """All values greater than or equal the given value."""
+  text_gte: String
+
+  """All values containing the given string."""
+  text_contains: String
+
+  """All values not containing the given string."""
+  text_not_contains: String
+
+  """All values starting with the given string."""
+  text_starts_with: String
+
+  """All values not starting with the given string."""
+  text_not_starts_with: String
+
+  """All values ending with the given string."""
+  text_ends_with: String
+
+  """All values not ending with the given string."""
+  text_not_ends_with: String
+}
+
 type OptionSubscriptionPayload {
   mutation: MutationType!
   node: Option
@@ -1623,18 +2266,36 @@ input OptionUpdateInput {
   correctQuestionAttempts: QuestionAttemptUpdateManyWithoutCorrectOptionInput
 }
 
+input OptionUpdateManyDataInput {
+  isCorrect: Boolean
+  text: String
+}
+
+input OptionUpdateManyMutationInput {
+  isCorrect: Boolean
+  text: String
+}
+
 input OptionUpdateManyWithoutQuestionInput {
   create: [OptionCreateWithoutQuestionInput!]
   connect: [OptionWhereUniqueInput!]
   disconnect: [OptionWhereUniqueInput!]
   delete: [OptionWhereUniqueInput!]
   update: [OptionUpdateWithWhereUniqueWithoutQuestionInput!]
+  updateMany: [OptionUpdateManyWithWhereNestedInput!]
+  deleteMany: [OptionScalarWhereInput!]
   upsert: [OptionUpsertWithWhereUniqueWithoutQuestionInput!]
+}
+
+input OptionUpdateManyWithWhereNestedInput {
+  where: OptionScalarWhereInput!
+  data: OptionUpdateManyDataInput!
 }
 
 input OptionUpdateOneWithoutCorrectQuestionAttemptsInput {
   create: OptionCreateWithoutCorrectQuestionAttemptsInput
   connect: OptionWhereUniqueInput
+  disconnect: Boolean
   delete: Boolean
   update: OptionUpdateWithoutCorrectQuestionAttemptsDataInput
   upsert: OptionUpsertWithoutCorrectQuestionAttemptsInput
@@ -1643,6 +2304,7 @@ input OptionUpdateOneWithoutCorrectQuestionAttemptsInput {
 input OptionUpdateOneWithoutQuestionAttemptsInput {
   create: OptionCreateWithoutQuestionAttemptsInput
   connect: OptionWhereUniqueInput
+  disconnect: Boolean
   delete: Boolean
   update: OptionUpdateWithoutQuestionAttemptsDataInput
   upsert: OptionUpsertWithoutQuestionAttemptsInput
@@ -1815,7 +2477,7 @@ type PendingCourseInvite implements Node {
   id: ID!
   createdAt: DateTime!
   email: String!
-  course(where: CourseWhereInput): Course!
+  course: Course!
 }
 
 """A connection to a list of items."""
@@ -1868,6 +2530,119 @@ type PendingCourseInvitePreviousValues {
   email: String!
 }
 
+input PendingCourseInviteScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PendingCourseInviteScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PendingCourseInviteScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PendingCourseInviteScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+}
+
 type PendingCourseInviteSubscriptionPayload {
   mutation: MutationType!
   node: PendingCourseInvite
@@ -1909,7 +2684,15 @@ input PendingCourseInviteSubscriptionWhereInput {
 
 input PendingCourseInviteUpdateInput {
   email: String
-  course: CourseUpdateOneWithoutPendingCourseInvitesInput
+  course: CourseUpdateOneRequiredWithoutPendingCourseInvitesInput
+}
+
+input PendingCourseInviteUpdateManyDataInput {
+  email: String
+}
+
+input PendingCourseInviteUpdateManyMutationInput {
+  email: String
 }
 
 input PendingCourseInviteUpdateManyWithoutCourseInput {
@@ -1918,7 +2701,14 @@ input PendingCourseInviteUpdateManyWithoutCourseInput {
   disconnect: [PendingCourseInviteWhereUniqueInput!]
   delete: [PendingCourseInviteWhereUniqueInput!]
   update: [PendingCourseInviteUpdateWithWhereUniqueWithoutCourseInput!]
+  updateMany: [PendingCourseInviteUpdateManyWithWhereNestedInput!]
+  deleteMany: [PendingCourseInviteScalarWhereInput!]
   upsert: [PendingCourseInviteUpsertWithWhereUniqueWithoutCourseInput!]
+}
+
+input PendingCourseInviteUpdateManyWithWhereNestedInput {
+  where: PendingCourseInviteScalarWhereInput!
+  data: PendingCourseInviteUpdateManyDataInput!
 }
 
 input PendingCourseInviteUpdateWithoutCourseDataInput {
@@ -2102,17 +2892,21 @@ type Query {
 type Question implements Node {
   id: ID!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option!]
+  correctShortAnswers: [String!]!
   prompt: String!
   concept: String
+  type: QuestionType!
 }
 
 type QuestionAttempt implements Node {
   id: ID!
   createdAt: DateTime!
-  question(where: QuestionWhereInput): Question!
-  option(where: OptionWhereInput): Option!
+  question: Question!
+  option: Option
+  shortAnswer: String
   isCorrect: Boolean!
-  correctOption(where: OptionWhereInput): Option!
+  correctOption: Option
+  correctShortAnswer: String
   isConfident: Boolean!
 }
 
@@ -2127,11 +2921,13 @@ type QuestionAttemptConnection {
 }
 
 input QuestionAttemptCreateInput {
+  shortAnswer: String
   isCorrect: Boolean!
+  correctShortAnswer: String
   isConfident: Boolean!
   question: QuestionCreateOneInput!
-  option: OptionCreateOneWithoutQuestionAttemptsInput!
-  correctOption: OptionCreateOneWithoutCorrectQuestionAttemptsInput!
+  option: OptionCreateOneWithoutQuestionAttemptsInput
+  correctOption: OptionCreateOneWithoutCorrectQuestionAttemptsInput
 }
 
 input QuestionAttemptCreateManyInput {
@@ -2150,17 +2946,21 @@ input QuestionAttemptCreateManyWithoutOptionInput {
 }
 
 input QuestionAttemptCreateWithoutCorrectOptionInput {
+  shortAnswer: String
   isCorrect: Boolean!
+  correctShortAnswer: String
   isConfident: Boolean!
   question: QuestionCreateOneInput!
-  option: OptionCreateOneWithoutQuestionAttemptsInput!
+  option: OptionCreateOneWithoutQuestionAttemptsInput
 }
 
 input QuestionAttemptCreateWithoutOptionInput {
+  shortAnswer: String
   isCorrect: Boolean!
+  correctShortAnswer: String
   isConfident: Boolean!
   question: QuestionCreateOneInput!
-  correctOption: OptionCreateOneWithoutCorrectQuestionAttemptsInput!
+  correctOption: OptionCreateOneWithoutCorrectQuestionAttemptsInput
 }
 
 """An edge in a connection."""
@@ -2177,8 +2977,12 @@ enum QuestionAttemptOrderByInput {
   id_DESC
   createdAt_ASC
   createdAt_DESC
+  shortAnswer_ASC
+  shortAnswer_DESC
   isCorrect_ASC
   isCorrect_DESC
+  correctShortAnswer_ASC
+  correctShortAnswer_DESC
   isConfident_ASC
   isConfident_DESC
   updatedAt_ASC
@@ -2188,8 +2992,171 @@ enum QuestionAttemptOrderByInput {
 type QuestionAttemptPreviousValues {
   id: ID!
   createdAt: DateTime!
+  shortAnswer: String
   isCorrect: Boolean!
+  correctShortAnswer: String
   isConfident: Boolean!
+}
+
+input QuestionAttemptScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuestionAttemptScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuestionAttemptScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuestionAttemptScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  shortAnswer: String
+
+  """All values that are not equal to given value."""
+  shortAnswer_not: String
+
+  """All values that are contained in given list."""
+  shortAnswer_in: [String!]
+
+  """All values that are not contained in given list."""
+  shortAnswer_not_in: [String!]
+
+  """All values less than the given value."""
+  shortAnswer_lt: String
+
+  """All values less than or equal the given value."""
+  shortAnswer_lte: String
+
+  """All values greater than the given value."""
+  shortAnswer_gt: String
+
+  """All values greater than or equal the given value."""
+  shortAnswer_gte: String
+
+  """All values containing the given string."""
+  shortAnswer_contains: String
+
+  """All values not containing the given string."""
+  shortAnswer_not_contains: String
+
+  """All values starting with the given string."""
+  shortAnswer_starts_with: String
+
+  """All values not starting with the given string."""
+  shortAnswer_not_starts_with: String
+
+  """All values ending with the given string."""
+  shortAnswer_ends_with: String
+
+  """All values not ending with the given string."""
+  shortAnswer_not_ends_with: String
+  isCorrect: Boolean
+
+  """All values that are not equal to given value."""
+  isCorrect_not: Boolean
+  correctShortAnswer: String
+
+  """All values that are not equal to given value."""
+  correctShortAnswer_not: String
+
+  """All values that are contained in given list."""
+  correctShortAnswer_in: [String!]
+
+  """All values that are not contained in given list."""
+  correctShortAnswer_not_in: [String!]
+
+  """All values less than the given value."""
+  correctShortAnswer_lt: String
+
+  """All values less than or equal the given value."""
+  correctShortAnswer_lte: String
+
+  """All values greater than the given value."""
+  correctShortAnswer_gt: String
+
+  """All values greater than or equal the given value."""
+  correctShortAnswer_gte: String
+
+  """All values containing the given string."""
+  correctShortAnswer_contains: String
+
+  """All values not containing the given string."""
+  correctShortAnswer_not_contains: String
+
+  """All values starting with the given string."""
+  correctShortAnswer_starts_with: String
+
+  """All values not starting with the given string."""
+  correctShortAnswer_not_starts_with: String
+
+  """All values ending with the given string."""
+  correctShortAnswer_ends_with: String
+
+  """All values not ending with the given string."""
+  correctShortAnswer_not_ends_with: String
+  isConfident: Boolean
+
+  """All values that are not equal to given value."""
+  isConfident_not: Boolean
 }
 
 type QuestionAttemptSubscriptionPayload {
@@ -2232,19 +3199,30 @@ input QuestionAttemptSubscriptionWhereInput {
 }
 
 input QuestionAttemptUpdateDataInput {
+  shortAnswer: String
   isCorrect: Boolean
+  correctShortAnswer: String
   isConfident: Boolean
-  question: QuestionUpdateOneInput
+  question: QuestionUpdateOneRequiredInput
   option: OptionUpdateOneWithoutQuestionAttemptsInput
   correctOption: OptionUpdateOneWithoutCorrectQuestionAttemptsInput
 }
 
 input QuestionAttemptUpdateInput {
+  shortAnswer: String
   isCorrect: Boolean
+  correctShortAnswer: String
   isConfident: Boolean
-  question: QuestionUpdateOneInput
+  question: QuestionUpdateOneRequiredInput
   option: OptionUpdateOneWithoutQuestionAttemptsInput
   correctOption: OptionUpdateOneWithoutCorrectQuestionAttemptsInput
+}
+
+input QuestionAttemptUpdateManyDataInput {
+  shortAnswer: String
+  isCorrect: Boolean
+  correctShortAnswer: String
+  isConfident: Boolean
 }
 
 input QuestionAttemptUpdateManyInput {
@@ -2253,7 +3231,16 @@ input QuestionAttemptUpdateManyInput {
   disconnect: [QuestionAttemptWhereUniqueInput!]
   delete: [QuestionAttemptWhereUniqueInput!]
   update: [QuestionAttemptUpdateWithWhereUniqueNestedInput!]
+  updateMany: [QuestionAttemptUpdateManyWithWhereNestedInput!]
+  deleteMany: [QuestionAttemptScalarWhereInput!]
   upsert: [QuestionAttemptUpsertWithWhereUniqueNestedInput!]
+}
+
+input QuestionAttemptUpdateManyMutationInput {
+  shortAnswer: String
+  isCorrect: Boolean
+  correctShortAnswer: String
+  isConfident: Boolean
 }
 
 input QuestionAttemptUpdateManyWithoutCorrectOptionInput {
@@ -2262,6 +3249,8 @@ input QuestionAttemptUpdateManyWithoutCorrectOptionInput {
   disconnect: [QuestionAttemptWhereUniqueInput!]
   delete: [QuestionAttemptWhereUniqueInput!]
   update: [QuestionAttemptUpdateWithWhereUniqueWithoutCorrectOptionInput!]
+  updateMany: [QuestionAttemptUpdateManyWithWhereNestedInput!]
+  deleteMany: [QuestionAttemptScalarWhereInput!]
   upsert: [QuestionAttemptUpsertWithWhereUniqueWithoutCorrectOptionInput!]
 }
 
@@ -2271,20 +3260,31 @@ input QuestionAttemptUpdateManyWithoutOptionInput {
   disconnect: [QuestionAttemptWhereUniqueInput!]
   delete: [QuestionAttemptWhereUniqueInput!]
   update: [QuestionAttemptUpdateWithWhereUniqueWithoutOptionInput!]
+  updateMany: [QuestionAttemptUpdateManyWithWhereNestedInput!]
+  deleteMany: [QuestionAttemptScalarWhereInput!]
   upsert: [QuestionAttemptUpsertWithWhereUniqueWithoutOptionInput!]
 }
 
+input QuestionAttemptUpdateManyWithWhereNestedInput {
+  where: QuestionAttemptScalarWhereInput!
+  data: QuestionAttemptUpdateManyDataInput!
+}
+
 input QuestionAttemptUpdateWithoutCorrectOptionDataInput {
+  shortAnswer: String
   isCorrect: Boolean
+  correctShortAnswer: String
   isConfident: Boolean
-  question: QuestionUpdateOneInput
+  question: QuestionUpdateOneRequiredInput
   option: OptionUpdateOneWithoutQuestionAttemptsInput
 }
 
 input QuestionAttemptUpdateWithoutOptionDataInput {
+  shortAnswer: String
   isCorrect: Boolean
+  correctShortAnswer: String
   isConfident: Boolean
-  question: QuestionUpdateOneInput
+  question: QuestionUpdateOneRequiredInput
   correctOption: OptionUpdateOneWithoutCorrectQuestionAttemptsInput
 }
 
@@ -2392,10 +3392,90 @@ input QuestionAttemptWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  shortAnswer: String
+
+  """All values that are not equal to given value."""
+  shortAnswer_not: String
+
+  """All values that are contained in given list."""
+  shortAnswer_in: [String!]
+
+  """All values that are not contained in given list."""
+  shortAnswer_not_in: [String!]
+
+  """All values less than the given value."""
+  shortAnswer_lt: String
+
+  """All values less than or equal the given value."""
+  shortAnswer_lte: String
+
+  """All values greater than the given value."""
+  shortAnswer_gt: String
+
+  """All values greater than or equal the given value."""
+  shortAnswer_gte: String
+
+  """All values containing the given string."""
+  shortAnswer_contains: String
+
+  """All values not containing the given string."""
+  shortAnswer_not_contains: String
+
+  """All values starting with the given string."""
+  shortAnswer_starts_with: String
+
+  """All values not starting with the given string."""
+  shortAnswer_not_starts_with: String
+
+  """All values ending with the given string."""
+  shortAnswer_ends_with: String
+
+  """All values not ending with the given string."""
+  shortAnswer_not_ends_with: String
   isCorrect: Boolean
 
   """All values that are not equal to given value."""
   isCorrect_not: Boolean
+  correctShortAnswer: String
+
+  """All values that are not equal to given value."""
+  correctShortAnswer_not: String
+
+  """All values that are contained in given list."""
+  correctShortAnswer_in: [String!]
+
+  """All values that are not contained in given list."""
+  correctShortAnswer_not_in: [String!]
+
+  """All values less than the given value."""
+  correctShortAnswer_lt: String
+
+  """All values less than or equal the given value."""
+  correctShortAnswer_lte: String
+
+  """All values greater than the given value."""
+  correctShortAnswer_gt: String
+
+  """All values greater than or equal the given value."""
+  correctShortAnswer_gte: String
+
+  """All values containing the given string."""
+  correctShortAnswer_contains: String
+
+  """All values not containing the given string."""
+  correctShortAnswer_not_contains: String
+
+  """All values starting with the given string."""
+  correctShortAnswer_starts_with: String
+
+  """All values not starting with the given string."""
+  correctShortAnswer_not_starts_with: String
+
+  """All values ending with the given string."""
+  correctShortAnswer_ends_with: String
+
+  """All values not ending with the given string."""
+  correctShortAnswer_not_ends_with: String
   isConfident: Boolean
 
   """All values that are not equal to given value."""
@@ -2403,9 +3483,6 @@ input QuestionAttemptWhereInput {
   question: QuestionWhereInput
   option: OptionWhereInput
   correctOption: OptionWhereInput
-  _MagicalBackRelation_QuizAttemptQuestionAttempts_every: QuizAttemptWhereInput
-  _MagicalBackRelation_QuizAttemptQuestionAttempts_some: QuizAttemptWhereInput
-  _MagicalBackRelation_QuizAttemptQuestionAttempts_none: QuizAttemptWhereInput
 }
 
 input QuestionAttemptWhereUniqueInput {
@@ -2422,9 +3499,15 @@ type QuestionConnection {
   aggregate: AggregateQuestion!
 }
 
+input QuestionCreatecorrectShortAnswersInput {
+  set: [String!]
+}
+
 input QuestionCreateInput {
   prompt: String!
   concept: String
+  type: QuestionType!
+  correctShortAnswers: QuestionCreatecorrectShortAnswersInput
   options: OptionCreateManyWithoutQuestionInput
 }
 
@@ -2446,6 +3529,8 @@ input QuestionCreateOneWithoutOptionsInput {
 input QuestionCreateWithoutOptionsInput {
   prompt: String!
   concept: String
+  type: QuestionType!
+  correctShortAnswers: QuestionCreatecorrectShortAnswersInput
 }
 
 """An edge in a connection."""
@@ -2464,6 +3549,8 @@ enum QuestionOrderByInput {
   prompt_DESC
   concept_ASC
   concept_DESC
+  type_ASC
+  type_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -2472,8 +3559,151 @@ enum QuestionOrderByInput {
 
 type QuestionPreviousValues {
   id: ID!
+  correctShortAnswers: [String!]!
   prompt: String!
   concept: String
+  type: QuestionType!
+}
+
+input QuestionScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuestionScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuestionScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuestionScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  prompt: String
+
+  """All values that are not equal to given value."""
+  prompt_not: String
+
+  """All values that are contained in given list."""
+  prompt_in: [String!]
+
+  """All values that are not contained in given list."""
+  prompt_not_in: [String!]
+
+  """All values less than the given value."""
+  prompt_lt: String
+
+  """All values less than or equal the given value."""
+  prompt_lte: String
+
+  """All values greater than the given value."""
+  prompt_gt: String
+
+  """All values greater than or equal the given value."""
+  prompt_gte: String
+
+  """All values containing the given string."""
+  prompt_contains: String
+
+  """All values not containing the given string."""
+  prompt_not_contains: String
+
+  """All values starting with the given string."""
+  prompt_starts_with: String
+
+  """All values not starting with the given string."""
+  prompt_not_starts_with: String
+
+  """All values ending with the given string."""
+  prompt_ends_with: String
+
+  """All values not ending with the given string."""
+  prompt_not_ends_with: String
+  concept: String
+
+  """All values that are not equal to given value."""
+  concept_not: String
+
+  """All values that are contained in given list."""
+  concept_in: [String!]
+
+  """All values that are not contained in given list."""
+  concept_not_in: [String!]
+
+  """All values less than the given value."""
+  concept_lt: String
+
+  """All values less than or equal the given value."""
+  concept_lte: String
+
+  """All values greater than the given value."""
+  concept_gt: String
+
+  """All values greater than or equal the given value."""
+  concept_gte: String
+
+  """All values containing the given string."""
+  concept_contains: String
+
+  """All values not containing the given string."""
+  concept_not_contains: String
+
+  """All values starting with the given string."""
+  concept_starts_with: String
+
+  """All values not starting with the given string."""
+  concept_not_starts_with: String
+
+  """All values ending with the given string."""
+  concept_ends_with: String
+
+  """All values not ending with the given string."""
+  concept_not_ends_with: String
+  type: QuestionType
+
+  """All values that are not equal to given value."""
+  type_not: QuestionType
+
+  """All values that are contained in given list."""
+  type_in: [QuestionType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [QuestionType!]
 }
 
 type QuestionSubscriptionPayload {
@@ -2515,16 +3745,36 @@ input QuestionSubscriptionWhereInput {
   node: QuestionWhereInput
 }
 
+enum QuestionType {
+  MULTIPLE_CHOICE
+  SHORT_ANSWER
+}
+
+input QuestionUpdatecorrectShortAnswersInput {
+  set: [String!]
+}
+
 input QuestionUpdateDataInput {
   prompt: String
   concept: String
+  type: QuestionType
+  correctShortAnswers: QuestionUpdatecorrectShortAnswersInput
   options: OptionUpdateManyWithoutQuestionInput
 }
 
 input QuestionUpdateInput {
   prompt: String
   concept: String
+  type: QuestionType
+  correctShortAnswers: QuestionUpdatecorrectShortAnswersInput
   options: OptionUpdateManyWithoutQuestionInput
+}
+
+input QuestionUpdateManyDataInput {
+  prompt: String
+  concept: String
+  type: QuestionType
+  correctShortAnswers: QuestionUpdatecorrectShortAnswersInput
 }
 
 input QuestionUpdateManyInput {
@@ -2533,13 +3783,26 @@ input QuestionUpdateManyInput {
   disconnect: [QuestionWhereUniqueInput!]
   delete: [QuestionWhereUniqueInput!]
   update: [QuestionUpdateWithWhereUniqueNestedInput!]
+  updateMany: [QuestionUpdateManyWithWhereNestedInput!]
+  deleteMany: [QuestionScalarWhereInput!]
   upsert: [QuestionUpsertWithWhereUniqueNestedInput!]
 }
 
-input QuestionUpdateOneInput {
+input QuestionUpdateManyMutationInput {
+  prompt: String
+  concept: String
+  type: QuestionType
+  correctShortAnswers: QuestionUpdatecorrectShortAnswersInput
+}
+
+input QuestionUpdateManyWithWhereNestedInput {
+  where: QuestionScalarWhereInput!
+  data: QuestionUpdateManyDataInput!
+}
+
+input QuestionUpdateOneRequiredInput {
   create: QuestionCreateInput
   connect: QuestionWhereUniqueInput
-  delete: Boolean
   update: QuestionUpdateDataInput
   upsert: QuestionUpsertNestedInput
 }
@@ -2556,6 +3819,8 @@ input QuestionUpdateOneWithoutOptionsInput {
 input QuestionUpdateWithoutOptionsDataInput {
   prompt: String
   concept: String
+  type: QuestionType
+  correctShortAnswers: QuestionUpdatecorrectShortAnswersInput
 }
 
 input QuestionUpdateWithWhereUniqueNestedInput {
@@ -2708,15 +3973,19 @@ input QuestionWhereInput {
 
   """All values not ending with the given string."""
   concept_not_ends_with: String
+  type: QuestionType
+
+  """All values that are not equal to given value."""
+  type_not: QuestionType
+
+  """All values that are contained in given list."""
+  type_in: [QuestionType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [QuestionType!]
   options_every: OptionWhereInput
   options_some: OptionWhereInput
   options_none: OptionWhereInput
-  _MagicalBackRelation_QuizQuestions_every: QuizWhereInput
-  _MagicalBackRelation_QuizQuestions_some: QuizWhereInput
-  _MagicalBackRelation_QuizQuestions_none: QuizWhereInput
-  _MagicalBackRelation_QuestionToQuestionAttempt_every: QuestionAttemptWhereInput
-  _MagicalBackRelation_QuestionToQuestionAttempt_some: QuestionAttemptWhereInput
-  _MagicalBackRelation_QuestionToQuestionAttempt_none: QuestionAttemptWhereInput
 }
 
 input QuestionWhereUniqueInput {
@@ -2729,15 +3998,15 @@ type Quiz implements Node {
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt!]
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
   orderedQuestionIds: [ID!]!
-  course(where: CourseWhereInput): Course
+  course: Course
   title: String!
   type: QuizType!
 }
 
 type QuizAttempt implements Node {
   id: ID!
-  student(where: StudentWhereInput): Student!
-  quiz(where: QuizWhereInput): Quiz!
+  student: Student!
+  quiz: Quiz!
   createdAt: DateTime!
   ltiSessionInfo: Json
   completed: DateTime
@@ -2833,6 +4102,127 @@ type QuizAttemptPreviousValues {
   score: Float
 }
 
+input QuizAttemptScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuizAttemptScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuizAttemptScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuizAttemptScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  completed: DateTime
+
+  """All values that are not equal to given value."""
+  completed_not: DateTime
+
+  """All values that are contained in given list."""
+  completed_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  completed_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  completed_lt: DateTime
+
+  """All values less than or equal the given value."""
+  completed_lte: DateTime
+
+  """All values greater than the given value."""
+  completed_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  completed_gte: DateTime
+  postSucceeded: Boolean
+
+  """All values that are not equal to given value."""
+  postSucceeded_not: Boolean
+  score: Float
+
+  """All values that are not equal to given value."""
+  score_not: Float
+
+  """All values that are contained in given list."""
+  score_in: [Float!]
+
+  """All values that are not contained in given list."""
+  score_not_in: [Float!]
+
+  """All values less than the given value."""
+  score_lt: Float
+
+  """All values less than or equal the given value."""
+  score_lte: Float
+
+  """All values greater than the given value."""
+  score_gt: Float
+
+  """All values greater than or equal the given value."""
+  score_gte: Float
+}
+
 type QuizAttemptSubscriptionPayload {
   mutation: MutationType!
   node: QuizAttempt
@@ -2877,10 +4267,24 @@ input QuizAttemptUpdateInput {
   completed: DateTime
   postSucceeded: Boolean
   score: Float
-  student: StudentUpdateOneWithoutQuizAttemptsInput
-  quiz: QuizUpdateOneWithoutQuizAttemptsInput
+  student: StudentUpdateOneRequiredWithoutQuizAttemptsInput
+  quiz: QuizUpdateOneRequiredWithoutQuizAttemptsInput
   questionAttempts: QuestionAttemptUpdateManyInput
   conceptConfidences: ConceptConfidenceUpdateManyInput
+}
+
+input QuizAttemptUpdateManyDataInput {
+  ltiSessionInfo: Json
+  completed: DateTime
+  postSucceeded: Boolean
+  score: Float
+}
+
+input QuizAttemptUpdateManyMutationInput {
+  ltiSessionInfo: Json
+  completed: DateTime
+  postSucceeded: Boolean
+  score: Float
 }
 
 input QuizAttemptUpdateManyWithoutQuizInput {
@@ -2889,6 +4293,8 @@ input QuizAttemptUpdateManyWithoutQuizInput {
   disconnect: [QuizAttemptWhereUniqueInput!]
   delete: [QuizAttemptWhereUniqueInput!]
   update: [QuizAttemptUpdateWithWhereUniqueWithoutQuizInput!]
+  updateMany: [QuizAttemptUpdateManyWithWhereNestedInput!]
+  deleteMany: [QuizAttemptScalarWhereInput!]
   upsert: [QuizAttemptUpsertWithWhereUniqueWithoutQuizInput!]
 }
 
@@ -2898,7 +4304,14 @@ input QuizAttemptUpdateManyWithoutStudentInput {
   disconnect: [QuizAttemptWhereUniqueInput!]
   delete: [QuizAttemptWhereUniqueInput!]
   update: [QuizAttemptUpdateWithWhereUniqueWithoutStudentInput!]
+  updateMany: [QuizAttemptUpdateManyWithWhereNestedInput!]
+  deleteMany: [QuizAttemptScalarWhereInput!]
   upsert: [QuizAttemptUpsertWithWhereUniqueWithoutStudentInput!]
+}
+
+input QuizAttemptUpdateManyWithWhereNestedInput {
+  where: QuizAttemptScalarWhereInput!
+  data: QuizAttemptUpdateManyDataInput!
 }
 
 input QuizAttemptUpdateWithoutQuizDataInput {
@@ -2906,7 +4319,7 @@ input QuizAttemptUpdateWithoutQuizDataInput {
   completed: DateTime
   postSucceeded: Boolean
   score: Float
-  student: StudentUpdateOneWithoutQuizAttemptsInput
+  student: StudentUpdateOneRequiredWithoutQuizAttemptsInput
   questionAttempts: QuestionAttemptUpdateManyInput
   conceptConfidences: ConceptConfidenceUpdateManyInput
 }
@@ -2916,7 +4329,7 @@ input QuizAttemptUpdateWithoutStudentDataInput {
   completed: DateTime
   postSucceeded: Boolean
   score: Float
-  quiz: QuizUpdateOneWithoutQuizAttemptsInput
+  quiz: QuizUpdateOneRequiredWithoutQuizAttemptsInput
   questionAttempts: QuestionAttemptUpdateManyInput
   conceptConfidences: ConceptConfidenceUpdateManyInput
 }
@@ -3155,6 +4568,129 @@ type QuizPreviousValues {
   type: QuizType!
 }
 
+input QuizScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuizScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuizScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuizScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  type: QuizType
+
+  """All values that are not equal to given value."""
+  type_not: QuizType
+
+  """All values that are contained in given list."""
+  type_in: [QuizType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [QuizType!]
+}
+
 type QuizSubscriptionPayload {
   mutation: MutationType!
   node: Quiz
@@ -3208,19 +4744,37 @@ input QuizUpdateInput {
   course: CourseUpdateOneWithoutQuizzesInput
 }
 
+input QuizUpdateManyDataInput {
+  title: String
+  type: QuizType
+  orderedQuestionIds: QuizUpdateorderedQuestionIdsInput
+}
+
+input QuizUpdateManyMutationInput {
+  title: String
+  type: QuizType
+  orderedQuestionIds: QuizUpdateorderedQuestionIdsInput
+}
+
 input QuizUpdateManyWithoutCourseInput {
   create: [QuizCreateWithoutCourseInput!]
   connect: [QuizWhereUniqueInput!]
   disconnect: [QuizWhereUniqueInput!]
   delete: [QuizWhereUniqueInput!]
   update: [QuizUpdateWithWhereUniqueWithoutCourseInput!]
+  updateMany: [QuizUpdateManyWithWhereNestedInput!]
+  deleteMany: [QuizScalarWhereInput!]
   upsert: [QuizUpsertWithWhereUniqueWithoutCourseInput!]
 }
 
-input QuizUpdateOneWithoutQuizAttemptsInput {
+input QuizUpdateManyWithWhereNestedInput {
+  where: QuizScalarWhereInput!
+  data: QuizUpdateManyDataInput!
+}
+
+input QuizUpdateOneRequiredWithoutQuizAttemptsInput {
   create: QuizCreateWithoutQuizAttemptsInput
   connect: QuizWhereUniqueInput
-  delete: Boolean
   update: QuizUpdateWithoutQuizAttemptsDataInput
   upsert: QuizUpsertWithoutQuizAttemptsInput
 }
@@ -3494,6 +5048,177 @@ type StudentPreviousValues {
   name: String!
 }
 
+input StudentScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [StudentScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [StudentScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [StudentScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  ltiUserId: String
+
+  """All values that are not equal to given value."""
+  ltiUserId_not: String
+
+  """All values that are contained in given list."""
+  ltiUserId_in: [String!]
+
+  """All values that are not contained in given list."""
+  ltiUserId_not_in: [String!]
+
+  """All values less than the given value."""
+  ltiUserId_lt: String
+
+  """All values less than or equal the given value."""
+  ltiUserId_lte: String
+
+  """All values greater than the given value."""
+  ltiUserId_gt: String
+
+  """All values greater than or equal the given value."""
+  ltiUserId_gte: String
+
+  """All values containing the given string."""
+  ltiUserId_contains: String
+
+  """All values not containing the given string."""
+  ltiUserId_not_contains: String
+
+  """All values starting with the given string."""
+  ltiUserId_starts_with: String
+
+  """All values not starting with the given string."""
+  ltiUserId_not_starts_with: String
+
+  """All values ending with the given string."""
+  ltiUserId_ends_with: String
+
+  """All values not ending with the given string."""
+  ltiUserId_not_ends_with: String
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
 type StudentSubscriptionPayload {
   mutation: MutationType!
   node: Student
@@ -3542,27 +5267,44 @@ input StudentUpdateInput {
   surveyResults: SurveyResultUpdateManyWithoutStudentInput
 }
 
+input StudentUpdateManyDataInput {
+  ltiUserId: String
+  email: String
+  name: String
+}
+
+input StudentUpdateManyMutationInput {
+  ltiUserId: String
+  email: String
+  name: String
+}
+
 input StudentUpdateManyWithoutCoursesInput {
   create: [StudentCreateWithoutCoursesInput!]
   connect: [StudentWhereUniqueInput!]
   disconnect: [StudentWhereUniqueInput!]
   delete: [StudentWhereUniqueInput!]
   update: [StudentUpdateWithWhereUniqueWithoutCoursesInput!]
+  updateMany: [StudentUpdateManyWithWhereNestedInput!]
+  deleteMany: [StudentScalarWhereInput!]
   upsert: [StudentUpsertWithWhereUniqueWithoutCoursesInput!]
 }
 
-input StudentUpdateOneWithoutQuizAttemptsInput {
+input StudentUpdateManyWithWhereNestedInput {
+  where: StudentScalarWhereInput!
+  data: StudentUpdateManyDataInput!
+}
+
+input StudentUpdateOneRequiredWithoutQuizAttemptsInput {
   create: StudentCreateWithoutQuizAttemptsInput
   connect: StudentWhereUniqueInput
-  delete: Boolean
   update: StudentUpdateWithoutQuizAttemptsDataInput
   upsert: StudentUpsertWithoutQuizAttemptsInput
 }
 
-input StudentUpdateOneWithoutSurveyResultsInput {
+input StudentUpdateOneRequiredWithoutSurveyResultsInput {
   create: StudentCreateWithoutSurveyResultsInput
   connect: StudentWhereUniqueInput
-  delete: Boolean
   update: StudentUpdateWithoutSurveyResultsDataInput
   upsert: StudentUpsertWithoutSurveyResultsInput
 }
@@ -3815,8 +5557,8 @@ type Subscription {
 type SurveyResult implements Node {
   id: ID!
   createdAt: DateTime!
-  course(where: CourseWhereInput): Course!
-  student(where: StudentWhereInput): Student!
+  course: Course!
+  student: Student!
   answers: Json!
 }
 
@@ -3882,6 +5624,79 @@ type SurveyResultPreviousValues {
   answers: Json!
 }
 
+input SurveyResultScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SurveyResultScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SurveyResultScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SurveyResultScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+}
+
 type SurveyResultSubscriptionPayload {
   mutation: MutationType!
   node: SurveyResult
@@ -3923,8 +5738,16 @@ input SurveyResultSubscriptionWhereInput {
 
 input SurveyResultUpdateInput {
   answers: Json
-  course: CourseUpdateOneWithoutSurveyResultsInput
-  student: StudentUpdateOneWithoutSurveyResultsInput
+  course: CourseUpdateOneRequiredWithoutSurveyResultsInput
+  student: StudentUpdateOneRequiredWithoutSurveyResultsInput
+}
+
+input SurveyResultUpdateManyDataInput {
+  answers: Json
+}
+
+input SurveyResultUpdateManyMutationInput {
+  answers: Json
 }
 
 input SurveyResultUpdateManyWithoutCourseInput {
@@ -3933,6 +5756,8 @@ input SurveyResultUpdateManyWithoutCourseInput {
   disconnect: [SurveyResultWhereUniqueInput!]
   delete: [SurveyResultWhereUniqueInput!]
   update: [SurveyResultUpdateWithWhereUniqueWithoutCourseInput!]
+  updateMany: [SurveyResultUpdateManyWithWhereNestedInput!]
+  deleteMany: [SurveyResultScalarWhereInput!]
   upsert: [SurveyResultUpsertWithWhereUniqueWithoutCourseInput!]
 }
 
@@ -3942,17 +5767,24 @@ input SurveyResultUpdateManyWithoutStudentInput {
   disconnect: [SurveyResultWhereUniqueInput!]
   delete: [SurveyResultWhereUniqueInput!]
   update: [SurveyResultUpdateWithWhereUniqueWithoutStudentInput!]
+  updateMany: [SurveyResultUpdateManyWithWhereNestedInput!]
+  deleteMany: [SurveyResultScalarWhereInput!]
   upsert: [SurveyResultUpsertWithWhereUniqueWithoutStudentInput!]
+}
+
+input SurveyResultUpdateManyWithWhereNestedInput {
+  where: SurveyResultScalarWhereInput!
+  data: SurveyResultUpdateManyDataInput!
 }
 
 input SurveyResultUpdateWithoutCourseDataInput {
   answers: Json
-  student: StudentUpdateOneWithoutSurveyResultsInput
+  student: StudentUpdateOneRequiredWithoutSurveyResultsInput
 }
 
 input SurveyResultUpdateWithoutStudentDataInput {
   answers: Json
-  course: CourseUpdateOneWithoutSurveyResultsInput
+  course: CourseUpdateOneRequiredWithoutSurveyResultsInput
 }
 
 input SurveyResultUpdateWithWhereUniqueWithoutCourseInput {
