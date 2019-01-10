@@ -7,7 +7,7 @@ import gql from 'graphql-tag';
 import update from 'immutability-helper';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
-import { ALPHABET } from '../../constants';
+import { ALPHABET, QUESTION_TYPE_NAMES, DEFAULT_QUESTION_TYPE, MULTIPLE_CHOICE, SHORT_ANSWER } from '../../constants';
 import ErrorBox from '../shared/ErrorBox';
 import ConceptSelector from './ConceptSelector';
 
@@ -79,6 +79,7 @@ export class CollapsibleQuestionEditor extends Component {
                 id: this.props.questionId,
                 concept: '',
                 prompt: '',
+                type: DEFAULT_QUESTION_TYPE,
                 options: [
                     {id: '_newOption1', text: '', isCorrect: false},
                     {id: '_newOption2', text: '', isCorrect: false},
@@ -88,7 +89,8 @@ export class CollapsibleQuestionEditor extends Component {
                     {id: '_newOption6', text: '', isCorrect: false},
                     {id: '_newOption7', text: '', isCorrect: false},
                     {id: '_newOption8', text: '', isCorrect: false}
-                ]
+                ],
+                correctShortAnswers: ["a","b"]
             };
             this.setState({ isLoading: false, question, isExpanded: true, isNew: true });
         } else {
@@ -169,26 +171,38 @@ export class CollapsibleQuestionEditor extends Component {
         if (concept === null || concept.trim() === '') {
             return 'Please enter a concept for this question';
         }
-        // Ensure there are at least 2 non-empty options
-        let optionCount = 0;
-        let noCorrectOption = true;
-        let correctOptionEmpty = false;
-        question.options.forEach(option => {
-            const { text, isCorrect } = option;
-            const isEmpty = text === null || text.trim() === '';
-            if (!isEmpty) { optionCount++; }
-            if (isCorrect) { noCorrectOption = false; }
-            // Ensure that the correct option is non-empty
-            if (isCorrect && isEmpty) { correctOptionEmpty = true; }
-        });
-        if (noCorrectOption) {
-            return 'There must be a correct option (choose with the radio button to the left of the option).';
-        }
-        if (correctOptionEmpty) {
-            return 'The correct option must not be be blank';
-        }
-        if (optionCount < 2) {
-            return 'The question must have 2 or more non-blank options';
+        switch (question.type) {
+            case MULTIPLE_CHOICE:
+                // Ensure there are at least 2 non-empty options
+                let optionCount = 0;
+                let noCorrectOption = true;
+                let correctOptionEmpty = false;
+                question.options.forEach(option => {
+                    const { text, isCorrect } = option;
+                    const isEmpty = text === null || text.trim() === '';
+                    if (!isEmpty) { optionCount++; }
+                    if (isCorrect) { noCorrectOption = false; }
+                    // Ensure that the correct option is non-empty
+                    if (isCorrect && isEmpty) { correctOptionEmpty = true; }
+                });
+                if (optionCount < 2) {
+                    return 'The question must have 2 or more non-blank options';
+                }
+                if (noCorrectOption) {
+                    return 'There must be a correct option (choose with the radio button to the left of the option).';
+                }
+                if (correctOptionEmpty) {
+                    return 'The correct option must not be be blank';
+                }
+                break;
+            case SHORT_ANSWER:
+                // Ensure there is at least 1 non-empty correct short answer
+                const shortAnswers = question.correctShortAnswers.filter(answer => answer.trim() !== '');
+                if (shortAnswers.length === 0) {
+                    return 'There must be at least one correct short answer.';
+                }
+                break;
+            default:
         }
         // Question is valid
         return true;
@@ -205,9 +219,11 @@ export class CollapsibleQuestionEditor extends Component {
         const { question } = this.state;
         // Prisma-specific syntax for nested update mutation
         let updatedQuestion = {
+            type: question.type,
             prompt: question.prompt,
             concept: question.concept,
-            options: { update: [] }
+            options: { update: [] },
+            correctShortAnswers: { set: question.correctShortAnswers }
         };
         // Get updated options for this question
         question.options.forEach(option => {
@@ -290,6 +306,11 @@ export class CollapsibleQuestionEditor extends Component {
         this.setState({ question, isDirty: true });
     }
 
+    _handleTypeChange(newType) {
+        let question = update(this.state.question, { $merge: { type: newType } });
+        this.setState({ question, isDirty: true });
+    }
+
     _handleOptionChange(optionIndex, newOption) {
         let question = update(this.state.question, { options: { [optionIndex]: { $merge: { text: newOption } } } } );
         this.setState({ question, isDirty: true });
@@ -310,6 +331,18 @@ export class CollapsibleQuestionEditor extends Component {
             } } );
         }
 
+        this.setState({ question, isDirty: true });
+    }
+
+    _handleShortAnswerChange(index, newShortAnswer) {
+        let question;
+        // Remove empty short answer
+        if (newShortAnswer === '') {
+            question = update(this.state.question, { correctShortAnswers: { $splice: [[index, 1]] } } );
+        } else {
+            // Otherwise update it
+            question = update(this.state.question, { correctShortAnswers: { [index]: { $set: newShortAnswer } } } );
+        }
         this.setState({ question, isDirty: true });
     }
 
@@ -367,16 +400,20 @@ export class CollapsibleQuestionEditor extends Component {
             </ScrollIntoViewIfNeeded>
         );
 
-        const conceptSelector = isExpanded && (
+        const metadatEditor = isExpanded && (
             <div className="panel-block quiz-editor-question-concept">
-                <label>
-                    <span className="is-inline">Concept &nbsp; &nbsp;</span>
-                </label>
+                <label className="is-inline">Concept &nbsp;</label>
                 <ConceptSelector concept={question.concept} onChange={(c) => this._handleConceptChange(c)} courseId={this.props.courseId} />
+
+                <select className="quiz-editor-question-type" value={question.type}
+                    onChange={(e) => this._handleTypeChange(e.target.value)}>
+                    <option value={MULTIPLE_CHOICE}>{QUESTION_TYPE_NAMES[MULTIPLE_CHOICE]}</option>
+                    <option value={SHORT_ANSWER}>{QUESTION_TYPE_NAMES[SHORT_ANSWER]}</option>
+                </select>
             </div>
         );
 
-        const optionsEditor = isExpanded && (
+        const optionsEditor = (isExpanded && question.type === MULTIPLE_CHOICE) && (
             <form>
             {question.options.map((option, optionIndex) =>
                 <div className="panel-block is-flex quiz-editor-question-option" key={option.id}>
@@ -403,6 +440,25 @@ export class CollapsibleQuestionEditor extends Component {
             </form>
         );
 
+        // Always displya an empty answer at the end to easily add
+        let correctShortAnswers = question ? question.correctShortAnswers.slice() : [];
+        correctShortAnswers.push('');
+        const shortAnswersEditor = (isExpanded && question.type === SHORT_ANSWER) && (
+            <div className="panel-block is-block quiz-editor-question-short-answers">
+            Correct short answers (whitespace and case will be ignored when comparing with students’ responses)
+                {correctShortAnswers.map((shortAnswer, index) =>
+                    <input
+                        value={shortAnswer}
+                        key={index}
+                        onChange={(e) => this._handleShortAnswerChange(index, e.target.value)}
+                        placeholder="Add a correct answer"
+                        className="input"
+                        type="text"
+                    />
+                )}
+            </div>
+        );
+
         return (
             <div className="panel collapsible-question-editor" id={this.props.elementId}>
                 <p className="panel-heading is-flex">
@@ -423,8 +479,9 @@ export class CollapsibleQuestionEditor extends Component {
                 </p>
 
                 {promptEditor}
-                {conceptSelector}
+                {metadatEditor}
                 {optionsEditor}
+                {shortAnswersEditor}
 
                 {/* If the question has been modified, have react router confirm before user navigates away */}
                 <Prompt
@@ -456,9 +513,11 @@ CollapsibleQuestionEditor.propTypes = {
 const QUESTION_QUERY = gql`
 query questionQuery($id: ID!) {
     question(id:$id){
-        concept
         id
+        concept
         prompt
+        type
+        correctShortAnswers
         options{
             id
             text
@@ -470,9 +529,11 @@ query questionQuery($id: ID!) {
 export const ADD_QUESTION = gql`
 mutation addQuestionMutation($quizId: ID!, $question: QuestionCreateInput!) {
     addQuestion(quizId: $quizId, question: $question) {
-        concept
         id
+        concept
         prompt
+        type
+        correctShortAnswers
         options{
             id
             text
@@ -484,9 +545,11 @@ mutation addQuestionMutation($quizId: ID!, $question: QuestionCreateInput!) {
 export const UPDATE_QUESTION = gql`
 mutation updateQuestionMutation($id: ID!, $data: QuestionUpdateInput!) {
     updateQuestion(id: $id, data: $data) {
-        concept
         id
+        concept
         prompt
+        type
+        correctShortAnswers
         options{
             id
             text

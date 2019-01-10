@@ -268,8 +268,16 @@ progress::-webkit-progress-value {
     min-height: 10rem;
 }
 
+.quiz-editor-question-type {
+    font-size: 100%;
+}
+
 .quiz-editor-question-option {
     padding: 0!important;
+}
+
+.quiz-editor-question-option:first-child {
+    border-top: none!important;
 }
 
 .quiz-editor-question-option-placeholder {
@@ -316,6 +324,10 @@ progress::-webkit-progress-value {
 
 .quiz-editor-question-option label {
     padding: 0 0.7rem 0 0;
+}
+
+.quiz-editor-question-short-answers input {
+    margin-top: 0.5rem;
 }
 
 .question-navbar {

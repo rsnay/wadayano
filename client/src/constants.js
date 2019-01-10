@@ -19,6 +19,11 @@ export const KEY_CODE_Z = 90;
 
 export const QUIZ_TYPE_NAMES = { 'PRACTICE': 'Practice', 'GRADED': 'Graded' };
 
+export const MULTIPLE_CHOICE = 'MULTIPLE_CHOICE';
+export const SHORT_ANSWER = 'SHORT_ANSWER';
+export const DEFAULT_QUESTION_TYPE = MULTIPLE_CHOICE;
+export const QUESTION_TYPE_NAMES = { MULTIPLE_CHOICE: 'Multiple Choice', SHORT_ANSWER: 'Short Answer' };
+
 export const CONFIDENCES = {
     'OVERCONFIDENT': {
         key: 'OVERCONFIDENT',
