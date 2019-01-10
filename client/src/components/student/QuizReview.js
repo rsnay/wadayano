@@ -15,6 +15,7 @@ import QuestionReview from './QuestionReview';
 import Modal from '../shared/Modal';
 
 import WadayanoScore from '../shared/WadayanoScore';
+import fragments from '../../fragments';
 
 class QuizReview extends Component {
 
@@ -334,58 +335,16 @@ class QuizReview extends Component {
 }
 
 QuizReview.propTypes = {
-    quizAttempt: PropTypes.object.isRequired
+    quizAttemptId: PropTypes.string.isRequired
 };
 
 const QUIZ_ATTEMPT_QUERY = gql`
   query quizAttemptQuery($id: ID!) {
     quizAttempt(id: $id) {
-      id
-      completed
-      score
-      postSucceeded
-      quiz {
-        id
-        title
-        questions {
-          id
-          prompt
-          concept
-          options {
-            id
-            text
-          }
-        }
-      }
-      questionAttempts {
-        id
-        question {
-          id
-          prompt
-          concept
-          options{
-              id
-              text
-          }
-        }
-        option {
-          id
-          text
-        }
-        correctOption {
-          id
-          text
-        }
-        isCorrect
-        isConfident
-      }
-      conceptConfidences {
-        id
-        concept
-        confidence
-      }
+        ...StudentFullQuizAttempt
     }
   }
+  ${fragments.studentFullQuizAttempt}
 `
 
 export default withAuthCheck(compose(

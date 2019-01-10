@@ -13,6 +13,7 @@ import LoadingBox from '../shared/LoadingBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import { shuffleArray } from '../../utils';
+import fragments from '../../fragments';
 
 // Different phases or stages of the quiz-taking experience
 const phases = {
@@ -307,38 +308,10 @@ class QuizTaker extends Component {
 const START_MUTATION = gql`
   mutation StartMutation($quizId: ID!) {
     startOrResumeQuizAttempt(quizId: $quizId) {
-      id
-      quiz {
-        id
-        title
-        questions {
-          id
-          prompt
-          concept
-          options {
-            id
-            text
-          }
-        }
-      }
-      questionAttempts {
-        id
-        question {
-          id
-        }
-        option {
-          id
-        }
-        isCorrect
-        isConfident
-      }
-      conceptConfidences {
-        id
-        concept
-        confidence
-      }
+      ...StudentFullQuizAttempt
     }
   }
+  ${fragments.studentFullQuizAttempt}
 `;
 
 const COMPLETE_MUTATION = gql`

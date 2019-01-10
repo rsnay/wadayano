@@ -29,7 +29,57 @@ const studentFullQuestion = gql`
     }
 `;
 
+const studentFullQuestionAttempt = gql`
+    fragment StudentFullQuestionAttempt on QuestionAttempt {
+        id
+        question {
+          ...StudentFullQuestion
+        }
+        option {
+          id
+          text
+        }
+        correctOption {
+          id
+          text
+        }
+        shortAnswer
+        correctShortAnswer
+        isCorrect
+        isConfident
+    }
+    ${studentFullQuestion}
+`;
+
+const studentFullQuizAttempt = gql`
+    fragment StudentFullQuizAttempt on QuizAttempt {
+        id
+        completed
+        score
+        postSucceeded
+        quiz {
+            id
+            title
+            questions {
+                ...StudentFullQuestion
+            }
+        }
+        questionAttempts {
+            ...StudentFullQuestionAttempt
+        }
+        conceptConfidences {
+            id
+            concept
+            confidence
+        }
+    }
+    ${studentFullQuestion}
+    ${studentFullQuestionAttempt}
+`;
+
 export default {
     instructorFullQuestion,
-    studentFullQuestion
+    studentFullQuestion,
+    studentFullQuestionAttempt,
+    studentFullQuizAttempt
 }
