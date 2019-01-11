@@ -9,34 +9,40 @@ import ErrorBox from '../shared/ErrorBox';
 import ConfidenceSelector from './ConfidenceSelector';
 import QuestionReview from './QuestionReview';
 
-import { ALPHABET, KEY_CODE_A, KEY_CODE_Z } from '../../constants';
+import { ALPHABET, KEY_CODE_A, KEY_CODE_Z, MULTIPLE_CHOICE } from '../../constants';
+import fragments from '../../fragments';
 
 class QuestionTaker extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-        error: null,
-        isLoading: false,
-        selectedOption: null,
-        confident: null,
-        submitted: false,
-        // Will get sent from the server after attempting the question
-        questionAttempt: null
-    };
-    this._submitted = false;
-    this._handleKeyDown = this._handleKeyDown.bind(this);
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoading: false,
+            selectedOption: null,
+            shortAnswer: '',
+            confident: null,
+            submitted: false,
+            // Will get sent from the server after attempting the question
+            questionAttempt: null
+        };
+        this._submitted = false;
+        this._handleKeyDown = this._handleKeyDown.bind(this);
+    }
 
-  componentDidMount() {
-    document.addEventListener('keydown', this._handleKeyDown);
-  }
+    componentDidMount() {
+        if (this.props.question.type === MULTIPLE_CHOICE) {
+            document.addEventListener('keydown', this._handleKeyDown);
+        }
+    }
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this._handleKeyDown);
-  }
+    componentWillUnmount() {
+        if (this.props.question.type === MULTIPLE_CHOICE) {
+            document.removeEventListener('keydown', this._handleKeyDown);
+        }
+    }
 
-  // Allow options to be selected by pressing that letter on the keyboard. This is kind of hacky right now
+  // Allow multiple-choice options to be selected by pressing that letter on the keyboard. This is kind of hacky right now
   _handleKeyDown(e) {
     // If the question has already been answered, don't let the selected answer change (without this, it's kind of entertaining!)
     if (this.state.submitted) { return; }
@@ -72,7 +78,9 @@ class QuestionTaker extends Component {
                 variables: {
                     quizAttemptId: this.props.quizAttemptId,
                     questionId: this.props.question.id,
-                    optionId: this.state.selectedOption.id,
+                    type: this.props.question.type,
+                    optionId: this.state.selectedOption ? this.state.selectedOption.id : null,
+                    shortAnswer: this.state.shortAnswer,
                     isConfident: this.state.confident
                 }
             });
@@ -94,9 +102,10 @@ class QuestionTaker extends Component {
   }
 
   render() {
-    const questionOptions = this.props.question.options;
+    const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '');
+    const isMultipleChoice = (this.props.question.type === MULTIPLE_CHOICE);
     
-    if (questionOptions.length === 0) {
+    if (isMultipleChoice && questionOptions.length === 0) {
         return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
     }
 
@@ -109,7 +118,7 @@ class QuestionTaker extends Component {
     );
 
     // Hide empty options
-    let options = questionOptions.filter(option => option.text.trim() !== '').map((option, index) => {
+    let options = questionOptions.map((option, index) => {
         return (<div className="columns is-mobile question-option-container" key={option.id}
             onClick={() => {
                 this.setState({ selectedOption: option })
@@ -120,6 +129,25 @@ class QuestionTaker extends Component {
             <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: option.text}}></span>
         </div>);
     });
+
+    let shortAnswer = (
+        <div className="columns">
+            <div className="column is-two-thirds-tablet field">
+                <input
+                    className="input is-medium"
+                    type="text"
+                    placeholder="Enter your answer"
+                    autoFocus
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
+                    value={this.state.shortAnswer}
+                    onChange={e => { this.setState({ shortAnswer: e.target.value })}}
+                />
+            </div>
+        </div>
+    )
 
     let confidenceSelector = (
         <ScrollIntoViewIfNeeded>
@@ -148,8 +176,9 @@ class QuestionTaker extends Component {
             <div>
                 {prompt}
                 <br />
-                {options}
-                {this.state.selectedOption && confidenceSelector}
+                {isMultipleChoice && options}
+                {!isMultipleChoice && shortAnswer}
+                {(this.state.selectedOption || this.state.shortAnswer !== '') && confidenceSelector}
                 {this.state.confident !== null && submitButton}
             </div>
         );
@@ -174,21 +203,18 @@ QuestionTaker.propTypes = {
 };
 
 const ATTEMPT_QUESTION_MUTATION = gql`
-  mutation AttemptQuestion($quizAttemptId: ID!, $questionId: ID!, $optionId: ID!, $isConfident: Boolean!) {
-    attemptQuestion(quizAttemptId: $quizAttemptId, questionId: $questionId, optionId: $optionId, isConfident: $isConfident) {
-      id
-      isCorrect
-      isConfident
-      option {
-          id
-          text
-      }
-      correctOption {
-          id
-          text
-      }
+  mutation AttemptQuestion(
+      $quizAttemptId: ID!,
+      $questionId: ID!,
+      $type: QuestionType!,
+      $optionId: ID,
+      $shortAnswer: String,
+      $isConfident: Boolean!) {
+    attemptQuestion(quizAttemptId: $quizAttemptId, questionId: $questionId, type: $type, optionId: $optionId, shortAnswer: $shortAnswer, isConfident: $isConfident) {
+        ...StudentFullQuestionAttempt
     }
   }
+  ${fragments.studentFullQuestionAttempt}
 `;
 
 export default graphql(ATTEMPT_QUESTION_MUTATION, { name: 'attemptQuestionMutation' })(QuestionTaker)
