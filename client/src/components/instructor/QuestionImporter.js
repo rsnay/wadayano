@@ -42,6 +42,7 @@ class QuestionImporter extends Component {
             });
         } catch (error) {
             alert('There was an error copying questions into this quiz. Please try again later, and contact us if the problem persists.');
+            this.setState({ isSaving: false });
         }
     }
 

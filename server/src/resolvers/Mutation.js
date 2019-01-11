@@ -145,12 +145,16 @@ async function importQuestions(root, args, context, info) {
     
     const questions = await context.db.query.questions({
         where: { id_in: args.questionIds }
-    }, `{ id, prompt, concept, options { isCorrect, text } }`);
+    }, `{ id, prompt, concept, type, correctShortAnswers, options { isCorrect, text } }`);
 
     let newQuestions = questions.map(question => {
         return {
             prompt: question.prompt,
             concept: question.concept,
+            type: question.type,
+            correctShortAnswers: {
+                set: question.correctShortAnswers
+            },
             options: {
                 create: question.options
             }
