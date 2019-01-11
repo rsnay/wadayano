@@ -70,13 +70,6 @@ export default class QuestionReview extends Component {
                 const iconClass = correct ? "has-text-success" : (incorrect ? "has-text-danger" : "");
                 const containerClass = correct ? "actual-correct" : "";
                 return optionListing(option.id, containerClass, iconClass, icon, option.text);
-
-                return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={option.id}>
-                    <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
-                        <span>{icon}</span>
-                    </span>
-                    <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: option.text}}></span>
-                </div>);
             });
         } else {
             // Display incorrect student short answer, and one correct short answer

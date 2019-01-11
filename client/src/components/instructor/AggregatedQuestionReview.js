@@ -11,6 +11,7 @@ export default class AggregatedQuestionReview extends Component {
   render() {
       console.log(this.props);
     const questionOptions = this.props.question.options;
+    const { correctShortAnswers } = this.props.question;
     //const attempt = this.props.aggregatedQuestionAttempt;
     
     const isMultipleChoice = (this.props.question.type === MULTIPLE_CHOICE);
@@ -23,21 +24,31 @@ export default class AggregatedQuestionReview extends Component {
         <div className="notification question-prompt" dangerouslySetInnerHTML={{__html: this.props.question.prompt}}></div>
     );
 
-    let correctIcon = <span className="icon"><i className="fas fa-check"></i></span>;
-
-    // Display all options, show number of students who chose each, and indicate which is correct
-    let optionsView = questionOptions.filter(option => option.text.trim() !== '').map((option, index) => {
-        const correct = option.isCorrect;
-        const icon = correct ? correctIcon : ALPHABET[index];
-        const iconClass = correct ? "has-text-success" : "";
-
-        return (<div className="columns is-mobile question-option-container is-review" key={option.id}>
+    const correctIcon = <span className="icon"><i className="fas fa-check"></i></span>;
+    const optionListing = (id, containerClass, iconClass, icon, text) => {
+        return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id}>
             <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
                 <span>{icon}</span>
             </span>
-            <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: option.text}}></span>
-        </div>);
-    });
+            <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: text}}></span>
+        </div>)
+    };
+
+    let optionsView;
+    if (isMultipleChoice) {
+        // Display all options, show number of students who chose each, and indicate which is correct
+        optionsView = questionOptions.filter(option => option.text.trim() !== '').map((option, index) => {
+            const correct = option.isCorrect;
+            const icon = correct ? correctIcon : ALPHABET[index];
+            const iconClass = correct ? "has-text-success" : "";
+
+            return optionListing(option.id, '', iconClass, icon, option.text);
+        });
+    } else {
+        optionsView = correctShortAnswers.map((answer, index) => {
+            return optionListing(index, '', 'has-text-success', correctIcon, answer);
+        });
+    }
 
     let confidenceSelector = <ConfidenceSelector disabled />;
 

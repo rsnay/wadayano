@@ -18,6 +18,7 @@ import Modal from '../shared/Modal';
 import { CONFIDENCES } from '../../constants';
 import ConfidenceBarGraph from './ConfidenceBarGraph';
 import ScoresBarGraph from './ScoresBarGraph';
+import fragments from '../../fragments';
 
 class AggregatedQuizReview extends Component {
 
@@ -338,14 +339,7 @@ export const QUIZ_QUERY = gql`
             }
         }
         questions {
-            id
-            concept
-            prompt
-            options {
-                id
-                isCorrect
-                text
-            }
+            ...InstructorFullQuestion
         }
         quizAttempts {
             id
@@ -373,6 +367,7 @@ export const QUIZ_QUERY = gql`
         }
     }
   }
+  ${fragments.instructorFullQuestion}
 `
 
 export default withAuthCheck(compose(
