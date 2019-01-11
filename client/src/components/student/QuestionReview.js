@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import ErrorBox from '../shared/ErrorBox';
 import ConfidenceSelector from './ConfidenceSelector';
-import { ALPHABET } from '../../constants';
+import { ALPHABET, MULTIPLE_CHOICE } from '../../constants';
 
 const CORRECT_FEEDBACKS = [
     'Nice!',
@@ -12,7 +12,7 @@ const CORRECT_FEEDBACKS = [
     'You’ve got this!'
 ];
 
-// This is basically a non-interactive stripped-down version of the QuestionTaker component, to be used in the post-quiz review (the post-question review is simply handled within the QuestionTaker)
+// This is basically a non-interactive stripped-down version of the QuestionTaker component, to be used in the post-question and post-quiz review
 export default class QuestionReview extends Component {
 
   _randomCorrectFeedback() {
@@ -21,11 +21,12 @@ export default class QuestionReview extends Component {
   }
 
   render() {
-      console.log(this.props);
-    const questionOptions = this.props.question.options;
+    let questionOptions = this.props.question.options.filter(option => option.text.trim() !== '');
     const attempt = this.props.questionAttempt;
     
-    if (questionOptions.length === 0) {
+    const isMultipleChoice = (this.props.question.type === MULTIPLE_CHOICE);
+    
+    if (isMultipleChoice && questionOptions.length === 0) {
         return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
     }
 
@@ -38,33 +39,52 @@ export default class QuestionReview extends Component {
     let actualCorrectIcon = <span className="icon"><i className="fas fa-arrow-right"></i></span>;
     let incorrectIcon = <span className="icon"><i className="fas fa-times"></i></span>;
 
-    let optionsView;
-    // If attempt was correct, only display the correct option
-    if (attempt.isCorrect) {
-        optionsView = (
-            <div className="columns is-mobile question-option-container is-review">
-                <span className="column is-1 question-option-letter level-left is-rounded button is-success">
-                    <span>{correctIcon}</span>
-                </span>
-                <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: questionOptions.filter(o => o.id === attempt.option.id)[0].text}}></span>
-            </div>
-        );
-    } else {
-        // Otherwise, display all options (selected is incorrect), and indicate which *was* correct
-        optionsView = questionOptions.filter(option => option.text.trim() !== '').map((option, index) => {
-            const correct = (attempt.correctOption.id === option.id);
-            const incorrect = (attempt.option.id === option.id);
-            const icon = correct ? actualCorrectIcon : (incorrect ? incorrectIcon : ALPHABET[index]);
-            const iconClass = correct ? "has-text-success" : (incorrect ? "has-text-danger" : "");
-            const containerClass = correct ? "actual-correct" : "";
+    const optionListing = (id, containerClass, iconClass, icon, text) => {
+        return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id}>
+            <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
+                <span>{icon}</span>
+            </span>
+            <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: text}}></span>
+        </div>)
+    };
 
-            return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={option.id}>
-                <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
-                    <span>{icon}</span>
-                </span>
-                <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: option.text}}></span>
-            </div>);
-        });
+    let optionsView;
+    // If attempt was correct, only display the correct answer
+    if (attempt.isCorrect) {
+        // Either the correct option’s HTML, or the student’s correct short answer text
+        let correctAnswerText;
+        if (isMultipleChoice) {
+            correctAnswerText = questionOptions.filter(o => o.id === attempt.option.id)[0].text;
+        } else {
+            correctAnswerText = attempt.shortAnswer;
+        }
+
+        optionsView = optionListing('correct', '', 'is-success', correctIcon, correctAnswerText);
+    } else {
+        if (isMultipleChoice) {
+            // Otherwise, display all options (selected is incorrect), and indicate which *was* correct
+            optionsView = questionOptions.map((option, index) => {
+                const correct = (attempt.correctOption.id === option.id);
+                const incorrect = (attempt.option.id === option.id);
+                const icon = correct ? actualCorrectIcon : (incorrect ? incorrectIcon : ALPHABET[index]);
+                const iconClass = correct ? "has-text-success" : (incorrect ? "has-text-danger" : "");
+                const containerClass = correct ? "actual-correct" : "";
+                return optionListing(option.id, containerClass, iconClass, icon, option.text);
+
+                return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={option.id}>
+                    <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
+                        <span>{icon}</span>
+                    </span>
+                    <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: option.text}}></span>
+                </div>);
+            });
+        } else {
+            // Display incorrect student short answer, and one correct short answer
+            optionsView = [
+                optionListing('incorrect', '', 'has-text-danger', incorrectIcon, attempt.shortAnswer),
+                optionListing('actualCorrect', 'actual-correct', 'has-text-success', actualCorrectIcon, attempt.correctShortAnswer)
+            ];
+        }
     }
 
     let confidenceSelector = <ConfidenceSelector confident={attempt.isConfident} disabled />;
@@ -84,8 +104,8 @@ export default class QuestionReview extends Component {
 }
 
 QuestionReview.propTypes = {
-    // Question must include prompt, options[], and id and text of each option
+    // Question must include prompt, type, options[], and id and text of each option
     question: PropTypes.object.isRequired,
-    // Question attempt must include isCorrect, isConfident, option (containing id), and correctOption (containing id)
+    // Question attempt must include isCorrect, isConfident, option (containing id), correctOption (containing id), shortAnswer, and correctShortAnswer
     questionAttempt: PropTypes.object.isRequired
 };

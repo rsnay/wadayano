@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 import ErrorBox from '../shared/ErrorBox';
 import ConfidenceSelector from '../student/ConfidenceSelector';
-import { ALPHABET } from '../../constants';
+import { ALPHABET, MULTIPLE_CHOICE } from '../../constants';
 
-// This is basically a non-interactive stripped-down version of the QuestionTaker component, to be used in the instructor’s aggregated quiz review report
+// This is a stripped-down version of the QuestionReview component, to be used in the instructor’s aggregated quiz review report
 export default class AggregatedQuestionReview extends Component {
 
   render() {
@@ -13,7 +13,9 @@ export default class AggregatedQuestionReview extends Component {
     const questionOptions = this.props.question.options;
     //const attempt = this.props.aggregatedQuestionAttempt;
     
-    if (questionOptions.length === 0) {
+    const isMultipleChoice = (this.props.question.type === MULTIPLE_CHOICE);
+    
+    if (isMultipleChoice && questionOptions.length === 0) {
         return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
     }
 
