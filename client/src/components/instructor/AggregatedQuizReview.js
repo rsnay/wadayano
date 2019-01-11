@@ -235,7 +235,7 @@ class AggregatedQuizReview extends Component {
 
         const averageWadayanoScoreLabel = (score) => (
             <div className="is-flex aggregated-score-label">
-                <img className="wadayano-list" src={Logo} alt="wadayano logo" style={{height: "2rem"}} />
+                <img className="wadayano-score-logo" src={Logo} alt="wadayano logo" style={{height: "2rem"}} />
                 <h4 className="subtitle is-flex flex-1">
                     Average Wadayano Score
                 </h4>
