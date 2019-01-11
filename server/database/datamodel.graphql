@@ -72,8 +72,9 @@ enum QuestionType {
 
 type Question {
     id: ID! @unique
-    options: [Option!] @relation(name: "QuestionOptions", onDelete: CASCADE)
-    correctShortAnswers: [String!]
+    # options and correctShortAnswers may be empty arrays, but must be present
+    options: [Option!]! @relation(name: "QuestionOptions", onDelete: CASCADE)
+    correctShortAnswers: [String!]!
     prompt: String!
     concept: String
     type: QuestionType!

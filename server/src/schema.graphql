@@ -34,7 +34,8 @@ type Mutation {
   startOrResumeQuizAttempt(quizId: ID!): QuizAttempt!
   completeQuizAttempt(quizAttemptId: ID!): QuizGradePayload!
   rateConcepts(quizAttemptId: ID!, conceptConfidences: [ConceptConfidenceCreateInput!]!): QuizAttempt!
-  attemptQuestion(quizAttemptId: ID!, questionId: ID!, optionId: ID!, isConfident: Boolean!): QuestionAttempt!
+  # attemptQuestion will be called with *either* optionId or shortAnswer, depending on the question type. In the future, this could be refactored into question-type-specific types
+  attemptQuestion(quizAttemptId: ID!, questionId: ID!, type: QuestionType!, optionId: ID, shortAnswer: String, isConfident: Boolean!): QuestionAttempt!
 
   submitSurveyResult(courseId: ID!, answers: Json!): SurveyResult
 }

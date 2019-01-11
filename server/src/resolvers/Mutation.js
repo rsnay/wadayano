@@ -519,30 +519,68 @@ async function attemptQuestion(root, args, context, info) {
         }
     }
 
-    // Get the correct option for this question
-    const correctOption = (await context.db.query.options({
-        where: {
-            question: { id: args.questionId },
-            isCorrect:true
+    let attemptData = {
+        question: {connect: {id: args.questionId}},
+        isConfident: args.isConfident,
+    };
+
+    if (args.type === 'MULTIPLE_CHOICE') {
+        // Get the correct option for this question
+        const correctOption = (await context.db.query.options({
+            where: {
+                question: { id: args.questionId },
+                isCorrect:true
+            }
+        }, `{ id }`))[0];
+
+        if (!correctOption) {
+            throw Error('There is no correct option for this question. Please contact your instructor.');
         }
-    }, `{ id }`))[0];
 
-    if (!correctOption) {
-        throw Error('There is no correct option for this question. Please contact your instructor.');
+        // Find out if this option was correct
+        const isCorrect = args.optionId === correctOption.id;
+
+        // Add multiple-choice-specific data to attemptData
+        attemptData.option = {connect: {id: args.optionId}};
+        attemptData.correctOption = {connect: {id: correctOption.id}};
+        attemptData.isCorrect = isCorrect;
+
+    } else {
+        // Get the correct short answers for this question
+        const correctShortAnswers = (await context.db.query.question({
+            where: {
+                id: args.questionId
+            }
+        }, `{ correctShortAnswers }`)).correctShortAnswers;
+
+        if (correctShortAnswers.length === 0) {
+            throw Error('There is no correct short answer for this question. Please contact your instructor.');
+        }
+
+        // Prepare student answer (whitespace and case are ignored when comparing with students’ responses)
+        let comparableStudentAnswer = args.shortAnswer.toLowerCase().replace(/\s/g,'');
+
+        // Compare with each correct answer
+        let isCorrect = false;
+        let correctShortAnswer = correctShortAnswers[0];
+        for (let i = 0; i < correctShortAnswers.length; i++) {
+            let comparableAnswer = correctShortAnswers[i].toLowerCase().replace(/\s/g,'');
+            if (comparableAnswer === comparableStudentAnswer) {
+                isCorrect = true;
+                correctShortAnswer = correctShortAnswers[i];
+                break;
+            }
+        }
+
+        // Add short-answer-specific data to attemptData
+        attemptData.shortAnswer = args.shortAnswer;
+        attemptData.correctShortAnswer = correctShortAnswer;
+        attemptData.isCorrect = isCorrect;
     }
-
-    // Find out if this option was correct
-    const isCorrect = args.optionId === correctOption.id;
 
     // Create a new question attempt (do this separately so it uses the correct selection set from the client)
     const result = await context.db.mutation.createQuestionAttempt({
-        data: {
-            question: {connect: {id: args.questionId}},
-            option: {connect: {id: args.optionId}},
-            correctOption: {connect: {id: correctOption.id}},
-            isCorrect: isCorrect,
-            isConfident: args.isConfident,
-        }
+        data: attemptData
     }, info);
 
     // Connect this question attempt to the quiz attempt (ideally, this would be done with a nested creation, but the client needs to send a selection set for QuestionAttempt, and the nested create would use that selection set on a QuizAttempt, which is no good)
