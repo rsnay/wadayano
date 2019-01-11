@@ -7,7 +7,6 @@ import { Prompt } from 'react-router';
 import { withAuthCheck } from '../shared/AuthCheck';
 import ConceptRater from './ConceptRater';
 import QuestionTaker from './QuestionTaker';
-import QuizReview from './QuizReview';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
@@ -16,11 +15,10 @@ import { shuffleArray } from '../../utils';
 import fragments from '../../fragments';
 
 // Different phases or stages of the quiz-taking experience
+// Student is redirected to the quiz review page after these
 const phases = {
   CONCEPTS: 'concepts',
   QUESTIONS: 'questions',
-  RESULTS: 'results',
-  CONCEPT_REVIEW: 'concept_review'
 };
 
 class QuizTaker extends Component {
@@ -39,7 +37,7 @@ class QuizTaker extends Component {
       quiz: null,
       randomizedQuestions: null,
       quizAttempt: null,
-      quizGradePayload: null
+      isComplete: false
     };
   }
 
@@ -60,8 +58,8 @@ class QuizTaker extends Component {
       const quizAttempt = result.data.startOrResumeQuizAttempt;
       const quiz = quizAttempt.quiz;
 
-      // Get current location of quiz attempt, and resume at that point
-      // It looks like the list order is guaranteed from prisma, so this should be fine: https://www.prisma.io/forum/t/list-array-order-guaranteed/2235
+      // Get current location of quiz attempt (number already answered) and resume from there
+      // Questions are randomized using a seed based on the quiz attempt ID (and original order from Prisma is always the same), so order is guaranteed
       const currentQuestionIndex = quizAttempt.questionAttempts.length;
 
       // If concepts have been rated, jump to the questions
@@ -69,19 +67,19 @@ class QuizTaker extends Component {
       if (quizAttempt.conceptConfidences.length > 0) {
         phase = phases.QUESTIONS;
       }
-      // Edge case—if a student answered all questions but didn't continue to the results (where the grade is actually submitted), submit it now
+      // Edge case—if a student answered all questions but didn't click continue after the last question (where the grade is actually submitted), submit it now
       if (currentQuestionIndex === quiz.questions.length) {
         this.setState({
           quizAttempt,
           quiz,
           currentQuestionIndex,
-          phase: phases.RESULTS
+          isComplete: true
         });
         this._completeQuiz();
         return;
       }
 
-      // Otherwise randomize the questions, store the data, and go to current question
+      // If quiz isn’t finished, randomize the questions, store the data, and go to current question
       let randomizedQuestions = shuffleArray(quizAttempt.id, [...quiz.questions]);
 
       this.setState({
@@ -106,8 +104,8 @@ class QuizTaker extends Component {
   }
 
   componentDidUpdate() {
-    // If the student isn't to the results screen yet, have the browser confirm before they leave the page
-    if (this.state.phase !== phases.RESULTS) {
+    // If the student hasn’t completed the quiz, have the browser confirm before they leave the page
+    if (!this.state.isComplete) {
       window.onbeforeunload = () => true;
     } else {
       window.onbeforeunload = undefined;
@@ -133,16 +131,11 @@ class QuizTaker extends Component {
   _onNextQuestion() {
     // If at the end of the quiz...
     let newIndex = this.state.currentQuestionIndex + 1;
-    // Change to Random
-    
     
     //check if newIndex if there is a question attempt for the next question, skip?????
-    // ... go to results (still set new currentQuestionIndex so progress bar fills up)
+    // ... complete the quiz and submit the grade (still set new currentQuestionIndex so progress bar fills up)
     if (newIndex >= this.state.quiz.questions.length) {
-      this.setState({
-        phase: phases.RESULTS,
-        currentQuestionIndex: newIndex
-      });
+      this.setState({ isComplete: true });
       this._completeQuiz();
     } else {
       // Otherwise go to next question
@@ -153,7 +146,7 @@ class QuizTaker extends Component {
     }
   }
 
-  // Sends the completeQuiz mutation. The resulting data gets used in the QuizReview component
+  // Sends the completeQuiz mutation and displays if grade postback was successful or not (if applicable)
   async _completeQuiz() {
     this.setState({ isLoading: true });
     try {
@@ -183,8 +176,11 @@ class QuizTaker extends Component {
         } 
       }
         
-      // Store quizGradePayload info in state
-      this.setState({ quizGradePayload, isLoading: false });
+      this.setState({ isLoading: false });
+
+      // Go to quiz review page (use replace instead of push so that browser back button will take student back to dashboard, not back to the quiz, which would start another attempt)
+      this.props.history.replace('/student/quiz/review/' + this.state.quizAttempt.id);
+
     } catch (e) {
       // Catch errors
       let message = 'Error completing quiz. ';
@@ -198,7 +194,7 @@ class QuizTaker extends Component {
 
   render() {
     
-    if (this.state.isLoading) {
+    if (this.state.isLoading ) {
       return <LoadingBox />;
     }
 
@@ -249,24 +245,6 @@ class QuizTaker extends Component {
         />;
         break;
 
-      case phases.RESULTS:
-        currentView = (
-          <div>
-            <QuizReview quizAttemptId={this.state.quizAttempt.id} />
-            <hr />
-            <p className="control">
-                  <Link to="/student" className="button is-medium">
-                      Return to Dashboard
-                  </Link>
-            </p>
-          </div>
-        );
-        break;
-
-      case phases.CONCEPT_REVIEW:
-        currentView = 'Concept review';
-        break;
-      
       default:
         currentView = null;
     }
@@ -276,10 +254,9 @@ class QuizTaker extends Component {
         <div className="container">
           {/* Bigger header with title, and progress bar for tablet and larger */}
           <div className="columns is-hidden-mobile">
-            {/* QuizReview already displays the quiz title, so hide the other one */}
-            { this.state.phase !== phases.RESULTS && <div className="column">
+            <div className="column">
               <h1 className="title is-1">{quiz.title}</h1>
-            </div>}
+            </div>
             <div className="column no-select" style={{margin: "1rem 0 0 0"}}>
               {this.state.phase === phases.QUESTIONS && <div className="is-flex-tablet">
                 <div style={{margin: "-.3rem 1rem .5rem 0", flexShrink: 0}}>Question {this.state.currentQuestionIndex + 1} of {quiz.questions.length}</div>
@@ -295,9 +272,9 @@ class QuizTaker extends Component {
           {currentView}
 
         </div>
-        {/* If the student isn't to the results screen yet, have react router confirm before they navigate away */}
+        {/* If the student hasn’t completed the quiz, have react router confirm before they navigate away */}
         <Prompt
-          when={this.state.phase !== phases.RESULTS}
+          when={!this.state.isComplete}
           message="Do you want to pause your quiz attempt? You can resume it from the wadayano course dashboard."
         />
       </section>

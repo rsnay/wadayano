@@ -320,14 +320,13 @@ class QuizReview extends Component {
                 modalState={this.state.displayConceptReview}
                 closeModal={() => this.setState({ displayConceptReview: false })}
                 title={"Concept Review: " + this.state.concept}>
-                <span className="concept-questions-list" id={"questionReview"+this.state.concept}>
+                <span className="concept-questions-list">
                     {this.state.conceptQuestions.map(conceptQuestion => (
                         <div className="question-review" key={conceptQuestion.id}>
-                        <QuestionReview id={conceptQuestion.id} questionAttempt={conceptQuestion} question={conceptQuestion.question} />
-                        <hr />
+                            <QuestionReview questionAttempt={conceptQuestion} question={conceptQuestion.question} />
+                            <hr />
                         </div>
                     ))}
-                    <br/>
                 </span>
             </Modal>
         </div>)
