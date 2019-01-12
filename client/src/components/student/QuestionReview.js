@@ -12,6 +12,20 @@ const CORRECT_FEEDBACKS = [
     'You’ve got this!'
 ];
 
+export const optionListing = (id, containerClass, iconClass, icon, html, text) => {
+    return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id}>
+        <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
+            <span>{icon}</span>
+        </span>
+        {/* Only use dangerouslySetInnerHTML if necessary, otherwise just show text (for short answers) */}
+        {text ?
+            <span className="column question-option-text level-left" >{text}</span>
+        :
+            <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: html}}></span>
+        }
+    </div>)
+};
+
 // This is basically a non-interactive stripped-down version of the QuestionTaker component, to be used in the post-question and post-quiz review
 export default class QuestionReview extends Component {
 
@@ -39,27 +53,16 @@ export default class QuestionReview extends Component {
     let actualCorrectIcon = <span className="icon"><i className="fas fa-arrow-right"></i></span>;
     let incorrectIcon = <span className="icon"><i className="fas fa-times"></i></span>;
 
-    const optionListing = (id, containerClass, iconClass, icon, text) => {
-        return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id}>
-            <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
-                <span>{icon}</span>
-            </span>
-            <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: text}}></span>
-        </div>)
-    };
-
     let optionsView;
     // If attempt was correct, only display the correct answer
     if (attempt.isCorrect) {
         // Either the correct option’s HTML, or the student’s correct short answer text
-        let correctAnswerText;
         if (isMultipleChoice) {
-            correctAnswerText = questionOptions.filter(o => o.id === attempt.option.id)[0].text;
+            optionsView = optionListing('correct', '', 'is-success', correctIcon, questionOptions.filter(o => o.id === attempt.option.id)[0].text, null);
         } else {
-            correctAnswerText = attempt.shortAnswer;
+            optionsView = optionListing('correct', '', 'is-success', correctIcon, null, attempt.shortAnswer);
         }
 
-        optionsView = optionListing('correct', '', 'is-success', correctIcon, correctAnswerText);
     } else {
         if (isMultipleChoice) {
             // Otherwise, display all options (selected is incorrect), and indicate which *was* correct
@@ -69,13 +72,14 @@ export default class QuestionReview extends Component {
                 const icon = correct ? actualCorrectIcon : (incorrect ? incorrectIcon : ALPHABET[index]);
                 const iconClass = correct ? "has-text-success" : (incorrect ? "has-text-danger" : "");
                 const containerClass = correct ? "actual-correct" : "";
-                return optionListing(option.id, containerClass, iconClass, icon, option.text);
+
+                return optionListing(option.id, containerClass, iconClass, icon, option.text, null);
             });
         } else {
             // Display incorrect student short answer, and one correct short answer
             optionsView = [
-                optionListing('incorrect', '', 'has-text-danger', incorrectIcon, attempt.shortAnswer),
-                optionListing('actualCorrect', 'actual-correct', 'has-text-success', actualCorrectIcon, attempt.correctShortAnswer)
+                optionListing('incorrect', '', 'has-text-danger', incorrectIcon, null, attempt.shortAnswer),
+                optionListing('actualCorrect', 'actual-correct', 'has-text-success', actualCorrectIcon, null, attempt.correctShortAnswer)
             ];
         }
     }

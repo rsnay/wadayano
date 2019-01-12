@@ -25,12 +25,17 @@ export default class AggregatedQuestionReview extends Component {
     );
 
     const correctIcon = <span className="icon"><i className="fas fa-check"></i></span>;
-    const optionListing = (id, containerClass, iconClass, icon, text) => {
+    const optionListing = (id, containerClass, iconClass, icon, html, text) => {
         return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id}>
             <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
                 <span>{icon}</span>
             </span>
-            <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: text}}></span>
+            {/* Only use dangerouslySetInnerHTML if necessary, otherwise just show text (for short answers) */}
+            {text ?
+                <span className="column question-option-text level-left" >{text}</span>
+            :
+                <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: html}}></span>
+            }
         </div>)
     };
 
@@ -42,11 +47,11 @@ export default class AggregatedQuestionReview extends Component {
             const icon = correct ? correctIcon : ALPHABET[index];
             const iconClass = correct ? "has-text-success" : "";
 
-            return optionListing(option.id, '', iconClass, icon, option.text);
+            return optionListing(option.id, '', iconClass, icon, option.text, null);
         });
     } else {
         optionsView = correctShortAnswers.map((answer, index) => {
-            return optionListing(index, '', 'has-text-success', correctIcon, answer);
+            return optionListing(index, '', 'has-text-success', correctIcon, null, answer);
         });
     }
 

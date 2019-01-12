@@ -80,6 +80,11 @@ async function addQuestion (root, args, context, info) {
         question.options.create[i].text = stripJs(question.options.create[i].text);
     }
 
+    // Don’t sanitize short answers for now, since escaping characters like < and & messes up checking. Short answers are only ever plain text, and are never displayed using dangerouslySetInnerHTML, unlike prompt and multiple-choice options
+    // for (let i = 0; i < question.correctShortAnswers.set.length; i++) {
+    //     question.correctShortAnswers.set[i] = stripJs(question.correctShortAnswers.set[i]);
+    // }
+
     const updatedQuiz = await context.db.mutation.updateQuiz({
         data: {
             questions: {
@@ -126,6 +131,10 @@ function updateQuestion(root, args, context, info) {
     for (let i = 0; i < data.options.update.length; i++) {
         data.options.update[i].data.text = stripJs(data.options.update[i].data.text);
     }
+    // Don’t sanitize short answers for now, since escaping characters like < and & messes up checking. Short answers are only ever plain text, and are never displayed using dangerouslySetInnerHTML, unlike prompt and multiple-choice options
+    // for (let i = 0; i < data.correctShortAnswers.set.length; i++) {
+    //     data.correctShortAnswers.set[i]= stripJs(data.correctShortAnswers.set[i]);
+    // }
 
     return context.db.mutation.updateQuestion({
         data,
