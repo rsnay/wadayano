@@ -576,6 +576,7 @@ async function attemptQuestion(root, args, context, info) {
             let comparableAnswer = answer.toLowerCase().replace(/\s/g,'')
             // Special case to handle both “0.14” and “.14” as correct by stripping leading 0s that are immediately followed by decimal
             comparableAnswer = comparableAnswer.replace(/^0+./, '.');
+            return comparableAnswer;
         }
 
         let comparableStudentAnswer = prepareAnswer(args.shortAnswer);
