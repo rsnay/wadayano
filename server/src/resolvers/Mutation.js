@@ -571,13 +571,20 @@ async function attemptQuestion(root, args, context, info) {
         }
 
         // Prepare student answer (whitespace and case are ignored when comparing with students’ responses)
-        let comparableStudentAnswer = args.shortAnswer.toLowerCase().replace(/\s/g,'');
+        function prepareAnswer(answer) {
+            // Ignore whitespace and case
+            let comparableAnswer = answer.toLowerCase().replace(/\s/g,'')
+            // Special case to handle both “0.14” and “.14” as correct by stripping leading 0s that are immediately followed by decimal
+            comparableAnswer = comparableAnswer.replace(/^0+./, '.');
+        }
+
+        let comparableStudentAnswer = prepareAnswer(args.shortAnswer);
 
         // Compare with each correct answer
         let isCorrect = false;
         let correctShortAnswer = correctShortAnswers[0];
         for (let i = 0; i < correctShortAnswers.length; i++) {
-            let comparableAnswer = correctShortAnswers[i].toLowerCase().replace(/\s/g,'');
+            let comparableAnswer = prepareAnswer(correctShortAnswers[i]);
             if (comparableAnswer === comparableStudentAnswer) {
                 isCorrect = true;
                 correctShortAnswer = correctShortAnswers[i];
