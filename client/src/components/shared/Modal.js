@@ -20,7 +20,7 @@ const Modal = ({ children, closeModal, modalState, title, showFooter, cardClassN
             </div>
           </section>
           {showFooter && <footer className="modal-card-foot">
-            <a className="button" onClick={closeModal}>Done</a>
+            <button className="button" onClick={closeModal}>Done</button>
           </footer>}
         </div>
       </div>

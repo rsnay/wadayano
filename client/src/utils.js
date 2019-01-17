@@ -72,8 +72,9 @@ export function confidenceAnalysis(quizAttempt){
             case 0:
                 break;
             case 1:
-            quizOverC += 1;
+                quizOverC += 1;
                 break;
+            default:
         } 
     }
 

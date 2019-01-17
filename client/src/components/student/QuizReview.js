@@ -60,7 +60,7 @@ class QuizReview extends Component {
             }
         }
         if(this.state.wadayano === null){
-            var wadayano = parseFloat((correctConfidence / questionNum * 100)).toFixed(1);
+            var wadayano = correctConfidence / questionNum;
             this.setState({wadayano});
             this.confidenceText(wadayano,quizAttempt);
         }
@@ -89,11 +89,12 @@ class QuizReview extends Component {
                 case 0:
                     break;
                 case 1:
-                quizOverC += 1;
+                    quizOverC += 1;
                     break;
+                default:
             } 
         }
-        if(wadayano > 90){
+        if(wadayano > 0.90){
             quizConfidenceText = "Accurate";
             quizConfidenceEmoji = "🧘";
         } else if(quizOverC === quizUnderC){
@@ -182,6 +183,7 @@ class QuizReview extends Component {
                             console.log("C?");
                             conceptConfidences[i].overCQuestions += 1;
                             break;
+                        default:
                     }  
                 }
             }
@@ -189,11 +191,11 @@ class QuizReview extends Component {
             conceptConfidences[i].conceptScore = parseFloat((correct/conceptConfidences[i].questionCnt)*100).toFixed(1); //individual concept score
             conceptConfidences[i].confidenceError = Math.abs(conceptConfidences[i].confidence - correct);
             conceptConfidences[i].confidenceBias = (conceptConfidences[i].confidence - correct);
-            conceptConfidences[i].wadayano = ((conceptConfidences[i].correctQuestions/conceptConfidences[i].questionCnt)*100).toFixed(1);
+            conceptConfidences[i].wadayano = conceptConfidences[i].correctQuestions / conceptConfidences[i].questionCnt;
             console.log(conceptConfidences[i].correctQuestions);
             console.log(conceptConfidences[i].questionCnt);
             console.log(conceptConfidences[i].wadayano);
-            if(conceptConfidences[i].wadayano > 90){
+            if(conceptConfidences[i].wadayano > 0.90){
                 conceptConfidences[i].confidenceText = "Accurate";
                 conceptConfidences[i].confidenceEmoji = "🧘";
             } else if(conceptConfidences[i].overCQuestions === conceptConfidences[i].underCQuestions){
@@ -284,16 +286,13 @@ class QuizReview extends Component {
     // Score format of 33.3%
     const formattedScore = formatScore(quizAttempt.score);
 
-    // If postSucceeded is null, then it was not a graded attempt
-    const isGraded = (quizAttempt.postSucceeded !== null);
-
     return (
         <div className="quiz-review-container">
             <div className="columns">
                 <div className="column is-6">
                 <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
                     <h2 className="subtitle is-2">Score: {formattedScore} <span className="has-text-weight-light">({this.predictedScore(quizAttempt.quiz.questions.length,predictedConcepts)}% Predicted)</span></h2>
-                    <WadayanoScore wadayano={this.state.wadayano} confidenceText={this.state.confidenceText}/>
+                    <WadayanoScore score={this.state.wadayano} confidenceText={this.state.confidenceText}/>
                 </div>
             </div>
             <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
@@ -307,7 +306,7 @@ class QuizReview extends Component {
                         <p className="title">
                             Score: {conceptConfidence.conceptScore}% <span className="has-text-weight-light">({this.predictedScore(conceptConfidence.questionCnt,conceptConfidence.confidence)}% Predicted)</span>
                         </p>
-                        <WadayanoScore wadayano={conceptConfidence.wadayano} confidenceText={conceptConfidence.confidenceText}/>
+                        <WadayanoScore score={conceptConfidence.wadayano} confidenceText={conceptConfidence.confidenceText}/>
                         <div id={conceptConfidence.concept+ "review"}></div>
                         <footer className="">
                             <button className="button is-primary is-block" style={{width: "100%"}} onClick = {this.selectReview.bind(null,conceptConfidence.concept, quizAttempt)}>View Details</button>

@@ -12,6 +12,8 @@ import ErrorBox from '../shared/ErrorBox';
 import ConceptSelector from './ConceptSelector';
 
 // TinyMCE imports and config
+// tinymce import is required but never used by reference, so add eslint exception
+/* eslint-disable no-unused-vars */
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/themes/modern/theme';
 import 'tinymce/plugins/autoresize';
@@ -21,6 +23,7 @@ import 'tinymce/plugins/image';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/textcolor';
+/* eslint-enable no-unused-vars */
 import { Editor } from '@tinymce/tinymce-react';
 import { stripTags } from '../../utils';
 import fragments from '../../fragments';

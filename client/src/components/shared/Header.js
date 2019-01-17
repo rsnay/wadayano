@@ -40,11 +40,11 @@ class Header extends Component {
             <Link to="/" className="navbar-item" style={{padding: 0}}>
                 <img src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem"}} />
             </Link>
-            <a role="button" className="navbar-burger" onClick={(e) => this._toggleMenu(e) } data-target="navMenu" aria-label="menu" aria-expanded="false">
+            <button className="navbar-burger button is-light" onClick={(e) => this._toggleMenu(e) } data-target="navMenu" aria-label="menu" aria-expanded="false">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
-            </a>
+            </button>
         </div>
 
         <div id="header-main-menu" className="navbar-menu">
