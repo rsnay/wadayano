@@ -19,7 +19,7 @@ export class QuizJSONImportModal extends Component {
     async importJSON() {
         // Update the quiz with the new questions
         try {
-            let questionData = JSON5.parse(this.state.jsonInput);
+            const questionData = JSON5.parse(this.state.jsonInput);
             this.setState({ isLoading: true });
             // Send the mutation
             const result = await this.props.saveQuizMutation({
@@ -48,7 +48,7 @@ export class QuizJSONImportModal extends Component {
 
     render() {
         return (
-            <Modal modalState={true} title="Import Question JSON" closeModal={this.props.onClose}>
+            <Modal modalState={true} title="Import Question JSON" closeModal={() => this.props.onClose(false)}>
                 <textarea className="textarea is-medium" rows={10}
                     value={this.state.jsonInput}
                     placeholder="Paste question JSON to import into this quiz"
