@@ -107,8 +107,8 @@ function updateQuiz(root, args, context, info) {
         data: {
             title: args.data.title,
             type: args.data.type,
-            // TODO the quiz editor currently uses the addQuestion and updateQuestion mutations which sanitize question and option HTML, but that should be added in here as well, if the editor were to use this. So updating questions through this mutation is being disabled for now:
-            // questions: args.data.questions
+            // TODO the quiz editor currently uses the addQuestion and updateQuestion mutations which sanitize question and option HTML, but that should be added in here as well, since questions and options can be imported via JSON, which will use this mutation.
+            questions: args.data.questions
         },
         where:{
             id:args.id

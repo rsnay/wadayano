@@ -16,6 +16,7 @@ import ButterToast, { ToastTemplate } from '../shared/Toast';
 import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
 import Modal from '../shared/Modal';
 import Breadcrumbs from '../shared/Breadcrumbs';
+import QuizJSONImportModal from './QuizJSONImportModal';
 
 export class QuizEditor extends Component {
     constructor(props) {
@@ -26,6 +27,7 @@ export class QuizEditor extends Component {
             isSaving: false,
             isAddingQuestion: false,
             showQuizInfoModal: false,
+            showQuizJSONImportModal: false,
             // Questions are stored in state once query loads, so that they can be reordered in the future (otherwise, query just loads into read-only prop).
             questions: new Map(),
             orderedQuestionIds: [],
@@ -41,6 +43,7 @@ export class QuizEditor extends Component {
         this.addQuestion = this.addQuestion.bind(this);
         this.onQuestionListSortEnd = this.onQuestionListSortEnd.bind(this);
         this.onNewQuestionSaved = this.onNewQuestionSaved.bind(this);
+        this.onImportComplete = this.onImportComplete.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -228,6 +231,15 @@ export class QuizEditor extends Component {
         }
     }
 
+    // Called when the import question JSON modal is closed
+    onImportComplete(refetch) {
+        this.setState({ showQuizJSONImportModal: false });
+        // Reload quiz data after it’s done
+        if (refetch) {
+            this.props.quizQuery.refetch();
+        }
+    }
+
 
   render() {
 
@@ -362,6 +374,14 @@ export class QuizEditor extends Component {
                 </span>
                 <span>Import From Other Quizzes</span>
             </Link>
+
+            <button className="button is-light" style={{marginBottom: "1rem", marginLeft: "0.5rem"}} onClick={() => this.setState({ showQuizJSONImportModal: true })}>
+                <span className="icon">
+                    <i className="fas fa-code"></i>
+                </span>
+                <span>Import Question JSON</span>
+            </button>
+            {this.state.showQuizJSONImportModal && <QuizJSONImportModal quizId={quiz.id} onClose={this.onImportComplete} />}
         </div>
 
         {(quiz.quizAttempts.length > 0) &&
