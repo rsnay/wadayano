@@ -103,6 +103,18 @@ progress::-webkit-progress-value {
 .question-prompt {
     font-size: 1.2rem;
 }
+.question-prompt p:not(:last-child), .question-prompt div:not(:last-child) {
+    margin-bottom: 0.7rem;
+}
+/* Overwrite some styles to better match what the instructor sees */
+.question-prompt ul, .question-prompt ol {
+    padding-left: 2rem!important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.question-prompt ul {
+    list-style: disc!important;
+}
 
 .question-option-container {
     cursor: pointer;
