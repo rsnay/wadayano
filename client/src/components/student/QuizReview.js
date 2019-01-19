@@ -271,16 +271,11 @@ class QuizReview extends Component {
     try {
         conceptConfidences = this.sortConcepts(quizAttempt);
     } catch (error) {
+        conceptConfidences = [];
         console.error(error);
         ButterToast.raise({
-            content: <ToastTemplate content="There was an error generating the report for this quiz. Please contact us if this problem persists." className="is-danger" />
+            content: <ToastTemplate content="There was an error generating the full report for this quiz. This may occur if the quiz has been modified by the instructor. Please contact us if this problem persists." className="is-danger" />
         });
-        return (
-            <p className="control">
-                <Link to="/student" className="button is-medium">
-                    Return to Dashboard
-                </Link>
-            </p>);
     }
 
     // Score format of 33.3%
