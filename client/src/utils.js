@@ -87,38 +87,31 @@ export function confidenceAnalysis(quizAttempt, concept = null){
     let overConfidentCount = 0;
     let underConfidentCount = 0;
 
-    for(let i = 0; i < questionAttempts.length; i++){
-        let correct = 0;
-        let confident = 0;
-        if (questionAttempts[i].isConfident) {
-            confident = 1;
+    for (let i = 0; i < questionAttempts.length; i++) {
+        let { isConfident, isCorrect } = questionAttempts[i];
+        // Count if the student was under- or overconfident on this question
+        if ((!isConfident) && isCorrect) {
+            underConfidentCount++;
+        } else if (isConfident && (!isCorrect)) {
+            overConfidentCount++;
         }
-        if (questionAttempts[i].isCorrect) {
-            correct = 1;
-        }
-        const compare = confident - correct;
-        switch (compare) {
-            case -1:
-                underConfidentCount++;
-                break;
-            case 1:
-                overConfidentCount++;
-                break;
-            default:
-        } 
     }
 
     // Get the overall wadayano score for the quiz or concept
     let wadayano = wadayanoScore(quizAttempt, concept);
 
     // wadayanoScore() returns a float in range 0-1
-    if(wadayano > 0.9){
+    if (wadayano > 0.9) {
+        // Accurate if wadayano score > 90%
         return CONFIDENCES.ACCURATE;
-    } else if (overConfidentCount === underConfidentCount){
+    } else if (overConfidentCount === underConfidentCount) {
+        // Mixed if student was equally under- and overconfident
         return CONFIDENCES.MIXED;
-    } else if (overConfidentCount > underConfidentCount){
+    } else if (overConfidentCount > underConfidentCount) {
+        // Overconfident if more over- than underconfident
         return CONFIDENCES.OVERCONFIDENT;
     } else {
+        // Otherwise underconfident
         return CONFIDENCES.UNDERCONFIDENT;
     }
 }
