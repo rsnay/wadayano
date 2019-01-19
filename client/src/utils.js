@@ -22,70 +22,101 @@ export function stripTags(html) {
     return doc.body.textContent || '';
 }
 
-// Calculate predicted score for a given quiz attempt
+// Filters a quizAttempt by the given concept, and returns the corresponding questionAttempts
+// Returns all questionAttempts if no concept is provided
+export function filterByConcept(quizAttempt, concept = null) {
+    // Filter by concept, if applicable
+    let questionAttempts;
+    if (concept !== null) {
+        questionAttempts = quizAttempt.questionAttempts.filter(questionAttempt => questionAttempt.question.concept === concept);
+    } else {
+        questionAttempts = quizAttempt.questionAttempts;
+    }
+    return questionAttempts;
+}
+
+// Calculate predicted score for a given quiz attempt (optionally for a specific concept, for which quizAttempt.questionAttempts[i].question.concept must be included)
 // Returns a float ranging from 0 to 1
-export function predictedScore(quizAttempt) {
+export function predictedScore(quizAttempt, concept = null) {
     if (!quizAttempt || !quizAttempt.questionAttempts || quizAttempt.questionAttempts.length === 0 || !quizAttempt.conceptConfidences || quizAttempt.conceptConfidences.length === 0) { 
         return 0;
     }
-    const questionCount = quizAttempt.questionAttempts.length;
+
+    const questionAttempts = filterByConcept(quizAttempt, concept);
+
+    const questionCount = questionAttempts.length;
     // Predicted score is the percentage of questions that the student predicted they would get correct (in the pre-quiz confidence assessment)
     let predictedCount = 0;
-    quizAttempt.conceptConfidences.forEach(c => predictedCount += c.confidence);
+    // Calculate predicted count, based on entire quiz or specific concept
+    if (concept !== null) {
+        const conceptConfidence = quizAttempt.conceptConfidences.find(c => c.concept === concept);
+        if (conceptConfidence === undefined) { return 0; }
+        predictedCount += conceptConfidence.confidence;
+    } else {
+        quizAttempt.conceptConfidences.forEach(c => predictedCount += c.confidence);
+    }
 
     return (predictedCount / questionCount);
 }
 
-// Calculate wadayano score for a given quiz attempt
+// Calculate wadayano score for a given quiz attempt (optionally for a specific concept, for which quizAttempt.questionAttempts[i].question.concept must be included)
 // Returns a float ranging from 0 to 1
-export function wadayanoScore(quizAttempt) {
+export function wadayanoScore(quizAttempt, concept = null) {
     if (!quizAttempt || !quizAttempt.questionAttempts || quizAttempt.questionAttempts.length === 0) { 
         return 0;
     }
-    const questionCount = quizAttempt.questionAttempts.length;
+
+    const questionAttempts = filterByConcept(quizAttempt, concept);
+
+    // Avoid divide by zero
+    const questionCount = questionAttempts.length;
+    if (questionCount === 0) { return 0; }
+
     // wadayano score is the percentage of questions where the student accurately assessed their confidence (confident and correct are either both true, or both false)
-    const accurateConfidenceCount = quizAttempt.questionAttempts.filter(q => q.isConfident === q.isCorrect).length;
+    const accurateConfidenceCount = questionAttempts.filter(q => q.isConfident === q.isCorrect).length;
 
     return (accurateConfidenceCount / questionCount);
 }
 
-// Analyze a student’s confidence for a given quiz attempt
+// Analyze a student’s confidence for a given quiz attempt (optionally for a specific concept, for which quizAttempt.questionAttempts[i].question.concept must be included)
 // Returns an object: { text: "Accurate", emoji: "🧘" }
-export function confidenceAnalysis(quizAttempt){
-    var quizOverC = 0;
-    var quizUnderC = 0;
-    for(var i = 0; i < quizAttempt.questionAttempts.length; i++){
-        var correct = 0;
-        var confident = 0;
-        var compare = 0;
-        if(quizAttempt.questionAttempts[i].isConfident){
+export function confidenceAnalysis(quizAttempt, concept = null){
+
+    const questionAttempts = filterByConcept(quizAttempt, concept);
+
+    let overConfidentCount = 0;
+    let underConfidentCount = 0;
+
+    for(let i = 0; i < questionAttempts.length; i++){
+        let correct = 0;
+        let confident = 0;
+        if (questionAttempts[i].isConfident) {
             confident = 1;
         }
-        if(quizAttempt.questionAttempts[i].isCorrect){
+        if (questionAttempts[i].isCorrect) {
             correct = 1;
         }
-        compare = confident - correct;
-        switch(compare){
+        const compare = confident - correct;
+        switch (compare) {
             case -1:
-                quizUnderC += 1;
-                break;
-            case 0:
+                underConfidentCount++;
                 break;
             case 1:
-                quizOverC += 1;
+                overConfidentCount++;
                 break;
             default:
         } 
     }
 
-    let wadayano = wadayanoScore(quizAttempt);
+    // Get the overall wadayano score for the quiz or concept
+    let wadayano = wadayanoScore(quizAttempt, concept);
 
     // wadayanoScore() returns a float in range 0-1
     if(wadayano > 0.9){
         return CONFIDENCES.ACCURATE;
-    } else if(quizOverC === quizUnderC){
+    } else if (overConfidentCount === underConfidentCount){
         return CONFIDENCES.MIXED;
-    } else if(quizOverC > quizUnderC){
+    } else if (overConfidentCount > underConfidentCount){
         return CONFIDENCES.OVERCONFIDENT;
     } else {
         return CONFIDENCES.UNDERCONFIDENT;
