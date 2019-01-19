@@ -19,7 +19,7 @@ export class QuizJSONImportModal extends Component {
     async importJSON() {
         // Update the quiz with the new questions
         try {
-            const questionData = JSON5.parse(this.state.jsonInput);
+            const questionData = JSON5.parse(this.state.jsonInput.replace(/\r?\n|\r/g, ''));
             this.setState({ isLoading: true });
             // Send the mutation
             const result = await this.props.saveQuizMutation({
@@ -38,6 +38,7 @@ export class QuizJSONImportModal extends Component {
             // Close this modal, and tell the QuizEditor to refetch data
             this.props.onClose(true);
         } catch (error) {
+            console.error(error);
             ButterToast.raise({
                 content: <ToastTemplate content={"The entered JSON was invalid, or there was an error importing the questions: " + error} className="is-danger" />,
                 timeout: 3000
