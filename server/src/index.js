@@ -67,7 +67,7 @@ server.express.enable('trust proxy');
 
 // Handle LTI launch requests
 // create application/x-www-form-urlencoded parser
-const urlencodedParser = bodyParser.urlencoded({ extended: false, limit: '5mb' })
+const urlencodedParser = bodyParser.urlencoded({ extended: false })
 server.post('/lti', urlencodedParser, (req, res) => handleLaunch(config, db, req, res));
 server.post('/lti/:action/:objectId', urlencodedParser, (req, res) => handleLaunch(config, db, req, res));
 
@@ -77,4 +77,5 @@ server.use(express.static(appDir));
 server.start({
   port: config.APP_SERVER_PORT || 4000,
   tracing: 'disabled',
+  bodyParserOptions: { limit: '1mb' }
 }, () => console.log(`Server is running on port ${config.APP_SERVER_PORT || 4000}`));
