@@ -316,6 +316,8 @@ progress::-webkit-progress-value {
     background-color: rgb(245, 245, 245);
     border-radius: 5px;
     box-shadow: 0px 0px 5px gray;
+    max-height: 20vh;
+    overflow-y: auto;
 }
 .question-navbar-item {
     display: inline!important;

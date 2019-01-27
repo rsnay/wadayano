@@ -18,6 +18,8 @@ import Modal from '../shared/Modal';
 import Breadcrumbs from '../shared/Breadcrumbs';
 import QuizJSONImportModal from './QuizJSONImportModal';
 
+const MAX_NAVBAR_QUESTIONS = 20;
+
 export class QuizEditor extends Component {
     constructor(props) {
         super(props);
@@ -251,14 +253,22 @@ export class QuizEditor extends Component {
         return <LoadingBox />;
     }
 
-    const allQuestions = this.state.orderedQuestionIds.concat(this.state.newQuestionIds);
+    let allQuestions = this.state.orderedQuestionIds.concat(this.state.newQuestionIds);
 
+    // Render up to 20 questions
+    let divisor = 1;
+    while (allQuestions.length / divisor > MAX_NAVBAR_QUESTIONS) {
+        divisor++;
+    }
     const questionNavbar = (
         <div id="question-navbar" className="question-navbar no-select">
             <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Jump to Question:</span>
-            {allQuestions.map((questionId, index) => (
-                <button key={questionId} onClick={() => this.scrollToQuestionId(questionId)} className="question-navbar-item button is-text">{index + 1}</button>
-            ))}
+            {/* Only render up to 20 questions by omitting non-factors of the divisor, but always include first and last questions */}
+            {allQuestions.map((questionId, index) => {
+                if ((index + 1) % divisor === 0 || index === 0 || index === allQuestions.length - 1) {
+                    return (<button key={questionId} onClick={() => this.scrollToQuestionId(questionId)} className="question-navbar-item button is-text">{index + 1}</button>);
+                }
+            })}
             <button className={"button is-text question-navbar-item"+ (this.state.isAddingQuestion ? " is-loading" : "")} title="Add Question" onClick={this.addQuestion}>
                 <span className="icon"><i className="fas fa-plus"></i></span>
             </button>
