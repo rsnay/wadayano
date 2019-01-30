@@ -188,7 +188,7 @@ class AggregatedQuizReview extends Component {
     render() {
 
         if (this.state.error || (this.props.quizQuery && this.props.quizQuery.error)) {
-            return <ErrorBox><p>Couldn’t load quiz report.</p></ErrorBox>;
+            return <ErrorBox><p>Couldn’t load quiz report. {this.state.error}</p></ErrorBox>;
         }
 
         if (this.state.isLoading || (this.props.quizQuery && this.props.quizQuery.loading)) {
