@@ -235,7 +235,7 @@ export class QuizEditor extends Component {
 
     // Called when the import question JSON modal is closed
     onImportComplete(refetch) {
-        this.setState({ showQuizJSONImportModal: false, isLoading: true });
+        this.setState({ showQuizJSONImportModal: false, isLoading: refetch });
         // Reload quiz data after it’s done
         if (refetch) {
             this.props.quizQuery.refetch();
