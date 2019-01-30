@@ -4,6 +4,7 @@ type Query {
   quiz(id:ID): Quiz!
   currentInstructor: Instructor!
   course(id:ID): Course!
+  courseConcepts(id:ID): [String!]!
   question(id:ID): Question!
   currentStudent: Student!
   currentStudentQuizAttempts(orderBy: QuizAttemptOrderByInput, courseId: ID): [QuizAttempt!]!

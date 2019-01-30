@@ -8,6 +8,7 @@ const Permissions = {
         quiz: rules.canAccessQuiz,
         currentInstructor: rules.isInstructor,
         course: rules.isAuthenticated, // More lax here, since individual properties are controlled below
+        courseConcepts: rules.isAuthenticated, // More lax here, since individual properties are controlled below
         question: rules.canAccessQuestion,
         currentStudent: rules.isStudent,
         currentStudentQuizAttempts: rules.isStudent,

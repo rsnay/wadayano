@@ -4,6 +4,32 @@ function course(root, args, context, info){
   return context.db.query.course({where:{id:args.id}}, info)
 }
 
+async function courseConcepts(root, args, context, info){
+  // Get the concepts for the whole course, by getting the 
+  // concept for each question in each quiz
+  const course = await context.db.query.course({where:{id:args.id}}, `
+    {
+      quizzes {
+        questions {
+          concept
+        }
+      }
+    }
+  `);
+
+  let concepts = new Set();
+  course.quizzes.forEach(quiz => {
+    quiz.questions.forEach(question => {
+      concepts.add(question.concept.trim());
+    })
+  });
+  // In case of an empty concept, remove it
+  concepts.delete('');
+  concepts = Array.from(concepts);
+
+  return concepts;
+}
+
 function currentInstructor(root, args, context, info){
   return context.db.query.instructor({where:{id:getUserInfo(context).userId}},info)
 }
@@ -60,6 +86,7 @@ async function quizAttempt(root, args, context, info) {
 
 module.exports = {
   course,
+  courseConcepts,
   currentInstructor,
   quiz,
   question,
