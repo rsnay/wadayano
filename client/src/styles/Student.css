@@ -124,6 +124,12 @@ progress::-webkit-progress-value {
     cursor: default;
     border: none;
 }
+.question-option-text.is-aggregated {
+    width: 100%;
+    border-radius: 28px;
+    padding-left: 1.2rem;
+    border: solid #92cdf7 1px;
+}
 .question-option-container.is-review.actual-correct {
     border: solid hsl(141, 71%, 48%) 1px!important;
     border-radius: 5px;

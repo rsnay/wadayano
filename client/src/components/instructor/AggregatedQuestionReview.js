@@ -1,40 +1,92 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
+import ReactTooltip from 'react-tooltip';
 
 import ErrorBox from '../shared/ErrorBox';
 import ConfidenceSelector from '../student/ConfidenceSelector';
 import { ALPHABET, MULTIPLE_CHOICE } from '../../constants';
+import LoadingBox from '../shared/LoadingBox';
+import { formatScore } from '../../utils';
 
 // This is a stripped-down version of the QuestionReview component, to be used in the instructor’s aggregated quiz review report
-export default class AggregatedQuestionReview extends Component {
+class AggregatedQuestionReview extends Component {
 
   render() {
-      console.log(this.props);
-    const questionOptions = this.props.question.options;
+
+    const query = this.props.courseQuery || null;
+
+    if (query && query.error) {
+        return <ErrorBox><p>Couldn’t load question report.</p></ErrorBox>;
+    }
+
+    if (query && query.loading) {
+        return <LoadingBox />;
+    }
+
+    const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '');
     const { correctShortAnswers } = this.props.question;
-    //const attempt = this.props.aggregatedQuestionAttempt;
-    
     const isMultipleChoice = (this.props.question.type === MULTIPLE_CHOICE);
-    
+    const studentCount = query.course.students.length;
+
     if (isMultipleChoice && questionOptions.length === 0) {
         return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
     }
 
+    let answerCounts = new Map();
+
+    // Ensure correct options/shortAnswers have initial counts
+    if (isMultipleChoice) {
+        questionOptions.forEach(option => { answerCounts.set(option.id, 0)});
+    } else {
+        correctShortAnswers.forEach(answer => { answerCounts.set(answer, 0)});
+    }
+
+    query.course.students.forEach(student => {
+        try {
+            let answer;
+            if (isMultipleChoice) {
+                answer = student.quizAttempts[0].questionAttempts[0].option.id;
+            } else {
+                // Get the correct short answer that the student’s answer matched, to avoid duplicates (with differences in capitalization or spacing) in the display
+                let questionAttempt = student.quizAttempts[0].questionAttempts[0];
+                if (questionAttempt.isCorrect) {
+                    answer = questionAttempt.correctShortAnswer;
+                } else {
+                    answer = questionAttempt.shortAnswer;
+                }
+            }
+            if (!answerCounts.has(answer)) {
+                answerCounts.set(answer, 1);
+            } else {
+                answerCounts.set(answer, answerCounts.get(answer) + 1);
+            }
+        } catch (error) { console.error(error); }
+    });
+
+    // Sort the map by answerCount, descending
+    answerCounts = new Map([...answerCounts.entries()].sort((a, b) => b[1] - a[1]));
+    console.log(answerCounts);
+    
     let promptView = (
         <div className="notification question-prompt" dangerouslySetInnerHTML={{__html: this.props.question.prompt}}></div>
     );
 
     const correctIcon = <span className="icon"><i className="fas fa-check"></i></span>;
-    const optionListing = (id, containerClass, iconClass, icon, html, text) => {
-        return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id}>
+    let incorrectIcon = <span className="icon"><i className="fas fa-times"></i></span>;
+
+    const optionListing = (id, containerClass, iconClass, icon, html, text, answerCount) => {
+        return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id} data-tip={answerCount + (answerCount === 1 ? ' student' : ' students') + ' (' + formatScore(answerCount / studentCount) + ')'}>
+            <ReactTooltip />
             <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
                 <span>{icon}</span>
             </span>
             {/* Only use dangerouslySetInnerHTML if necessary, otherwise just show text (for short answers) */}
             {text ?
-                <span className="column question-option-text level-left" >{text}</span>
+                <span className="column question-option-text level-left is-aggregated"  style={{background:`linear-gradient(90deg, #92cdf7 0%, #92cdf7 ${answerCount / studentCount * 100}%, rgba(9,9,121,0) ${answerCount / studentCount * 100}%)`}}>{text}</span>
             :
-                <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: html}}></span>
+                <span className="column question-option-text level-left is-aggregated" dangerouslySetInnerHTML={{__html: html}}  style={{background:`linear-gradient(90deg, #92cdf7 0%, #92cdf7 ${answerCount / studentCount * 100}%, rgba(9,9,121,0) ${answerCount / studentCount * 100}%)`}}></span>
             }
         </div>)
     };
@@ -46,12 +98,18 @@ export default class AggregatedQuestionReview extends Component {
             const correct = option.isCorrect;
             const icon = correct ? correctIcon : ALPHABET[index];
             const iconClass = correct ? "has-text-success" : "";
+            const answerCount = answerCounts.get(option.id);
 
-            return optionListing(option.id, '', iconClass, icon, option.text, null);
+            return optionListing(option.id, '', iconClass, icon, option.text, null, answerCount);
         });
     } else {
-        optionsView = correctShortAnswers.map((answer, index) => {
-            return optionListing(index, '', 'has-text-success', correctIcon, null, answer);
+        optionsView = [];
+        answerCounts.forEach((count, answer) => {
+            const correct = correctShortAnswers.indexOf(answer) >= 0;
+            const icon = correct ? correctIcon : incorrectIcon;
+            const iconClass = correct ? "has-text-success" : "has-text-danger";
+
+            optionsView.push(optionListing(answer, '', iconClass, icon, null, answer, count));
         });
     }
 
@@ -73,17 +131,44 @@ export default class AggregatedQuestionReview extends Component {
 }
 
 AggregatedQuestionReview.propTypes = {
-    // Question must include prompt, and options[] with id, isCorrect, and text of each option
+    // Question must include id, prompt, and options[] with id, isCorrect, and text of each option
     question: PropTypes.object.isRequired,
-    /* Aggregated question attempt must include: {
-        studentCount: (number of all students who attempted question),
-        optionCounts: {
-            'optionId': (number of students who chose this option),
-            'optionId': (number of students who chose this option),
-            'optionId': (number of students who chose this option),
-            etc.
-        },
-        confidentCount: (number of students who were confident)
-    }*/
-    aggregatedQuestionAttempt: PropTypes.object.isRequired
+    // Needed to find relevant quiz attempts
+    courseId: PropTypes.string.isRequired,
+    quizId: PropTypes.string.isRequired
 };
+
+// Get the students’ answers for this question from their first attempt for the parent quiz
+const COURSE_QUERY = gql`
+  query courseQuery($courseId: ID!, $quizId: ID!, $questionId: ID!) {
+    course(id:$courseId) {
+    id
+    students(where:{quizAttempts_some:{quiz:{id:$quizId}}}) {
+      name
+      quizAttempts(where:{quiz:{id:$quizId}}, first:1) {
+        id
+        score
+        questionAttempts(where:{question:{id:$questionId}}) {
+          id
+          option {
+            id
+          }
+          shortAnswer
+          isCorrect
+          correctShortAnswer
+        }
+      }
+    }
+  }
+}`;
+
+export default graphql(COURSE_QUERY, {
+      name: 'courseQuery',
+      options: (props) => {
+        return { variables: {
+            courseId: props.courseId,
+            quizId: props.quizId, 
+            questionId: props.question.id
+        } }
+      }
+    }) (AggregatedQuestionReview);

@@ -50,6 +50,7 @@ class AggregatedQuizReview extends Component {
             try {
                 this.processData(nextProps);
             } catch (error) {
+                console.error(error);
                 ButterToast.raise({
                     content: <ToastTemplate content="There was an error generating the aggregated report for this quiz. Please contact us if this problem persists." className="is-danger" />
                 });
@@ -309,7 +310,7 @@ class AggregatedQuizReview extends Component {
                     closeModal={() => this.setState({ showConceptModal: null })}
                     title={"Concept Review: " + this.state.showConceptModal}>
                         {quiz.questions.filter(q => q.concept === this.state.showConceptModal).map(conceptQuestion => (
-                            <AggregatedQuestionReview key={conceptQuestion.id} question={conceptQuestion} />
+                            <AggregatedQuestionReview key={conceptQuestion.id} question={conceptQuestion} quizId={quiz.id} courseId={quiz.course.id} />
                         ))}
                         <br/>
                 </Modal>
