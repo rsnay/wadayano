@@ -24,6 +24,7 @@
     "react-scroll-into-view-if-needed": "^2.1.4",
     "react-show-more": "^2.0.0",
     "react-timeago": "^4.1.9",
+    "react-tooltip": "^3.9.2",
     "tinymce": "^4.8.2"
   },
   "scripts": {
