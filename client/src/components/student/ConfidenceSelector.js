@@ -5,7 +5,7 @@ export default class ConfidenceSelector extends Component {
     render() {
         return (
         <div className="question-confidence-selector">
-        <h5 style={{margin: "0.5rem", fontSize: "1.2rem"}}>I’m confident: </h5>
+        <h5 style={{margin: "0.5rem", fontSize: "1.2rem"}}>{this.props.title || "I’m confident: "}</h5>
         <div className="buttons has-addons">
             <button autoFocus={this.props.autoFocus}
                 disabled={this.props.disabled}
@@ -34,5 +34,6 @@ export default class ConfidenceSelector extends Component {
 ConfidenceSelector.propTypes = {
     autoFocus: PropTypes.bool,
     disabled: PropTypes.bool,
-    confident: PropTypes.bool
+    confident: PropTypes.bool,
+    title: PropTypes.string
 }
