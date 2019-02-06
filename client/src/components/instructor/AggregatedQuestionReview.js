@@ -10,10 +10,22 @@ import { ALPHABET, MULTIPLE_CHOICE } from '../../constants';
 import LoadingBox from '../shared/LoadingBox';
 import { formatScore } from '../../utils';
 
+const SHORT_ANSWERS_TO_DISPLAY = 5;
+
 // This is a stripped-down version of the QuestionReview component, to be used in the instructor’s aggregated quiz review report
 class AggregatedQuestionReview extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showAllAnswers: false
+        };
+    }
 
   render() {
+
+    const promptView = (
+        <div className="notification question-prompt" dangerouslySetInnerHTML={{__html: this.props.question.prompt}}></div>
+    );
 
     const query = this.props.courseQuery || null;
 
@@ -22,7 +34,11 @@ class AggregatedQuestionReview extends Component {
     }
 
     if (query && query.loading) {
-        return <LoadingBox />;
+        return (<React.Fragment>
+            {promptView}
+            <LoadingBox style={{maxWidth: "100%"}} />
+            <hr />
+        </React.Fragment>);
     }
 
     const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '');
@@ -35,6 +51,7 @@ class AggregatedQuestionReview extends Component {
     }
 
     let answerCounts = new Map();
+    let confidentCount = 0;
 
     // Ensure correct options/shortAnswers have initial counts
     if (isMultipleChoice) {
@@ -45,12 +62,12 @@ class AggregatedQuestionReview extends Component {
 
     query.course.students.forEach(student => {
         try {
+            let questionAttempt = student.quizAttempts[0].questionAttempts[0];
             let answer;
             if (isMultipleChoice) {
-                answer = student.quizAttempts[0].questionAttempts[0].option.id;
+                answer = questionAttempt.option.id;
             } else {
                 // Get the correct short answer that the student’s answer matched, to avoid duplicates (with differences in capitalization or spacing) in the display
-                let questionAttempt = student.quizAttempts[0].questionAttempts[0];
                 if (questionAttempt.isCorrect) {
                     answer = questionAttempt.correctShortAnswer;
                 } else {
@@ -62,17 +79,27 @@ class AggregatedQuestionReview extends Component {
             } else {
                 answerCounts.set(answer, answerCounts.get(answer) + 1);
             }
+            if (questionAttempt.isConfident) {
+                confidentCount++;
+            }
+        // Just swallow errors, with invalid attempt simply being ommitted from the stats
         } catch (error) { console.error(error); }
     });
 
     // Sort the map by answerCount, descending
     answerCounts = new Map([...answerCounts.entries()].sort((a, b) => b[1] - a[1]));
     console.log(answerCounts);
-    
-    let promptView = (
-        <div className="notification question-prompt" dangerouslySetInnerHTML={{__html: this.props.question.prompt}}></div>
-    );
 
+    // If showing short-answer questions, only show the most popular 5 answers by default
+    let showAllButton = null;
+    if (!isMultipleChoice && !this.state.showAllAnswers && answerCounts.size > SHORT_ANSWERS_TO_DISPLAY) {
+        answerCounts = new Map([...answerCounts.entries()].slice(0, SHORT_ANSWERS_TO_DISPLAY));
+        showAllButton = (<button style={{marginTop: "-0.5rem"}} className="button has-text-link is-text is-fullwidth" onClick = {() => this.setState({ showAllAnswers: true })}>
+            <span className="icon"><i className="fas fa-angle-down"></i></span>
+            <span>View All Responses</span>
+        </button>);
+    }
+    
     const correctIcon = <span className="icon"><i className="fas fa-check"></i></span>;
     let incorrectIcon = <span className="icon"><i className="fas fa-times"></i></span>;
 
@@ -113,7 +140,8 @@ class AggregatedQuestionReview extends Component {
         });
     }
 
-    let confidenceSelector = <ConfidenceSelector disabled />;
+    const confidence = confidentCount / studentCount;
+    let confidenceSelector = <ConfidenceSelector disabled title={formatScore(confidence) + " of students were confident:"} confident={confidence >= 0.5} />;
 
     let feedbackView = <p className="question-option-text"></p>;
 
@@ -122,6 +150,7 @@ class AggregatedQuestionReview extends Component {
             {promptView}
             <br />
             {optionsView}
+            {showAllButton}
             {confidenceSelector}
             {feedbackView}
             <hr />
@@ -156,6 +185,7 @@ const COURSE_QUERY = gql`
           shortAnswer
           isCorrect
           correctShortAnswer
+          isConfident
         }
       }
     }
