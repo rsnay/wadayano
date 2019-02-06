@@ -73,6 +73,17 @@ button::-moz-focus-inner {
     float:left;
 }
 
+/* Quiz Scores */
+.attempt{
+    margin-top:10px;
+}
+
+.dropdown {
+    float:bottom;
+    margin:15px;
+    margin-bottom: -27px;
+}
+
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;

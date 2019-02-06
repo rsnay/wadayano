@@ -22,7 +22,9 @@ class QuizScores extends Component {
             sortColumn: 'name',
             sortAscending: true,
             studentScores: [],
-            currentStudentReview: null
+            currentStudentReview: null,
+            chosenScore: "First Attempt",
+            currentStudent: null,
         };
         this.sortByColumn = this.sortByColumn.bind(this);
     }
@@ -40,25 +42,80 @@ class QuizScores extends Component {
             let studentScores = course.students.map(student => {
                 // Determine if student took this quiz
                 let attempts = {};
-                let highestAttempt = null;
-                try {
-                    attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
-                    attempts = attempts.concat().sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
-                    // Get highest-scoring attempt for this student
-                    highestAttempt = attempts[0];
-                    console.log(student, attempts, highestAttempt);
-                } catch (error) { }
+                let chosenAttempt = null;
+                if(this.state.chosenScore === "Highest Score"){
+                    try {
+                        console.log(this.state.chosenScore);
+                        attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
+                        //
+                        attempts = attempts.concat().sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+                        // Get highest-scoring attempt for this student
+                        chosenAttempt = attempts[0];
+                        console.log(student, attempts, chosenAttempt);
+                    } catch (error) { }
+                } /*else if(this.state.chosenScore === "Lowest Score"){
+                    try {
+                        console.log(this.state.chosenScore);
+                        attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
+                        //
+                        attempts = attempts.concat().sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+                        // Get highest-scoring attempt for this student
+                        chosenAttempt = attempts[attempts.length-1];
+                        console.log(student, attempts, chosenAttempt);
+                    } catch (error) { }
+                }*/ else if(this.state.chosenScore === "First Attempt"){
+                    try {
+                        console.log(this.state.chosenScore);
+                        attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
+                        //
+                        attempts = attempts.concat().sort((a, b) => new Date(b.createAt) - new Date(a.createAt));
+                        // Get highest-scoring attempt for this student
+                        chosenAttempt = attempts[0];
+                        console.log(student, attempts, chosenAttempt);
+                    } catch (error) { console.log(error); }
+                } /*else if(this.state.chosenScore === "Last Attempt"){
+                    try {
+                        console.log(this.state.chosenScore);
+                        attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
+                        //
+                        attempts = attempts.concat().sort((a, b) => new Date(b.createAt) - new Date(a.createAt));
+                        // Get highest-scoring attempt for this student
+                        chosenAttempt = attempts[attempts.length-1];
+                        console.log(student, attempts, chosenAttempt);
+                    } catch (error) { console.log("here?"); }
+                } else if(this.state.chosenScore === "All Attempts"){
+                    try {
+                        console.log(this.state.chosenScore);
+                        attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
+                        //
+                        attempts = attempts.concat().sort((a, b) => new Date(b.createAt) - new Date(a.createAt));
+                        // Get highest-scoring attempt for this student
+                        chosenAttempt = attempts;
+                        console.log(student, attempts, chosenAttempt);
+                    } catch (error) { console.log("here?"); }
+                } else if(this.state.chosenScore === "Average Attempt"){
+                    try {
+                        console.log(this.state.chosenScore);
+                        attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
+                        //
+                        attempts = attempts.concat().sort((a, b) => new Date(b.createAt) - new Date(a.createAt));
+                        // Get highest-scoring attempt for this student
+                        chosenAttempt = attempts[attempts.length-1];
+                        console.log(student, attempts, chosenAttempt);
+                    } catch (error) { console.log("here?"); }
+                }*/
+                console.log(this.state.chosenScore);
                 // Output score for each student, if quiz was taken
-                if (highestAttempt) {
-                    const attemptPredictedScore = predictedScore(highestAttempt);
-                    const attemptWadayanoScore = wadayanoScore(highestAttempt);
-                    const attemptConfidenceAnalysis = confidenceAnalysis(highestAttempt);
+                if (chosenAttempt) {
+                    const attemptPredictedScore = predictedScore(chosenAttempt);
+                    const attemptWadayanoScore = wadayanoScore(chosenAttempt);
+                    const attemptConfidenceAnalysis = confidenceAnalysis(chosenAttempt);
                     return {
                         id: student.id,
                         name: student.name,
                         attempts: attempts.length,
-                        highestScore: highestAttempt.score,
-                        highestAttempt,
+                        highestScore: chosenAttempt.score,
+                        chosenAttempt,
                         predictedScore: attemptPredictedScore,
                         wadayanoScore: attemptWadayanoScore,
                         confidenceAnalysis: attemptConfidenceAnalysis
@@ -69,7 +126,7 @@ class QuizScores extends Component {
                         name: student.name,
                         attempts: 0,
                         highestScore: "",
-                        highestAttempt: null,
+                        chosenAttempt: null,
                         wadayanoScore: "",
                         confidenceAnalysis: { text: '0' }
                     }
@@ -103,8 +160,26 @@ class QuizScores extends Component {
         this.setState({ sortColumn: newSortColumn, sortAscending, studentScores });
     }
 
-    showAttemptReview(student) {
-        this.setState({ currentStudentReview: student });
+    showAttemptReview(student,quiz) {
+        console.log("student:");
+        console.log(student);
+        console.log("quiz:")
+        console.log(quiz);
+        let attempts = student.chosenAttempt.student.quizAttempts.filter(a => a.student.id === student.id && a.completed);
+        console.log(attempts);
+        attempts = student.chosenAttempt.student.quizAttempts.filter(a => a.quiz.id === quiz.id && a.completed);
+                        //
+        attempts = attempts.concat().sort((a, b) => new Date(b.createAt) - new Date(a.createAt));
+        this.setState({ currentStudentReview: student , currentQuizAttempts: attempts , chosenAttempt:student.chosenAttempt});
+    }
+
+    toggleDropdown(){
+        var dropdown = document.querySelector('.dropdown');
+        if(dropdown.className == "dropdown"){
+            dropdown.className = "dropdown is-active"
+        } else {
+            dropdown.className = "dropdown";
+        }
     }
 
     render() {
@@ -127,7 +202,7 @@ class QuizScores extends Component {
             const columns = [
                 { title: 'Student Name', columnId: 'name', sortable: true },
                 { title: 'Attempts', columnId: 'attempts', sortable: true },
-                { title: 'Highest Score', columnId: 'highestScore', sortable: true },
+                { title: this.state.chosenScore, columnId: 'highestScore', sortable: true },
                 { title: 'Predicted Score', columnId: 'predictedScore', sortable: true },
                 { title: 'Wadayano Score', columnId: 'wadayanoScore', sortable: true },
                 { title: 'Confidence Analysis', columnId: 'confidenceAnalysis', sortable: true },
@@ -162,7 +237,7 @@ class QuizScores extends Component {
                                             <td>{student.confidenceAnalysis.emoji}&nbsp;{student.confidenceAnalysis.text}</td>
                                             <td>
                                                 <button className="button is-light"
-                                                    onClick={() => this.showAttemptReview(student)}>
+                                                    onClick={() => this.showAttemptReview(student,quiz)}>
                                                     <span className="icon">
                                                     <i className="fas fa-history"></i>
                                                     </span>
@@ -211,10 +286,17 @@ class QuizScores extends Component {
 
                 {this.state.currentStudentReview && <Modal
                     modalState={true}
-                    closeModal={() => this.setState({ currentStudentReview: null })}
+                    closeModal={() => this.setState({ currentStudentReview: null , currentQuizAttempts: null})}
                     title={`Attempt from ${this.state.currentStudentReview.name}`}
                     cardClassName="quiz-scores-report-modal">
-                        <QuizReviewPage hideFooter={true} match={{ params: { quizAttemptId: this.state.currentStudentReview.highestAttempt.id } }} />
+                    <div class="tabs">
+                    <ul>
+                        {this.state.currentQuizAttempts.map((attempt,index) => 
+                            <li class="is-active"><a href="#/" onClick={() => this.setState({ chosenAttempt: attempt})}>Attempt {index}</a></li>
+                        )}
+                    </ul>
+                    </div>
+                        <QuizReviewPage hideFooter={true} match={{ params: { quizAttemptId: this.state.chosenAttempt.id } }} />
                 </Modal>}
 
                 {this.state.isAggregatedReportVisible && <Modal
@@ -279,6 +361,17 @@ export const QUIZ_QUERY = gql`
             student {
                 id
                 name
+                quizAttempts {
+                    id
+                    quiz{
+                        id
+                    }
+                    student{
+                        id
+                    }
+                    id
+                    completed
+                }
             }
             createdAt
             completed
