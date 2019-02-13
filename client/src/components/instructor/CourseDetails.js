@@ -14,6 +14,8 @@ import LTISetupModal from './LTISetupModal';
 import CourseInfoForm from './CourseInfoForm';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 import Breadcrumbs from '../shared/Breadcrumbs';
+import withCourseScores from './CourseScoresProvider';
+import { formatScore } from '../../utils';
 
 export class CourseDetails extends Component {
 
@@ -137,16 +139,19 @@ export class CourseDetails extends Component {
     </div>);
     // Create table of quizzes, if any exist for the course
     if (course.quizzes.length > 0) {
+        // Check if aggregated quiz scores are loaded (these come in async through withCourseScores HOC)
+        const scoresLoaded = this.props.courseScores !== null;
+        const scores = this.props.courseScores;
         quizzesTable = (<div className="table-wrapper">
         <table className="table is-striped is-hoverable is-fullwidth quiz-table responsive-table">
           <thead>
               <tr className="sticky-header">
                   <th>Title</th>
                   <th>Type</th>
-                  <th style={{whiteSpace: "nowrap"}}>
-                      <span className="is-hidden-touch">Questions</span>
-                      <span className="is-hidden-desktop">?s</span>
-                  </th>
+                  <th>Number of Students</th>
+                  <th>Average Score</th>
+                  <th>Average Predicted Score</th>
+                  <th>Average Wadayano Score</th>
                   <th style={{width: "24rem"}}>Actions</th>
               </tr>
           </thead>
@@ -155,7 +160,15 @@ export class CourseDetails extends Component {
               <tr key={quiz.id}>
                   <td data-title="Title"><Link className="has-text-black is-block" to={"/instructor/quiz/" + quiz.id}>{quiz.title}</Link></td>
                   <td data-title="Type">{QUIZ_TYPE_NAMES[quiz.type]}</td>
-                  <td data-title="Questions">{quiz.questions.length}</td>
+                  {scoresLoaded ? ((scores.get(quiz.id).studentCount > 0) ? 
+                                        <React.Fragment>
+                                            <td><Link to={"/instructor/quiz/" + quiz.id + "/scores"}>{scores.get(quiz.id).studentCount}</Link></td>
+                                            <td>{formatScore(scores.get(quiz.id).averageScore)}</td>
+                                            <td>{formatScore(scores.get(quiz.id).averagePredictedScore)}</td>
+                                            <td>{formatScore(scores.get(quiz.id).averageWadayanoScore)}</td>
+                                        </React.Fragment>
+                                    : <td colSpan="4"><i>Quiz not taken</i></td>
+                  ) : <td colSpan="4">Loading</td>}
                   <td data-title="Actions">
                     <span className="buttons">
                         <Link to={"/instructor/quiz/" + quiz.id}
@@ -428,7 +441,7 @@ mutation removeInstructor($email: String!, $courseId: ID!) {
     removeInstructorFromCourse(email: $email, courseId: $courseId)
 } `
 
-export default withAuthCheck(compose(
+export default withAuthCheck(withCourseScores(compose(
     graphql(COURSE_QUERY, {
         name: 'courseQuery',
         options: (props) => {
@@ -439,4 +452,4 @@ export default withAuthCheck(compose(
     graphql(COURSE_DELETE, {name:"courseDelete"}),
     graphql(INVITE_INSTRUCTOR, {name:"inviteInstructorMutation"}),
     graphql(REMOVE_INSTRUCTOR, {name:"removeInstructorMutation"}),
-) (CourseDetails), { instructor: true});
+) (CourseDetails)), { instructor: true});
