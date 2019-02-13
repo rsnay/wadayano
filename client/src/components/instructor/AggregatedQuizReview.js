@@ -64,19 +64,19 @@ class AggregatedQuizReview extends Component {
         const quiz = nextProps.quizQuery.quiz;
         const concepts = Array.from(new Set(quiz.questions.map(q => q.concept)));
 
-        // Get highest completed quiz attempt for each student
-        let studentHighestAttempts = new Map();
+        // Get first completed quiz attempt for each student (query only returns completed attempts)
+        let studentFirstAttempts = new Map();
         quiz.quizAttempts.forEach(attempt => {
             if (attempt.completed) {
                 const studentId = attempt.student.id;
-                // Add to map if new student, of replace student’s lower attempt
-                if (studentHighestAttempts.get(studentId) === undefined || studentHighestAttempts.get(studentId).score < attempt.score) {
-                    studentHighestAttempts.set(studentId, attempt);
+                // Add to map if no completed attempt for student already
+                if (studentFirstAttempts.get(studentId) === undefined) {
+                    studentFirstAttempts.set(studentId, attempt);
                 }
             }
         });
 
-        const studentCount = studentHighestAttempts.size;
+        const studentCount = studentFirstAttempts.size;
         // Make sure we have student data to display
         if (studentCount === 0) {
             this.setState({ error: 'No students have taken this quiz.' });
@@ -110,8 +110,8 @@ class AggregatedQuizReview extends Component {
         let conceptAveragePredictedScores = new Map(concepts.map(c => [c, 0]));
         let conceptAverageWadayanoScores = new Map(concepts.map(c => [c, 0]));
 
-        // Go through highest attempt for each student
-        studentHighestAttempts.forEach((attempt) => {
+        // Go through first attempt for each student
+        studentFirstAttempts.forEach((attempt) => {
             // Overall score, wadayano score, and confidence analysis
             const attemptPredictedScore = predictedScore(attempt);
             const attemptWadayanoScore = wadayanoScore(attempt);
@@ -129,20 +129,26 @@ class AggregatedQuizReview extends Component {
             // Increase counter for this confidence analysis type
             confidenceAnalysisCounts[attemptConfidenceAnalysis.key]++;
             
-            // Concept-level score and wadayano score
-            concepts.forEach(concept => {
-                const conceptQuestionAttempts = attempt.questionAttempts.filter(questionAttempt => questionAttempt.question.concept === concept);
+            try {
+                // Concept-level score and wadayano score
+                concepts.forEach(concept => {
+                    const conceptQuestionAttempts = attempt.questionAttempts.filter(questionAttempt => questionAttempt.question.concept === concept);
 
-                const conceptScore = conceptQuestionAttempts.filter(questionAttempt => questionAttempt.isCorrect).length / conceptQuestionAttempts.length;
-                (conceptScores.get(concept)).push(conceptScore);
+                    const conceptScore = conceptQuestionAttempts.filter(questionAttempt => questionAttempt.isCorrect).length / conceptQuestionAttempts.length;
+                    (conceptScores.get(concept)).push(conceptScore);
 
-                const conceptConfidence = attempt.conceptConfidences.find(cc => cc.concept === concept);
-                const conceptPredictedScore = conceptConfidence.confidence / conceptQuestionAttempts.length;
-                (conceptPredictedScores.get(concept)).push(conceptPredictedScore);
+                    const conceptConfidence = attempt.conceptConfidences.find(cc => cc.concept === concept);
+                    const conceptPredictedScore = conceptConfidence.confidence / conceptQuestionAttempts.length;
+                    (conceptPredictedScores.get(concept)).push(conceptPredictedScore);
 
-                const conceptWadayanoScore = conceptQuestionAttempts.filter(questionAttempt => questionAttempt.isConfident === questionAttempt.isCorrect).length / conceptQuestionAttempts.length;
-                (conceptWadayanoScores.get(concept)).push(conceptWadayanoScore);
-            })
+                    const conceptWadayanoScore = conceptQuestionAttempts.filter(questionAttempt => questionAttempt.isConfident === questionAttempt.isCorrect).length / conceptQuestionAttempts.length;
+                    (conceptWadayanoScores.get(concept)).push(conceptWadayanoScore);
+                });
+            } catch (error) {
+                // An error might occur if changes to concepts occurred in the quiz after some students took it
+                // Just swallow these errors for now
+                console.log(error);
+            }
         });
 
         // Find average overall score and Wadayano Score
@@ -342,7 +348,7 @@ export const QUIZ_QUERY = gql`
         questions {
             ...InstructorFullQuestion
         }
-        quizAttempts {
+        quizAttempts(where:{completed_not:null}) {
             id
             student {
                 id

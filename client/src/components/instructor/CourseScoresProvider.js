@@ -23,13 +23,13 @@ export default function withCourseScores(ComposedComponent) {
                 let courseScores = new Map();
     
                 course.quizzes.forEach(quiz => {
-                    // Get first completed quiz attempt for each student, and calculate wadayano score
+                    // Get first completed quiz attempt for each student, and calculate wadayano and predicted score
                     let studentScores = new Map();
                     quiz.quizAttempts.forEach(attempt => {
                         if (attempt.completed) {
                             const studentId = attempt.student.id;
-                            // Save score and wadayano score for this student if not already in the Map, or if previously-saved score is lower
-                            if (studentScores.get(studentId) === undefined || studentScores.get(studentId).score < attempt.score) {
+                            // Save score and wadayano score for this student if not already in the Map
+                            if (studentScores.get(studentId) === undefined) {
                                 studentScores.set(studentId, {
                                     score: attempt.score,
                                     predictedScore: predictedScore(attempt),
@@ -87,40 +87,37 @@ export default function withCourseScores(ComposedComponent) {
     // Get course details and quiz attempts
     const COURSE_QUERY = gql`
     query courseQuery($id:ID!) {
-    course(
-        id:$id
-    ){
-        id
-        title
-        quizzes{
+        course(
+            id:$id
+        ){
             id
             title
-            type
-            questions{
+            quizzes{
                 id
-            }
-            quizAttempts(where:{completed_not:null}) {
-                id
-                student {
+                title
+                type
+                questions{
                     id
                 }
-                completed
-                score
-                questionAttempts {
+                quizAttempts(where:{completed_not:null}) {
                     id
-                    isCorrect
-                    isConfident
-                }
-                conceptConfidences {
-                    id
-                    confidence
+                    student {
+                        id
+                    }
+                    completed
+                    score
+                    questionAttempts {
+                        id
+                        isCorrect
+                        isConfident
+                    }
+                    conceptConfidences {
+                        id
+                        confidence
+                    }
                 }
             }
         }
-        students {
-            id
-        }
-    }
     }
     `
 

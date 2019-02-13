@@ -36,13 +36,13 @@ class CourseScores extends Component {
             // const students = Array.from(course.students);
 
             let aggregatedQuizScores = course.quizzes.map(quiz => {
-                // Get highest completed quiz attempt for each student, and calculate wadayano score
+                // Get first completed quiz attempt for each student, and calculate wadayano score
                 let studentScores = new Map();
                 quiz.quizAttempts.forEach(attempt => {
                     if (attempt.completed) {
                         const studentId = attempt.student.id;
-                        // Save score and wadayano score for this student if not already in the Map, or if previously-saved score is lower
-                        if (studentScores.get(studentId) === undefined || studentScores.get(studentId).score < attempt.score) {
+                        // Save score and wadayano score for this student if not already in the Map
+                        if (studentScores.get(studentId) === undefined) {
                             studentScores.set(studentId, {
                                 score: attempt.score,
                                 predictedScore: predictedScore(attempt),
