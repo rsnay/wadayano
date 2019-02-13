@@ -9,7 +9,7 @@ import ErrorBox from '../shared/ErrorBox';
 import ConfidenceSelector from './ConfidenceSelector';
 import QuestionReview from './QuestionReview';
 
-import { ALPHABET, KEY_CODE_A, KEY_CODE_Z, MULTIPLE_CHOICE } from '../../constants';
+import { ALPHABET, KEY_CODE_A, KEY_CODE_Z, MULTIPLE_CHOICE, KEY_CODE_COMMA, KEY_CODE_PERIOD } from '../../constants';
 import fragments from '../../fragments';
 
 class QuestionTaker extends Component {
@@ -42,7 +42,7 @@ class QuestionTaker extends Component {
         }
     }
 
-  // Allow multiple-choice options to be selected by pressing that letter on the keyboard. This is kind of hacky right now
+  // Allow multiple-choice options to be selected by pressing that letter on the keyboard (or ,. to select confidence). This is kind of hacky right now
   _handleKeyDown(e) {
     // If the question has already been answered, don't let the selected answer change (without this, it's kind of entertaining!)
     if (this.state.submitted) { return; }
@@ -52,6 +52,15 @@ class QuestionTaker extends Component {
 
     // Check that the question is loaded and has options
     if (this.props.question && this.props.question.options) {
+
+        // Select confidence with , and . (if an answer has already been selected)
+        if (this.state.selectedOption || this.state.shortAnswer !== '') {
+            if (e.keyCode === KEY_CODE_COMMA || e.keyCode === KEY_CODE_PERIOD) {
+                this.setState({ confident: (e.keyCode === KEY_CODE_COMMA) });
+                e.preventDefault();
+            }
+        }
+
         let optionIndex = -1;
         // 65 is A, and the letters are sequential afterwards through Z
         if (e.keyCode >= KEY_CODE_A && e.keyCode <= KEY_CODE_Z) {

@@ -16,6 +16,8 @@ export const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 // Letters are key codes 65–90: https://keycode.info/
 export const KEY_CODE_A = 65;
 export const KEY_CODE_Z = 90;
+export const KEY_CODE_COMMA = 188;
+export const KEY_CODE_PERIOD = 190;
 
 export const QUIZ_TYPE_NAMES = { 'PRACTICE': 'Practice', 'GRADED': 'Graded' };
 
