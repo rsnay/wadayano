@@ -182,6 +182,11 @@ class QuizScores extends Component {
         }
     }
 
+    attemptChoice(attempt){
+        this.setState({chosenAttempt:attempt});
+        
+    }
+
     render() {
 
         if (this.props.quizQuery && this.props.quizQuery.error) {
@@ -292,7 +297,7 @@ class QuizScores extends Component {
                     <div class="tabs">
                     <ul>
                         {this.state.currentQuizAttempts.map((attempt,index) => 
-                            <li class="is-active"><a href="#/" onClick={() => this.setState({ chosenAttempt: attempt})}>Attempt {index}</a></li>
+                            <li className={(this.state.chosenAttempt.id === attempt.id ? "is-active" : "")}><a href="#/" onClick={() => this.setState({ chosenAttempt: attempt})}>Attempt {index}</a></li>
                         )}
                     </ul>
                     </div>
