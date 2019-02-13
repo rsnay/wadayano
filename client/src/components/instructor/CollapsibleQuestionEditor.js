@@ -15,7 +15,7 @@ import ConceptSelector from './ConceptSelector';
 // tinymce import is required but never used by reference, so add eslint exception
 /* eslint-disable no-unused-vars */
 import tinymce from 'tinymce/tinymce';
-import 'tinymce/themes/modern/theme';
+import 'tinymce/themes/silver/theme';
 import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/hr';
@@ -30,9 +30,10 @@ import fragments from '../../fragments';
 
 // Main editor configuration
 const tinymceConfig = {
-    skin_url: '/tinymce/lightgray',
+    skin_url: '/tinymce/skins/oxide',
     plugins: 'autoresize charmap hr image link lists textcolor',
     toolbar: 'undo redo | formatselect | fontsizeselect | bold italic underline | forecolor backcolor | align | bullist numlist | outdent indent | superscript subscript | removeformat | hr image link charmap',
+    contextmenu: 'cut copy paste | link removeformat',
     formats: {
         h1: { block: 'h1', classes: 'title is-1' },
         h2: { block: 'h2', classes: 'title is-2' },

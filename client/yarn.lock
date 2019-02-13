@@ -908,14 +908,12 @@
     "@svgr/core" "^2.4.1"
     loader-utils "^1.1.0"
 
-"@tinymce/tinymce-react@^2.2.6":
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/@tinymce/tinymce-react/-/tinymce-react-2.2.6.tgz#8e3d8dc65e9b9ae1f5232e1e53453039f5afa2f4"
-  integrity sha512-/fFnxeKfY3ed7l2El7l7gNs5HcMBVHM1eKrpA4vgp73oyHuFkJ4qLlrfPekt2bBszSpSY13CkcSdNIRuGE2Y1A==
+"@tinymce/tinymce-react@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@tinymce/tinymce-react/-/tinymce-react-3.0.1.tgz#6343e004d14fcc875cfe1cd6d0cf552a341ac55b"
+  integrity sha512-19g2iHR6Bxp7FpnyA/71Aq5kzzM7D5adT87hL+QvcySH1NoqB2aTqBBdiF/0HoDVI/nXq7FbalmlIcVTen1WrQ==
   dependencies:
-    prop-types "^15.6.0"
-    react "^16.2.0"
-    react-dom "^16.2.0"
+    prop-types "^15.6.2"
 
 "@types/async@2.0.49":
   version "2.0.49"
@@ -6489,14 +6487,14 @@ longest@^1.0.1:
   resolved "https://registry.yarnpkg.com/longest/-/longest-1.0.1.tgz#30a0b2da38f73770e8294a0d22e6625ed77d0097"
   integrity sha1-MKCy2jj3N3DoKUoNIuZiXtd9AJc=
 
-loose-envify@^1.0.0, loose-envify@^1.3.1:
+loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.3.1:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-loose-envify@^1.1.0, loose-envify@^1.2.0:
+loose-envify@^1.2.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.3.1.tgz#d1a8ad33fa9ce0e713d65fdd0ac8b748d478c848"
   integrity sha1-0aitM/qc4OcT1l/dCsi3SNR4yEg=
@@ -8692,16 +8690,6 @@ react-dev-utils@^7.0.1:
     strip-ansi "4.0.0"
     text-table "0.2.0"
 
-react-dom@^16.2.0:
-  version "16.5.0"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.5.0.tgz#57704e5718669374b182a17ea79a6d24922cb27d"
-  integrity sha512-qgsQdjFH54pQ1AGLCBKsqjPxib4Pnp+cOsNxGPlkHn5YnsSt43sBvHSif6FheY7NMMS6HPeSJOxXf6ECanjacA==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
-    schedule "^0.3.0"
-
 react-dom@^16.7.0:
   version "16.7.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.7.0.tgz#a17b2a7ca89ee7390bc1ed5eb81783c7461748b8"
@@ -8838,16 +8826,6 @@ react-truncate@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/react-truncate/-/react-truncate-2.3.0.tgz#d469b355aff1f83ae9e0f2fed0d47dfd061e5d2e"
   integrity sha512-a/POPUnuhhlUn94qjddRm97Xd83iJ70CtoVmXMo7ytc5s0eFHiRsR0gT7OkuMfEhH1m+UjVYroHiTxXf0aLenw==
-
-react@^16.2.0:
-  version "16.5.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.5.0.tgz#f2c1e754bf9751a549d9c6d9aca41905beb56575"
-  integrity sha512-nw/yB/L51kA9PsAy17T1JrzzGRk+BlFCJwFF7p+pwVxgqwPjYNeZEkkH7LXn9dmflolrYMXLWMTkQ77suKPTNQ==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
-    schedule "^0.3.0"
 
 react@^16.7.0:
   version "16.7.0"
@@ -9362,13 +9340,6 @@ saxes@^3.1.4:
   integrity sha512-GVZmLJnkS4Vl8Pe9o4nc5ALZ615VOVxCmea8Cs0l+8GZw3RQ5XGOSUomIUfuZuk4Todo44v4y+HY1EATkDDiZg==
   dependencies:
     xmlchars "^1.3.1"
-
-schedule@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/schedule/-/schedule-0.3.0.tgz#1be2ab2fc2e768536269ce7326efb478d6c045e8"
-  integrity sha512-20+1KVo517sR7Nt+bYBN8a+bEJDKLPEx7Ohtts1kX05E4/HY53YUNuhfkVNItmWAnBYHcpG9vsd2/CJxG+aPCQ==
-  dependencies:
-    object-assign "^4.1.1"
 
 scheduler@^0.12.0:
   version "0.12.0"
@@ -10175,10 +10146,10 @@ timsort@^0.3.0:
   resolved "https://registry.yarnpkg.com/timsort/-/timsort-0.3.0.tgz#405411a8e7e6339fe64db9a234de11dc31e02bd4"
   integrity sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
 
-tinymce@^4.8.2:
-  version "4.8.2"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.8.2.tgz#2ba65ee56f6641d8dcaca85db3fb36e9b35a3010"
-  integrity sha512-ssq/cGcK8ELG+a96H2mqH6QvsmTSlQk9wj+OYxLIOxsDnWfu90T1TGIachwcQnXsD5FeNFz5X7K860CP9JQCtQ==
+tinymce@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.0.0.tgz#03e819e8f3a2ce116fc445541fa493d6b7f5d827"
+  integrity sha512-aWBXuV1S+JaZUoteLgOoDv9Ra7wcohpRFoHhldoRWUg9fdA36zC9XPjWfxNgzaANqKdOICxZ3tguLmi3RLtiLA==
 
 tmp@^0.0.33:
   version "0.0.33"

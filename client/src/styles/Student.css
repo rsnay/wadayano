@@ -127,6 +127,10 @@ progress::-webkit-progress-value {
     list-style: disc!important;
 }
 
+.question-prompt hr {
+    background-color: gray;
+}
+
 .question-option-container {
     cursor: pointer;
     margin-bottom: 1.5rem!important;
@@ -247,7 +251,7 @@ progress::-webkit-progress-value {
     overflow: visible;
     z-index: 5;
     vertical-align: top;
-    margin-top: -4rem;
+    margin-top: -1rem;
     margin-right: -1rem;
     margin-left: 1rem;
     color: #aaa;
@@ -259,6 +263,7 @@ progress::-webkit-progress-value {
     border: none;
     border-radius: 0;
     min-height: 10rem;
+    width: 100%;
 }
 
 .quiz-editor-question-type {

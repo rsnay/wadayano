@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@tinymce/tinymce-react": "^2.2.6",
+    "@tinymce/tinymce-react": "^3.0.1",
     "apollo-client-preset": "^1.0.8",
     "bulma": "^0.7.1",
     "butter-toast": "^3.1.0",
@@ -25,7 +25,7 @@
     "react-show-more": "^2.0.0",
     "react-timeago": "^4.1.9",
     "react-tooltip": "^3.9.2",
-    "tinymce": "^4.8.2"
+    "tinymce": "^5.0.0"
   },
   "scripts": {
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
