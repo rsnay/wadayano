@@ -57,7 +57,7 @@ class Header extends Component {
                 {this.isLoggedIn && <NavLink activeClassName="is-active is-pulled-right" to="/feedback" className="navbar-item">Send Feedback</NavLink>}
                 <div className="navbar-item">
                 {this.isLoggedIn ? 
-                    <button className="button is-danger is-outlined" onClick={() => this._logOut() }>Log Out</button>
+                    <button className="button is-outlined" onClick={() => this._logOut() }>Log Out</button>
                 : 
                     <Link to="/login" className="button is-info is-outlined">Log In</Link>
                 }
