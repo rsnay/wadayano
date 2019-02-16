@@ -354,6 +354,12 @@ progress::-webkit-progress-value {
     color: #333!important;
 }
 
+.quiz-options-menu {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    padding: 0.3rem 0;
+}
+
 /* TinyMCE customizations */
 .panel-block > .mce-panel {
     border: none!important;

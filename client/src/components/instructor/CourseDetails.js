@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import ReactTooltip from 'react-tooltip';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
@@ -66,6 +67,8 @@ export class CourseDetails extends Component {
 
     // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
     _showLTISetup(action, objectId) {
+        // Hide tooltip from quiz actions menu so it doesn't show over modal overlay
+        document.getElementById('quiz-actions-tooltip').style.left = '-1000px';
         this.setState({ displayLtiSetupAction: action, displayLtiSetupObjectId: objectId });
     }
 
@@ -143,7 +146,7 @@ export class CourseDetails extends Component {
         const scoresLoaded = this.props.courseScores !== null;
         const scores = this.props.courseScores;
         quizzesTable = (<div className="table-wrapper">
-        <table className="table is-striped is-hoverable is-fullwidth quiz-table responsive-table">
+        <table className="table is-fullwidth quiz-table responsive-table">
           <thead>
               <tr className="sticky-header">
                   <th>Title</th>
@@ -152,7 +155,7 @@ export class CourseDetails extends Component {
                   <th>Average Score</th>
                   <th>Average Predicted Score</th>
                   <th>Average Wadayano Score</th>
-                  <th style={{width: "24rem"}}>Actions</th>
+                  <th>Actions</th>
               </tr>
           </thead>
           <tbody>
@@ -170,29 +173,7 @@ export class CourseDetails extends Component {
                                     : <td colSpan="4"><i>Quiz not taken</i></td>
                   ) : <td colSpan="4">Loading</td>}
                   <td data-title="Actions">
-                    <span className="buttons">
-                        <Link to={"/instructor/quiz/" + quiz.id}
-                            className="button is-light">
-                            <span className="icon">
-                            <i className="fas fa-edit"></i>
-                            </span>
-                            <span>Edit</span>
-                        </Link>
-                        <button className="button is-light"
-                            onClick={() => this._showLTISetup('quiz', quiz.id)}>
-                            <span className="icon">
-                            <i className="fas fa-link"></i>
-                            </span>
-                            <span>Add to LMS</span>
-                        </button>
-                        <Link to={"/instructor/quiz/" + quiz.id + "/scores"}
-                            className="button is-light">
-                            <span className="icon">
-                            <i className="fas fa-chart-bar"></i>
-                            </span>
-                            <span>Scores</span>
-                        </Link>
-                    </span>
+                    <button className="button is-light" data-tip={quiz.id} data-for="quiz-actions-tooltip" data-event="click"> ••• </button>
                   </td>
               </tr>
           )}
@@ -201,6 +182,45 @@ export class CourseDetails extends Component {
 
       </div>);
     }
+
+    let quizActionsTooltip = (
+        <ReactTooltip
+            id="quiz-actions-tooltip"
+            type="light"
+            place="bottom"
+            effect="solid"
+            event="no-event"
+            globalEventOff="click"
+            border={true}
+            class="quiz-options-menu"
+            getContent={(dataTip) => 
+                <React.Fragment>
+                <Link to={"/instructor/quiz/" + dataTip}
+                    className="navbar-item">
+                    <span className="icon">
+                    <i className="fas fa-edit"></i>
+                    </span>
+                    <span>Edit</span>
+                </Link>
+                <a className="navbar-item"
+                    role="menuitem"
+                    onClick={() => this._showLTISetup('quiz', dataTip)}>
+                    <span className="icon">
+                    <i className="fas fa-link"></i>
+                    </span>
+                    <span>Add to LMS</span>
+                </a>
+                <Link to={"/instructor/quiz/" + dataTip + "/scores"}
+                    className="navbar-item">
+                    <span className="icon">
+                    <i className="fas fa-chart-bar"></i>
+                    </span>
+                    <span>Scores</span>
+                </Link>
+                </React.Fragment>
+            }
+        />
+    );
 
     return (
         <section className="section">
@@ -303,6 +323,7 @@ export class CourseDetails extends Component {
                 <span>New Quiz</span>
             </button>
             {quizzesTable}
+            {quizActionsTooltip}
 
         <hr />
 
