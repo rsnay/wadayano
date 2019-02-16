@@ -174,7 +174,7 @@ const COURSE_QUERY = gql`
     id
     students(where:{quizAttempts_some:{quiz:{id:$quizId}}}) {
       name
-      quizAttempts(where:{quiz:{id:$quizId}}, first:1) {
+      quizAttempts(where:{quiz:{id:$quizId}, completed_not:null}, first:1) {
         id
         score
         questionAttempts(where:{question:{id:$questionId}}) {
