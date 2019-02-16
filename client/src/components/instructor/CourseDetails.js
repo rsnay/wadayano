@@ -146,7 +146,7 @@ export class CourseDetails extends Component {
         const scoresLoaded = this.props.courseScores !== null;
         const scores = this.props.courseScores;
         quizzesTable = (<div className="table-wrapper">
-        <table className="table is-fullwidth quiz-table responsive-table">
+        <table className="table is-hoverable is-fullwidth quiz-table responsive-table">
           <thead>
               <tr className="sticky-header">
                   <th>Title</th>
@@ -159,13 +159,17 @@ export class CourseDetails extends Component {
               </tr>
           </thead>
           <tbody>
-              {course.quizzes.map((quiz, index)=>
-              <tr key={quiz.id}>
-                  <td data-title="Title"><Link className="has-text-black is-block" to={"/instructor/quiz/" + quiz.id}>{quiz.title}</Link></td>
+              {course.quizzes.map((quiz)=>
+              <tr key={quiz.id} onClick={(e) => {
+                    if (scoresLoaded && scores.get(quiz.id).studentCount > 0) {
+                        this.props.history.push('/instructor/quiz/' + quiz.id + '/scores');
+                    } else { this.props.history.push('/instructor/quiz/' + quiz.id); } 
+              }}>
+                  <td data-title="Title">{quiz.title}</td>
                   <td data-title="Type">{QUIZ_TYPE_NAMES[quiz.type]}</td>
                   {scoresLoaded ? ((scores.get(quiz.id).studentCount > 0) ? 
                                         <React.Fragment>
-                                            <td><Link to={"/instructor/quiz/" + quiz.id + "/scores"}>{scores.get(quiz.id).studentCount}</Link></td>
+                                            <td>{scores.get(quiz.id).studentCount}</td>
                                             <td>{formatScore(scores.get(quiz.id).averageScore)}</td>
                                             <td>{formatScore(scores.get(quiz.id).averagePredictedScore)}</td>
                                             <td>{formatScore(scores.get(quiz.id).averageWadayanoScore)}</td>

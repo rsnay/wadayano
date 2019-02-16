@@ -33,6 +33,9 @@ input[type=radio] {
 button::-moz-focus-inner { 
     border: 0; 
 }
+button.is-light:focus, a.is-light:focus {
+    box-shadow: 0 0 0 0.125em rgba(104, 197, 215, 0.25)!important;
+}
 
 /* On mobile browsers with toolbars that hide and disappear, attempt to have the modal dialogs not get clipped by the toolbars. Issue is that Bulma's 100vh behaves differently than 100% of viewport height. Could cause issues, depending on the height of the modal's parent element? */
 .modal-card {
@@ -359,6 +362,9 @@ progress::-webkit-progress-value {
     opacity: 1 !important;
     padding: 0.3rem 0;
 }
+.quiz-options-menu .icon {
+    padding-right: 0.5rem;
+}
 
 /* TinyMCE customizations */
 .panel-block > .mce-panel {
@@ -431,6 +437,7 @@ progress::-webkit-progress-value {
 /* Dashboard */
 .quiz-table tbody tr td {
     vertical-align: middle;
+    cursor: pointer;
 }
 .sticky-header th {
     position: sticky;
