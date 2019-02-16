@@ -44,12 +44,12 @@ class AggregatedQuestionReview extends Component {
     const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '');
     const { correctShortAnswers } = this.props.question;
     const isMultipleChoice = (this.props.question.type === MULTIPLE_CHOICE);
-    const studentCount = query.course.students.length;
 
     if (isMultipleChoice && questionOptions.length === 0) {
         return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
     }
 
+    let totalAnswerCount = 0;
     let answerCounts = new Map();
     let confidentCount = 0;
 
@@ -82,6 +82,8 @@ class AggregatedQuestionReview extends Component {
             if (questionAttempt.isConfident) {
                 confidentCount++;
             }
+            // Add this to the total answer count (in case of errors, or not all students answering this question, the percents will add up to 100%)
+            totalAnswerCount++;
         // Just swallow errors, with invalid attempt simply being ommitted from the stats
         } catch (error) { console.error(error); }
     });
@@ -104,16 +106,16 @@ class AggregatedQuestionReview extends Component {
     let incorrectIcon = <span className="icon"><i className="fas fa-times"></i></span>;
 
     const optionListing = (id, containerClass, iconClass, icon, html, text, answerCount) => {
-        return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id} data-tip={answerCount + (answerCount === 1 ? ' student' : ' students') + ' (' + formatScore(answerCount / studentCount) + ')'}>
+        return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id} data-tip={answerCount + (answerCount === 1 ? ' student' : ' students') + ' (' + formatScore(answerCount / totalAnswerCount) + ')'}>
             <ReactTooltip />
             <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
                 <span>{icon}</span>
             </span>
             {/* Only use dangerouslySetInnerHTML if necessary, otherwise just show text (for short answers) */}
             {text ?
-                <span className="column question-option-text level-left is-aggregated"  style={{background:`linear-gradient(90deg, #92cdf7 0%, #92cdf7 ${answerCount / studentCount * 100}%, rgba(9,9,121,0) ${answerCount / studentCount * 100}%)`}}>{text}</span>
+                <span className="column question-option-text level-left is-aggregated"  style={{background:`linear-gradient(90deg, #92cdf7 0%, #92cdf7 ${answerCount / totalAnswerCount * 100}%, rgba(9,9,121,0) ${answerCount / totalAnswerCount * 100}%)`}}>{text}</span>
             :
-                <span className="column question-option-text level-left is-aggregated" dangerouslySetInnerHTML={{__html: html}}  style={{background:`linear-gradient(90deg, #92cdf7 0%, #92cdf7 ${answerCount / studentCount * 100}%, rgba(9,9,121,0) ${answerCount / studentCount * 100}%)`}}></span>
+                <span className="column question-option-text level-left is-aggregated" dangerouslySetInnerHTML={{__html: html}}  style={{background:`linear-gradient(90deg, #92cdf7 0%, #92cdf7 ${answerCount / totalAnswerCount * 100}%, rgba(9,9,121,0) ${answerCount / totalAnswerCount * 100}%)`}}></span>
             }
         </div>)
     };
@@ -140,7 +142,7 @@ class AggregatedQuestionReview extends Component {
         });
     }
 
-    const confidence = confidentCount / studentCount;
+    const confidence = confidentCount / totalAnswerCount;
     let confidenceSelector = <ConfidenceSelector disabled title={`${Math.round(confidence * 100)}% of students were confident:`} confident={confidence >= 0.5} />;
 
     let feedbackView = <p className="question-option-text"></p>;
