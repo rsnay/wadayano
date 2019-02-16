@@ -43,7 +43,7 @@ class QuizScores extends Component {
                 // Determine if student took this quiz
                 let attempts = {};
                 let chosenAttempt = null;
-                if(this.state.chosenScore === "Highest Score"){
+                /*if(this.state.chosenScore === "Highest Score"){
                     try {
                         console.log(this.state.chosenScore);
                         attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
@@ -53,7 +53,7 @@ class QuizScores extends Component {
                         chosenAttempt = attempts[0];
                         console.log(student, attempts, chosenAttempt);
                     } catch (error) { }
-                } /*else if(this.state.chosenScore === "Lowest Score"){
+                } else if(this.state.chosenScore === "Lowest Score"){
                     try {
                         console.log(this.state.chosenScore);
                         attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
@@ -63,7 +63,7 @@ class QuizScores extends Component {
                         chosenAttempt = attempts[attempts.length-1];
                         console.log(student, attempts, chosenAttempt);
                     } catch (error) { }
-                }*/ else if(this.state.chosenScore === "First Attempt"){
+                } else*/ if(this.state.chosenScore === "First Attempt"){
                     try {
                         console.log(this.state.chosenScore);
                         attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed)
@@ -297,7 +297,7 @@ class QuizScores extends Component {
                     <div class="tabs">
                     <ul>
                         {this.state.currentQuizAttempts.map((attempt,index) => 
-                            <li className={(this.state.chosenAttempt.id === attempt.id ? "is-active" : "")}><a href="#/" onClick={() => this.setState({ chosenAttempt: attempt})}>Attempt {index}</a></li>
+                            <li className={(this.state.chosenAttempt.id === attempt.id ? "is-active" : "")}><a href="#/" onClick={() => this.setState({ chosenAttempt: attempt})}>Attempt {index + 1}</a></li>
                         )}
                     </ul>
                     </div>
