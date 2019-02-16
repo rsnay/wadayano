@@ -195,12 +195,19 @@ export class CourseDetails extends Component {
             class="quiz-options-menu"
             getContent={(dataTip) => 
                 <React.Fragment>
+                <Link to={"/instructor/quiz/" + dataTip + "/scores"}
+                    className="navbar-item">
+                    <span className="icon">
+                    <i className="fas fa-chart-bar"></i>
+                    </span>
+                    <span>View Scores</span>
+                </Link>
                 <Link to={"/instructor/quiz/" + dataTip}
                     className="navbar-item">
                     <span className="icon">
                     <i className="fas fa-edit"></i>
                     </span>
-                    <span>Edit</span>
+                    <span>Edit Quiz</span>
                 </Link>
                 <a className="navbar-item"
                     role="menuitem"
@@ -210,13 +217,6 @@ export class CourseDetails extends Component {
                     </span>
                     <span>Add to LMS</span>
                 </a>
-                <Link to={"/instructor/quiz/" + dataTip + "/scores"}
-                    className="navbar-item">
-                    <span className="icon">
-                    <i className="fas fa-chart-bar"></i>
-                    </span>
-                    <span>Scores</span>
-                </Link>
                 </React.Fragment>
             }
         />
