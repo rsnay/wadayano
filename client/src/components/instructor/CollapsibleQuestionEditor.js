@@ -413,7 +413,7 @@ export class CollapsibleQuestionEditor extends Component {
             </ScrollIntoViewIfNeeded>
         );
 
-        const metadatEditor = isExpanded && (
+        const metadataEditor = isExpanded && (
             <div className="panel-block quiz-editor-question-concept">
                 <label className="is-inline">Concept &nbsp;</label>
                 <ConceptSelector concept={question.concept} onChange={(c) => this._handleConceptChange(c)} courseId={this.props.courseId} />
@@ -475,12 +475,13 @@ export class CollapsibleQuestionEditor extends Component {
 
         return (
             <div className="panel collapsible-question-editor" id={this.props.elementId}>
+                {!isExpanded && (
                 <p className="panel-heading is-flex">
                     {dragHandle}
 
                     <span className="collapsible-question-editor-title" onClick={this._loadQuestion}>
                         {this.props.questionIndex !== null && `${this.props.questionIndex + 1}. `}
-                        {!isExpanded && stripTags(question ? question.prompt : this.props.defaultPrompt)}
+                        {stripTags(question ? question.prompt : this.props.defaultPrompt)}
                     </span>
 
                     <span className="is-pulled-right is-flex collapsible-question-editor-button-group">
@@ -491,11 +492,23 @@ export class CollapsibleQuestionEditor extends Component {
                     </span>
 
                 </p>
+                )}
 
+                {metadataEditor}
                 {promptEditor}
-                {metadatEditor}
                 {optionsEditor}
                 {shortAnswersEditor}
+
+                {isExpanded && (
+                    <p className="panel-heading is-flex collapsible-question-editor-footer">
+                        <span className="is-pulled-right is-flex collapsible-question-editor-button-group">
+                            {deleteButton}
+                            {editButton}
+                            {cancelButton}
+                            {saveButton}
+                        </span>
+                    </p>
+                )}
 
                 {/* If the question has been modified, have react router confirm before user navigates away */}
                 <Prompt

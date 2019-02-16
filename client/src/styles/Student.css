@@ -224,6 +224,14 @@ progress::-webkit-progress-value {
     min-width: 0%;
 }
 
+.collapsible-question-editor .panel-block:first-child {
+    border-radius: 4px 4px 0 0!important;
+}
+
+.collapsible-question-editor-footer {
+    border-radius: 0 0 4px 4px!important;
+}
+
 /* In collapsed question, have the bottom corners of the header rounded as well */
 .collapsible-question-editor .panel-heading:only-child {
     border-bottom-right-radius: 4px!important;
