@@ -2,6 +2,7 @@ import { CONFIDENCES } from "./constants";
 
 // Format a 0–1 float score to 33.3%
 export function formatScore(score) {
+    if (Number.isNaN(score)) { score = 0; }
     return `${Math.round(score * 1000) / 10}%`;
 }
 
@@ -44,7 +45,10 @@ export function predictedScore(quizAttempt, concept = null) {
 
     const questionAttempts = filterByConcept(quizAttempt, concept);
 
+    // Avoid divide by zero
     const questionCount = questionAttempts.length;
+    if (questionCount === 0) { return 0; }
+
     // Predicted score is the percentage of questions that the student predicted they would get correct (in the pre-quiz confidence assessment)
     let predictedCount = 0;
     // Calculate predicted count, based on entire quiz or specific concept
