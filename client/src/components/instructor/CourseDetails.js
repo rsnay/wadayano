@@ -149,12 +149,12 @@ export class CourseDetails extends Component {
         <table className="table is-hoverable is-fullwidth quiz-table responsive-table">
           <thead>
               <tr className="sticky-header">
-                  <th>Title</th>
+                  <th>Quiz</th>
                   <th>Type</th>
-                  <th>Number of Students</th>
-                  <th>Average Score</th>
-                  <th>Average Predicted Score</th>
-                  <th>Average Wadayano Score</th>
+                  <th>Completion</th>
+                  <th>Avg. Score</th>
+                  <th>Avg. Predicted Score</th>
+                  <th>Avg. Wadayano Score</th>
                   <th>Actions</th>
               </tr>
           </thead>
@@ -169,13 +169,13 @@ export class CourseDetails extends Component {
                   <td data-title="Type">{QUIZ_TYPE_NAMES[quiz.type]}</td>
                   {scoresLoaded ? ((scores.get(quiz.id).studentCount > 0) ? 
                                         <React.Fragment>
-                                            <td>{scores.get(quiz.id).studentCount}</td>
+                                            <td>{scores.get(quiz.id).studentCount} / {course.students.length}</td>
                                             <td>{formatScore(scores.get(quiz.id).averageScore)}</td>
                                             <td>{formatScore(scores.get(quiz.id).averagePredictedScore)}</td>
                                             <td>{formatScore(scores.get(quiz.id).averageWadayanoScore)}</td>
                                         </React.Fragment>
                                     : <td colSpan="4"><i>Quiz not taken</i></td>
-                  ) : <td colSpan="4">Loading</td>}
+                  ) : <td colSpan="4"><i>Loading</i></td>}
                   <td data-title="Actions">
                     <button className="button is-light" data-tip={quiz.id} data-for="quiz-actions-tooltip" data-event="click"> ••• </button>
                   </td>
@@ -303,22 +303,6 @@ export class CourseDetails extends Component {
             <hr />
           </section>
 
-          <section>
-            <h4 className="title is-4">Course Scores</h4>
-            <div className="is-flex-tablet">
-                <span style={{flex: 1}}>View scores for students in the class, aggregated by quiz. (To view individual student scores for a quiz, click “Scores” on a quiz below.)<br /></span>
-                    <Link style={{marginLeft: "1rem"}}
-                        className="button is-light"
-                        to={'/instructor/course/' + course.id + '/scores'}>
-                        <span className="icon">
-                        <i className="fas fa-chart-bar"></i>
-                        </span>
-                        <span>View Course Scores</span>
-                    </Link>
-            </div>
-            <hr />
-          </section>
-
             <h4 className="title is-4 is-inline-block">Quizzes</h4>
             <button className="button is-primary is-pulled-right" onClick = {() => this.createQuiz()}>
                 <span className="icon">
@@ -419,6 +403,9 @@ export const COURSE_QUERY = gql`
         number
         lmsUrl
         ltiSecret
+        students {
+            id
+        }
         quizzes{
             id
             title
