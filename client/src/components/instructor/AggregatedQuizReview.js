@@ -215,7 +215,7 @@ class AggregatedQuizReview extends Component {
 
         const averageScoreLabel = (score) => (
             <div className="is-flex aggregated-score-label">
-                <span className="icon is-medium is-pulled-left has-text-primary">
+                <span className="icon is-medium is-pulled-left has-text-info">
                     <i className="fas fa-2x fa-chart-bar"></i>
                 </span>
                 <h4 className="subtitle is-flex flex-1">
@@ -229,7 +229,7 @@ class AggregatedQuizReview extends Component {
 
         const averagePredictedScoreLabel = (score) => (
             <div className="is-flex aggregated-score-label">
-                <span className="icon is-medium is-pulled-left has-text-primary">
+                <span className="icon is-medium is-pulled-left has-text-warning">
                     <i className="fas fa-2x fa-chart-line"></i>
                 </span>
                 <h4 className="subtitle is-flex flex-1">
@@ -259,7 +259,8 @@ class AggregatedQuizReview extends Component {
                     <div className="column">
                         <div className="box" style={{height: "280px"}}>
                             {averageScoreLabel(averageScore)}
-                            <ScoresBarGraph scores={scores} />
+                            {averagePredictedScoreLabel(averagePredictedScore)}
+                            <ScoresBarGraph scoreSeries={[scores, predictedScores]} />
                         </div>
                     </div>
                     <div className="column">
@@ -271,14 +272,6 @@ class AggregatedQuizReview extends Component {
                                 underconfident={confidenceAnalysisCounts.UNDERCONFIDENT}
                                 mixed={confidenceAnalysisCounts.MIXED}
                                 />
-                        </div>
-                    </div>
-                </div>
-                <div className="columns is-desktop">
-                    <div className="column is-half-desktop">
-                        <div className="box" style={{height: "280px"}}>
-                            {averagePredictedScoreLabel(averagePredictedScore)}
-                            <ScoresBarGraph scores={predictedScores} />
                         </div>
                     </div>
                 </div>
@@ -300,7 +293,7 @@ class AggregatedQuizReview extends Component {
                                     {averageWadayanoScoreLabel(conceptAverageWadayanoScores.get(concept))}
                                     <footer>
                                         <button
-                                            className="button is-primary is-block"
+                                            className="button is-light is-block"
                                             style={{width: "100%"}}
                                             onClick={() => this.setState({showConceptModal: concept})}
                                         >View Questions</button>
@@ -377,12 +370,10 @@ export const QUIZ_QUERY = gql`
   ${fragments.instructorFullQuestion}
 `
 
-export default withAuthCheck(compose(
-    graphql(QUIZ_QUERY, {
-      name: 'quizQuery',
-      options: (props) => {
-        console.log(props);
-        return { variables: { id: props.quizId } }
-      }
-    }),
-  )(AggregatedQuizReview), { instructor: true });
+export default graphql(QUIZ_QUERY, {
+    name: 'quizQuery',
+    options: (props) => {
+    console.log(props);
+    return { variables: { id: props.quizId } }
+    }
+})(AggregatedQuizReview);

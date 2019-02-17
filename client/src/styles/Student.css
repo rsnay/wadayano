@@ -101,6 +101,15 @@ button.is-light:focus, a.is-light:focus {
     max-width: 1400px;
 }
 
+.quiz-attempt-selector {
+    margin-bottom: -3rem!important;
+}
+.quiz-attempt-selector ul {
+    margin-bottom: 1.5rem;
+}
+.quiz-attempt-selector li:first-child {
+    margin-top: 0.25em;
+}
 /* Quiz Taker */
 progress::-webkit-progress-value {
     transition: width 0.3s ease-out;
@@ -524,6 +533,14 @@ progress::-webkit-progress-value {
 .aggregated-score-label h4 {
     padding: 0.3rem 0 0 1rem;
 }
+.aggregated-score-label:not(:last-of-type) h4 {
+    margin-bottom: 0!important;
+}
+@media screen and (max-width: 500px) {
+    .aggregated-score-label h4 {
+        font-size: 1rem!important;
+    }
+}
 
 /* Bar graphs */
 .chart-bar {
@@ -540,11 +557,13 @@ progress::-webkit-progress-value {
     vertical-align: bottom!important;
     border-bottom: none!important;
     border-top: none!important;
+    padding: 0!important;
 }
 .scores-bar-graph .chart-bar {
-    width: 1rem;
+    width: 50%;
     height: 0px;
     clear: both;
+    max-width: 1rem;
 }
 .scores-bar-graph .chart-bar-label {
     display: block;
@@ -555,8 +574,9 @@ progress::-webkit-progress-value {
 .scores-bar-graph .tick-marks td {
     height: 0px;
     position: relative;
-    top: -35px;
+    top: -10px;
     font-size: 50%;
+    padding: 0.5em 0.75em!important;
 }
 .scores-bar-graph .tick-marks td:not(:first-child):not(:last-child) {
     border: solid #ccc 1px;
@@ -564,7 +584,6 @@ progress::-webkit-progress-value {
 .scores-bar-graph .tick-mark-labels td {
     position: relative;
     padding: 0;
-    top: -7px;
     font-size: 50%;
 }
 
