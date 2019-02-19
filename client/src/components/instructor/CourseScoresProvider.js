@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import { formatScore, predictedScore, wadayanoScore, stringCompare } from '../../utils';
+import { predictedScore, wadayanoScore } from '../../utils';
 
 export default function withCourseScores(ComposedComponent) {
-    class WithCourseScores extends React.Component {
+    class WithCourseScores extends Component {
         constructor() {
             super();
             this.state = { courseScores: null };

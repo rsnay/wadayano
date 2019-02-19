@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export default class LoadingBox extends Component {
     render() {
         return (
-            <div className="container section" {...this.props}>
+            <div className="container section" style={this.props.style}>
                 <center>
                     <div className="button is-large is-primary is-loading">Loading</div>
                     {this.props.children}

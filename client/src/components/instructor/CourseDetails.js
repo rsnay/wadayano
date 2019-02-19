@@ -24,10 +24,9 @@ export class CourseDetails extends Component {
         super(props);
         this.state = {
             displayLtiSetupAction: null,
-            displayLtiSetupObjectI: null,
+            displayLtiSetupObjectId: null,
             displayCourseInfoForm: false
         };
-        this.courseTitleInput = React.createRef();
     }
 
     async createQuiz(){
@@ -215,7 +214,8 @@ export class CourseDetails extends Component {
                 </Link>
                 <a className="navbar-item"
                     role="menuitem"
-                    onClick={() => this._showLTISetup('quiz', dataTip)}>
+                    href="#lti"
+                    onClick={(e) => { this._showLTISetup('quiz', dataTip); e.preventDefault(); }}>
                     <span className="icon">
                     <i className="fas fa-link"></i>
                     </span>

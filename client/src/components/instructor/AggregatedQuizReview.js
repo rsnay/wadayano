@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
-
-import { withAuthCheck } from '../shared/AuthCheck';
 
 import { formatScore, confidenceAnalysis, predictedScore, wadayanoScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';

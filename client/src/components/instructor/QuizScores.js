@@ -211,7 +211,9 @@ class QuizScores extends Component {
                             <div className="tabs quiz-attempt-selector">
                             <ul>
                                 {this.state.currentQuizAttempts.map((attempt,index) => 
-                                    <li className={(this.state.chosenAttempt.id === attempt.id ? "is-active" : "")}><a onClick={() => this.setState({ chosenAttempt: attempt})}>Attempt {index + 1}</a></li>
+                                    <li className={(this.state.chosenAttempt.id === attempt.id ? "is-active" : "")} key={index}>
+                                        <a href={"#" + attempt.id} onClick={(e) => { this.setState({ chosenAttempt: attempt}); e.preventDefault(); }}>Attempt {index + 1}</a>
+                                    </li>
                                 )}
                             </ul>
                             </div>

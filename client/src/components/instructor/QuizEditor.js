@@ -267,7 +267,7 @@ export class QuizEditor extends Component {
             {allQuestions.map((questionId, index) => {
                 if ((index + 1) % divisor === 0 || index === 0 || index === allQuestions.length - 1) {
                     return (<button key={questionId} onClick={() => this.scrollToQuestionId(questionId)} className="question-navbar-item button is-text">{index + 1}</button>);
-                }
+                } else { return null; }
             })}
             <button className={"button is-text question-navbar-item"+ (this.state.isAddingQuestion ? " is-loading" : "")} title="Add Question" onClick={this.addQuestion}>
                 <span className="icon"><i className="fas fa-plus"></i></span>
