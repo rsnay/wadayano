@@ -253,18 +253,30 @@ class AggregatedQuizReview extends Component {
             </div>
         );
 
+        const barGraphLegend = (averageScore, averagePredictedScore) => (
+            <div className="is-flex-desktop scores-bar-graph-legend">
+                <h4 className="subtitle is-flex flex-1">
+                    <span className="has-text-warning">■&nbsp;&nbsp;</span>
+                    Predicted ({formatScore(averagePredictedScore, 0)}&nbsp;average)
+                </h4>
+                <h4 className="subtitle is-flex flex-1">
+                    <span className="has-text-info">■&nbsp;&nbsp;</span>
+                    Score ({formatScore(averageScore, 0)}&nbsp;average)
+                </h4>
+            </div>
+        );
+
         return (
             <div>
                 <div className="columns is-desktop">
                     <div className="column">
-                        <div className="box" style={{height: "280px"}}>
-                            {averageScoreLabel(averageScore)}
-                            {averagePredictedScoreLabel(averagePredictedScore)}
-                            <ScoresBarGraph scoreSeries={[scores, predictedScores]} />
+                        <div className="box" style={{minHeight: "280px"}}>
+                            {barGraphLegend(averageScore, averagePredictedScore)}
+                            <ScoresBarGraph scoreSeries={[predictedScores, scores]} />
                         </div>
                     </div>
                     <div className="column">
-                        <div className="box" style={{height: "280px"}}>
+                        <div className="box" style={{minHeight: "280px"}}>
                             {averageWadayanoScoreLabel(averageWadayanoScore)}
                             <ConfidenceBarGraph
                                 overconfident={confidenceAnalysisCounts.OVERCONFIDENT}

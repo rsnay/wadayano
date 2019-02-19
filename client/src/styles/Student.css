@@ -534,7 +534,7 @@ progress::-webkit-progress-value {
     padding: 0.3rem 0 0 1rem;
 }
 .aggregated-score-label:not(:last-of-type) h4 {
-    margin-bottom: 0!important;
+    /*margin-bottom: 0!important;*/
 }
 @media screen and (max-width: 500px) {
     .aggregated-score-label h4 {
@@ -551,6 +551,7 @@ progress::-webkit-progress-value {
 
 /* Aggregated scores bar graph */
 .scores-bar-graph {
+    margin-bottom: -0.4rem!important;
 }
 .scores-bar-graph td {
     text-align: center;
@@ -585,6 +586,9 @@ progress::-webkit-progress-value {
     position: relative;
     padding: 0;
     font-size: 50%;
+}
+.scores-bar-graph-legend h4 {
+    padding-right: 0.5rem;
 }
 
 /* Aggregated confidence analysis bar graph */

@@ -1,9 +1,9 @@
 import { CONFIDENCES } from "./constants";
 
-// Format a 0–1 float score to 33.3%
-export function formatScore(score) {
+// Format a 0–1 float score to 33.3%, with the given number of  digits after the decimal point
+export function formatScore(score, mantissaDigits = 1) {
     if (Number.isNaN(score)) { score = 0; }
-    return `${Math.round(score * 1000) / 10}%`;
+    return `${Math.round(score * 100 * Math.pow(10, mantissaDigits)) / (1 * Math.pow(10, mantissaDigits))}%`;
 }
 
 // A function to help with reordering an array element (for drag and drop)
