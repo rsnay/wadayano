@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import ReactTooltip from 'react-tooltip';
@@ -8,7 +8,6 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 
 import { withAuthCheck } from '../shared/AuthCheck';
 
-import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import Modal from '../shared/Modal';
 import LTISetupModal from './LTISetupModal';
@@ -130,7 +129,10 @@ export class CourseDetails extends Component {
     }
 
     if (this.props.courseQuery && this.props.courseQuery.error) {
-        return <ErrorBox><p>Couldn’t load course.</p></ErrorBox>;
+        ButterToast.raise({
+            content: <ToastTemplate content="Couldn’t load course." className="is-danger" />
+        });
+        return <Redirect to="/instructor/courses" />
     }
     let course = this.props.courseQuery.course;
 
