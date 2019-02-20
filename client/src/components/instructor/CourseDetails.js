@@ -72,7 +72,7 @@ export class CourseDetails extends Component {
 
     // Asks for the email address of an instructor to invite and sends to server
     async inviteInstructor(course) {
-        let email = window.prompt('Enter the email address of the instructor whom you would like to invite to this course:');
+        let email = window.prompt('Invite other instructors to join this course. Other instructors will have all course permissions, including managing quizzes, deleting the course, and inviting/removing any instructors.\nEnter the email address of the instructor whom you would like to invite to this course:');
         if (!email || email.trim() === '') {
           return;
         }
@@ -238,7 +238,7 @@ export class CourseDetails extends Component {
           ]} />
 
           <section>
-            <h4 className="title is-4">Course Info</h4>
+            <h4 className="title is-4">{course.title}</h4>
             <div className="is-flex-tablet">
                 <span style={{flex: 1}}>
                     <label className="label">Title: {course.title}</label>
@@ -257,6 +257,75 @@ export class CourseDetails extends Component {
           </section>
 
           <section>
+            <h4 className="title is-4">Course Scores</h4>
+            <div className="is-flex-tablet">
+                <span style={{flex: 1}}>View scores for students in the class, aggregated by quiz. (To view individual student scores for a quiz, click “Scores” on a quiz below.)<br /></span>
+                    <Link style={{marginLeft: "1rem"}}
+                        className="button is-light"
+                        to={'/instructor/course/' + course.id + '/scores'}>
+                        <span className="icon">
+                        <i className="fas fa-chart-bar"></i>
+                        </span>
+                        <span>View Course Scores</span>
+                    </Link>
+            </div>
+            <hr />
+          </section>
+
+            <h4 className="title is-4 is-inline-block">Quizzes</h4>
+            <button className="button is-primary is-pulled-right" onClick = {() => this.createQuiz()}>
+                <span className="icon">
+                <i className="fas fa-plus"></i>
+                </span>
+                <span>New Quiz</span>
+            </button>
+            {quizzesTable}
+            {quizActionsTooltip}
+
+        <hr />
+
+        <section>
+            <h4 className="title is-4">Course Instructors</h4>
+            <div className="is-flex-tablet">
+                <button style={{marginLeft: "1rem", marginRight: "3rem"}} className="button is-light"
+                    onClick={() => this.inviteInstructor(course)}>
+                    <span className="icon">
+                    <i className="fas fa-user-plus"></i>
+                    </span>
+                    <span>Invite an Instructor</span>
+                </button>
+            {course.instructors.map(instructor => 
+                <span className="tag is-light is-large" style={{margin: ".25rem"}} key={instructor.email}>
+                    {instructor.email}&nbsp;
+                    <button className="delete is-small" onClick={() => this.removeInstructor(course, instructor.email)} title="Remove Instructor"></button>
+                </span>
+            )}
+            <br /></div>
+            {course.pendingCourseInvites.map(invite => 
+                <span className="tag is-warning is-large" style={{margin: ".25rem"}} key={invite.email}>
+                    {invite.email} (pending)&nbsp;
+                    <button className="delete is-small" onClick={() => this.removeInstructor(course, invite.email)} title="Cancel Invite"></button>
+                </span>
+            )}
+            <hr />
+        </section>
+
+        <section>
+            <h4 className="title is-4">Delete Course</h4>
+            <div className="is-flex-tablet">
+                <span>Deleting this course will permanently delete all quizzes, students’ quizzes attempts, survey data, and other information associated with this course. This cannot be undone.<br /></span>
+                <button style={{marginLeft: "1rem"}} className="button is-danger is-outlined"
+                    onClick={() => this.deleteCourse(course)}>
+                    <span className="icon">
+                    <i className="fas fa-trash-alt"></i>
+                    </span>
+                    <span>Delete Course</span>
+                </button>
+            </div>
+            <hr />
+        </section>
+
+        <section>
             <h4 className="title is-4">Student Dashboard</h4>
             <div className="is-flex-tablet">
                 <span>Students in your course can access the Student Dashboard to practice quizzes and review past quiz performance. Simply place an LTI link on a content page or somewhere accessible in your LMS.<br /></span>
@@ -304,61 +373,6 @@ export class CourseDetails extends Component {
             </div>
             <hr />
           </section>
-
-            <h4 className="title is-4 is-inline-block">Quizzes</h4>
-            <button className="button is-primary is-pulled-right" onClick = {() => this.createQuiz()}>
-                <span className="icon">
-                <i className="fas fa-plus"></i>
-                </span>
-                <span>New Quiz</span>
-            </button>
-            {quizzesTable}
-            {quizActionsTooltip}
-
-        <hr />
-
-        <section>
-            <h4 className="title is-4">Course Instructors</h4>
-            <div className="is-flex-tablet">
-                <span>Invite other instructors to join this course. Other instructors will have all course permissions, including managing quizzes, deleting the course, and inviting/removing any instructors.<br /><br /></span>
-                <button style={{marginLeft: "1rem"}} className="button is-light"
-                    onClick={() => this.inviteInstructor(course)}>
-                    <span className="icon">
-                    <i className="fas fa-user-plus"></i>
-                    </span>
-                    <span>Invite an Instructor</span>
-                </button>
-            </div>
-            {course.instructors.map(instructor => 
-                <span className="tag is-light is-large" style={{margin: ".25rem"}} key={instructor.email}>
-                    {instructor.email}&nbsp;
-                    <button className="delete is-small" onClick={() => this.removeInstructor(course, instructor.email)} title="Remove Instructor"></button>
-                </span>
-            )}
-            <br />
-            {course.pendingCourseInvites.map(invite => 
-                <span className="tag is-warning is-large" style={{margin: ".25rem"}} key={invite.email}>
-                    {invite.email} (pending)&nbsp;
-                    <button className="delete is-small" onClick={() => this.removeInstructor(course, invite.email)} title="Cancel Invite"></button>
-                </span>
-            )}
-            <hr />
-        </section>
-
-        <section>
-            <h4 className="title is-4">Delete Course</h4>
-            <div className="is-flex-tablet">
-                <span>Deleting this course will permanently delete all quizzes, students’ quizzes attempts, survey data, and other information associated with this course. This cannot be undone.<br /></span>
-                <button style={{marginLeft: "1rem"}} className="button is-danger is-outlined"
-                    onClick={() => this.deleteCourse(course)}>
-                    <span className="icon">
-                    <i className="fas fa-trash-alt"></i>
-                    </span>
-                    <span>Delete Course</span>
-                </button>
-            </div>
-            <hr />
-        </section>
 
         </div>
         {this.state.displayLtiSetupAction &&

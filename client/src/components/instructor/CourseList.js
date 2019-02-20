@@ -37,25 +37,10 @@ export class CourseList extends Component {
           <hr />
           <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
 
-          <div className="tile is-4 is-parent">
-                <span className="tile is-child box">
-                    <p className="title">
-                        <span style={{verticalAlign: "-10%"}} className="icon"><i className="fas fa-plus-square" aria-hidden="true"></i></span>
-                        &nbsp;
-                        Create Course
-                    </p>
-                    <div className="content">
-                        <CreateCourseForm />
-                    </div>
-                </span>
-            </div>
-
             {courses.map((course, index) => 
                 <div className="tile is-4 is-parent" key={course.id}>
                     <Link to={"/instructor/course/" + course.id} className="tile is-child box">
                         <p className="title">
-                            <span style={{verticalAlign: "middle"}} className="icon"><i className="fas fa-chalkboard-teacher" aria-hidden="true"></i></span>
-                            &nbsp; &nbsp;
                             {course.title}
                         </p>
                         <hr />
@@ -69,6 +54,19 @@ export class CourseList extends Component {
                     </Link>
                 </div>
             )}
+
+            <div className="tile is-4 is-parent">
+                <span className="tile is-child box">
+                    <p className="title">
+                        <span style={{verticalAlign: "-10%"}} className="icon"><i className="fas fa-plus-square" aria-hidden="true"></i></span>
+                        &nbsp;
+                        Create Course
+                    </p>
+                    <div className="content">
+                        <CreateCourseForm />
+                    </div>
+                </span>
+            </div>
 
         </div>
 
