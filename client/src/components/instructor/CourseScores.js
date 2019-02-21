@@ -156,9 +156,9 @@ class CourseScores extends Component {
                                     {(quiz.studentCount > 0) ? 
                                         <React.Fragment>
                                             <td><Link to={"/instructor/quiz/" + quiz.id + "/scores"}>{quiz.studentCount} / {course.students.length}</Link></td>
-                                            <td>{formatScore(quiz.averageScore)}</td>
-                                            <td>{formatScore(quiz.averagePredictedScore)}</td>
-                                            <td>{formatScore(quiz.averageWadayanoScore)}</td>
+                                            <td>{formatScore(quiz.averageScore, 0)}</td>
+                                            <td>{formatScore(quiz.averagePredictedScore, 0)}</td>
+                                            <td>{formatScore(quiz.averageWadayanoScore, 0)}</td>
                                             <td>
                                                 <button className="button is-light"
                                                     onClick={() => this.setState({ currentQuizReview: quiz })}>

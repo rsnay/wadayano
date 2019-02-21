@@ -220,7 +220,7 @@ class AggregatedQuizReview extends Component {
                     Average Score
                 </h4>
                 <h4 className="subtitle is-flex">
-                    {formatScore(score)}
+                    {formatScore(score, 0)}
                 </h4>
             </div>
         );
@@ -234,7 +234,7 @@ class AggregatedQuizReview extends Component {
                     Average Predicted Score
                 </h4>
                 <h4 className="subtitle is-flex">
-                    {formatScore(score)}
+                    {formatScore(score, 0)}
                 </h4>
             </div>
         );
@@ -246,7 +246,7 @@ class AggregatedQuizReview extends Component {
                     Average Wadayano Score
                 </h4>
                 <h4 className="subtitle is-flex">
-                    {formatScore(score)}
+                    {formatScore(score, 0)}
                 </h4>
             </div>
         );

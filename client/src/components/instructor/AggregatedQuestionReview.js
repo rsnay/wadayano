@@ -106,7 +106,7 @@ class AggregatedQuestionReview extends Component {
     let incorrectIcon = <span className="icon"><i className="fas fa-times"></i></span>;
 
     const optionListing = (id, containerClass, iconClass, icon, html, text, answerCount) => {
-        return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id} data-tip={answerCount + (answerCount === 1 ? ' student' : ' students') + ' (' + formatScore(answerCount / totalAnswerCount) + ')'}>
+        return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id} data-tip={answerCount + (answerCount === 1 ? ' student' : ' students') + ' (' + formatScore(answerCount / totalAnswerCount, 0) + ')'}>
             <ReactTooltip />
             <span className={"column is-1 question-option-letter level-left is-rounded button " + iconClass} >
                 <span>{icon}</span>

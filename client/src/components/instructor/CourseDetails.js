@@ -171,9 +171,9 @@ export class CourseDetails extends Component {
                   {scoresLoaded ? ((scores.get(quiz.id).studentCount > 0) ? 
                                         <React.Fragment>
                                             <td>{scores.get(quiz.id).studentCount} / {course.students.length}</td>
-                                            <td>{formatScore(scores.get(quiz.id).averageScore)}</td>
-                                            <td>{formatScore(scores.get(quiz.id).averagePredictedScore)}</td>
-                                            <td>{formatScore(scores.get(quiz.id).averageWadayanoScore)}</td>
+                                            <td>{formatScore(scores.get(quiz.id).averageScore, 0)}</td>
+                                            <td>{formatScore(scores.get(quiz.id).averagePredictedScore, 0)}</td>
+                                            <td>{formatScore(scores.get(quiz.id).averageWadayanoScore, 0)}</td>
                                         </React.Fragment>
                                     : <td colSpan="4"><i>Quiz not taken</i></td>
                   ) : <td colSpan="4"><i>Loading</i></td>}
