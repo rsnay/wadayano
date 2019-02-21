@@ -256,22 +256,6 @@ export class CourseDetails extends Component {
             <hr />
           </section>
 
-          <section>
-            <h4 className="title is-4">Course Scores</h4>
-            <div className="is-flex-tablet">
-                <span style={{flex: 1}}>View scores for students in the class, aggregated by quiz. (To view individual student scores for a quiz, click “Scores” on a quiz below.)<br /></span>
-                    <Link style={{marginLeft: "1rem"}}
-                        className="button is-light"
-                        to={'/instructor/course/' + course.id + '/scores'}>
-                        <span className="icon">
-                        <i className="fas fa-chart-bar"></i>
-                        </span>
-                        <span>View Course Scores</span>
-                    </Link>
-            </div>
-            <hr />
-          </section>
-
             <h4 className="title is-4 is-inline-block">Quizzes</h4>
             <button className="button is-primary is-pulled-right" onClick = {() => this.createQuiz()}>
                 <span className="icon">
