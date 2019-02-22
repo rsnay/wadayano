@@ -143,7 +143,7 @@ class AggregatedQuestionReview extends Component {
     }
 
     const confidence = confidentCount / totalAnswerCount;
-    let confidenceSelector = <ConfidenceSelector disabled title={`${Math.round(confidence * 100)}% of students were confident:`} confident={confidence >= 0.5} />;
+    let confidenceSelector = <ConfidenceSelector disabled title={`${formatScore(confidence, 0)} of students were confident:`} confident={confidence >= 0.5} />;
 
     let feedbackView = <p className="question-option-text"></p>;
 
