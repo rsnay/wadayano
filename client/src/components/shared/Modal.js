@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import AriaModal from 'react-aria-modal';
 
 const Modal = ({ children, closeModal, modalState, title, showFooter, cardClassName }) => {
     if(!modalState) {
@@ -7,23 +8,32 @@ const Modal = ({ children, closeModal, modalState, title, showFooter, cardClassN
     }
     
     return(
-      <div className="modal is-active">
-        <div className="modal-background" onClick={closeModal} />
-        <div className={"modal-card " + cardClassName}>
-          <header className="modal-card-head">
-            <p className="modal-card-title">{title}</p>
-            <button className="delete" onClick={closeModal} />
-          </header>
-          <section className="modal-card-body">
-            <div className="content">
-              {children}
-            </div>
-          </section>
-          {showFooter && <footer className="modal-card-foot">
-            <button className="button" onClick={closeModal}>Done</button>
-          </footer>}
+      <AriaModal
+          titleText={title}
+          onExit={closeModal}
+          verticallyCenter={true}
+          underlayClickExits={false}
+          underlayColor="transparent"
+          underlayStyle={{ paddingTop: '2em' }}
+      >
+        <div className="modal is-active">
+          <div className="modal-background" onClick={closeModal} />
+          <div className={"modal-card " + cardClassName}>
+            <header className="modal-card-head">
+              <p className="modal-card-title">{title}</p>
+              <button className="delete" onClick={closeModal} />
+            </header>
+            <section className="modal-card-body">
+              <div className="content">
+                {children}
+              </div>
+            </section>
+            {showFooter && <footer className="modal-card-foot">
+              <button className="button" onClick={closeModal}>Done</button>
+            </footer>}
+          </div>
         </div>
-      </div>
+      </AriaModal>
     );
 }
   
