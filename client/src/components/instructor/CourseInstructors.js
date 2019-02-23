@@ -94,7 +94,7 @@ class CourseInstructors extends Component {
             <span style={{flex: "1 1 0%"}}>
             {course.instructors.map(instructor => 
                 <span className="tag is-light is-large is-rounded instructor-tag" style={{margin: ".25rem", paddingRight: "0"}} key={instructor.email}>
-                    {instructor.email}&nbsp;
+                    {instructor.email}&nbsp;&nbsp;
                     <button className="button is-gray is-rounded"
                         onClick={() => this.removeInstructor(course, instructor.email)}
                         title="Remove Instructor"
@@ -106,7 +106,7 @@ class CourseInstructors extends Component {
                 </span>
             )}
             </span>
-            <button style={{marginLeft: "1rem"}} className="button is-light"
+            <button style={{marginLeft: "1rem", marginTop: "0.25rem"}} className="button is-light"
                 onClick={() => this.inviteInstructorPrompt(course)}>
                 <span className="icon">
                 <i className="fas fa-user-plus"></i>
