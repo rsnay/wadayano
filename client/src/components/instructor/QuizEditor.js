@@ -314,7 +314,7 @@ export class QuizEditor extends Component {
             <form>
                 <label className="label is-medium">
                     Quiz Title<br />
-                    <input className="input" type="text" placeholder="e.g. Lipids Review" defaultValue={quiz.title} id={quiz.id} style={{maxWidth: "42rem"}} />
+                    <input className="input" type="text" placeholder="e.g. Lipids Review" defaultValue={quiz.title} id={quiz.id} style={{maxWidth: "42rem"}} maxLength={200} />
                 </label>
 
                 <label className="label is-medium">

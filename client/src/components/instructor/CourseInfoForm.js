@@ -14,9 +14,9 @@ class CourseInfoForm extends Component {
         // List of fields to edit
         // New fields to be edited need to be added here, passed in as part of the `course` prop, and added to the CourseInfoUpdateInput input type in the server’s schema.graphql
         this.fields = [
-            {id: 'title', type: 'text', title: 'Course Title', required: true, placeholder: 'e.g. Introduction to Pathophysiology', hint: ''},
-            {id: 'number', type: 'text', title: 'Course Number', required: false, placeholder: 'e.g. CS 101', hint: ''},
-            {id: 'lmsUrl', type: 'url', title: 'Course LMS URL', required: false, placeholder: 'e.g. https://canvas.instructure.com/courses/123456', hint: 'Since students must launch graded quizzes from the LMS, wadayano can provide a link to the LMS to make it easier for students. Enter a course-specific URL that works for students, perhaps pointing to the assignments page.'}
+            {id: 'title', type: 'text', title: 'Course Title', required: true, maxLength: 200, placeholder: 'e.g. Introduction to Pathophysiology', hint: ''},
+            {id: 'number', type: 'text', title: 'Course Number', required: false, maxLength: 200, placeholder: 'e.g. CS 101', hint: ''},
+            {id: 'lmsUrl', type: 'url', title: 'Course LMS URL', required: false, maxLength: 2000, placeholder: 'e.g. https://canvas.instructure.com/courses/123456', hint: 'Since students must launch graded quizzes from the LMS, wadayano can provide a link to the LMS to make it easier for students. Enter a course-specific URL that works for students, perhaps pointing to the assignments page.'}
         ];
         // Load default value for each field from props (if undefined, set to '' to keep the form fields as controlled components)
         this.fields.forEach(field => { state[field.id] = props.course[field.id] || '' });
@@ -103,6 +103,7 @@ class CourseInfoForm extends Component {
                             className="input"
                             type={field.type}
                             required={field.required}
+                            maxLength={field.maxLength}
                             placeholder={field.placeholder}
                         />
                     </div>

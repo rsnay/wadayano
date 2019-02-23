@@ -60,6 +60,7 @@ class ConceptSelector extends Component {
                     onChange={this.handleInputChange}
                     className="input is-inline"
                     type="text"
+                    maxLength={200}
                     placeholder={this.props.placeholder} />
                 {suggestionsList}
             </React.Fragment>

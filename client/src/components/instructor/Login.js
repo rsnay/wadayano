@@ -213,6 +213,7 @@ class Login extends Component {
                     onChange={this._handleInputChange}
                     className="input"
                     type="email"
+                    maxLength={255}
                     placeholder="Email"
                   />
                   <span className="icon is-small is-left">

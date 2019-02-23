@@ -60,6 +60,7 @@ export class CreateCourseForm extends Component {
                         onChange={(e) => this._handleNewTitleChange(e)}
                         onKeyPress={(e) => this._handleNewTitleKeyPress(e)}
                         className="input"
+                        maxLength={200}
                         placeholder="New Course Title" />
                 </div>
                 <div className="field control">
