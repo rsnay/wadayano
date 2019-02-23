@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import ReactTooltip from 'react-tooltip';
@@ -37,32 +37,6 @@ export class CourseDetails extends Component {
             }
         });
         this.props.history.push('/instructor/quiz/' + result.data.createQuiz.id);
-    }
-
-    async deleteCourse(course){
-        let response = window.prompt('Are you certain that this course should be deleted? Type ‘absolutely’ to proceed.')
-        if (response && (response.toLowerCase() === 'absolutely' || response.toLowerCase() === '\'absolutely\'')) {
-            try {
-                const result = await this.props.courseDelete({
-                    variables:{
-                        id:course.id
-                    }
-                });
-                if (result.errors && result.errors.length > 0) {
-                    throw result;
-                }
-                ButterToast.raise({
-                    content: <ToastTemplate content={course.title + " was deleted."} className="is-info" />,
-                });
-                this.props.history.push('/instructor/courses');
-            } catch (result) {
-                ButterToast.raise({
-                    content: <ToastTemplate content={"Error deleting course: " + result.errors[0].message} className="is-danger" />,
-                });
-            }
-        } else {
-            alert('Course will not be deleted.');
-        }
     }
 
     // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
@@ -222,21 +196,6 @@ export class CourseDetails extends Component {
         </section>
 
         <section>
-            <h4 className="title is-4">Delete Course</h4>
-            <div className="is-flex-tablet">
-                <span>Deleting this course will permanently delete all quizzes, students’ quizzes attempts, survey data, and other information associated with this course. This cannot be undone.<br /></span>
-                <button style={{marginLeft: "1rem"}} className="button is-danger is-outlined"
-                    onClick={() => this.deleteCourse(course)}>
-                    <span className="icon">
-                    <i className="fas fa-trash-alt"></i>
-                    </span>
-                    <span>Delete Course</span>
-                </button>
-            </div>
-            <hr />
-        </section>
-
-        <section>
             <h4 className="title is-4">Student Dashboard</h4>
             <div className="is-flex-tablet">
                 <span>Students in your course can access the Student Dashboard to practice quizzes and review past quiz performance. Simply place an LTI link on a content page or somewhere accessible in your LMS.<br /></span>
@@ -337,9 +296,6 @@ export const COURSE_QUERY = gql`
             id
             title
             type
-            questions{
-                id
-            }
         }
     }
   }
@@ -354,13 +310,6 @@ mutation createQuizMutation($courseId: ID!) {
     }
 }`
 
-export const COURSE_DELETE = gql`
-mutation courseDelete($id:ID!) {
-    deleteCourse(id:$id){
-        id
-    }
-}`
-
 export default withAuthCheck(withCourseScores(compose(
     graphql(COURSE_QUERY, {
         name: 'courseQuery',
@@ -368,6 +317,5 @@ export default withAuthCheck(withCourseScores(compose(
             return { variables: { id:props.match.params.courseId } }
         }
     }),
-    graphql(CREATE_QUIZ, {name:"createQuizMutation"}),
-    graphql(COURSE_DELETE, {name:"courseDelete"})
+    graphql(CREATE_QUIZ, {name:"createQuizMutation"})
 ) (CourseDetails)), { instructor: true});

@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { graphql } from 'react-apollo';
+import { withRouter } from 'react-router-dom';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
-// A form, intended for inclusion in a modal dialog on the course details page, to edit various course information.
+import ButterToast, { ToastTemplate } from '../shared/Toast';
+
+// A form, intended for inclusion in a modal dialog on the course details page, to edit various course information or delete the course.
 class CourseInfoForm extends Component {
     constructor(props) {
         super(props);
@@ -21,13 +24,13 @@ class CourseInfoForm extends Component {
         // Load default value for each field from props (if undefined, set to '' to keep the form fields as controlled components)
         this.fields.forEach(field => { state[field.id] = props.course[field.id] || '' });
         // Pre-bind this function, to make adding it to input fields easier
-        this._handleInputChange = this._handleInputChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         // Set initial state (not done at beginning, since we mutated when setting default fields)
         this.state = state;
     }
 
     // When the save button is pressed, or form is submitted via enter key
-    async _submit(e) {
+    async saveCourseInfo(e) {
         if (e) { e.preventDefault(); }
         // Prevent re-submission while loading
         if (this.state.isLoading) { return; }
@@ -74,9 +77,36 @@ class CourseInfoForm extends Component {
         }
     }
 
+    async deleteCourse(){
+        let response = window.prompt('Deleting this course will permanently delete all quizzes, students’ quizzes attempts, survey data, and other information associated with this course. This cannot be undone. Type ‘absolutely’ to delete this course.')
+        if (response === null) { return; }
+        if (response && (response.toLowerCase() === 'absolutely' || response.toLowerCase() === '\'absolutely\'')) {
+            try {
+                const result = await this.props.courseDelete({
+                    variables: {
+                        id: this.props.course.id
+                    }
+                });
+                if (result.errors && result.errors.length > 0) {
+                    throw result;
+                }
+                ButterToast.raise({
+                    content: <ToastTemplate content={this.props.course.title + " was deleted."} className="is-info" />,
+                });
+                this.props.history.push('/instructor/courses');
+            } catch (result) {
+                ButterToast.raise({
+                    content: <ToastTemplate content={"Error deleting course. Please try again later."} className="is-danger" />,
+                });
+            }
+        } else {
+            alert('Course will not be deleted.');
+        }
+    }
+
     // Called when the form fields change
     // This function is from https://reactjs.org/docs/forms.html
-    _handleInputChange(event) {
+    handleInputChange(event) {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
@@ -88,7 +118,7 @@ class CourseInfoForm extends Component {
 
     render() {
         return (
-          <form onSubmit={(e) => this._submit(e) } ref={(el) => this.formElement = el}>
+          <form onSubmit={(e) => this.saveCourseInfo(e) } ref={(el) => this.formElement = el}>
 
             {this.state.error && <p className="notification is-danger">{this.state.error}</p> }
 
@@ -99,7 +129,7 @@ class CourseInfoForm extends Component {
                         <input
                             value={this.state[field.id]}
                             name={field.id}
-                            onChange={this._handleInputChange}
+                            onChange={this.handleInputChange}
                             className="input"
                             type={field.type}
                             required={field.required}
@@ -122,9 +152,15 @@ class CourseInfoForm extends Component {
                     Cancel
                   </button>
                   <button
+                    className="button is-danger"
+                    type="button"
+                    onClick={() => this.deleteCourse()}>
+                    Delete Course
+                  </button>
+                  <button
                     className={"button is-primary" + (this.state.isLoading ? " is-loading" : "")}
                     type="submit"
-                    onClick={() => this._submit() }>
+                    onClick={() => this.saveCourseInfo() }>
                     Save Changes
                   </button>
               </p>
@@ -148,4 +184,14 @@ mutation updateCourse($id:ID!, $info:CourseInfoUpdateInput!) {
     }
 }`
 
-export default graphql(UPDATE_COURSE, {name:"updateCourseMutation"}) (CourseInfoForm);
+const COURSE_DELETE = gql`
+mutation courseDelete($id:ID!) {
+    deleteCourse(id:$id){
+        id
+    }
+}`
+
+export default withRouter(compose(
+    graphql(UPDATE_COURSE, {name:"updateCourseMutation"}),
+    graphql(COURSE_DELETE, {name:"courseDelete"})
+) (CourseInfoForm));
