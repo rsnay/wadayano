@@ -262,7 +262,7 @@ export class QuizEditor extends Component {
     }
     const questionNavbar = (
         <div id="question-navbar" className="question-navbar no-select">
-            <span className="has-text-dark is-inline-block" style={{marginTop: "0.4rem"}}>Jump to Question:</span>
+            <span className="has-text-dark is-inline-block question-navbar-title">Jump to Question:</span>
             {/* Only render up to 20 questions by omitting non-factors of the divisor, but always include first and last questions */}
             {allQuestions.map((questionId, index) => {
                 if ((index + 1) % divisor === 0 || index === 0 || index === allQuestions.length - 1) {

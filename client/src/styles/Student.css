@@ -271,7 +271,7 @@ progress::-webkit-progress-value {
     overflow: visible;
     z-index: 5;
     vertical-align: top;
-    margin-top: -1rem;
+    margin-top: -2rem;
     margin-right: -1rem;
     margin-left: 1rem;
     color: #aaa;
@@ -279,15 +279,11 @@ progress::-webkit-progress-value {
 }
 
 .quiz-editor-question-prompt > div {
-    padding: 0.5rem;
+    padding: 0;
     border: none;
     border-radius: 0;
     min-height: 10rem;
     width: 100%;
-}
-
-.quiz-editor-question-type {
-    font-size: 100%;
 }
 
 .quiz-editor-question-option {
@@ -303,6 +299,8 @@ progress::-webkit-progress-value {
     height: 0;
     overflow: visible;
     margin-left: 0.5rem;
+    margin-bottom: -0.2rem;
+    margin-top: 0.2rem;
     color: #aaa;
     font-size: 80%;
     line-height: 250%;
@@ -333,6 +331,7 @@ progress::-webkit-progress-value {
 .quiz-editor-question-option input[type=radio] + span {
     font-size: 80%;
     min-width: 1rem;
+    padding-left: 0.3rem;
 }
 .quiz-editor-question-option input[type=radio]:checked + span::after {
     padding-left: 0.8rem;
@@ -360,6 +359,9 @@ progress::-webkit-progress-value {
     box-shadow: 0px 0px 5px gray;
     max-height: 20vh;
     overflow-y: auto;
+}
+.question-navbar-title {
+    margin-top: 0.5rem;
 }
 .question-navbar-item {
     display: inline!important;

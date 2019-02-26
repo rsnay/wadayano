@@ -415,7 +415,7 @@ export class CollapsibleQuestionEditor extends Component {
 
         const metadataEditor = isExpanded && (
             <div className="panel-block quiz-editor-question-concept">
-                <label className="is-inline">Concept &nbsp;</label>
+                <label className="is-inline" style={{marginRight: "1rem"}}>Concept</label>
                 <ConceptSelector concept={question.concept} onChange={(c) => this._handleConceptChange(c)} courseId={this.props.courseId} />
 
                 <select className="quiz-editor-question-type" value={question.type}
