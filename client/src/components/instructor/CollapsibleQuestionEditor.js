@@ -443,7 +443,7 @@ export class CollapsibleQuestionEditor extends Component {
                 <form>
                 {question.options.map((option, optionIndex) =>
                     (optionIndex <= lastVisibleOption) && (<div className="panel-block is-flex quiz-editor-question-option" key={option.id}>
-                        <label className="radio is-flex">
+                        <label className={"radio is-flex" + (optionIndex === lastVisibleOption ? " is-invisible" : "")}>
                             <input
                                 id={option.id + "radio"}
                                 key={option.id + "radio"}
