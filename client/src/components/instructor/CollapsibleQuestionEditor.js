@@ -418,40 +418,56 @@ export class CollapsibleQuestionEditor extends Component {
                 <label className="is-inline" style={{marginRight: "1rem"}}>Concept</label>
                 <ConceptSelector concept={question.concept} onChange={(c) => this._handleConceptChange(c)} courseId={this.props.courseId} />
 
-                <select className="quiz-editor-question-type" value={question.type}
-                    onChange={(e) => this._handleTypeChange(e.target.value)}>
-                    <option value={MULTIPLE_CHOICE}>{QUESTION_TYPE_NAMES[MULTIPLE_CHOICE]}</option>
-                    <option value={SHORT_ANSWER}>{QUESTION_TYPE_NAMES[SHORT_ANSWER]}</option>
-                </select>
+                <div className="select">
+                    <select className="quiz-editor-question-type" value={question.type}
+                        onChange={(e) => this._handleTypeChange(e.target.value)}>
+                        <option value={MULTIPLE_CHOICE}>{QUESTION_TYPE_NAMES[MULTIPLE_CHOICE]}</option>
+                        <option value={SHORT_ANSWER}>{QUESTION_TYPE_NAMES[SHORT_ANSWER]}</option>
+                    </select>
+                </div>
             </div>
         );
 
-        const optionsEditor = (isExpanded && question.type === MULTIPLE_CHOICE) && (
-            <form>
-            {question.options.map((option, optionIndex) =>
-                <div className="panel-block is-flex quiz-editor-question-option" key={option.id}>
-                    <label className="radio is-flex">
-                        <input
-                            id={option.id + "radio"}
-                            key={option.id + "radio"}
-                            checked={option.isCorrect}
-                            onChange={(e) => this._handleCorrectOptionChange(optionIndex, e.currentTarget.value)}
-                            name={"question" + question.id}
-                            disabled={option.text.trim() === ""}
-                            type="radio" />
-                        <span>{ALPHABET[optionIndex]}</span>
-                    </label>
-                    <span className="quiz-editor-question-option-tinymce-container">
-                        {option.text.trim() === "" && <span className="quiz-editor-question-option-placeholder">(Leave option empty to hide on quiz)</span>}
-                        <Editor
-                            value={option.text}
-                            onEditorChange={(newOption) => this._handleOptionChange(optionIndex, newOption)}
-                            init={tinymceInlineConfig} />
-                    </span>
-                </div>
-            )}
-            </form>
-        );
+        let optionsEditor = null;
+        if (isExpanded && question.type === MULTIPLE_CHOICE) {
+            let lastVisibleOption = question.options.length;
+            for (let i = question.options.length - 1; i >= 0; i--) {
+                if (question.options[i].text.trim() === '' && i >= 1) {
+                    lastVisibleOption = i;
+                } else {
+                    break;
+                }
+            }
+            console.log(lastVisibleOption);
+            optionsEditor = (isExpanded && question.type === MULTIPLE_CHOICE) && (
+                <form>
+                {question.options.map((option, optionIndex) =>
+                    (optionIndex <= lastVisibleOption) && (<div className="panel-block is-flex quiz-editor-question-option" key={option.id}>
+                        <label className="radio is-flex">
+                            <input
+                                id={option.id + "radio"}
+                                key={option.id + "radio"}
+                                checked={option.isCorrect}
+                                onChange={(e) => this._handleCorrectOptionChange(optionIndex, e.currentTarget.value)}
+                                name={"question" + question.id}
+                                disabled={option.text.trim() === ""}
+                                type="radio" />
+                            <span>{ALPHABET[optionIndex]}</span>
+                        </label>
+                        <span className="quiz-editor-question-option-tinymce-container">
+                            {option.text.trim() === "" && <span className="quiz-editor-question-option-placeholder">
+                                {(optionIndex === lastVisibleOption) ? "Add an option" : "(Leave option empty to hide on quiz)"}
+                            </span>}
+                            <Editor
+                                value={option.text}
+                                onEditorChange={(newOption) => this._handleOptionChange(optionIndex, newOption)}
+                                init={tinymceInlineConfig} />
+                        </span>
+                    </div>)
+                )}
+                </form>
+            );
+        }
 
         // Always display an empty answer textbox at the end to easily add another
         // Add the empty to a copy of the correctShortAnswers array to not actually store in question
