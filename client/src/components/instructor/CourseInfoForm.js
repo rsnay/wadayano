@@ -12,7 +12,8 @@ class CourseInfoForm extends Component {
         super(props);
         let state = {
             error: '',
-            isLoading: false
+            isLoading: false,
+            isDeleting: false
         };
         // List of fields to edit
         // New fields to be edited need to be added here, passed in as part of the `course` prop, and added to the CourseInfoUpdateInput input type in the server’s schema.graphql
@@ -82,6 +83,7 @@ class CourseInfoForm extends Component {
         if (response === null) { return; }
         if (response && (response.toLowerCase() === 'absolutely' || response.toLowerCase() === '\'absolutely\'')) {
             try {
+                this.setState({ isDeleting: true });
                 const result = await this.props.courseDelete({
                     variables: {
                         id: this.props.course.id
@@ -98,6 +100,7 @@ class CourseInfoForm extends Component {
                 ButterToast.raise({
                     content: <ToastTemplate content={"Error deleting course. Please try again later."} className="is-danger" />,
                 });
+                this.setState({ isDeleting: false });
             }
         } else {
             alert('Course will not be deleted.');
@@ -152,7 +155,7 @@ class CourseInfoForm extends Component {
                     Cancel
                   </button>
                   <button
-                    className="button is-danger"
+                    className={"button is-danger" + (this.state.isDeleting ? " is-loading" : "")}
                     type="button"
                     onClick={() => this.deleteCourse()}>
                     Delete Course
