@@ -233,7 +233,7 @@ progress::-webkit-progress-value {
     overflow: hidden;
     padding-left: 1rem;
     cursor: pointer;
-    min-width: 0%;
+    min-width: 10%;
 }
 
 .collapsible-question-editor .panel-block:first-child {
