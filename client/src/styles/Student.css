@@ -261,6 +261,13 @@ progress::-webkit-progress-value {
     margin-right: 0.3rem;
 }
 
+.quiz-editor-question-type {
+    margin-right: 0.3rem;
+}
+.quiz-editor-question-type input[type=radio] {
+    margin-top: -0.25rem;
+}
+
 .quiz-editor-question-prompt {
     padding: 0!important;
 }
@@ -535,9 +542,6 @@ progress::-webkit-progress-value {
 .aggregated-score-label h4 {
     padding: 0.3rem 0 0 1rem;
 }
-.aggregated-score-label:not(:last-of-type) h4 {
-    /*margin-bottom: 0!important;*/
-}
 @media screen and (max-width: 500px) {
     .aggregated-score-label h4 {
         font-size: 1rem!important;
@@ -594,8 +598,6 @@ progress::-webkit-progress-value {
 }
 
 /* Aggregated confidence analysis bar graph */
-.confidence-bar-graph {
-}
 .confidence-bar-graph td {
     padding: 0.25rem;
     vertical-align: middle!important;
