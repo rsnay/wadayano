@@ -33,7 +33,7 @@ import OptionSelector from '../shared/OptionSelector';
 const tinymceConfig = {
     skin_url: '/tinymce/skins/oxide',
     plugins: 'autoresize charmap hr image link lists textcolor',
-    toolbar: 'undo redo | formatselect | fontsizeselect | bold italic underline | forecolor backcolor | align | bullist numlist | outdent indent | superscript subscript | removeformat | hr image link charmap',
+    toolbar: 'undo redo | bold italic underline | bullist numlist | outdent indent | superscript subscript | hr image link charmap',
     contextmenu: 'cut copy paste | link removeformat',
     formats: {
         h1: { block: 'h1', classes: 'title is-1' },
@@ -46,7 +46,9 @@ const tinymceConfig = {
     menubar: false,
     statusbar: false,
     branding: false,
-    autoresize_max_height: 500
+    autoresize_max_height: 500,
+    default_link_target: "_blank",
+    target_list: false
 };
 
 // Smaller toolbar on inline editor for options
