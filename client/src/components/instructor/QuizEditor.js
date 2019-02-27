@@ -17,6 +17,7 @@ import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
 import Modal from '../shared/Modal';
 import Breadcrumbs from '../shared/Breadcrumbs';
 import QuizJSONImportModal from './QuizJSONImportModal';
+import OptionSelector from '../shared/OptionSelector';
 
 const MAX_NAVBAR_QUESTIONS = 20;
 
@@ -320,17 +321,15 @@ export class QuizEditor extends Component {
                 <label className="label is-medium">
                     Quiz Type<br />
                 </label>
-                <div className="control">
-                    <label className="radio">
-                        <input type="radio" name="quizType" value="GRADED" defaultChecked={quiz.type === "GRADED"} />
-                        Graded quiz (must be launched from LMS)
-                    </label>
-                    <br />
-                    <label className="radio">
-                        <input type="radio" name="quizType" value="PRACTICE" defaultChecked={quiz.type === "PRACTICE"} />
-                        Practice quiz (students can launch from wadayano dashboard or LMS)
-                    </label>
-                </div>
+                <OptionSelector
+                    type="radio"
+                    name="quizType"
+                    defaultValue={quiz.type}
+                    options={[
+                        {value:"GRADED", title: "Graded quiz (must be launched from LMS)"},
+                        {value:"PRACTICE", title: "Practice quiz (students can launch from wadayano dashboard or LMS)"}
+                    ]}
+                />
                 <hr />
 
                 <div className="field is-grouped">

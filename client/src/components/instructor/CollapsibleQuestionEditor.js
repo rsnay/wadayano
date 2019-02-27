@@ -27,6 +27,7 @@ import 'tinymce/plugins/textcolor';
 import { Editor } from '@tinymce/tinymce-react';
 import { stripTags } from '../../utils';
 import fragments from '../../fragments';
+import OptionSelector from '../shared/OptionSelector';
 
 // Main editor configuration
 const tinymceConfig = {
@@ -418,13 +419,17 @@ export class CollapsibleQuestionEditor extends Component {
                 <label className="is-inline" style={{marginRight: "1rem"}}>Concept</label>
                 <ConceptSelector concept={question.concept} onChange={(c) => this._handleConceptChange(c)} courseId={this.props.courseId} />
 
-                <div className="select">
-                    <select className="quiz-editor-question-type" value={question.type}
-                        onChange={(e) => this._handleTypeChange(e.target.value)}>
-                        <option value={MULTIPLE_CHOICE}>{QUESTION_TYPE_NAMES[MULTIPLE_CHOICE]}</option>
-                        <option value={SHORT_ANSWER}>{QUESTION_TYPE_NAMES[SHORT_ANSWER]}</option>
-                    </select>
-                </div>
+                <OptionSelector
+                    className="quiz-editor-question-type"
+                    value={question.type}
+                    onChange={(value) => this._handleTypeChange(value)}
+                    type="radio"
+                    multilineRadio={false}
+                    options={[
+                        {value: MULTIPLE_CHOICE, title: QUESTION_TYPE_NAMES[MULTIPLE_CHOICE]},
+                        {value: SHORT_ANSWER, title: QUESTION_TYPE_NAMES[SHORT_ANSWER]}
+                    ]}
+                />
             </div>
         );
 

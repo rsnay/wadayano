@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Modal from '../shared/Modal';
 import CopyableTextInput from '../shared/CopyableTextInput';
 import { LTI_LAUNCH_URL } from '../../constants';
+import OptionSelector from '../shared/OptionSelector';
 
 const LMS = {
     CANVAS: {
@@ -17,7 +18,7 @@ const LMS = {
             className="button is-text">
                 <span className="icon is-small"><i className="fas fa-question-circle"></i></span>
                 <span>Help with Canvas integration</span></a>
-            <br /> <br /> <CopyableTextInput readOnly label="Canvas External Tool URL" value={LTI_LAUNCH_URL} /></div>)
+            <br /> <br /> <CopyableTextInput readOnly label="Canvas External Tool URL" value={LTI_LAUNCH_URL} /><br /></div>)
     },
     LEARNING_SUITE: {
         id: 'LEARNING_SUITE',
@@ -60,15 +61,18 @@ class LTISetupModal extends Component {
         }
 
         const lmsSelector = (
-            <label className="label is-medium">
-                Select your LMS<br />
-                <div className="select">
-                    <select value={this.state.lmsId} onChange={(e) => this.setState({lmsId: e.target.value})}>
-                        <option value={LMS.LEARNING_SUITE.id}>Learning Suite</option>
-                        <option value={LMS.CANVAS.id}>Canvas</option>
-                    </select>
-                </div>
-            </label>
+            <React.Fragment>
+                <label className="label is-medium"> Select your LMS<br /> </label>
+                <OptionSelector
+                    value={this.state.lmsId}
+                    onChange={(value) => this.setState({lmsId: value})}
+                    options={[
+                        {value: LMS.LEARNING_SUITE.id, title: "Learning Suite"},
+                        {value: LMS.CANVAS.id, title: "Canvas"},
+                    ]}
+                />
+                <br />
+            </React.Fragment>
         );
 
         const launchUrl = this._formatUrl(this.state.lmsId, this.props.action, this.props.objectId);
