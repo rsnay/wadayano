@@ -40,7 +40,7 @@ export class CourseDetails extends Component {
     }
 
     // Shows the LTI setup modal dialog for a given quiz/dashboard/survey launch
-    _showLTISetup(action, objectId) {
+    showLTISetup(action, objectId) {
         // Hide tooltip from quiz actions menu so it doesn't show over modal overlay
         document.getElementById('quiz-actions-tooltip').style.left = '-1000px';
         this.setState({ displayLtiSetupAction: action, displayLtiSetupObjectId: objectId });
@@ -138,7 +138,7 @@ export class CourseDetails extends Component {
                 <a className="navbar-item"
                     role="menuitem"
                     href="#lti"
-                    onClick={(e) => { this._showLTISetup('quiz', dataTip); e.preventDefault(); }}>
+                    onClick={(e) => { this.showLTISetup('quiz', dataTip); e.preventDefault(); }}>
                     <span className="icon">
                     <i className="fas fa-link"></i>
                     </span>
@@ -200,7 +200,7 @@ export class CourseDetails extends Component {
             <div className="is-flex-tablet">
                 <span>Students in your course can access the Student Dashboard to practice quizzes and review past quiz performance. Simply place an LTI link on a content page or somewhere accessible in your LMS.<br /></span>
                 <button style={{marginLeft: "1rem"}} className="button is-light"
-                    onClick={() => this._showLTISetup('dashboard', course.id)}>
+                    onClick={() => this.showLTISetup('dashboard', course.id)}>
                     <span className="icon">
                     <i className="fas fa-rocket"></i>
                     </span>
@@ -224,7 +224,7 @@ export class CourseDetails extends Component {
                     </Link>
                     <br />
                     <button style={{marginLeft: "0.5rem", marginBottom: "0.5rem"}} className="button is-light"
-                        onClick={() => this._showLTISetup('survey', course.id)}>
+                        onClick={() => this.showLTISetup('survey', course.id)}>
                         <span className="icon">
                         <i className="fas fa-clipboard-list"></i>
                         </span>

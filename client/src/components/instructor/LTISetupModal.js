@@ -36,6 +36,10 @@ const LMS = {
     }
 }
 
+/**
+ * Provides a modal dialog with LTI setup instructions and configuration info.
+ * The elements of the config are passed via props, and formatted in here, according to the selected LMS.
+ */
 class LTISetupModal extends Component {
 
     constructor(props) {
@@ -45,7 +49,7 @@ class LTISetupModal extends Component {
         }
     }
 
-    _formatUrl(lmsId, action, objectId) {
+    formatUrl(lmsId, action, objectId) {
         switch(lmsId) {
             case LMS.CANVAS.id:
                 return `${LTI_LAUNCH_URL}?action=${action}&objectId=${objectId}`;
@@ -75,7 +79,7 @@ class LTISetupModal extends Component {
             </React.Fragment>
         );
 
-        const launchUrl = this._formatUrl(this.state.lmsId, this.props.action, this.props.objectId);
+        const launchUrl = this.formatUrl(this.state.lmsId, this.props.action, this.props.objectId);
 
         return (
             <Modal

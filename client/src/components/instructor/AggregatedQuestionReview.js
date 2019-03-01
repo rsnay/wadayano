@@ -12,7 +12,7 @@ import { formatScore } from '../../utils';
 
 const SHORT_ANSWERS_TO_DISPLAY = 5;
 
-// This is a stripped-down version of the QuestionReview component, to be used in the instructor’s aggregated quiz review report
+// This is a modified version of the QuestionReview component that displays aggregated stats, to be used in the instructor’s aggregated quiz review report
 class AggregatedQuestionReview extends Component {
     constructor(props) {
         super(props);
@@ -46,14 +46,14 @@ class AggregatedQuestionReview extends Component {
     const isMultipleChoice = (this.props.question.type === MULTIPLE_CHOICE);
 
     if (isMultipleChoice && questionOptions.length === 0) {
-        return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
+        return <ErrorBox><p>There are no options for this question. Add options in the quiz editor.</p></ErrorBox>;
     }
 
     let totalAnswerCount = 0;
     let answerCounts = new Map();
     let confidentCount = 0;
 
-    // Ensure correct options/shortAnswers have initial counts
+    // Ensure correct options/shortAnswers have initial answer counts so that they always display, even if not chosen
     if (isMultipleChoice) {
         questionOptions.forEach(option => { answerCounts.set(option.id, 0)});
     } else {
@@ -62,6 +62,7 @@ class AggregatedQuestionReview extends Component {
 
     query.course.students.forEach(student => {
         try {
+            // QuestionAttempts within the QuizAttempt are already filtered to only this question
             let questionAttempt = student.quizAttempts[0].questionAttempts[0];
             let answer;
             if (isMultipleChoice) {
@@ -82,13 +83,13 @@ class AggregatedQuestionReview extends Component {
             if (questionAttempt.isConfident) {
                 confidentCount++;
             }
-            // Add this to the total answer count (in case of errors, or not all students answering this question, the percents will add up to 100%)
+            // Add this to the total answer count (in case of errors, or not all students answering this question, the percents will still add up to 100%)
             totalAnswerCount++;
         // Just swallow errors, with invalid attempt simply being ommitted from the stats
         } catch (error) { console.error(error); }
     });
 
-    // Sort the map by answerCount, descending
+    // Sort the map by answerCount, descending. a[i] is the value in the key-value pair
     answerCounts = new Map([...answerCounts.entries()].sort((a, b) => b[1] - a[1]));
     console.log(answerCounts);
 
@@ -96,7 +97,7 @@ class AggregatedQuestionReview extends Component {
     let showAllButton = null;
     if (!isMultipleChoice && !this.state.showAllAnswers && answerCounts.size > SHORT_ANSWERS_TO_DISPLAY) {
         answerCounts = new Map([...answerCounts.entries()].slice(0, SHORT_ANSWERS_TO_DISPLAY));
-        showAllButton = (<button style={{marginTop: "-0.5rem"}} className="button has-text-link is-text is-fullwidth" onClick = {() => this.setState({ showAllAnswers: true })}>
+        showAllButton = (<button style={{marginTop: "-0.5rem"}} className="button has-text-link is-text is-fullwidth is-rounded" onClick = {() => this.setState({ showAllAnswers: true })}>
             <span className="icon"><i className="fas fa-angle-down"></i></span>
             <span>View All Responses</span>
         </button>);
@@ -104,6 +105,7 @@ class AggregatedQuestionReview extends Component {
     
     const correctIcon = <span className="icon"><i className="fas fa-check"></i></span>;
     let incorrectIcon = <span className="icon"><i className="fas fa-times"></i></span>;
+    let progressGradient = (answerCount, totalAnswerCount) => `linear-gradient(90deg, #92cdf7 0%, #92cdf7 ${answerCount / totalAnswerCount * 100}%, rgba(9,9,121,0) ${answerCount / totalAnswerCount * 100}%)`;
 
     const optionListing = (id, containerClass, iconClass, icon, html, text, answerCount) => {
         return (<div className={"columns is-mobile question-option-container is-review " + containerClass} key={id} data-tip={answerCount + (answerCount === 1 ? ' student' : ' students') + ' (' + formatScore(answerCount / totalAnswerCount, 0) + ')'}>
@@ -113,9 +115,9 @@ class AggregatedQuestionReview extends Component {
             </span>
             {/* Only use dangerouslySetInnerHTML if necessary, otherwise just show text (for short answers) */}
             {text ?
-                <span className="column question-option-text level-left is-aggregated"  style={{background:`linear-gradient(90deg, #92cdf7 0%, #92cdf7 ${answerCount / totalAnswerCount * 100}%, rgba(9,9,121,0) ${answerCount / totalAnswerCount * 100}%)`}}>{text}</span>
+                <span className="column question-option-text level-left is-aggregated" style={{background: progressGradient(answerCount, totalAnswerCount)}}>{text}</span>
             :
-                <span className="column question-option-text level-left is-aggregated" dangerouslySetInnerHTML={{__html: html}}  style={{background:`linear-gradient(90deg, #92cdf7 0%, #92cdf7 ${answerCount / totalAnswerCount * 100}%, rgba(9,9,121,0) ${answerCount / totalAnswerCount * 100}%)`}}></span>
+                <span className="column question-option-text level-left is-aggregated" dangerouslySetInnerHTML={{__html: html}}  style={{background: progressGradient(answerCount, totalAnswerCount)}}></span>
             }
         </div>)
     };
@@ -132,6 +134,7 @@ class AggregatedQuestionReview extends Component {
             return optionListing(option.id, '', iconClass, icon, option.text, null, answerCount);
         });
     } else {
+        // Display all correct and actually-given short answers, show number of students who chose each, and indicate which are correct
         optionsView = [];
         answerCounts.forEach((count, answer) => {
             const correct = correctShortAnswers.indexOf(answer) >= 0;
@@ -142,10 +145,9 @@ class AggregatedQuestionReview extends Component {
         });
     }
 
+    // Overall question confidence
     const confidence = confidentCount / totalAnswerCount;
     let confidenceSelector = <ConfidenceSelector disabled title={`${formatScore(confidence, 0)} of students were confident:`} confident={confidence >= 0.5} />;
-
-    let feedbackView = <p className="question-option-text"></p>;
 
     return (
         <div>
@@ -154,7 +156,6 @@ class AggregatedQuestionReview extends Component {
             {optionsView}
             {showAllButton}
             {confidenceSelector}
-            {feedbackView}
             <hr />
         </div>
     );

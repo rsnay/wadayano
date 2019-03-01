@@ -7,11 +7,11 @@ import { Redirect } from 'react-router-dom';
 import ErrorBox from '../shared/ErrorBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
+/**
+ * Component to view, add, and remove instructors of a course.
+ * Intended for use in CourseDetails
+ */
 class CourseInstructors extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {  };
-    }
 
     // Asks for the email address of an instructor to invite and sends to server
     inviteInstructorPrompt(course) {
@@ -74,9 +74,12 @@ class CourseInstructors extends Component {
     
 
     render() {
-        if (this.props.courseQuery && this.props.courseQuery.loading && (!this.props.courseQuery.course || !this.props.courseQuery.course.instructors)) { return null; }
+        if (this.props.courseQuery && this.props.courseQuery.loading &&
+            (!this.props.courseQuery.course || !this.props.courseQuery.course.instructors)) { return null; }
+
         if (this.props.courseQuery && this.props.courseQuery.error) {
             if (this.props.courseQuery.error.message.indexOf('Not Authorised') !== -1) {
+                // In case an instructor removed themselves from the course, redirect back to the course list
                 ButterToast.raise({
                     content: <ToastTemplate content="You do not have access to this course." className="is-danger" />
                 });
@@ -89,38 +92,37 @@ class CourseInstructors extends Component {
         const course = this.props.courseQuery.course;
 
         return (
-            <React.Fragment>
+          <React.Fragment>
             <div className="is-flex-tablet">
-            <span style={{flex: "1 1 0%"}}>
-            {course.instructors.map(instructor => 
-                <span className="tag is-light is-large is-rounded instructor-tag" style={{margin: ".25rem", paddingRight: "0"}} key={instructor.email}>
-                    {instructor.email}&nbsp;&nbsp;
-                    <button className="button is-gray is-rounded"
-                        onClick={() => this.removeInstructor(course, instructor.email)}
-                        title="Remove Instructor"
-                    >
-                        <span className="icon">
-                            <i className="fas fa-user-minus"></i>
+                <span style={{flex: "1 1 0%"}}>
+                    {course.instructors.map(instructor => 
+                        <span className="tag is-light is-large is-rounded instructor-tag" style={{margin: ".25rem", paddingRight: "0"}} key={instructor.email}>
+                            {instructor.email}&nbsp;&nbsp;
+                            <button className="button is-gray is-rounded"
+                                onClick={() => this.removeInstructor(course, instructor.email)}
+                                title="Remove Instructor"
+                            >
+                                <span className="icon"> <i className="fas fa-user-minus"></i></span>
+                            </button>
                         </span>
-                    </button>
+                    )}
                 </span>
-            )}
-            </span>
-            <button style={{marginLeft: "1rem", marginTop: "0.25rem"}} className="button is-light"
-                onClick={() => this.inviteInstructorPrompt(course)}>
-                <span className="icon">
-                <i className="fas fa-user-plus"></i>
-                </span>
-                <span>Invite an Instructor</span>
-            </button>
-            <br /></div>
+                <button className="button is-light"
+                    style={{marginLeft: "1rem", marginTop: "0.25rem"}} 
+                    onClick={() => this.inviteInstructorPrompt(course)}
+                >
+                    <span className="icon"><i className="fas fa-user-plus"></i></span>
+                    <span>Invite an Instructor</span>
+                </button>
+                <br />
+            </div>
             {course.pendingCourseInvites.map(invite => 
                 <span className="tag is-warning is-large is-rounded instructor-tag" style={{margin: ".25rem"}} key={invite.email}>
                     {invite.email} (pending)&nbsp;
                     <button className="delete" onClick={() => this.removeInstructor(course, invite.email)} title="Cancel Invite"></button>
                 </span>
             )} 
-            </React.Fragment>
+          </React.Fragment>
         );
     }
 }

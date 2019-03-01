@@ -4,6 +4,11 @@ import gql from 'graphql-tag';
 
 import { predictedScore, wadayanoScore } from '../../utils';
 
+/**
+ * Wraps a component (currently CourseDetails) and injects a courseScores prop with aggregated course/quiz scores.
+ * Used to allow the quizzes table to appear quickly, and time-consuming aggregated scores can be loaded async.
+ * @param {CourseDetails} ComposedComponent 
+ */
 export default function withCourseScores(ComposedComponent) {
     class WithCourseScores extends Component {
         constructor() {
@@ -17,8 +22,6 @@ export default function withCourseScores(ComposedComponent) {
     
                 // Prepare data for the sortable table
                 const course = nextProps.courseQuery.course;
-                // Use Array.from to shallow-copy, since source prop is read-only
-                // const students = Array.from(course.students);
 
                 let courseScores = new Map();
     
@@ -74,24 +77,18 @@ export default function withCourseScores(ComposedComponent) {
             }
         }
 
-        componentDidMount() {
-            // this would fetch or connect to a store
-            this.setState({ name: "Michael" });
-        }
-
         render() {
             return <ComposedComponent {...this.props} courseScores={this.state.courseScores} />;
         }
     };
 
-    // Get course details and quiz attempts
+    // Get completed quiz attempts for all quizzes in the course
     const COURSE_QUERY = gql`
     query courseQuery($id:ID!) {
         course(
             id:$id
         ){
             id
-            title
             quizzes{
                 id
                 title
@@ -121,7 +118,7 @@ export default function withCourseScores(ComposedComponent) {
     }
     `
 
-    WithCourseScores.displayName = `WithCourseScores(${ComposedComponent.displayName || ComposedComponent.name || 'Component'}`;
+    WithCourseScores.displayName = `WithCourseScores(${ComposedComponent.displayName || ComposedComponent.name || 'Component'})`;
     return graphql(COURSE_QUERY, {
         name: 'courseQuery',
         options: (props) => {

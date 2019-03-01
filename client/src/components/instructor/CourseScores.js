@@ -13,6 +13,10 @@ import AggregatedQuizReview from './AggregatedQuizReview';
 import Modal from '../shared/Modal';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
+/**
+ * Displays aggregated statistics for all quizzes in the course
+ * Not currently used; being merged into the quizzes table in CourseDetails
+ */
 class CourseScores extends Component {
     constructor(props) {
         super(props);

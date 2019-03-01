@@ -10,13 +10,6 @@ import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
 export class CourseList extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-        };
-    }
-
-    
 
   render() {
 
