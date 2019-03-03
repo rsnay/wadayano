@@ -102,10 +102,8 @@ button.is-light:focus, a.is-light:focus {
 }
 
 .quiz-attempt-selector {
-    margin-bottom: -3rem!important;
-}
-.quiz-attempt-selector ul {
-    margin-bottom: 1.5rem;
+    margin-left: -2rem;
+    margin-top: -1.5rem;
 }
 .quiz-attempt-selector li:first-child {
     margin-top: 0.25em;

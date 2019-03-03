@@ -9,7 +9,7 @@ import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import { formatScore, predictedScore, wadayanoScore, confidenceAnalysis, stringCompare } from '../../utils';
 import { QUIZ_TYPE_NAMES } from '../../constants';
-import QuizReviewPage from '../student/QuizReviewPage';
+import QuizReview from '../student/QuizReview';
 import AggregatedQuizReview from './AggregatedQuizReview';
 import Modal from '../shared/Modal';
 import Breadcrumbs from '../shared/Breadcrumbs';
@@ -217,8 +217,12 @@ class QuizScores extends Component {
                                 )}
                             </ul>
                             </div>
-                            <QuizReviewPage hideFooter={true} hideTitle={true} match={{ params: { quizAttemptId: this.state.chosenAttempt.id } }} />
-                    </Modal>}
+                            <QuizReview
+                                hideTitle={true}
+                                quizAttemptId={this.state.chosenAttempt.id}
+                            />
+                        </Modal>
+                    )}
 
                     <hr />
                     <Link className="button" to={"/instructor/course/" + course.id}>Return to Course</Link>
