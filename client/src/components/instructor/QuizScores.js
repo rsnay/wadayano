@@ -7,13 +7,18 @@ import { withAuthCheck } from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
+import Modal from '../shared/Modal';
+import Breadcrumbs from '../shared/Breadcrumbs';
+
 import { formatScore, predictedScore, wadayanoScore, confidenceAnalysis, stringCompare } from '../../utils';
 import { QUIZ_TYPE_NAMES } from '../../constants';
 import QuizReview from '../student/QuizReview';
 import AggregatedQuizReview from './AggregatedQuizReview';
-import Modal from '../shared/Modal';
-import Breadcrumbs from '../shared/Breadcrumbs';
 
+/**
+ * Displays an <AggregatedQuizReview /> component and a table of all students in the course,
+ * with the scores of their *first* attempt of this quiz.
+ */
 class QuizScores extends Component {
     constructor(props) {
         super(props);
@@ -22,9 +27,7 @@ class QuizScores extends Component {
             sortColumn: 'name',
             sortAscending: true,
             studentScores: [],
-            currentStudentReview: null,
-            chosenScore: "First Attempt",
-            currentStudent: null,
+            currentStudentReview: null
         };
         this.sortByColumn = this.sortByColumn.bind(this);
     }
@@ -100,10 +103,9 @@ class QuizScores extends Component {
         this.setState({ sortColumn: newSortColumn, sortAscending, studentScores });
     }
 
-    showAttemptReview(student) {
+    showStudentAttempts(student) {
         const quiz = this.props.quizQuery.quiz;
         const attempts = quiz.quizAttempts.filter(a => a.student.id === student.id && a.completed);
-        console.log(attempts);
         this.setState({ currentStudentReview: student , currentQuizAttempts: attempts , chosenAttempt: student.chosenAttempt});
     }
 
@@ -127,7 +129,7 @@ class QuizScores extends Component {
             const columns = [
                 { title: 'Student Name', columnId: 'name', sortable: true },
                 { title: 'Attempts', columnId: 'attempts', sortable: true },
-                { title: this.state.chosenScore, columnId: 'highestScore', sortable: true },
+                { title: 'First Attempt', columnId: 'highestScore', sortable: true },
                 { title: 'Predicted Score', columnId: 'predictedScore', sortable: true },
                 { title: 'Wadayano Score', columnId: 'wadayanoScore', sortable: true },
                 { title: 'Confidence Analysis', columnId: 'confidenceAnalysis', sortable: true },
@@ -162,7 +164,7 @@ class QuizScores extends Component {
                                             <td>{student.confidenceAnalysis.emoji}&nbsp;{student.confidenceAnalysis.text}</td>
                                             <td>
                                                 <button className="button is-light"
-                                                    onClick={() => this.showAttemptReview(student)}>
+                                                    onClick={() => this.showStudentAttempts(student)}>
                                                     <span className="icon">
                                                     <i className="fas fa-history"></i>
                                                     </span>
@@ -198,24 +200,27 @@ class QuizScores extends Component {
                 </section>
 
                 <div className="content" style={{margin: "0 5% 2rem 5%"}}>
-                    <AggregatedQuizReview quizId={quiz.id} />
-                    <h3 className="title">Students</h3>
 
+                    <AggregatedQuizReview quizId={quiz.id} />
+
+                    <h3 className="title">Students</h3>
                     {scoresTable}
 
-                    {this.state.currentStudentReview && <Modal
-                        modalState={true}
-                        closeModal={() => this.setState({ currentStudentReview: null , currentQuizAttempts: null})}
-                        title={`Attempts from ${this.state.currentStudentReview.name}`}
-                        cardClassName="quiz-scores-report-modal">
+                    {this.state.currentStudentReview && (
+                        <Modal
+                            modalState={true}
+                            closeModal={() => this.setState({ currentStudentReview: null , currentQuizAttempts: null})}
+                            title={`Attempts from ${this.state.currentStudentReview.name}`}
+                            cardClassName="quiz-scores-report-modal"
+                        >
                             <div className="tabs quiz-attempt-selector">
-                            <ul>
-                                {this.state.currentQuizAttempts.map((attempt,index) => 
-                                    <li className={(this.state.chosenAttempt.id === attempt.id ? "is-active" : "")} key={index}>
-                                        <a href={"#" + attempt.id} onClick={(e) => { this.setState({ chosenAttempt: attempt}); e.preventDefault(); }}>Attempt {index + 1} ({formatScore(attempt.score, 0)})</a>
-                                    </li>
-                                )}
-                            </ul>
+                                <ul>
+                                    {this.state.currentQuizAttempts.map((attempt,index) => 
+                                        <li className={(this.state.chosenAttempt.id === attempt.id ? "is-active" : "")} key={index}>
+                                            <a href={"#" + attempt.id} onClick={(e) => { this.setState({ chosenAttempt: attempt}); e.preventDefault(); }}>Attempt {index + 1} ({formatScore(attempt.score, 0)})</a>
+                                        </li>
+                                    )}
+                                </ul>
                             </div>
                             <QuizReview
                                 hideTitle={true}
@@ -254,7 +259,7 @@ const sortFunctions = {
 };
 
 // Get the quiz and attempts
-export const QUIZ_QUERY = gql`
+const QUIZ_QUERY = gql`
   query quizQuery($id: ID!) {
     quiz(id:$id){
         id
@@ -268,7 +273,7 @@ export const QUIZ_QUERY = gql`
                 name
             }
         }
-        quizAttempts {
+        quizAttempts(where:{completed_not:null}) {
             id
             student {
                 id
@@ -288,12 +293,11 @@ export const QUIZ_QUERY = gql`
         }
     }
   }
-`
+`;
 
 export default withAuthCheck(compose(
     graphql(QUIZ_QUERY, {name: 'quizQuery',
         options: (props) => {
-            console.log(props.match.params.quizId);
             return { variables: { id:props.match.params.quizId } }
         }
     }),

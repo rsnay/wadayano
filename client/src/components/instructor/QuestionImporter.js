@@ -11,6 +11,9 @@ import LoadingBox from '../shared/LoadingBox';
 import { stripTags } from '../../utils';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
+/**
+ * Page that allows instructors to select individual questions (or all questions in a quiz) to import into a quiz.
+ */
 class QuestionImporter extends Component {
     constructor(props) {
         super(props);
@@ -21,7 +24,7 @@ class QuestionImporter extends Component {
         };
     }
 
-    async _importQuestions() {
+    async importQuestions() {
         this.setState({ isSaving: true });
         try {
             const quizId = this.props.match.params.quizId;
@@ -46,7 +49,7 @@ class QuestionImporter extends Component {
         }
     }
 
-    _selectQuiz(quizId, deselect = false) {
+    selectQuiz(quizId, deselect = false) {
         let questionIds = [...this.state.questionIds];
         // Add or remove each question from this quiz
         let quiz = this.props.quizQuery.quiz.course.quizzes.find(q => q.id === quizId);
@@ -62,7 +65,7 @@ class QuestionImporter extends Component {
         this.setState({ questionIds });
     }
 
-    _selectQuestion(questionId, deselect = false) {
+    selectQuestion(questionId, deselect = false) {
         let questionIds = [...this.state.questionIds];
         // Add or remove this question
         if (!deselect) {
@@ -103,11 +106,11 @@ class QuestionImporter extends Component {
                         <tr className="sticky-header">
                             <th style={{textAlign: "center"}}>
                                 <button className="button is-small" style={{marginBottom: "0.2rem", width: "100%"}}
-                                    onClick={() => this._selectQuiz(quiz.id)}>
+                                    onClick={() => this.selectQuiz(quiz.id)}>
                                     All
                                 </button>
                                 <button className="button is-small" style={{width: "100%"}}
-                                    onClick={() => this._selectQuiz(quiz.id, true)}>
+                                    onClick={() => this.selectQuiz(quiz.id, true)}>
                                     None
                                 </button>
                             </th>
@@ -124,9 +127,8 @@ class QuestionImporter extends Component {
                             <tr key={question.id}>
                                 <td>
                                     <button className={"button" + (selected ? " is-link" : "")}
-                                        onClick={() => this._selectQuestion(question.id, selected)}>
+                                        onClick={() => this.selectQuestion(question.id, selected)}>
                                         {selected ? "✓" : <i>&nbsp;&nbsp;</i>}
-                                        {/*selected ? <span className="icon"><i className="fas fa-check"></i></span> : <span className="icon"></span>*/}
                                     </button>
                                 </td>
                                 <td>
@@ -165,7 +167,7 @@ class QuestionImporter extends Component {
                             <button
                                 className="button is-primary"
                                 disabled={selectedIds.length === 0}
-                                onClick={() => this._importQuestions()}>
+                                onClick={() => this.importQuestions()}>
                                 Import {selectedIds.length || ""} Question{selectedIds.length !== 1 && "s"}
                             </button>
                         </p>

@@ -7,20 +7,25 @@ import JSON5 from 'json5';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 import Modal from '../shared/Modal';
 
+/**
+ * Modal component to show a form (used within QuizEditor) requesting question JSON to import.
+ * This component saves the data into the quiz, and signals the parent component to reload when it saves.
+ */
 export class QuizJSONImportModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
             jsonInput: '',
-            isLoading: false
+            isImporting: false
         };
     }
 
+    // Update the quiz with the new questions
     async importJSON() {
-        // Update the quiz with the new questions
+        this.setState({ isImporting: true });
         try {
+            // Parse with JSON5 to be more lenient about non-quoted property names, trailing commas, etc.
             const questionData = JSON5.parse(this.state.jsonInput.replace(/\r?\n|\r/g, ''));
-            this.setState({ isLoading: true });
             // Send the mutation
             const result = await this.props.saveQuizMutation({
                 variables:{
@@ -44,7 +49,7 @@ export class QuizJSONImportModal extends Component {
                 timeout: 3000
             });
         }
-        this.setState({ isLoading: false });
+        this.setState({ isImporting: false });
     }
 
     render() {
@@ -53,23 +58,26 @@ export class QuizJSONImportModal extends Component {
                 <textarea className="textarea is-medium" rows={10}
                     value={this.state.jsonInput}
                     placeholder="Paste question JSON to import into this quiz"
-                    disabled={this.state.isLoading}
-                    onChange={(e) => this.setState({ jsonInput: e.target.value })} />
+                    disabled={this.state.isImporting}
+                    onChange={(e) => this.setState({ jsonInput: e.target.value })}
+                />
 
                 <hr />
 
                 <div className="field is-grouped">
                     <p className="control">
                         <button
-                            className={"button" + (this.state.isLoading ? " is-loading" : "")}
-                            onClick={() => this.props.onClose(false)}>
+                            className={"button" + (this.state.isImporting ? " is-loading" : "")}
+                            onClick={() => this.props.onClose(false)}
+                        >
                             Cancel
                         </button>
                     </p>
                     <p className="control">
                         <button
-                            className={"button is-primary" + (this.state.isLoading ? " is-loading" : "")}
-                            onClick={() => this.importJSON()}>
+                            className={"button is-primary" + (this.state.isImporting ? " is-loading" : "")}
+                            onClick={() => this.importJSON()}
+                        >
                             Import Questions
                         </button>
                     </p>
