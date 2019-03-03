@@ -6,21 +6,23 @@ import gql from 'graphql-tag';
 import update from 'immutability-helper';
 
 import { withAuthCheck } from '../shared/AuthCheck';
-import { reorder } from '../../utils';
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-import ButterToast, { ToastTemplate } from '../shared/Toast';
-
-import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
 import Modal from '../shared/Modal';
 import Breadcrumbs from '../shared/Breadcrumbs';
+
+import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
+import QuizInfoForm from './QuizInfoForm';
 import QuizJSONImportModal from './QuizJSONImportModal';
-import OptionSelector from '../shared/OptionSelector';
 
 const MAX_NAVBAR_QUESTIONS = 20;
 
+/**
+ * The actual saving of changes to quiz questions or quiz info happens in the QuestionEditor and QuizInfoForm components, respectively.
+ * This page component displays quiz info, and manages QuestionEditors corresponding to the questions in the quiz.
+ */
 export class QuizEditor extends Component {
     constructor(props) {
         super(props);
@@ -33,6 +35,7 @@ export class QuizEditor extends Component {
             showQuizJSONImportModal: false,
             // Questions are stored in state once query loads, so that they can be reordered in the future (otherwise, query just loads into read-only prop).
             questions: new Map(),
+            // Contains actual questions plus new (unsaved) question IDs
             orderedQuestionIds: [],
             // Store a special flag for questions added during the editing session to auto-expand them
             autoExpandQuestionIds: [],
@@ -42,9 +45,7 @@ export class QuizEditor extends Component {
         };
     
         // Pre-bind these functions, to make adding it to input fields easier
-        this.saveQuiz = this.saveQuiz.bind(this);
         this.addQuestion = this.addQuestion.bind(this);
-        this.onQuestionListSortEnd = this.onQuestionListSortEnd.bind(this);
         this.onNewQuestionSaved = this.onNewQuestionSaved.bind(this);
         this.onImportComplete = this.onImportComplete.bind(this);
     }
@@ -68,66 +69,6 @@ export class QuizEditor extends Component {
                questions.set(qId, { id: qId, prompt: '' });
             });
             this.setState({ isLoading: false, questions, orderedQuestionIds });
-        }
-    }
-
-    async saveQuiz(quiz, refetch = true){
-        // Collect data to update in the quiz
-        let quizData = {
-            title: document.getElementById(quiz.id).value,
-            type: Array.from(document.getElementsByName('quizType')).find(r => r.checked).value,
-        };
-        this.setState({ isSaving: true });
-
-        try {
-            // Send the mutation
-            const result = await this.props.saveQuizMutation({
-                variables:{
-                    id: quiz.id,
-                    data: quizData
-                }
-            });
-            if (result.errors && result.errors.length > 0) {
-                throw result;
-            }
-            ButterToast.raise({
-                content: <ToastTemplate content="Quiz info saved." className="is-success" />
-            });
-        } catch (error) {
-            ButterToast.raise({
-                content: <ToastTemplate content="Error saving quiz info." className="is-danger" />
-            });
-        }
-        this.setState({ isSaving: false, showQuizInfoModal: false });
-
-        // Reload quiz data after it's done
-        if (refetch) {
-            this.props.quizQuery.refetch();
-        }
-    }
-
-    async deleteQuiz(quiz){
-        if (!window.confirm('Are you sure you want to delete this quiz? All students’ attempts for this quiz will also be deleted.')) { return; }
-        this.setState({ isLoading: true });
-        try {
-            const result = await this.props.quizDeleteMutation({
-                variables:{
-                    id: quiz.id
-                }
-            });
-            if (result.errors && result.errors.length > 0) {
-                throw result;
-            }
-            // Redirect to course details after successful deletion
-            this.props.history.push('/instructor/course/' + quiz.course.id);
-            ButterToast.raise({
-                content: <ToastTemplate content="Quiz was deleted." className="is-success" />
-            });
-        } catch (error) {
-            this.setState({ isLoading: false });
-            ButterToast.raise({
-                content: <ToastTemplate content="Error deleting quiz." className="is-danger" />
-            });
         }
     }
 
@@ -169,26 +110,6 @@ export class QuizEditor extends Component {
             const headerHeight = document.getElementById('question-navbar').offsetHeight;
             window.scrollTo(0, window.scrollY - headerHeight);
         }
-    }
-
-    // Called when a question is reordered
-    onQuestionListSortEnd(result) {
-        // Dropped outside the list
-        if (!result.destination) {
-          return;
-        }
-    
-        const orderedQuestionIds = reorder(
-          this.state.orderedQuestionIds,
-          result.source.index,
-          result.destination.index
-        );
-    
-        this.setState({
-          orderedQuestionIds,
-        });
-
-        alert('Saving the question order is not yet implemented.');
     }
 
     // Called after a question is deleted (the delete mutation was already sent; we just need to remove from display)
@@ -243,7 +164,6 @@ export class QuizEditor extends Component {
         }
     }
 
-
   render() {
 
     if (this.props.quizQuery && this.props.quizQuery.error) {
@@ -256,7 +176,7 @@ export class QuizEditor extends Component {
 
     let allQuestions = this.state.orderedQuestionIds.concat(this.state.newQuestionIds);
 
-    // Render up to 20 questions
+    // Render up to 20 questions in navbar
     let divisor = 1;
     while (allQuestions.length / divisor > MAX_NAVBAR_QUESTIONS) {
         divisor++;
@@ -288,7 +208,8 @@ export class QuizEditor extends Component {
             defaultPrompt={this.state.questions.get(questionId).prompt}
             defaultExpanded={(this.state.autoExpandQuestionIds.indexOf(questionId) > -1)}
             onDelete={() => this.onQuestionDelete(questionId)}
-            onNewSave={this.onNewQuestionSaved} />
+            onNewSave={this.onNewQuestionSaved}
+        />
     ));
 
     const newQuestionButton = (
@@ -311,46 +232,21 @@ export class QuizEditor extends Component {
         <Modal
             modalState={this.state.showQuizInfoModal}
             closeModal={() => this.setState({ showQuizInfoModal: false})}
-            title="Edit Quiz Info">
-            <form>
-                <label className="label is-medium">
-                    Quiz Title<br />
-                    <input className="input" type="text" placeholder="e.g. Lipids Review" defaultValue={quiz.title} id={quiz.id} style={{maxWidth: "42rem"}} maxLength={200} />
-                </label>
-
-                <label className="label is-medium">
-                    Quiz Type<br />
-                </label>
-                <OptionSelector
-                    type="radio"
-                    name="quizType"
-                    defaultValue={quiz.type}
-                    options={[
-                        {value:"GRADED", title: "Graded quiz (must be launched from LMS)"},
-                        {value:"PRACTICE", title: "Practice quiz (students can launch from wadayano dashboard or LMS)"}
-                    ]}
-                />
-                <hr />
-
-                <div className="field is-grouped">
-                    <p className="control buttons">
-                        <button className="button" type="button" onClick={() => this.setState({ showQuizInfoModal: false})}>
-                            Cancel
-                        </button>
-                        <button className="button is-danger" type="button" onClick={() => this.deleteQuiz(quiz)}>
-                            Delete Quiz
-                        </button>
-                        <button className={"button is-primary"+ (this.state.isSaving ? " is-loading" : "")} type="submit" disabled={this.state.isSaving} onClick={() => this.saveQuiz(quiz, true)}>
-                            Save Changes
-                        </button>
-                    </p>
-                </div>
-            </form>
+            title="Edit Quiz Info"
+        >
+            <QuizInfoForm
+                quiz={quiz}
+                onCancel={() => this.setState({ showQuizInfoModal: false })}
+                onSave={() => {
+                    this.setState({ showQuizInfoModal: false });
+                    this.props.quizQuery.refetch();
+                }}
+            />
         </Modal>
     );
 
     return (
-        <section className="section">
+      <section className="section">
         <div className="container">
 
         <Breadcrumbs links={[
@@ -362,8 +258,8 @@ export class QuizEditor extends Component {
         <section>
             <div className="is-flex-tablet">
                 <div style={{flex: 1}}>
-                    <h3 className="title is-3">{quiz.title}</h3>
-                    <h4 className="subtitle is-4">{QUIZ_TYPE_NAMES[quiz.type]} Quiz</h4>
+                    <h1 className="title is-3">{quiz.title}</h1>
+                    <h2 className="subtitle is-4">{QUIZ_TYPE_NAMES[quiz.type]} Quiz</h2>
                 </div>
                 <button className="button is-light" onClick={() => this.setState({ showQuizInfoModal: true})} style={{marginTop: "1rem"}}>
                     <span className="icon">
@@ -376,7 +272,7 @@ export class QuizEditor extends Component {
         </section>
 
         <div className="is-flex-tablet">
-            <h4 className="title is-4" style={{flex: 1}}>Questions</h4>
+            <h2 className="title is-4" style={{flex: 1}}>Questions</h2>
             <Link to={"/instructor/quiz/" + quiz.id + "/import-questions"} className="button is-light" style={{marginBottom: "1rem"}}>
                 <span className="icon">
                     <i className="fas fa-file-import"></i>
@@ -436,33 +332,10 @@ export const QUIZ_QUERY = gql`
   }
 `
 
-export const QUIZ_SAVE = gql`
-mutation quizSaveMutation(
-    $id: ID!
-    $data: QuizUpdateInput!
-){
-    updateQuiz(
-        id: $id
-        data: $data
-    ){
-        id
-    }
-}`
-
-export const QUIZ_DELETE = gql`
-mutation quizDeleteMutation($id:ID!) {
-    deleteQuiz(id:$id){
-        id
-    }
-}`
-
 export default withAuthCheck(compose(
     graphql(QUIZ_QUERY, {name: 'quizQuery',
         options: (props) => {
-            console.log(props.match.params.quizId);
-            return { variables: { id:props.match.params.quizId } }
+            return { variables: { id: props.match.params.quizId } }
         }
-    }),
-    graphql(QUIZ_SAVE, {name: 'saveQuizMutation'}),
-    graphql(QUIZ_DELETE, {name:'quizDeleteMutation'}),
+    })
 ) (QuizEditor), { instructor: true });
