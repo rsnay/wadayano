@@ -16,7 +16,7 @@ class QuizReviewPage extends Component {
 
           <div>
 
-            <QuizReview quizAttemptId={quizAttemptId} />
+            <QuizReview quizAttemptId={quizAttemptId} hideTitle={this.props.hideTitle} />
 
             {!this.props.hideFooter &&
               <React.Fragment>

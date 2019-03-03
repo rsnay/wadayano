@@ -212,12 +212,12 @@ class QuizScores extends Component {
                             <ul>
                                 {this.state.currentQuizAttempts.map((attempt,index) => 
                                     <li className={(this.state.chosenAttempt.id === attempt.id ? "is-active" : "")} key={index}>
-                                        <a href={"#" + attempt.id} onClick={(e) => { this.setState({ chosenAttempt: attempt}); e.preventDefault(); }}>Attempt {index + 1}</a>
+                                        <a href={"#" + attempt.id} onClick={(e) => { this.setState({ chosenAttempt: attempt}); e.preventDefault(); }}>Attempt {index + 1} ({formatScore(attempt.score, 0)})</a>
                                     </li>
                                 )}
                             </ul>
                             </div>
-                            <QuizReviewPage hideFooter={true} match={{ params: { quizAttemptId: this.state.chosenAttempt.id } }} />
+                            <QuizReviewPage hideFooter={true} hideTitle={true} match={{ params: { quizAttemptId: this.state.chosenAttempt.id } }} />
                     </Modal>}
 
                     <hr />

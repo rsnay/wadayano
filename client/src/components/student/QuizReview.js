@@ -76,7 +76,7 @@ class QuizReview extends Component {
                 {/* Title and overall results */}
                 <div className="columns">
                     <div className="column is-6">
-                    <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>
+                        {(!this.props.hideTitle) && <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>}
                         <h2 className="subtitle is-2">
                             Score: {formatScore(quizAttempt.score)}&nbsp;
                             <span className="has-text-weight-light">
@@ -135,7 +135,12 @@ class QuizReview extends Component {
 }
 
 QuizReview.propTypes = {
-    quizAttemptId: PropTypes.string.isRequired
+    quizAttemptId: PropTypes.string.isRequired,
+    hideTitle: PropTypes.bool
+};
+
+QuizReview.defaultProps = {
+    hideTitle: false
 };
 
 const QUIZ_ATTEMPT_QUERY = gql`
