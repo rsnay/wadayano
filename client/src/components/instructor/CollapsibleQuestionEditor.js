@@ -55,7 +55,7 @@ const tinymceConfig = {
 const tinymceInlineConfig = {
     ...tinymceConfig,
     inline: true,
-    toolbar: 'undo redo | bold italic underline | forecolor backcolor | align | outdent indent | superscript subscript | removeformat | image charmap',
+    toolbar: 'undo redo | bold italic underline | outdent indent | superscript subscript | image charmap',
 };
 
 const unsavedAlertMessage = 'You have unsaved questions in this quiz. Do you want to discard these changes?';
