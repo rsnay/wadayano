@@ -285,35 +285,33 @@ class AggregatedQuizReview extends Component {
                         </div>
                     </div>
                 </div>
-
+                <div className = "column">
+                <div className="box">
                 <h3 className="title">Concepts</h3>
-
-                <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
+                    <table className ="table is-striped is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>Concept</th>
+                            <th>Average Score</th>
+                            <th>Average Predicted Score</th>
+                            <th>Average Wadayano Score</th>
+                            <th> View Details </th>
+                        </tr>
+                    </thead>
+                    <tbody>
                     {concepts.map(concept => {
-                        const questionCount = quiz.questions.filter(q => q.concept === concept).length;
-                        return (
-                            <div className="tile is-6 is-parent" key={concept}>
-                                <div className="tile is-child box">
-                                    <p className="title">
-                                        <span>{concept}</span>
-                                        <span className="question-count">{questionCount === 1 ? '1 Question' : questionCount + ' Questions'}</span>
-                                    </p>
-                                    {averageScoreLabel(conceptAverageScores.get(concept))}
-                                    {averagePredictedScoreLabel(conceptAveragePredictedScores.get(concept))}
-                                    {averageWadayanoScoreLabel(conceptAverageWadayanoScores.get(concept))}
-                                    <footer>
-                                        <button
-                                            className="button is-light is-block"
-                                            style={{width: "100%"}}
-                                            onClick={() => this.setState({showConceptModal: concept})}
-                                        >View Questions</button>
-                                    </footer>
-                                </div>
-                            </div>
-                        )
-                    })}
+                        return(
+                    <tr id={concept+"rowid"}>
+                        <td>{concept}</td>
+                        <td>{(conceptAverageScores.get(concept)*100).toFixed()}%</td>
+                        <td>{(conceptAveragePredictedScores.get(concept)*100).toFixed()}%</td>
+                        <td>{(conceptAverageWadayanoScores.get(concept)*100).toFixed()}%</td>
+                        <td> View Details </td>
+                        </tr>)})}
+                    </tbody>
+                    </table>
                 </div>
-
+                </div>
                 <Modal
                     modalState={this.state.showConceptModal !== null}
                     closeModal={() => this.setState({ showConceptModal: null })}
@@ -323,6 +321,7 @@ class AggregatedQuizReview extends Component {
                         ))}
                         <br/>
                 </Modal>
+                
 
             </div>
         );

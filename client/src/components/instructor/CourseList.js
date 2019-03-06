@@ -38,11 +38,11 @@ export class CourseList extends Component {
                         </p>
                         <hr />
                         <div className="content">
-                            <span className="icon"><i className="fas fa-user-graduate" aria-hidden="true"></i></span>&nbsp;
-                            {course.students.length === 1 ? '1 Student' : course.students.length + ' Students'}
+                            <span><span className="icon"><i className="fas fa-user-graduate" aria-hidden="true"></i></span>&nbsp;
+                            <span style={{marginBottom: "5px"}}>{course.students.length === 1 ? '1 Student' : course.students.length + ' Students'}</span></span>
                             <br />
-                            <span className="icon"><i className="fas fa-list-ul" aria-hidden="true"></i></span>&nbsp;
-                            {course.quizzes.length === 1 ? '1 Quiz' : course.quizzes.length + ' Quizzes'}
+                            <span><span className="icon"><i className="fas fa-list-ul" aria-hidden="true"></i></span>&nbsp;
+                            <span style={{marginBottom: "5px"}}>{course.quizzes.length === 1 ? '1 Quiz' : course.quizzes.length + ' Quizzes'}</span></span>
                         </div>
                     </Link>
                 </div>
