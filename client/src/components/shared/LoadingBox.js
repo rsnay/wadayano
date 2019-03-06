@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+/**
+ * A simple loading spinner, in the wadayano primary color.
+ */
 export default class LoadingBox extends Component {
     render() {
         return (

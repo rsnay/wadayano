@@ -19,3 +19,15 @@ ToastTemplate.propTypes = {
     className: PropTypes.string,
     content: PropTypes.string.isRequired
 };
+
+/*
+Example usage:
+
+import ButterToast, { ToastTemplate } from '../shared/Toast';
+
+ButterToast.raise({
+    content: <ToastTemplate content="Something great happened." className="is-success" />,
+    timeout: 3000
+});
+
+*/

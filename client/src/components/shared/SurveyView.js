@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-// A stateless, controlled component to display a course survey for previewing or taking (the parent component must provide the selected answers to and receive changes from this component)
+/**
+ * A stateless, controlled component to display a course survey for previewing
+ * or taking (the parent component must provide the selected answers to and
+ * receive changes from this component)
+ *  */
 export default class SurveyView extends Component {
 
     // When an option is selected, pass up the change
-    _handleOptionClick(questionIndex, optionIndex) {
+    handleOptionClick(questionIndex, optionIndex) {
         if (this.props.onChange) {
             let newAnswers = {...this.props.selectedAnswers};
             newAnswers[questionIndex] = optionIndex;
@@ -35,7 +39,7 @@ export default class SurveyView extends Component {
                                 value={o.index}
                                 disabled={disabled}
                                 checked={selectedAnswers[q.index] === o.index}
-                                onChange={() => this._handleOptionClick(q.index, o.index)}
+                                onChange={() => this.handleOptionClick(q.index, o.index)}
                                 />
                             <span className="survey-question-option-text">
                                 {o.text}
@@ -44,10 +48,11 @@ export default class SurveyView extends Component {
                     ))}
                 </div>
             </div>
-        ))
+        ));
+
         return (
             <div>
-            {questions}
+                {questions}
             </div>
         );
     }
