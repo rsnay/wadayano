@@ -12,12 +12,6 @@ import LoadingBox from '../shared/LoadingBox';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
 class SurveyResults extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-        };
-    }
 
     _downloadCsv() {
         // Check that data has loaded
@@ -100,7 +94,8 @@ class SurveyResults extends Component {
                                     <td style={{whiteSpace: "nowrap"}}>{student.name}</td>
                                     {result ? 
                                         course.survey.questions.map(q => <td key={q.index}>{result.answers[q.index] ? q.options.filter(o => o.index === result.answers[q.index])[0].text : <i>n/a</i>}</td>)
-                                    : <td colSpan={course.survey.questions.length}><i>Survey not taken</i></td>
+                                    : 
+                                        <td colSpan={course.survey.questions.length}><i>Survey not taken</i></td>
                                     }
                                 </tr>);
                             })}

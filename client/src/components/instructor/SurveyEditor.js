@@ -30,7 +30,7 @@ class SurveyEditor extends Component {
     componentWillReceiveProps(nextProps) {
         if (!nextProps.courseQuery.error && !nextProps.courseQuery.loading && !this.state.surveyLoaded) {
             this.setState({
-                newSurveyText: this._stringifySurvey(nextProps.courseQuery.course.survey),
+                newSurveyText: this.stringifySurvey(nextProps.courseQuery.course.survey),
                 surveyLoaded: true
             });
         }
@@ -41,7 +41,7 @@ class SurveyEditor extends Component {
         // If the
         if (!this.state.surveyLoaded && this.props.courseQuery && !this.props.courseQuery.loading && this.props.courseQuery.course.survey) {
             this.setState({
-                newSurveyText: this._stringifySurvey(this.props.courseQuery.course.survey),
+                newSurveyText: this.stringifySurvey(this.props.courseQuery.course.survey),
                 surveyLoaded: true
             });
         }
@@ -50,16 +50,16 @@ class SurveyEditor extends Component {
     componentDidUpdate() {
         // If the survey has been modified, have the browser confirm before user leaves the page
         if (this.state.isDirty) {
-          window.onbeforeunload = () => true;
+            window.onbeforeunload = () => true;
         } else {
-          window.onbeforeunload = undefined;
+            window.onbeforeunload = undefined;
         }
-      }
-    
-      componentWillUnmount() {
+    }
+
+    componentWillUnmount() {
         // Remove leave confirmation when the user navigates away
         window.onbeforeunload = undefined;
-      }
+    }
 
     /* Structure of survey object:
        survey = {
@@ -89,7 +89,7 @@ class SurveyEditor extends Component {
     */
 
     // Parses the survey text into an array of questions objects containing prompt and options
-    _parseSurveyText(text) {
+    parseSurveyText(text) {
         // Add an extra new line at the end so that last question gets popped off
         text += '\n';
         let lines = text.split('\n');
@@ -112,7 +112,7 @@ class SurveyEditor extends Component {
     }
 
     // Stringifies a survey object into the user-editable text
-    _stringifySurvey(survey) {
+    stringifySurvey(survey) {
         if (!survey) { return ''; }
         let text = '';
         try {
@@ -127,7 +127,7 @@ class SurveyEditor extends Component {
         return text.trim();
     }
 
-    async _saveSurvey() {
+    async saveSurvey() {
         this.setState({ isSaving: true });
         try {
             const courseId = this.props.courseQuery.course.id;
@@ -135,7 +135,7 @@ class SurveyEditor extends Component {
             const result = await this.props.saveSurveyMutation({
                 variables: {
                     courseId,
-                    survey: this._parseSurveyText(this.state.newSurveyText)
+                    survey: this.parseSurveyText(this.state.newSurveyText)
                 }
             });
             // Handle errors
@@ -180,28 +180,35 @@ class SurveyEditor extends Component {
                     ]} />
 
                     <h3 className="title is-3">Course Survey</h3>
-                    <i className="">Note: modifying the survey (except for adding new questions to the very end) after students have taken it will invalidate existing student responses.</i>
+                    <i>Note: modifying the survey (except for adding new questions to the very end) after students have taken it will invalidate existing student responses.</i>
                     <br /><br />
 
                     <div className="columns">
                         <div className="column is-6">
                             <h4 className="subtitle is-4">
                                 Editor
-                                <button style={{height:"inherit", padding:"0 0 0 0.5rem"}} className="button is-text is-pulled-right" onClick={() => this.setState({ formatModalVisible: true })}>
+                                <button
+                                    style={{height:"inherit", padding:"0 0 0 0.5rem"}}
+                                    className="button is-text is-pulled-right"
+                                    onClick={() => this.setState({ formatModalVisible: true })}
+                                >
                                     <span className="icon is-small"><i className="fas fa-question-circle"></i></span>
                                     <span>Formatting hints</span>
                                 </button>
                             </h4>
 
-                            <textarea className="textarea is-medium survey-editor" rows={10}
+                            <textarea
+                                className="textarea is-medium survey-editor"
+                                rows={10}
                                 value={this.state.newSurveyText}
                                 placeholder="Click “Formatting Hints” above to get started creating your survey."
-                                onChange={(e) => this.setState({ newSurveyText: e.target.value, isDirty: true })} />
+                                onChange={(e) => this.setState({ newSurveyText: e.target.value, isDirty: true })}
+                            />
                         </div>
                         <div className="column is-6">
                             <h4 className="subtitle is-4">Preview</h4>
 
-                            <SurveyView survey={this._parseSurveyText(this.state.newSurveyText)} />
+                            <SurveyView survey={this.parseSurveyText(this.state.newSurveyText)} />
                         </div>
                     </div>
 
@@ -213,7 +220,7 @@ class SurveyEditor extends Component {
                         <p className="control">
                             <button
                                 className={"button is-primary" + (this.state.isSaving ? " is-loading" : "")}
-                                onClick={() => this._saveSurvey()}>
+                                onClick={() => this.saveSurvey()}>
                                 Save Survey
                             </button>
                         </p>
@@ -225,7 +232,12 @@ class SurveyEditor extends Component {
                         message="Do you want to discard your unsaved changes to this survey?"
                     />
                     {this.state.formatModalVisible &&
-                        <Modal modalState={true} closeModal={() => this.setState({ formatModalVisible: false })} title="Survey Formatting" showFooter={true}>
+                        <Modal
+                            modalState={true}
+                            closeModal={() => this.setState({ formatModalVisible: false })}
+                            title="Survey Formatting"
+                            showFooter={true}
+                        >
                             <ol>
                                 <li>Type a question on one line.</li>
                                 <li>Put each option for that question on a new line.</li>
@@ -262,7 +274,7 @@ const COURSE_QUERY = gql`
         survey
     }
   }
-`
+`;
 
 const SAVE_SURVEY = gql`
 mutation saveSurveyMutation(
@@ -276,7 +288,7 @@ mutation saveSurveyMutation(
         id
         survey
     }
-}`
+}`;
 
 export default withAuthCheck(compose(
     graphql(COURSE_QUERY, {

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-// This component simply displays a (optionally read-only) text input, with a copy
-// button attached to it, to easily copy the text to the user's clipboard.
+/**
+ * This component simply displays a (optionally read-only) text input, with a copy
+ * button attached to it, to easily copy the text to the user's clipboard.
+ */
 class CopyableTextInput extends Component {
     constructor(props) {
         super(props);
@@ -10,7 +12,7 @@ class CopyableTextInput extends Component {
         this.textInput = React.createRef();
     }
     
-    _copyText() {
+    copyText() {
         // iOS complicates copying text
         // From https://stackoverflow.com/a/34046084/702643
         if (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)) {
@@ -44,25 +46,26 @@ class CopyableTextInput extends Component {
     render() {
         return (
             <div>
-            {this.props.label &&
-                <label className="label">{this.props.label}</label> 
-            }
-            <div className="field has-addons">
-                <div className="control is-expanded">
-                    <input className="input"
-                        type="text"
-                        ref={this.textInput}
-                        readOnly={this.props.readOnly}
-                        value={this.props.value}
-                        onClick={() => this.textInput.current.select()} />
+                {this.props.label &&
+                    <label className="label">{this.props.label}</label> 
+                }
+                <div className="field has-addons">
+                    <div className="control is-expanded">
+                        <input className="input"
+                            type="text"
+                            ref={this.textInput}
+                            readOnly={this.props.readOnly}
+                            value={this.props.value}
+                            onClick={() => this.textInput.current.select()}
+                        />
+                    </div>
+                    <div className="control">
+                        <button className={this.state.copied ? "button is-success" : "button is-info"} onClick={() => {this.copyText()}}>
+                            {this.state.copied && <span className="icon"><i className="fas fa-check"></i></span>}
+                            {!this.state.copied && "Copy"}
+                        </button>
+                    </div>
                 </div>
-                <div className="control">
-                    <button className={this.state.copied ? "button is-success" : "button is-info"} onClick={() => {this._copyText()}}>
-                    {this.state.copied && <span className="icon"><i className="fas fa-check"></i></span>}
-                    {!this.state.copied && "Copy"}
-                    </button>
-                </div>
-            </div>
             </div>
         );
     }

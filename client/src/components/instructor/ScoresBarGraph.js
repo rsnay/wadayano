@@ -65,7 +65,15 @@ export default class ScoresBarGraph extends Component {
             barCells[i] = (
                 <td key={i}>
                     {scoreSeriesGroups.map((scoreSerieGroups, serieIndex) => 
-                        <span key={serieIndex} className="chart-bar" style={{height: (scoreSerieGroups[i] / max) * MAX_HEIGHT + "px", backgroundColor: BAR_COLORS[serieIndex]}} data-tip={scoreSerieGroups[i] + (scoreSerieGroups[i] === 1 ? ' student' : ' students')}></span>
+                        <span
+                            key={serieIndex}
+                            className="chart-bar"
+                            style={{
+                                height: (scoreSerieGroups[i] / max) * MAX_HEIGHT + "px",        
+                                backgroundColor: BAR_COLORS[serieIndex]
+                            }}
+                            data-tip={scoreSerieGroups[i] + (scoreSerieGroups[i] === 1 ? ' student' : ' students')}
+                        ></span>
                     )}
                 </td>
             );

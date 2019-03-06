@@ -179,8 +179,8 @@ class ResetPassword extends Component {
 
             </div>
         </section>
-        )
-    };
+        );
+    }
 }
 
 const RESET_PASSWORD_MUTATION = gql`
