@@ -299,6 +299,10 @@ async function instructorSignup(root, args, context, info) {
     if (!validateEmail(email)) {
         throw new Error('Invalid email address');
     }
+    // Check that password is at least 6 characters
+    if (args.password.length < 6) {
+        throw new Error('Password must be at least 6 characters');
+    }
     // Hash password
     const password = await bcrypt.hash(args.password, 10);
     // Create instructor account
@@ -377,6 +381,11 @@ async function instructorResetPassword(root, args, context, info) {
     let tokenAge = new Date() - new Date(resetToken.createdAt);
     if (tokenAge > MILLISECONDS_IN_DAY) {
         throw Error('This password reset request has expired.');
+    }
+
+    // Check that password is at least 6 characters
+    if (args.password.length < 6) {
+        throw new Error('Password must be at least 6 characters');
     }
 
     // Hash new password
