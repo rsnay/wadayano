@@ -83,14 +83,14 @@ class QuizReview extends Component {
                                 ({formatScore(predictedScore(quizAttempt))} Predicted)
                             </span>
                         </h2>
-                        <WadayanoScore score={wadayanoScore(quizAttempt)} confidenceText={confidenceAnalysis(quizAttempt).text} />
+                        <WadayanoScore score={wadayanoScore(quizAttempt)} confidenceAnalysis={confidenceAnalysis(quizAttempt)} />
                     </div>
                 </div>
                 {/* Concept-specific result cards */}
                 <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
                 {conceptResults.map(result => 
                     <div className="tile is-6 is-parent" key={result.concept}>
-                        <div className="tile is-child box">
+                        <div className="tile is-child box concept-result-card">
                             <p className="title">
                                 <span>{result.concept}</span>
                                 <span className="question-count">
@@ -100,7 +100,7 @@ class QuizReview extends Component {
                             <p className="title">
                                 Score: {formatScore(result.score)} <span className="has-text-weight-light">({formatScore(result.predictedScore)} Predicted)</span>
                             </p>
-                            <WadayanoScore score={result.wadayanoScore} confidenceText={result.confidenceAnalysis.text} />
+                            <WadayanoScore score={result.wadayanoScore} confidenceAnalysis={result.confidenceAnalysis} />
                             <footer className="">
                                 <button
                                 className="button is-primary is-block"

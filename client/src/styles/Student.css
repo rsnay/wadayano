@@ -68,12 +68,31 @@ button.is-light:focus, a.is-light:focus {
     cursor: pointer;
 }
 
-#emoji {
-    font-size: 2.7em;
+.emoji {
+    transition: all .15s ease; 
+    display: inline-block;
+}
+.emoji:hover {
+    transform: scale(2);
+}
+
+.wadyano-score-container {
+    margin: 0!important;
 }
 
 .wadayano-score-logo {
+    max-width: 80px;
+    margin: 0.5rem;
     float:left;
+}
+.wadayano-score-logo img {
+    max-height: 4rem;
+    height: 4rem;
+    margin: 0;
+}
+
+.wadyano-score-container h2 {
+    margin: 0!important;
 }
 
 /* Quiz Scores */

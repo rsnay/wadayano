@@ -1,49 +1,64 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { formatScore } from '../../utils';
 import Logo from '../../logo_boxed.svg';
 import Modal from '../shared/Modal';
 
-const emojis = {
-    "Accurate" : "🧘",
-    "Mixed" : "🤷‍",
-    "Overconfident" : "🤦‍",
-    "Underconfident" : "🙍‍"
-}
-
+/**
+ * Component for use in QuizReview that displays the wadayano logo, wadayano score,
+ * and confidence analysis (used for both quizzes and invidiaul concepts).
+ */
 export default class WadayanoScore extends Component{
 
     constructor(props) {
         super(props);
-    
         this.state = {
             displayHelpText:false,
         };
-    
-        // Pre-bind this function, to make adding it to input fields easier
-        this.helpText = this.helpText.bind(this);
     }
 
-    helpText(){
-        this.setState({displayHelpText: true});
-    }
-    
     render(){
-    return(<React.Fragment><div className="columns is-gapless is-multiline" style={{margin:"0px"}}>
-        <div className = "column is-2" style={{width:"80px", margin:"5px"}}><img className="wadayano-score-logo" src={Logo} alt="wadayano" style={{maxHeight: "4rem", height: "4rem", margin: "0px"}} /></div>
-        <div className="column"><h2 className="subtitle is-4" style={{margin:"0px"}}>Wadayano Score: {formatScore(this.props.score)}</h2>
-        <div><span className="subtitle is-4">{emojis[this.props.confidenceText]} {this.props.confidenceText}</span><span className="question-mark-circle" onClick = {() => this.helpText()}>?</span></div></div>
-        </div>
+        return(
+            <React.Fragment>
+                <div className="columns is-gapless is-multiline wadyano-score-container">
+                    <div className="column wadayano-score-logo">
+                        <img src={Logo} alt="wadayano" />
+                    </div>
+                    <div className="column">
+                        <h2 className="subtitle is-4">
+                            Wadayano Score: {formatScore(this.props.score)}
+                        </h2>
+                        <div>
+                            <span className="subtitle is-4">
+                                <span className="emoji">{this.props.confidenceAnalysis.emoji}</span> {this.props.confidenceAnalysis.text}
+                            </span>
+                            <span className="question-mark-circle" onClick={() => this.setState({ displayHelpText: true }) }>?</span>
+                        </div>
+                    </div>
+                </div>
 
-        <Modal
-            modalState={this.state.displayHelpText}
-            closeModal={() => this.setState({ displayHelpText: false })}
-            title={"Help:"}>
-            <p>Wadayano Score measures how well you know what you know.</p>
-
-            <p>-Higher scores mean you are only confident about things you actually know.</p>
-
-            <p>-Lower scores may indicate that you are over- or under-confident.</p>
-        </Modal></React.Fragment>
+                <Modal
+                    modalState={this.state.displayHelpText}
+                    closeModal={() => this.setState({ displayHelpText: false })}
+                    title={"Help"}
+                >
+                    <p>Wadayano Score measures how well you know what you know.</p>
+                    <ul>
+                        <li>Higher scores mean you are only confident about things you actually know.</li>
+                        <li>Lower scores may indicate that you are over- or under-confident.</li>
+                    </ul>
+                </Modal>
+            </React.Fragment>
         );
     }
 }
+
+WadayanoScore.propTypes = {
+    // Floating point score in range 0–1
+    score: PropTypes.number.isRequired,
+    // The object returned from utils.confidenceAnalysis matches this shape
+    confidenceAnalysis: PropTypes.shape({
+        text: PropTypes.string.isRequired,
+        emoji: PropTypes.string.isRequired
+    }).isRequired
+};
