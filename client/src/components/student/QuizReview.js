@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
-import { withAuthCheck } from '../shared/AuthCheck';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import { formatScore, wadayanoScore, confidenceAnalysis, predictedScore } from '../../utils';
@@ -16,6 +15,11 @@ import Modal from '../shared/Modal';
 import WadayanoScore from '../shared/WadayanoScore';
 import fragments from '../../fragments';
 
+/**
+ * This component (used in the student QuizReviewPage and in the instructor QuizScores) displays
+ * overall scores (actual, wadayano, and predicted) for the quiz and for the quiz’s concepts.
+ * Questions within each concept can be reviewed.
+ */
 class QuizReview extends Component {
 
     constructor(props) {
@@ -76,16 +80,20 @@ class QuizReview extends Component {
                 {/* Title and overall results */}
                 <div className="columns">
                     <div className="column is-6">
-                        {(!this.props.hideTitle) && <h2 className="subtitle is-2">{quizAttempt.quiz.title}</h2>}
+                        {(!this.props.hideTitle) && <h1 className="subtitle is-2">{quizAttempt.quiz.title}</h1>}
                         <h2 className="subtitle is-2">
                             Score: {formatScore(quizAttempt.score)}&nbsp;
                             <span className="has-text-weight-light">
                                 ({formatScore(predictedScore(quizAttempt))} Predicted)
                             </span>
                         </h2>
-                        <WadayanoScore score={wadayanoScore(quizAttempt)} confidenceAnalysis={confidenceAnalysis(quizAttempt)} />
+                        <WadayanoScore
+                            score={wadayanoScore(quizAttempt)}
+                            confidenceAnalysis={confidenceAnalysis(quizAttempt)}
+                        />
                     </div>
                 </div>
+
                 {/* Concept-specific result cards */}
                 <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
                 {conceptResults.map(result => 
@@ -100,12 +108,15 @@ class QuizReview extends Component {
                             <p className="title">
                                 Score: {formatScore(result.score)} <span className="has-text-weight-light">({formatScore(result.predictedScore)} Predicted)</span>
                             </p>
-                            <WadayanoScore score={result.wadayanoScore} confidenceAnalysis={result.confidenceAnalysis} />
-                            <footer className="">
+                            <WadayanoScore
+                                score={result.wadayanoScore}
+                                confidenceAnalysis={result.confidenceAnalysis}
+                            />
+                            <footer>
                                 <button
-                                className="button is-primary is-block"
-                                style={{width: "100%"}}
-                                onClick = {() => this.setState({ showReviewForConcept: result.concept })}>
+                                    className="button is-primary is-block is-fullwidth"
+                                    onClick = {() => this.setState({ showReviewForConcept: result.concept })}
+                                >
                                     View Details
                                 </button>
                             </footer>
@@ -118,19 +129,22 @@ class QuizReview extends Component {
                 <Modal
                     modalState={this.state.showReviewForConcept !== null}
                     closeModal={() => this.setState({ showReviewForConcept: null })}
-                    title={"Concept Review: " + this.state.showReviewForConcept}>
+                    title={"Concept Review: " + this.state.showReviewForConcept}
+                >
                     <span className="concept-questions-list">
                         {quizAttempt.questionAttempts
                             .filter(q => q.question.concept === this.state.showReviewForConcept)
                             .map(conceptQuestion => (
-                            <div className="question-review" key={conceptQuestion.id}>
-                                <QuestionReview questionAttempt={conceptQuestion} question={conceptQuestion.question} />
-                                <hr />
-                            </div>
-                        ))}
+                                <div className="question-review" key={conceptQuestion.id}>
+                                    <QuestionReview questionAttempt={conceptQuestion} question={conceptQuestion.question} />
+                                    <hr />
+                                </div>
+                            )
+                        )}
                     </span>
                 </Modal>
-            </div>)
+            </div>
+        );
     }
 }
 
@@ -150,13 +164,11 @@ const QUIZ_ATTEMPT_QUERY = gql`
     }
   }
   ${fragments.studentFullQuizAttempt}
-`
+`;
 
-export default withAuthCheck(compose(
-    graphql(QUIZ_ATTEMPT_QUERY, {
+export default graphql(QUIZ_ATTEMPT_QUERY, {
       name: 'quizAttemptQuery',
       options: (props) => {
         return { variables: { id: props.quizAttemptId } }
       }
-    }),
-  )(QuizReview), { student: true, instructor: true });
+})(QuizReview);

@@ -3,16 +3,16 @@ import { Redirect } from 'react-router';
 
 import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR, AUTH_ROLE_STUDENT } from '../../constants';
 
-
 /**
-* A higher-order component that wraps other components and
-* provides an authentication check for the given roles.
-*
-* @export
-* @param {Component} WrappedComponent - Component to wrap
-* @param {Object} authRoles - optional object containing boolean student and/or instructor properites to restrict the authCheck to those roles. If neither property is provided, the check will pass if any user/role is logged in.
-* @returns {WithAuthCheck(Component)} - the wrapped component
-*/
+ * A higher-order component that wraps other components and
+ * provides an authentication check for the given roles.
+ * Should typically only be used on components that act as pages.
+ *
+ * @export
+ * @param {Component} WrappedComponent - Component to wrap
+ * @param {Object} authRoles - optional object containing boolean student and/or instructor properites to restrict the authCheck to those roles. If neither property is provided, the check will pass if any user/role is logged in.
+ * @returns {WithAuthCheck(Component)} - the wrapped component
+ */
 export function withAuthCheck(WrappedComponent, authRoles) {
     class WithAuthCheck extends Component {
         constructor(props) {
@@ -42,13 +42,14 @@ export function withAuthCheck(WrappedComponent, authRoles) {
         }
         
         render() {
-            // Wraps the input component in a container, without mutating it.
+            // Redirect to login if unauthorized, and pass the location to redirect to via state
             if (!this.valid) {
                 return <Redirect to={{
                     pathname: '/login',
                     state: { from: this.props.location }
                 }} />
             }
+            // Wraps the input component in a container, without mutating it.
             return <WrappedComponent {...this.props} />;
         }
     }
