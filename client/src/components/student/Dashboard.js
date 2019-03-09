@@ -11,6 +11,10 @@ import LoadingBox from '../shared/LoadingBox';
 import { withAuthCheck } from '../shared/AuthCheck';
 import { formatScore, wadayanoScore } from '../../utils';
 
+/**
+ * This page presents tables of unfinished quiz attempts, available practice quizzes,
+ * and past quiz attempts for a given course. (Based on the student currently logged in).
+ */
 class Dashboard extends Component {
 
   render() {
@@ -24,15 +28,22 @@ class Dashboard extends Component {
     }
 
     const course = this.props.courseQuery.course;
-    const quizzes = course.quizzes;
-    const practiceQuizzes = quizzes.filter(quiz => quiz.type === 'PRACTICE');
+    // Quizzes in course are filtered in query to only practice quizzes
+    const practiceQuizzes = course.quizzes;
+    // Quiz attempts contains graded and practice quiz attempts
     const quizAttempts = this.props.quizAttemptsQuery.currentStudentQuizAttempts;
     const unfinishedAttempts = quizAttempts.filter(attempt => attempt.completed === null);
     const pastAttempts = quizAttempts.filter(attempt => attempt.completed !== null);
 
-    const lmsUrlLink = (actionText) => (course.lmsUrl && course.lmsUrl !== '') ? <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>click here to {actionText}</a> : actionText;
+    const lmsUrlLink = (actionText) => {
+        if (course.lmsUrl && course.lmsUrl !== '') {
+            return <a target="_blank" rel="noopener noreferrer" href={course.lmsUrl}>{actionText}</a>;
+        } else {
+            return actionText;
+        }
+    };
 
-    let practiceQuizzesTable = <div className="notification has-text-centered">No practice quizzes are currently available for this course.</div>;
+    let practiceQuizzesTable;
     if (practiceQuizzes.length > 0) {
         practiceQuizzesTable = (
         <div className="table-wrapper">
@@ -48,16 +59,18 @@ class Dashboard extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {practiceQuizzes.filter(quiz => quiz.type === 'PRACTICE').map((quiz, index) => 
+                    {practiceQuizzes.map((quiz) => 
                         <tr key={quiz.id}>
                             <td data-title="Title">
-                                <Link className="has-text-black is-block" to={"/student/quiz/" + quiz.id}>
-                                {quiz.title}</Link>
+                                <Link to={"/student/quiz/" + quiz.id} className="has-text-black is-block">
+                                    {quiz.title}
+                                </Link>
                             </td>
-                            <td data-title="Questions">{quiz.questions.length}</td>
+                            <td data-title="Questions">
+                                {quiz.questions.length}
+                            </td>
                             <td data-title="Actions">
-                                <Link to={"/student/quiz/" + quiz.id}
-                                className="button is-primary is-outlined">
+                                <Link to={"/student/quiz/" + quiz.id} className="button is-primary is-outlined">
                                     <span className="icon"><i className="fas fa-rocket"></i></span>
                                     <span>Practice Quiz</span>
                                 </Link>
@@ -68,9 +81,15 @@ class Dashboard extends Component {
             </table>
         </div>
         );
+    } else {
+        practiceQuizzesTable = (
+            <div className="notification has-text-centered">
+                No practice quizzes are currently available for this course.
+            </div>
+        );
     }
 
-    let unfinishedAttemptsTable = unfinishedAttempts.length > 0 && (
+    let unfinishedAttemptsTable = (unfinishedAttempts.length > 0) && (
         <div style={{overflowX: "auto"}}>
             <table className="table is-striped is-hoverable is-fullwidth quiz-table responsive-table" style={{border: "solid #209cee 1px"}}>
                 <thead>
@@ -86,18 +105,24 @@ class Dashboard extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {unfinishedAttempts.map((attempt, index) => 
+                    {unfinishedAttempts.map((attempt) => 
                         <tr key={attempt.id}>
-                            <td data-title="Started" style={{whiteSpace: "nowrap"}}><TimeAgo date={attempt.createdAt} /></td>
-                            <td data-title="Quiz">
-                                <Link className="has-text-black is-block" to={"/student/quiz/"+ attempt.quiz.id}>
-                                {attempt.quiz.title}</Link>
+                            <td data-title="Started" style={{whiteSpace: "nowrap"}}>
+                                <TimeAgo date={attempt.createdAt} />
                             </td>
-                            <td data-title="Questions">{attempt.quiz.questions.length}</td>
-                            <td data-title="Completion">{formatScore(attempt.questionAttempts.length / attempt.quiz.questions.length)}</td>
+                            <td data-title="Quiz">
+                                <Link to={"/student/quiz/"+ attempt.quiz.id} className="has-text-black is-block">
+                                    {attempt.quiz.title}
+                                </Link>
+                            </td>
+                            <td data-title="Questions">
+                                {attempt.quiz.questions.length}
+                            </td>
+                            <td data-title="Completion">
+                                {formatScore(attempt.questionAttempts.length / attempt.quiz.questions.length)}
+                            </td>
                             <td data-title="Resume">
-                                <Link to={"/student/quiz/" + attempt.quiz.id}
-                                className="button is-primary is-outlined">
+                                <Link to={"/student/quiz/" + attempt.quiz.id} className="button is-primary is-outlined">
                                     <span className="icon"><i className="fas fa-rocket"></i></span>
                                     <span>Resume</span>
                                 </Link>
@@ -107,10 +132,9 @@ class Dashboard extends Component {
                 </tbody>
             </table>
         </div>
-
     );
 
-    let pastAttemptsTable = <div className="notification has-text-centered">No quiz attempts yet. Choose a practice quiz from the list above, or {lmsUrlLink('launch a quiz from your learning management system')} to get started.</div>;
+    let pastAttemptsTable;
     if (pastAttempts.length > 0) {
         pastAttemptsTable = (
         <div className="table-wrapper">
@@ -130,20 +154,22 @@ class Dashboard extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {pastAttempts.map((attempt, index) => 
+                    {pastAttempts.map((attempt) => 
                         <tr key={attempt.id}>
-                            <td data-title="Completed" style={{whiteSpace: "nowrap"}}><TimeAgo date={attempt.completed} /></td>
+                            <td data-title="Completed" style={{whiteSpace: "nowrap"}}>
+                                <TimeAgo date={attempt.completed} />
+                            </td>
                             <td data-title="Quiz">
-                                <Link className="has-text-black is-block" to={"/student/quiz/review/" + attempt.id}>
-                                {attempt.quiz.title}</Link>
+                                <Link to={"/student/quiz/review/" + attempt.id} className="has-text-black is-block">
+                                    {attempt.quiz.title}
+                                </Link>
                             </td>
                             <td data-title="Questions">{attempt.quiz.questions.length}</td>
                             <td data-title="Type">{QUIZ_TYPE_NAMES[attempt.quiz.type]}</td>
                             <td data-title="Score">{attempt.completed ? formatScore(attempt.score) : "n/a"}</td>
                             <td data-title="Wadayano Score">{attempt.completed ? formatScore(wadayanoScore(attempt)) : "n/a"}</td>
                             <td data-title="Review">
-                                <Link to={"/student/quiz/review/" + attempt.id}
-                                className="button is-info is-outlined">
+                                <Link to={"/student/quiz/review/" + attempt.id} className="button is-info is-outlined">
                                     <span className="icon"><i className="fas fa-history"></i></span>
                                     <span>Review</span>
                                 </Link>
@@ -154,6 +180,12 @@ class Dashboard extends Component {
             </table>
         </div>
         );
+    } else {
+        pastAttemptsTable = (
+            <div className="notification has-text-centered">
+                No quiz attempts yet. Choose a practice quiz from the list above, or {lmsUrlLink('launch a quiz from your learning management system')} to get started.
+            </div>
+        );
     }
 
     return (
@@ -162,21 +194,24 @@ class Dashboard extends Component {
           <h3 className="title is-3">{course.title} Dashboard</h3>
           <hr />
 
-
-          {unfinishedAttempts.length > 0 && <section className="message is-info">
-            <div className="message-header">
-                <h4 className="title is-4 has-text-white">Unfinished Quiz Attempts</h4>
-            </div>
-            <div className="message-body">
-                <p>Need to pause during a quiz? Simply close the quiz, and resume it here.</p>
-
-            </div>
+          {unfinishedAttempts.length > 0 && (
+            <section className="message is-info">
+                <div className="message-header">
+                    <h4 className="title is-4 has-text-white">Unfinished Quiz Attempts</h4>
+                </div>
+                <div className="message-body">
+                    <p>Need to pause during a quiz? Simply close the quiz, and resume it here.</p>
+                </div>
                 {unfinishedAttemptsTable}
-          </section>}
+            </section>
+          )}
 
           <section>
             <h4 className="title is-4">Practice Quizzes</h4>
-            <p>Take a practice quiz below. To take a quiz that is graded for this course, please {lmsUrlLink('launch it from your course’s learning management system')} (i.e. Canvas or Learning Suite).<br /><br /></p>
+            <p>
+                <i>These quizzes do not affect your grade.</i> To take a quiz that is graded for this course, {lmsUrlLink('launch it from your course’s learning management system')} (i.e. Canvas or Learning Suite).
+                <br /><br />
+            </p>
 
             {practiceQuizzesTable}
 
@@ -185,7 +220,6 @@ class Dashboard extends Component {
 
           <section>
             <h4 className="title is-4">Past Quiz Attempts</h4>
-            <p>Review previous quiz attempts, and see where you’ve improved.<br /><br /></p>
 
             {pastAttemptsTable}
 
@@ -197,25 +231,25 @@ class Dashboard extends Component {
     )
   }
 }
-// Get the course information
+// Get the course information and info about practice quizzes
 const COURSE_QUERY = gql`
   query courseQuery($id: ID!) {
-    course(id:$id){
+    course(id: $id){
         id
         title
         lmsUrl
-        quizzes {
+        quizzes(where: {type: PRACTICE }) {
             id
             title
-            type
             questions {
                 id
             }
         }
     }
   }
-`
+`;
 
+// Query all quiz attempts for the current student
 const QUIZ_ATTEMPTS_QUERY = gql`
     query($courseId: ID!) {
         currentStudentQuizAttempts(orderBy: completed_DESC, courseId: $courseId) {
@@ -238,7 +272,7 @@ const QUIZ_ATTEMPTS_QUERY = gql`
             score
         }
     }
-`
+`;
 
 export default withAuthCheck(compose(
     graphql(COURSE_QUERY, {
