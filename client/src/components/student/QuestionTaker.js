@@ -12,6 +12,11 @@ import QuestionReview from './QuestionReview';
 import { ALPHABET, KEY_CODE_A, KEY_CODE_Z, MULTIPLE_CHOICE, KEY_CODE_COMMA, KEY_CODE_PERIOD } from '../../constants';
 import fragments from '../../fragments';
 
+/**
+ * This component is used in QuizTaker, and is responsible for displaying a question,
+ * getting the student’s answer, submitting the question attempt to the server, and
+ * displaying a QuestionReview to show if the student was correct.
+ */
 class QuestionTaker extends Component {
 
     constructor(props) {
@@ -26,63 +31,66 @@ class QuestionTaker extends Component {
             // Will get sent from the server after attempting the question
             questionAttempt: null
         };
-        this._submitted = false;
-        this._handleKeyDown = this._handleKeyDown.bind(this);
+        this.submitted = false;
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
     componentDidMount() {
         if (this.props.question.type === MULTIPLE_CHOICE) {
-            document.addEventListener('keydown', this._handleKeyDown);
+            document.addEventListener('keydown', this.handleKeyDown);
         }
     }
 
     componentWillUnmount() {
         if (this.props.question.type === MULTIPLE_CHOICE) {
-            document.removeEventListener('keydown', this._handleKeyDown);
+            document.removeEventListener('keydown', this.handleKeyDown);
         }
     }
 
-  // Allow multiple-choice options to be selected by pressing that letter on the keyboard (or ,. to select confidence). This is kind of hacky right now
-  _handleKeyDown(e) {
-    // If the question has already been answered, don't let the selected answer change (without this, it's kind of entertaining!)
-    if (this.state.submitted) { return; }
+    // Allow multiple-choice options to be selected by pressing that letter on the keyboard (or ,. to select confidence). This is kind of hacky right now
+    // Presently, confidence cannot be selected with ,. on short-answer questions. This could be added in the future (checking if focus is in the short-answer field first)
+    handleKeyDown(e) {
+        // If the question has already been answered, don't let the selected answer change (without this, it's kind of entertaining!)
+        if (this.state.submitted) { return; }
 
-    // If a modifier key is pressed, ignore (otherwise they can't ctrl+c to copy, etc.)
-    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) { return; }
+        // If a modifier key is pressed, ignore (otherwise they can't ctrl+c to copy, etc.)
+        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) { return; }
 
-    // Check that the question is loaded and has options
-    if (this.props.question && this.props.question.options) {
+        // Check that the question is loaded and has options
+        if (this.props.question && this.props.question.options) {
 
-        // Select confidence with , and . (if an answer has already been selected)
-        if (this.state.selectedOption || this.state.shortAnswer !== '') {
-            if (e.keyCode === KEY_CODE_COMMA || e.keyCode === KEY_CODE_PERIOD) {
-                this.setState({ confident: (e.keyCode === KEY_CODE_COMMA) });
+            // Select confidence with , and . (if an answer has already been selected)
+            if (this.state.selectedOption) {
+                if (e.keyCode === KEY_CODE_COMMA || e.keyCode === KEY_CODE_PERIOD) {
+                    this.setState({ confident: (e.keyCode === KEY_CODE_COMMA) });
+                    e.preventDefault();
+                }
+            }
+
+            let optionIndex = -1;
+            // 65 is A, and the letters are sequential afterwards through Z
+            if (e.keyCode >= KEY_CODE_A && e.keyCode <= KEY_CODE_Z) {
+                optionIndex = e.keyCode - KEY_CODE_A;
+            }
+            // Filter to non-empty options
+            const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '')
+            // Make sure there are this many options (If C was pressed, make sure there are ≥ 3 non-empty options)
+            if (optionIndex >= 0 && questionOptions.length > optionIndex) {
+                // Make sure that the selected option is non-empty
+                this.setState({ selectedOption: questionOptions[optionIndex] });
                 e.preventDefault();
             }
         }
-
-        let optionIndex = -1;
-        // 65 is A, and the letters are sequential afterwards through Z
-        if (e.keyCode >= KEY_CODE_A && e.keyCode <= KEY_CODE_Z) {
-            optionIndex = e.keyCode - KEY_CODE_A;
-        }
-        // Filter to non-empty options
-        const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '')
-        // Make sure there are this many options (If C was pressed, make sure there are ≥ 3 non-empty options)
-        if (optionIndex >= 0 && questionOptions.length > optionIndex) {
-            // Make sure that the selected option is non-empty
-            this.setState({ selectedOption: questionOptions[optionIndex] });
-            e.preventDefault();
-        }
     }
-  }
 
-  async _submit() {
-        // If the enter button is pressed really quickly in succession, this could get fired twice before the
-        if (this._submitted) { return; }
-        this._submitted = true;
+    async submit() {
+        // If the enter button is pressed really quickly in succession, this could get fired twice before a re-render
+        if (this.submitted) { return; }
+        this.submitted = true;
+
         this.setState({ isLoading: true });
         try {
+            // Send question attempt
             const result = await this.props.attemptQuestionMutation({
                 variables: {
                     quizAttemptId: this.props.quizAttemptId,
@@ -96,7 +104,7 @@ class QuestionTaker extends Component {
             if (result.errors && result.errors.length > 0) {
                 throw result;
             }
-            console.log("question attempt", result.data.attemptQuestion);
+            // Get the actual question attempt result (which contains if student was correct, and actual correct answer)
             this.setState({ questionAttempt: result.data.attemptQuestion, submitted: true });
             if (this.props.onQuestionCompleted) {
                 this.props.onQuestionCompleted();
@@ -108,100 +116,112 @@ class QuestionTaker extends Component {
             }
             this.setState({ error: 'Error saving answer: ' + message, isLoading: false });
         }
-  }
-
-  render() {
-    const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '');
-    const isMultipleChoice = (this.props.question.type === MULTIPLE_CHOICE);
-    
-    if (isMultipleChoice && questionOptions.length === 0) {
-        return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
     }
 
-    if (this.state.error) {
-        return <ErrorBox><p>{this.state.error}</p></ErrorBox>;
-    }
+    render() {
+        const questionOptions = this.props.question.options.filter(option => option.text.trim() !== '');
+        const isMultipleChoice = (this.props.question.type === MULTIPLE_CHOICE);
+        
+        if (isMultipleChoice && questionOptions.length === 0) {
+            return <ErrorBox><p>There are no options for this question. Please contact your instructor.</p></ErrorBox>;
+        }
 
-    let prompt = (
-        <div className="notification question-prompt" dangerouslySetInnerHTML={{__html: this.props.question.prompt}}></div>
-    );
+        if (this.state.error) {
+            return <ErrorBox><p>{this.state.error}</p></ErrorBox>;
+        }
 
-    // Hide empty options
-    let options = questionOptions.map((option, index) => {
-        return (<div className="columns is-mobile question-option-container" key={option.id}
-            onClick={() => {
-                this.setState({ selectedOption: option })
-            }}>
-            <button className={"column is-1 question-option-letter level-left is-rounded button " + (this.state.selectedOption && this.state.selectedOption.id === option.id ? "is-link" : "")} >
-                <span>{ALPHABET[index]}</span>
-            </button>
-            <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: option.text}}></span>
-        </div>);
-    });
+        const prompt = (
+            <div className="notification question-prompt" dangerouslySetInnerHTML={{__html: this.props.question.prompt}}></div>
+        );
 
-    let shortAnswer = (
-        <div className="columns">
-            <div className="column is-two-thirds-tablet field">
-                <input
-                    className="input is-medium"
-                    type="text"
-                    placeholder="Enter your answer"
-                    autoFocus
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck="false"
-                    value={this.state.shortAnswer}
-                    onChange={e => { this.setState({ shortAnswer: e.target.value })}}
+        // Hide empty options
+        const options = isMultipleChoice && questionOptions.map((option, index) => {
+            return (
+                <div
+                    key={option.id}
+                    className="columns is-mobile question-option-container"
+                    onClick={() => this.setState({ selectedOption: option }) }
+                >
+                    <button className={"column is-1 question-option-letter level-left is-rounded button " + (this.state.selectedOption && this.state.selectedOption.id === option.id ? "is-link" : "")} >
+                        <span>{ALPHABET[index]}</span>
+                    </button>
+                    <span className="column question-option-text level-left" dangerouslySetInnerHTML={{__html: option.text}}></span>
+                </div>
+            );
+        });
+
+        const shortAnswer = (!isMultipleChoice) && (
+            <div className="columns">
+                <div className="column is-two-thirds-tablet field">
+                    <input
+                        className="input is-medium"
+                        type="text"
+                        placeholder="Enter your answer"
+                        autoFocus
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck="false"
+                        value={this.state.shortAnswer}
+                        onChange={e => { this.setState({ shortAnswer: e.target.value })}}
+                    />
+                </div>
+            </div>
+        );
+
+        const confidenceSelector = (
+            <ScrollIntoViewIfNeeded>
+                <ConfidenceSelector
+                    onChange={(confident) => { this.setState({ confident }) }}
+                    confident={this.state.confident}
                 />
-            </div>
-        </div>
-    )
-
-    let confidenceSelector = (
-        <ScrollIntoViewIfNeeded>
-            <ConfidenceSelector
-                onChange={(confident) => { this.setState({ confident }) }}
-                confident={this.state.confident} />
-        </ScrollIntoViewIfNeeded>
-    );
-
-    let submitButton = (
-        <ScrollIntoViewIfNeeded>
-        <hr />
-        <button autoFocus className={"button is-primary is-medium" + (this.state.isLoading ? " is-loading" : "")} onClick={() => this._submit()}>Submit</button>
-        </ScrollIntoViewIfNeeded>
-    );
-
-    let review = this.state.questionAttempt && <QuestionReview questionAttempt={this.state.questionAttempt} question={this.props.question} />;
-
-    let continueButton = (
-        <button autoFocus className="button is-primary is-medium" onClick={this.props.onNextQuestion}>Continue</button>
-    );
-
-    // Question answer view
-    if (!this.state.submitted) {
-        return (
-            <div>
-                {prompt}
-                <br />
-                {isMultipleChoice && options}
-                {!isMultipleChoice && shortAnswer}
-                {(this.state.selectedOption || this.state.shortAnswer !== '') && confidenceSelector}
-                {this.state.confident !== null && submitButton}
-            </div>
+            </ScrollIntoViewIfNeeded>
         );
-    } else {
-        // Question review view
-        return (
-            <div>
-                {review}
-                <br />
-                {continueButton}
-            </div>
+
+        const submitButton = (
+            <ScrollIntoViewIfNeeded>
+                <hr />
+                <button
+                    autoFocus
+                    className={"button is-primary is-medium" + (this.state.isLoading ? " is-loading" : "")}
+                    onClick={() => this.submit()}
+                >
+                    Submit
+                </button>
+            </ScrollIntoViewIfNeeded>
         );
+
+        const review = this.state.questionAttempt && <QuestionReview questionAttempt={this.state.questionAttempt} question={this.props.question} />;
+
+        const continueButton = (
+            <button autoFocus className="button is-primary is-medium" onClick={this.props.onNextQuestion}>Continue</button>
+        );
+
+        // Question answer view
+        if (!this.state.submitted) {
+            return (
+                <div>
+                    {prompt}
+                    <br />
+
+                    {options}
+                    {shortAnswer}
+
+                    {(this.state.selectedOption || this.state.shortAnswer !== '') && confidenceSelector}
+                    {this.state.confident !== null && submitButton}
+                </div>
+            );
+        } else {
+            // Question review view
+            return (
+                <div>
+                    {review}
+                    <br />
+                    {continueButton}
+                </div>
+            );
+        }
     }
-  }
 }
 
 QuestionTaker.propTypes = {
@@ -226,4 +246,4 @@ const ATTEMPT_QUESTION_MUTATION = gql`
   ${fragments.studentFullQuestionAttempt}
 `;
 
-export default graphql(ATTEMPT_QUESTION_MUTATION, { name: 'attemptQuestionMutation' })(QuestionTaker)
+export default graphql(ATTEMPT_QUESTION_MUTATION, { name: 'attemptQuestionMutation' })(QuestionTaker);
