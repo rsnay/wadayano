@@ -205,6 +205,11 @@ progress::-webkit-progress-value {
     margin-bottom: 1rem;
 }
 
+.question-confidence-selector h5 {
+    margin: 0.5rem;
+    font-size: 1.2rem;
+}
+
 .question-confidence-selector button {
     height: 3rem;
     width: 5rem;
