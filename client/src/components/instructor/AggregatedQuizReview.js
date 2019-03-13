@@ -303,10 +303,10 @@ class AggregatedQuizReview extends Component {
                         return(
                     <tr id={concept+"rowid"}>
                         <td>{concept}</td>
-                        <td>{(conceptAverageScores.get(concept)*100).toFixed()}%</td>
-                        <td>{(conceptAveragePredictedScores.get(concept)*100).toFixed()}%</td>
-                        <td>{(conceptAverageWadayanoScores.get(concept)*100).toFixed()}%</td>
-                        <td> View Details </td>
+                        <td>{formatScore(conceptAverageScores.get(concept), 0)}</td>
+                        <td>{formatScore(conceptAveragePredictedScores.get(concept),0)}</td>
+                        <td>{formatScore(conceptAverageWadayanoScores.get(concept),0)}</td>
+                        <td> <button className="button" onClick={() => this.setState({ showConceptModal: concept })}> View Details </button> </td>
                         </tr>)})}
                     </tbody>
                     </table>

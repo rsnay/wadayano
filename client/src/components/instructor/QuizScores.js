@@ -190,7 +190,7 @@ class QuizScores extends Component {
                         <Breadcrumbs links={[
                             { to: "/instructor/courses", title: "Course List" },
                             { to: "/instructor/course/" + course.id, title: course.title },
-                            { to: "/instructor/quiz/" + quiz.id, title: quiz.title },
+                            //{ to: "/instructor/quiz/" + quiz.id, title: quiz.title },
                             { to: "/instructor/quiz/" + quiz.id + "/score", title: "View Scores", active: true }
                         ]} />
 
