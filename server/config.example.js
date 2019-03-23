@@ -11,6 +11,8 @@ const AWS_SES_KEY = 'example';
 const AWS_SES_SECRET = 'example';
 const AWS_SES_FROM_ADDRESS = 'no-reply@example.com';
 
+const FEEDBACK_EMAIL_ADDRESS = 'feedback@example.com';
+
 module.exports = {
     APP_SECRET,
     APP_SERVER_PORT,
