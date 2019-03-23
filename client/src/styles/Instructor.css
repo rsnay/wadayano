@@ -1,0 +1,321 @@
+/* Course Details */
+.instructor-tag {
+    border: solid #d4d4d4 1px;
+}
+.instructor-tag button.is-rounded {
+    height: 100%;
+}
+
+/* Quiz Editor */
+.concept-tag {
+    margin: 0.25rem;
+    cursor: pointer;
+    border: none;
+}
+.concept-tag:hover {
+    background-color: #d4d4d4!important;
+}
+.concept-tag:focus {
+    outline: none;
+    border: solid gray 1px;
+    background-color: #d4d4d4!important;
+}
+
+.concept-suggestions-list {
+    white-space: nowrap;
+    overflow: hidden;
+    flex: 1;
+}
+
+.collapsible-question-editor {
+    margin-bottom: 1rem;
+}
+
+.collapsible-question-editor .panel-heading {
+    padding-top: 1.2rem;
+    vertical-align: middle;
+}
+
+.collapsible-question-editor-button-group {
+    margin: -0.4rem -0.5rem 0 auto;
+}
+
+.collapsible-question-editor-title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-left: 1rem;
+    cursor: pointer;
+    min-width: 10%;
+}
+
+.collapsible-question-editor .panel-block:first-child {
+    border-radius: 4px 4px 0 0!important;
+}
+
+.collapsible-question-editor-footer {
+    border-radius: 0 0 4px 4px!important;
+}
+
+/* In collapsed question, have the bottom corners of the header rounded as well */
+.collapsible-question-editor .panel-heading:only-child {
+    border-bottom-right-radius: 4px!important;
+    border-bottom-left-radius: 4px!important;
+}
+
+.collapsible-question-editor .drag-handle {
+    padding: 1rem;
+    margin-top: -1rem;
+    margin-left: -1rem;
+    padding-right: 2rem;
+    margin-bottom: -1rem;
+}
+.collapsible-question-editor .panel-heading button {
+    margin-right: 0.3rem;
+}
+
+.quiz-editor-question-type {
+    margin-right: 0.3rem;
+}
+.quiz-editor-question-type input[type=radio] {
+    margin-top: -0.25rem;
+}
+
+.quiz-editor-question-prompt {
+    padding: 0!important;
+}
+
+.quiz-editor-question-prompt-placeholder {
+    position: relative;
+    width: 0;
+    overflow: visible;
+    z-index: 5;
+    vertical-align: top;
+    margin-top: -2rem;
+    margin-right: -1rem;
+    margin-left: 1rem;
+    color: #aaa;
+    pointer-events: none;
+}
+
+.quiz-editor-question-prompt > div {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    min-height: 10rem;
+    width: 100%;
+}
+
+.quiz-editor-question-option {
+    padding: 0!important;
+}
+
+.quiz-editor-question-option:first-child {
+    border-top: none!important;
+}
+
+.quiz-editor-question-option-placeholder {
+    display: block;
+    height: 0;
+    overflow: visible;
+    margin-left: 0.5rem;
+    margin-bottom: -0.2rem;
+    margin-top: 0.2rem;
+    color: #aaa;
+    font-size: 80%;
+    line-height: 250%;
+    pointer-events: none;
+}
+
+.quiz-editor-question-option-tinymce-container {
+    display: inline-block;
+    width: 100%;
+    border-left: 1px solid #dbdbdb;
+}
+
+.quiz-editor-question-option-tinymce-container > div {
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.quiz-editor-question-option input[type=text] {
+    margin: 0!important;
+    border: none;
+    border-radius: 0;
+}
+.quiz-editor-question-option input[type=radio] {
+    vertical-align: middle;
+    margin: 0.1rem 0.5rem 0 0.5rem;
+}
+
+.quiz-editor-question-option input[type=radio] + span {
+    font-size: 80%;
+    min-width: 1rem;
+    padding-left: 0.3rem;
+}
+.quiz-editor-question-option input[type=radio]:checked + span::after {
+    padding-left: 0.8rem;
+    content: "(Correct\00a0Response)";
+    color: #4EBD7D;
+}
+
+.quiz-editor-question-option label {
+    padding: 0 0.7rem 0 0;
+}
+
+.quiz-editor-question-short-answers input {
+    margin-top: 0.5rem;
+}
+
+.question-navbar {
+    position: sticky;
+    z-index: 10;
+    top: -5px;
+    left: 0;
+    margin: 0!important;
+    padding: 0.2rem 0.2rem 0 1rem;
+    background-color: rgb(245, 245, 245);
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px gray;
+    max-height: 20vh;
+    overflow-y: auto;
+}
+.question-navbar-title {
+    margin-top: 0.5rem;
+}
+.question-navbar-item {
+    display: inline!important;
+    color: #333!important;
+}
+
+.quiz-options-menu {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    padding: 0.3rem 0;
+}
+.quiz-options-menu .icon {
+    padding-right: 0.5rem;
+}
+
+/* TinyMCE customizations */
+.panel-block > .mce-panel {
+    border: none!important;
+}
+
+.mce-tinymce {
+    box-shadow: none!important;
+    -webkit-box-shadow: none!important;
+    -moz-box-shadow: none!important;
+}
+
+.mce-edit-focus {
+    outline: 1px solid #3273dc!important;
+    box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25)
+}
+
+.mce-floatpanel.mce-tinymce-inline {
+    margin-left: 200px!important;
+}
+
+/* Aggregated report labels */
+.aggregated-score-label {
+    display: flex;
+}
+.aggregated-score-label h4 {
+    padding: 0.3rem 0 0 1rem;
+}
+@media screen and (max-width: 500px) {
+    .aggregated-score-label h4 {
+        font-size: 1rem!important;
+    }
+}
+
+/* Instructor modal showing a student’s attempts for a quiz */
+.quiz-scores-report-modal {
+    width: 95vw!important;
+    max-width: 1400px;
+}
+
+.quiz-attempt-selector {
+    margin-left: -2rem;
+    margin-top: -1.5rem;
+}
+.quiz-attempt-selector li:first-child {
+    margin-top: 0.25em;
+}
+
+/* Bar graphs */
+.chart-bar {
+    display: inline-block;
+    background: #64C5D8;
+    border-radius: 3px;
+}
+
+/* Aggregated scores bar graph */
+.scores-bar-graph {
+    margin-bottom: -0.4rem!important;
+}
+.scores-bar-graph td {
+    text-align: center;
+    vertical-align: bottom!important;
+    border-bottom: none!important;
+    border-top: none!important;
+    padding: 0!important;
+}
+.scores-bar-graph .chart-bar {
+    width: 50%;
+    height: 0px;
+    clear: both;
+    max-width: 1rem;
+}
+.scores-bar-graph .chart-bar-label {
+    display: block;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 0.2rem;
+}
+.scores-bar-graph .tick-marks td {
+    height: 0px;
+    position: relative;
+    top: -10px;
+    font-size: 50%;
+    padding: 0.5em 0.75em!important;
+}
+.scores-bar-graph .tick-marks td:not(:first-child):not(:last-child) {
+    border: solid #ccc 1px;
+}
+.scores-bar-graph .tick-mark-labels td {
+    position: relative;
+    padding: 0;
+    font-size: 50%;
+}
+.scores-bar-graph-legend h4 {
+    padding-right: 0.5rem;
+}
+
+/* Aggregated confidence analysis bar graph */
+.confidence-bar-graph td {
+    padding: 0.25rem;
+    vertical-align: middle!important;
+    border: none!important;
+    white-space: nowrap;
+}
+.confidence-bar-graph td:first-child {
+    text-align: right;
+    color: #222;
+    padding-left: 0;
+}
+.confidence-bar-graph td:last-child {
+    text-align: left;
+}
+.confidence-bar-graph .chart-bar {
+    width: 100px;
+    height: 1rem;
+    vertical-align: -10%;
+    margin-right: 0.5rem;
+}
+.confidence-bar-graph .emoji-cell {
+    font-size: 2rem;
+    width: 3rem;
+    padding: 0 0.5rem 0 0.5rem;
+}

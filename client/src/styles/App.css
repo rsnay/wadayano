@@ -10,3 +10,137 @@ html {
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
+
+/* General */
+.navbar-burger {
+    /* Make burger fill navbar height, since our logo is taller than default navbar height */
+    height: auto!important;
+    min-height: 3.25rem;
+}
+
+input[type=checkbox] {
+    vertical-align: middle;
+    position: relative;
+    bottom: 1px;
+}
+
+input[type=radio] {
+    vertical-align: middle!important;
+    margin-top: -0.2rem;
+    margin-right: 0.5rem;
+}
+
+.fade-opacity {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    -webkit-transition: opacity 0.3s ease-in-out;
+    -moz-transition: opacity 0.3s ease-in-out;
+    -ms-transition: opacity 0.3s ease-in-out;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+/* Hide firefox dotted focus on buttons */
+button::-moz-focus-inner { 
+    border: 0; 
+}
+button.is-light:focus, a.is-light:focus {
+    box-shadow: 0 0 0 0.125em rgba(104, 197, 215, 0.25)!important;
+}
+
+/* On mobile browsers with toolbars that hide and disappear, attempt to have the modal dialogs not get clipped by the toolbars. Issue is that Bulma's 100vh behaves differently than 100% of viewport height. Could cause issues, depending on the height of the modal's parent element? */
+.modal-card {
+    max-height: calc(100% - 40px)!important;
+}
+/* Make sure long modal title doesn't hide the close button */
+.modal-card-title {
+    max-width: calc(100% - 15px);
+    margin-bottom: 0!important;
+}
+
+/* Shift butter-toast toast notifications to below header */
+.butter-toast .notification {
+    width: 300px;
+    max-width: 90vw;
+}
+
+/* Sortable tables */
+.sticky-header th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: white;
+}
+.sortable-header th {
+    cursor: pointer;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+@media screen and (max-width: 414px) {
+    .table-wrapper {
+        overflow-x: auto;
+    }
+}
+
+/* Responsive tables */
+/* Largely from https://elvery.net/demo/responsive-tables/#no-more-tables */
+@media only screen and (max-width: 750px) {
+	
+	/* Force table to not be like tables anymore */
+	.responsive-table table, 
+	.responsive-table thead, 
+	.responsive-table tbody, 
+	.responsive-table th, 
+	.responsive-table td, 
+	.responsive-table tr { 
+		display: block; 
+	}
+ 
+	/* Hide table headers (but not display: none;, for accessibility) */
+	.responsive-table thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+ 
+	.responsive-table tr {
+        /* Override zebra stripes */
+        background: inherit!important;
+        margin-bottom: 1rem;
+        /* Add bottom border on tr instead of td */
+        border-bottom: solid #cecece 1px;
+    }
+
+    .responsive-table tr:last-child {
+        /* Hide bottom border on last row */
+        border-bottom: none;
+    }
+ 
+	.responsive-table td { 
+		/* Behave  like a "row" */
+		border: none!important;
+		position: relative;
+		padding-left: 45%!important; 
+		white-space: normal;
+		text-align:left;
+	}
+ 
+	.responsive-table td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 0.5rem;
+		left: 0.5rem;
+		width: 40%; 
+		padding-right: 0.5rem; 
+		white-space: nowrap;
+		text-align:left;
+		font-weight: bold;
+	}
+ 
+	/* Label the data */
+	.responsive-table td:before { content: attr(data-title); }
+}
