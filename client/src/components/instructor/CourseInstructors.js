@@ -96,9 +96,9 @@ class CourseInstructors extends Component {
             <div className="is-flex-tablet">
                 <span style={{flex: "1 1 0%"}}>
                     {course.instructors.map(instructor => 
-                        <span className="tag is-light is-large is-rounded instructor-tag" style={{margin: ".25rem", paddingRight: "0"}} key={instructor.email}>
+                        <span className="tag is-white is-large is-rounded instructor-tag" style={{margin: ".25rem", paddingRight: "0"}} key={instructor.email}>
                             {instructor.email}&nbsp;&nbsp;
-                            <button className="button is-gray is-rounded"
+                            <button className="button is-light is-rounded"
                                 onClick={() => this.removeInstructor(course, instructor.email)}
                                 title="Remove Instructor"
                             >
@@ -117,7 +117,7 @@ class CourseInstructors extends Component {
                 <br />
             </div>
             {course.pendingCourseInvites.map(invite => 
-                <span className="tag is-warning is-large is-rounded instructor-tag" style={{margin: ".25rem"}} key={invite.email}>
+                <span className="tag is-warning is-large is-rounded instructor-tag-pending" style={{margin: ".25rem"}} key={invite.email}>
                     {invite.email} (pending)&nbsp;
                     <button className="delete" onClick={() => this.removeInstructor(course, invite.email)} title="Cancel Invite"></button>
                 </span>
