@@ -60,6 +60,12 @@ const tinymceInlineConfig = {
 
 const unsavedAlertMessage = 'You have unsaved questions in this quiz. Do you want to discard these changes?';
 
+/**
+ * This component allows question editing (used in QuizEditor), including the concept, prompt,
+ * question type, and multiple choice options or correct short answers.
+ * It handles saving and deleting the question itself, and provides callbacks to alert the QuizEditor.
+ * This is currently the most complex component in wadayano!
+ */
 export class QuestionEditor extends Component {
     constructor(props) {
         super(props);
@@ -77,16 +83,16 @@ export class QuestionEditor extends Component {
         };
 
         // Pre-bind functions
-        this._loadQuestion = this._loadQuestion.bind(this);
-        this._deleteQuestion = this._deleteQuestion.bind(this);
-        this._saveQuestion = this._saveQuestion.bind(this);
-        this._discardChanges = this._discardChanges.bind(this);
-        this._onBeforeUnload = this._onBeforeUnload.bind(this);
+        this.loadQuestion = this.loadQuestion.bind(this);
+        this.deleteQuestion = this.deleteQuestion.bind(this);
+        this.saveQuestion = this.saveQuestion.bind(this);
+        this.discardChanges = this.discardChanges.bind(this);
+        this.onBeforeUnload = this.onBeforeUnload.bind(this);
     }
     
     componentDidMount() {
         // Add beforeunload listener to alert user of unsaved changes
-        window.addEventListener('beforeunload', this._onBeforeUnload);
+        window.addEventListener('beforeunload', this.onBeforeUnload);
 
         // If question is new and has a temporary ID, set the flag and autoexpand
         if (/^_new[0-9]*/.test(this.props.questionId)) {
@@ -112,16 +118,16 @@ export class QuestionEditor extends Component {
         } else {
             // Otherwise, if starting expanded, call the query immediately
             if (this.props.defaultExpanded) {
-                this._loadQuestion();
+                this.loadQuestion();
             }
         }
     }
 
     componentWillUnmount() {
-        window.removeEventListener('beforeunload', this._onBeforeUnload);
+        window.removeEventListener('beforeunload', this.onBeforeUnload);
     }
 
-    _onBeforeUnload(e) {
+    onBeforeUnload(e) {
         // Warn of any unsaved changes before navigating away
         if (this.state.isDirty) {
             e.returnValue = unsavedAlertMessage;
@@ -129,7 +135,7 @@ export class QuestionEditor extends Component {
         }
     }
     
-    async _loadQuestion() {
+    async loadQuestion() {
         // Don’t reload question if already expanded
         if (this.state.isExpanded) { return; }
         try {
@@ -148,7 +154,7 @@ export class QuestionEditor extends Component {
         }
     }
 
-    async _deleteQuestion() {
+    async deleteQuestion() {
         if (!window.confirm('Are you sure you want to delete this question? All students’ attempts for this question will also be deleted.')) { return; }
         this.setState({ isDeleting: true, isExpanded: false, isDirty: false });
         try {
@@ -176,7 +182,7 @@ export class QuestionEditor extends Component {
 
     // Performs various checks on a given question (for before the quiz is saved)
     // Returns true if valid, or a message describing why it’s invalid
-    _validateQuestion() {
+    validateQuestion() {
         const { question } = this.state;
         // Ensure the question has a non-empty prompt
         if (question.prompt === null || question.prompt.trim() === '') {
@@ -224,9 +230,9 @@ export class QuestionEditor extends Component {
         return true;
     }
     
-    async _saveQuestion() {
+    async saveQuestion() {
         this.setState({ isLoading: true });
-        const valid = this._validateQuestion();
+        const valid = this.validateQuestion();
         if (valid !== true) {
             alert(`Please correct this error: ${valid}`);
             this.setState({ isLoading: false });
@@ -295,7 +301,7 @@ export class QuestionEditor extends Component {
         }
     }
 
-    _discardChanges() {
+    discardChanges() {
         // If it’s a new question, it hasn’t been saved to server, so ‘delete’ the question to remove it entirely
         if (this.state.isNew) {
             // If there is content in the prompt, confirm deletion
@@ -312,27 +318,27 @@ export class QuestionEditor extends Component {
         }
     }
 
-    _handlePromptChange(newPrompt) {
+    handlePromptChange(newPrompt) {
         let question = update(this.state.question, { $merge: { prompt: newPrompt } });
         this.setState({ question, isDirty: true });
     }
     
-    _handleConceptChange(newConcept) {
+    handleConceptChange(newConcept) {
         let question = update(this.state.question, { $merge: { concept: newConcept } });
         this.setState({ question, isDirty: true });
     }
 
-    _handleTypeChange(newType) {
+    handleTypeChange(newType) {
         let question = update(this.state.question, { $merge: { type: newType } });
         this.setState({ question, isDirty: true });
     }
 
-    _handleOptionChange(optionIndex, newOption) {
+    handleOptionChange(optionIndex, newOption) {
         let question = update(this.state.question, { options: { [optionIndex]: { $merge: { text: newOption } } } } );
         this.setState({ question, isDirty: true });
     }
 
-    _handleCorrectOptionChange(optionIndex, checked) {
+    handleCorrectOptionChange(optionIndex, checked) {
         const previousCorrectIndex = this.state.question.options.findIndex(o => o.isCorrect === true);
 
         // Update correct option
@@ -350,7 +356,7 @@ export class QuestionEditor extends Component {
         this.setState({ question, isDirty: true });
     }
 
-    _handleShortAnswerChange(index, newShortAnswer) {
+    handleShortAnswerChange(index, newShortAnswer) {
         let question;
         // Remove empty short answer
         if (newShortAnswer === '') {
@@ -377,19 +383,19 @@ export class QuestionEditor extends Component {
         );
 
         const saveButton = isExpanded && (
-            <button className={"button is-primary" + (isLoading ? " is-loading" : "")} onClick={this._saveQuestion}>
+            <button className={"button is-primary" + (isLoading ? " is-loading" : "")} onClick={this.saveQuestion}>
                 <span>Save</span>
             </button>
         );
 
         const cancelButton = isExpanded && (
-            <button className="button" onClick={this._discardChanges}>
+            <button className="button" onClick={this.discardChanges}>
                 <span>Cancel</span>
             </button>
         );
 
         const editButton = !isExpanded && (
-            <button className={"button" + (isLoading ? " is-loading" : "")} disabled={isDeleting} onClick={this._loadQuestion}>
+            <button className={"button" + (isLoading ? " is-loading" : "")} disabled={isDeleting} onClick={this.loadQuestion}>
                 <span className="icon">
                     <i className="fas fa-edit"></i>
                 </span>
@@ -398,7 +404,7 @@ export class QuestionEditor extends Component {
         );
 
         const deleteButton = !isNew && (
-            <button className={"button" + (isDeleting ? " is-loading" : "")} onClick={this._deleteQuestion} title="Delete Question">
+            <button className={"button" + (isDeleting ? " is-loading" : "")} onClick={this.deleteQuestion} title="Delete Question">
                 <span className="icon">
                     <i className="fas fa-trash-alt"></i>
                 </span>
@@ -411,7 +417,7 @@ export class QuestionEditor extends Component {
                 {/* Another element needed so react won’t reinsert placeholder after tinymce editor, since tinymce modifies dom and react can only do its best to adjust */}
                 <span></span>
                 <Editor value={question.prompt}
-                    onEditorChange={(newPrompt) => this._handlePromptChange(newPrompt)}
+                    onEditorChange={(newPrompt) => this.handlePromptChange(newPrompt)}
                     init={tinymceConfig} />
             </ScrollIntoViewIfNeeded>
         );
@@ -419,12 +425,12 @@ export class QuestionEditor extends Component {
         const metadataEditor = isExpanded && (
             <div className="panel-block quiz-editor-question-concept">
                 <label className="is-inline" style={{marginRight: "1rem"}}>Concept</label>
-                <ConceptSelector concept={question.concept} onChange={(c) => this._handleConceptChange(c)} courseId={this.props.courseId} />
+                <ConceptSelector concept={question.concept} onChange={(c) => this.handleConceptChange(c)} courseId={this.props.courseId} />
 
                 <OptionSelector
                     className="quiz-editor-question-type"
                     value={question.type}
-                    onChange={(value) => this._handleTypeChange(value)}
+                    onChange={(value) => this.handleTypeChange(value)}
                     type="radio"
                     multilineRadio={false}
                     options={[
@@ -455,7 +461,7 @@ export class QuestionEditor extends Component {
                                 id={option.id + "radio"}
                                 key={option.id + "radio"}
                                 checked={option.isCorrect}
-                                onChange={(e) => this._handleCorrectOptionChange(optionIndex, e.currentTarget.value)}
+                                onChange={(e) => this.handleCorrectOptionChange(optionIndex, e.currentTarget.value)}
                                 name={"question" + question.id}
                                 disabled={option.text.trim() === ""}
                                 type="radio" />
@@ -467,7 +473,7 @@ export class QuestionEditor extends Component {
                             </span>}
                             <Editor
                                 value={option.text}
-                                onEditorChange={(newOption) => this._handleOptionChange(optionIndex, newOption)}
+                                onEditorChange={(newOption) => this.handleOptionChange(optionIndex, newOption)}
                                 init={tinymceInlineConfig} />
                         </span>
                     </div>)
@@ -487,7 +493,7 @@ export class QuestionEditor extends Component {
                     <input
                         value={shortAnswer}
                         key={index}
-                        onChange={(e) => this._handleShortAnswerChange(index, e.target.value)}
+                        onChange={(e) => this.handleShortAnswerChange(index, e.target.value)}
                         placeholder="Add a correct answer"
                         className="input"
                         type="text"
@@ -502,7 +508,7 @@ export class QuestionEditor extends Component {
                 <p className="panel-heading is-flex">
                     {dragHandle}
 
-                    <span className="question-editor-title" onClick={this._loadQuestion}>
+                    <span className="question-editor-title" onClick={this.loadQuestion}>
                         {this.props.questionIndex !== null && `${this.props.questionIndex + 1}. `}
                         {stripTags(question ? question.prompt : this.props.defaultPrompt)}
                     </span>

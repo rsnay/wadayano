@@ -187,13 +187,24 @@ export class QuizEditor extends Component {
             {/* Only render up to 20 questions by omitting non-factors of the divisor, but always include first and last questions */}
             {allQuestions.map((questionId, index) => {
                 if ((index + 1) % divisor === 0 || index === 0 || index === allQuestions.length - 1) {
-                    return (<button key={questionId} onClick={() => this.scrollToQuestionId(questionId)} className="question-navbar-item button is-text">{index + 1}</button>);
+                    return (
+                        <button
+                            key={questionId}
+                            onClick={() => this.scrollToQuestionId(questionId)}
+                            className="question-navbar-item button is-text"
+                        >
+                            {index + 1}
+                        </button>
+                    );
                 } else { return null; }
             })}
-            <button className={"button is-text question-navbar-item"+ (this.state.isAddingQuestion ? " is-loading" : "")} title="Add Question" onClick={this.addQuestion}>
+            <button
+                className={"button is-text question-navbar-item"+ (this.state.isAddingQuestion ? " is-loading" : "")}
+                title="Add Question"
+                onClick={this.addQuestion}
+            >
                 <span className="icon"><i className="fas fa-plus"></i></span>
             </button>
-            <div id="editor-toolbar"></div>
         </div>
     );
 
@@ -213,7 +224,7 @@ export class QuizEditor extends Component {
     ));
 
     const newQuestionButton = (
-        <div className="panel question-editor no-select">
+        <div className="panel question-editor no-select" onClick={this.addQuestion}>
             <p className="panel-heading is-flex">
                 <i style={{paddingLeft: "1rem"}}>New Question</i>
                 <span className="is-pulled-right is-flex question-editor-button-group">
@@ -305,13 +316,13 @@ export class QuizEditor extends Component {
 
         </div>
       </section>
-    )
+    );
   }
 
 }
 
 // Get the quiz
-export const QUIZ_QUERY = gql`
+const QUIZ_QUERY = gql`
   query quizQuery($id: ID!) {
     quiz(id:$id) {
         id
@@ -330,7 +341,7 @@ export const QUIZ_QUERY = gql`
         }
     }
   }
-`
+`;
 
 export default withAuthCheck(compose(
     graphql(QUIZ_QUERY, {name: 'quizQuery',
