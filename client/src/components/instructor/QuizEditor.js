@@ -13,7 +13,7 @@ import LoadingBox from '../shared/LoadingBox';
 import Modal from '../shared/Modal';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
-import CollapsibleQuestionEditor from './CollapsibleQuestionEditor';
+import QuestionEditor from './QuestionEditor';
 import QuizInfoForm from './QuizInfoForm';
 import QuizJSONImportModal from './QuizJSONImportModal';
 
@@ -198,7 +198,7 @@ export class QuizEditor extends Component {
     );
 
     const questionList = allQuestions.map((questionId, index) => (
-        <CollapsibleQuestionEditor
+        <QuestionEditor
             key={questionId}
             courseId={this.props.quizQuery.quiz.course.id}
             quizId={this.props.quizQuery.quiz.id}
@@ -213,10 +213,10 @@ export class QuizEditor extends Component {
     ));
 
     const newQuestionButton = (
-        <div className="panel collapsible-question-editor no-select">
+        <div className="panel question-editor no-select">
             <p className="panel-heading is-flex">
                 <i style={{paddingLeft: "1rem"}}>New Question</i>
-                <span className="is-pulled-right is-flex collapsible-question-editor-button-group">
+                <span className="is-pulled-right is-flex question-editor-button-group">
                     <button className={"button" + (this.state.isAddingQuestion ? " is-loading" : "")} onClick={this.addQuestion}>
                         <span className="icon"><i className="fas fa-plus"></i></span>
                         <span>Add Question</span>

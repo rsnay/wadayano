@@ -60,7 +60,7 @@ const tinymceInlineConfig = {
 
 const unsavedAlertMessage = 'You have unsaved questions in this quiz. Do you want to discard these changes?';
 
-export class CollapsibleQuestionEditor extends Component {
+export class QuestionEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -497,17 +497,17 @@ export class CollapsibleQuestionEditor extends Component {
         );
 
         return (
-            <div className="panel collapsible-question-editor" id={this.props.elementId}>
+            <div className="panel question-editor" id={this.props.elementId}>
                 {!isExpanded && (
                 <p className="panel-heading is-flex">
                     {dragHandle}
 
-                    <span className="collapsible-question-editor-title" onClick={this._loadQuestion}>
+                    <span className="question-editor-title" onClick={this._loadQuestion}>
                         {this.props.questionIndex !== null && `${this.props.questionIndex + 1}. `}
                         {stripTags(question ? question.prompt : this.props.defaultPrompt)}
                     </span>
 
-                    <span className="is-pulled-right is-flex collapsible-question-editor-button-group">
+                    <span className="is-pulled-right is-flex question-editor-button-group">
                         {deleteButton}
                         {editButton}
                         {cancelButton}
@@ -523,8 +523,8 @@ export class CollapsibleQuestionEditor extends Component {
                 {shortAnswersEditor}
 
                 {isExpanded && (
-                    <p className="panel-heading is-flex collapsible-question-editor-footer">
-                        <span className="is-pulled-right is-flex collapsible-question-editor-button-group">
+                    <p className="panel-heading is-flex question-editor-footer">
+                        <span className="is-pulled-right is-flex question-editor-button-group">
                             {deleteButton}
                             {editButton}
                             {cancelButton}
@@ -544,7 +544,7 @@ export class CollapsibleQuestionEditor extends Component {
     }
 }
     
-CollapsibleQuestionEditor.propTypes = {
+QuestionEditor.propTypes = {
     elementId: PropTypes.string,
     // courseId is needed for getting concept suggestions from the course
     courseId: PropTypes.string,
@@ -592,17 +592,17 @@ mutation deleteQuestionMutation($id: ID!) {
     deleteQuestion(id: $id) {
         id
     }
-}`
+}`;
 
 // Manually wrap in ApolloConsumer to get access to Apollo client to manually fire query
 const WithApolloClient = (props) => (
     <ApolloConsumer>
-    {client => <CollapsibleQuestionEditor client={client} {...props} />}
+        {client => <QuestionEditor client={client} {...props} />}
     </ApolloConsumer>
-    );
+);
     
 export default compose(
     graphql(ADD_QUESTION, {name: 'addQuestionMutation'}),
     graphql(UPDATE_QUESTION, {name: 'updateQuestionMutation'}),
     graphql(DELETE_QUESTION, {name: 'deleteQuestionMutation'}),
-    ) (WithApolloClient)
+) (WithApolloClient);

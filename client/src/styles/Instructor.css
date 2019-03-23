@@ -27,20 +27,20 @@
     flex: 1;
 }
 
-.collapsible-question-editor {
+.question-editor {
     margin-bottom: 1rem;
 }
 
-.collapsible-question-editor .panel-heading {
+.question-editor .panel-heading {
     padding-top: 1.2rem;
     vertical-align: middle;
 }
 
-.collapsible-question-editor-button-group {
+.question-editor-button-group {
     margin: -0.4rem -0.5rem 0 auto;
 }
 
-.collapsible-question-editor-title {
+.question-editor-title {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -49,28 +49,28 @@
     min-width: 10%;
 }
 
-.collapsible-question-editor .panel-block:first-child {
+.question-editor .panel-block:first-child {
     border-radius: 4px 4px 0 0!important;
 }
 
-.collapsible-question-editor-footer {
+.question-editor-footer {
     border-radius: 0 0 4px 4px!important;
 }
 
 /* In collapsed question, have the bottom corners of the header rounded as well */
-.collapsible-question-editor .panel-heading:only-child {
+.question-editor .panel-heading:only-child {
     border-bottom-right-radius: 4px!important;
     border-bottom-left-radius: 4px!important;
 }
 
-.collapsible-question-editor .drag-handle {
+.question-editor .drag-handle {
     padding: 1rem;
     margin-top: -1rem;
     margin-left: -1rem;
     padding-right: 2rem;
     margin-bottom: -1rem;
 }
-.collapsible-question-editor .panel-heading button {
+.question-editor .panel-heading button {
     margin-right: 0.3rem;
 }
 
