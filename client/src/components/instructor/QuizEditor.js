@@ -291,7 +291,7 @@ export class QuizEditor extends Component {
 
         {(quiz.quizAttempts.length > 0) &&
             <div className="notification is-warning">
-            <p>Students have taken this quiz. Changing quiz questions will invalidate data and lead to inconsistencies and/or errors. Please <Link to="/feedback">contact us</Link> if you need assistance.</p>
+            <p>Students have taken (or started taking) this quiz. Changing quiz questions will invalidate data and lead to inconsistencies and/or errors. Please <Link to="/feedback">contact us</Link> if you need assistance.</p>
             </div>
         }
 
