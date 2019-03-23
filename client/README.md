@@ -1,10 +1,12 @@
-# Knowledge Monitoring Dashboard Client
+# wadayano frontend
 - Requirements: recent NPM/Yarn installation
 - Get started by running these commands in this directory:
   - `yarn`
   - `yarn build-css`
   - `yarn start`
 - Open `localhost:3000` (3000 is default port) in a browser
+
+*Following is the default README.md from create-react-app*
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
