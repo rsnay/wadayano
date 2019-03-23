@@ -38,8 +38,6 @@ class AggregatedQuizReview extends Component {
             conceptAverageWadayanoScores: null,
             showConceptModal: null
         };
-    
-        // Pre-bind this function, to make adding it to input fields easier
     }
 
     componentWillReceiveProps(nextProps) {
@@ -203,45 +201,14 @@ class AggregatedQuizReview extends Component {
         // Quiz object from database
         const quiz = this.props.quizQuery.quiz;
 
-        console.log(quiz);
-
         // Get all unique concepts in the quiz
         const concepts = Array.from(new Set(quiz.questions.map(q => q.concept)));
-        console.log(concepts);
 
         const { scores, averageScore, predictedScores, averagePredictedScore, averageWadayanoScore, confidenceAnalysisCounts, conceptAverageScores, conceptAveragePredictedScores, conceptAverageWadayanoScores } = this.state;
 
-        const averageScoreLabel = (score) => (
-            <div className="is-flex aggregated-score-label">
-                <span className="icon is-medium is-pulled-left has-text-info">
-                    <i className="fas fa-2x fa-chart-bar"></i>
-                </span>
-                <h4 className="subtitle is-flex flex-1">
-                    Average Score
-                </h4>
-                <h4 className="subtitle is-flex">
-                    {formatScore(score, 0)}
-                </h4>
-            </div>
-        );
-
-        const averagePredictedScoreLabel = (score) => (
-            <div className="is-flex aggregated-score-label">
-                <span className="icon is-medium is-pulled-left has-text-warning">
-                    <i className="fas fa-2x fa-chart-line"></i>
-                </span>
-                <h4 className="subtitle is-flex flex-1">
-                    Average Predicted Score
-                </h4>
-                <h4 className="subtitle is-flex">
-                    {formatScore(score, 0)}
-                </h4>
-            </div>
-        );
-
         const averageWadayanoScoreLabel = (score) => (
             <div className="is-flex aggregated-score-label">
-                <img className="wadayano-score-logo" src={Logo} alt="wadayano logo" style={{height: "2rem"}} />
+                <img src={Logo} alt="wadayano logo" style={{height: "2rem"}} />
                 <h4 className="subtitle is-flex flex-1">
                     Average Wadayano Score
                 </h4>
@@ -285,33 +252,32 @@ class AggregatedQuizReview extends Component {
                         </div>
                     </div>
                 </div>
-                <div className = "column">
                 <div className="box">
-                <h3 className="title">Concepts</h3>
-                    <table className ="table is-striped is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th>Concept</th>
-                            <th>Average Score</th>
-                            <th>Average Predicted Score</th>
-                            <th>Average Wadayano Score</th>
-                            <th> View Details </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {concepts.map(concept => {
-                        return(
-                    <tr id={concept+"rowid"}>
-                        <td>{concept}</td>
-                        <td>{formatScore(conceptAverageScores.get(concept), 0)}</td>
-                        <td>{formatScore(conceptAveragePredictedScores.get(concept),0)}</td>
-                        <td>{formatScore(conceptAverageWadayanoScores.get(concept),0)}</td>
-                        <td> <button className="button" onClick={() => this.setState({ showConceptModal: concept })}> View Details </button> </td>
-                        </tr>)})}
-                    </tbody>
+                    <h3 className="title">Concepts</h3>
+                    <table className="table is-striped is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Concept</th>
+                                <th>Average Score</th>
+                                <th>Average Predicted Score</th>
+                                <th>Average Wadayano Score</th>
+                                <th>View Questions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {concepts.map(concept => { return (
+                                <tr key={concept} style={{ cursor: "pointer" }} onClick={() => this.setState({ showConceptModal: concept })}>
+                                    <td>{concept}</td>
+                                    <td>{formatScore(conceptAverageScores.get(concept), 0)}</td>
+                                    <td>{formatScore(conceptAveragePredictedScores.get(concept),0)}</td>
+                                    <td>{formatScore(conceptAverageWadayanoScores.get(concept),0)}</td>
+                                    <td><button className="button is-light" onClick={() => this.setState({ showConceptModal: concept })}>View Questions</button></td>
+                                </tr>
+                            )})}
+                        </tbody>
                     </table>
                 </div>
-                </div>
+
                 <Modal
                     modalState={this.state.showConceptModal !== null}
                     closeModal={() => this.setState({ showConceptModal: null })}
@@ -321,8 +287,6 @@ class AggregatedQuizReview extends Component {
                         ))}
                         <br/>
                 </Modal>
-                
-
             </div>
         );
     }
