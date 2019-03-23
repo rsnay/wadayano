@@ -135,9 +135,38 @@ class QuizScores extends Component {
                 { title: 'Confidence Analysis', columnId: 'confidenceAnalysis', sortable: true },
                 { title: 'View Report', columnId: 'viewReport', sortable: false }
             ];
+
+            const scoreRows = this.state.studentScores.map(student => {
+                // Output score for each student, if quiz was taken
+                return (
+                    <tr key={student.id} className="has-cursor-pointer" onClick={() => this.showStudentAttempts(student)}>
+                        <td style={{whiteSpace: "nowrap"}}>{student.name}</td>
+                        {(student.attempts > 0) ? 
+                            <React.Fragment>
+                                <td>{student.attempts}</td>
+                                <td>{formatScore(student.highestScore)}</td>
+                                <td>{formatScore(student.predictedScore)}</td>
+                                <td>{formatScore(student.wadayanoScore)}</td>
+                                <td>{student.confidenceAnalysis.emoji}&nbsp;{student.confidenceAnalysis.text}</td>
+                                <td>
+                                    <button className="button is-light"
+                                        onClick={() => this.showStudentAttempts(student)}>
+                                        <span className="icon">
+                                        <i className="fas fa-history"></i>
+                                        </span>
+                                        <span>View Report</span>
+                                    </button>
+                                </td>
+                            </React.Fragment>
+                        : <td colSpan="6"><i>Quiz not taken</i></td>
+                        }
+                    </tr>
+                );
+            });
+
             scoresTable = (
                 <div className="table-wrapper">
-                    <table className="table is-striped is-fullwidth survey-results-table">
+                    <table className="table is-striped is-hoverable is-fullwidth survey-results-table">
                         <thead>
                             <tr className="sticky-header sortable-header">
                                 {columns.map(col => (
@@ -151,31 +180,7 @@ class QuizScores extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.studentScores.map(student => {
-                                // Output score for each student, if quiz was taken
-                                return (<tr key={student.id}>
-                                    <td style={{whiteSpace: "nowrap"}}>{student.name}</td>
-                                    {(student.attempts > 0) ? 
-                                        <React.Fragment>
-                                            <td>{student.attempts}</td>
-                                            <td>{formatScore(student.highestScore)}</td>
-                                            <td>{formatScore(student.predictedScore)}</td>
-                                            <td>{formatScore(student.wadayanoScore)}</td>
-                                            <td>{student.confidenceAnalysis.emoji}&nbsp;{student.confidenceAnalysis.text}</td>
-                                            <td>
-                                                <button className="button is-light"
-                                                    onClick={() => this.showStudentAttempts(student)}>
-                                                    <span className="icon">
-                                                    <i className="fas fa-history"></i>
-                                                    </span>
-                                                    <span>View Report</span>
-                                                </button>
-                                            </td>
-                                        </React.Fragment>
-                                    : <td colSpan="6"><i>Quiz not taken</i></td>
-                                    }
-                                </tr>);
-                            })}
+                            {scoreRows}
                         </tbody>
                     </table>
                 </div>

@@ -42,6 +42,10 @@ input[type=radio] {
     flex: 1;
 }
 
+.has-cursor-pointer {
+    cursor: pointer;
+}
+
 /* Hide firefox dotted focus on buttons */
 button::-moz-focus-inner { 
     border: 0; 

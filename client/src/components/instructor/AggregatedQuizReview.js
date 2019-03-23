@@ -254,7 +254,7 @@ class AggregatedQuizReview extends Component {
                 </div>
                 <div className="box">
                     <h3 className="title">Concepts</h3>
-                    <table className="table is-striped is-fullwidth">
+                    <table className="table is-striped is-hoverable is-fullwidth">
                         <thead>
                             <tr>
                                 <th>Concept</th>
@@ -266,7 +266,7 @@ class AggregatedQuizReview extends Component {
                         </thead>
                         <tbody>
                             {concepts.map(concept => { return (
-                                <tr key={concept} style={{ cursor: "pointer" }} onClick={() => this.setState({ showConceptModal: concept })}>
+                                <tr key={concept} className="has-cursor-pointer" onClick={() => this.setState({ showConceptModal: concept })}>
                                     <td>{concept}</td>
                                     <td>{formatScore(conceptAverageScores.get(concept), 0)}</td>
                                     <td>{formatScore(conceptAveragePredictedScores.get(concept),0)}</td>
