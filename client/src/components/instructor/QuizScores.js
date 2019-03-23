@@ -139,7 +139,7 @@ class QuizScores extends Component {
             const scoreRows = this.state.studentScores.map(student => {
                 // Output score for each student, if quiz was taken
                 return (
-                    <tr key={student.id} className="has-cursor-pointer" onClick={() => this.showStudentAttempts(student)}>
+                    <tr key={student.id} className="has-cursor-pointer" onClick={(student.attempts > 0) ? () => this.showStudentAttempts(student): () => {}}>
                         <td style={{whiteSpace: "nowrap"}}>{student.name}</td>
                         {(student.attempts > 0) ? 
                             <React.Fragment>
