@@ -54,6 +54,9 @@ const server = new GraphQLServer({
   resolverValidationOptions :{
     requireResolversForResolveType: false
   },
+  // Since the shield catches errors and masks as unauthorized,
+  // commenting this next line out is very helpful for debugging.
+  // Just make *certain* that it is uncommented before committing/pushing.
   middlewares: [shield(Permissions)],
   context: req => ({
     ...req,

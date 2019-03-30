@@ -4,9 +4,17 @@ datamodel: datamodel.graphql
 # You can only access the API when providing JWTs that are signed with this secret
 #secret: mysecret123
 
+# NOTE: before deploying, make sure that PRISMA_MANAGEMENT_API_SECRET is set in the environment to SECRET_GOES_HERE
+# export PRISMA_MANAGEMENT_API_SECRET=SECRET_GOES_HERE
+
 # The endpoint represents the HTTP endpoint for your Prisma API.
 # It encodes several pieces of information:
 # * Prisma server (`localhost:4466` in this example)
 # * Service name (`myservice` in this example)
 # * Stage (`dev` in this example)
 endpoint: http://localhost:4466/myservice/dev
+
+# A "post-deployment" hook that downloads the newest schema (this should be run from the `server` directory, not the `database` directory)
+hooks:
+  post-deploy:
+    - graphql get-schema --project database

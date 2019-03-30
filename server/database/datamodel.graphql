@@ -1,3 +1,8 @@
+# This is the Prisma datamodel, from which Prisma generates src/generated/prisma.graphql. The generated schema is the actual schema used for the database-level (private) GraphQL API.
+# The application-level (public) GraphQL API schema is defined in schema.graphql, and should import relevant data types from this datamodel.graphql. The app-level API will then interact with the DB-level Prisma API.
+
+# After updating this file, run `prisma deploy` from the `server` directory (not in the `database` directory) on the dev machine. This will update the database for the dev environment, and download the new generated Prisma schema. (Run `prisma deploy` with the new datamodel on the production EC2 instance to migrate the production DB before deploying code that uses it; e.g. `git pull`, then `prisma deploy` in `database` directory, then `pm2 restart index` if successful)
+
 # Users
 type Instructor {
     id: ID! @unique
@@ -59,6 +64,8 @@ type Quiz {
     createdAt: DateTime!
     quizAttempts: [QuizAttempt!]! @relation(name: "QuizQuizAttempts", onDelete: CASCADE)
     questions: [Question!]! @relation(name: "QuizQuestions", onDelete: CASCADE)
+    # orderedQuestionIds is not used, but is here to support future question reordering
+    # Currently, questions in quizzes are presented in a random order
     orderedQuestionIds: [ID!]
     course: Course  @relation(name: "CourseQuizzes", onDelete: SET_NULL)
     title: String!
