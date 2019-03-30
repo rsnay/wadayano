@@ -44,7 +44,8 @@ const Permissions = {
             attemptQuestion: rules.ownsQuizAttempt,
         */
       
-        submitSurveyResult: rules.enrolledInCourse
+        submitSurveyResult: rules.enrolledInCourse,
+        trackEvent: allow
     },
     Course: {
         title: rules.canAccessCourse,

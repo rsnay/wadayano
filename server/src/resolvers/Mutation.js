@@ -748,6 +748,26 @@ async function submitSurveyResult(root, args, context, info) {
         }
     }, info);
 }
+
+function trackEvent(root, args, context, info) {
+    // Check for valid login (student or instructor)
+    const { userId, isInstructor } = getUserInfo(context);
+    if (userId === null) {
+        return;
+    }
+    console.log("HI!!!!!!!!!!");
+
+
+    // Save the tracking event, and connect it to the user
+    const { event } = args;
+    console.log(event);
+    return context.db.mutation.createTrackingEvent({
+        data: {
+            ...event,
+            [isInstructor ? 'instructor' : 'student']: { connect: { id: userId } }
+        }
+    }, info);
+}
     
 module.exports = {
     addCourse,
@@ -773,4 +793,5 @@ module.exports = {
     attemptQuestion,
     rateConcepts,
     submitSurveyResult,
+    trackEvent
 }

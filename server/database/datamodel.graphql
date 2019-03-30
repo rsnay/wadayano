@@ -130,3 +130,19 @@ type SurveyResult {
     student: Student! @relation(name: "StudentSurveyResults", onDelete: SET_NULL)
     answers: Json!
  }
+
+enum TrackingEventAction {
+    STUDENT_REVIEW_QUIZ_ATTEMPT
+    STUDENT_REVIEW_CONCEPT
+}
+
+type TrackingEvent {
+    id: ID! @unique
+    createdAt: DateTime!
+    # Since Prisma currently doesn’t support polymorphic relations (ETA Q3 2019),
+    # store either a student or instructor. See https://github.com/prisma/prisma/issues/83#issuecomment-477160057
+    student: Student
+    instructor: Instructor
+    action: TrackingEventAction!
+    context: Json!
+}

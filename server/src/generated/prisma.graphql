@@ -1,5 +1,5 @@
 # source: http://wadayano.com:4466/wadayano/dev
-# timestamp: Wed Jan 09 2019 19:06:34 GMT-0700 (Mountain Standard Time)
+# timestamp: Fri Mar 29 2019 21:36:42 GMT-0600 (Mountain Daylight Time)
 
 type AggregateConceptConfidence {
   count: Int!
@@ -46,6 +46,10 @@ type AggregateStudent {
 }
 
 type AggregateSurveyResult {
+  count: Int!
+}
+
+type AggregateTrackingEvent {
   count: Int!
 }
 
@@ -1749,6 +1753,15 @@ input InstructorUpdateManyWithWhereNestedInput {
   data: InstructorUpdateManyDataInput!
 }
 
+input InstructorUpdateOneInput {
+  create: InstructorCreateInput
+  connect: InstructorWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: InstructorUpdateDataInput
+  upsert: InstructorUpsertNestedInput
+}
+
 input InstructorUpdateOneRequiredInput {
   create: InstructorCreateInput
   connect: InstructorWhereUniqueInput
@@ -1949,72 +1962,78 @@ scalar Long
 
 type Mutation {
   createInstructorPasswordResetToken(data: InstructorPasswordResetTokenCreateInput!): InstructorPasswordResetToken!
-  createStudent(data: StudentCreateInput!): Student!
   createCourse(data: CourseCreateInput!): Course!
   createPendingCourseInvite(data: PendingCourseInviteCreateInput!): PendingCourseInvite!
   createQuiz(data: QuizCreateInput!): Quiz!
   createOption(data: OptionCreateInput!): Option!
   createQuizAttempt(data: QuizAttemptCreateInput!): QuizAttempt!
   createSurveyResult(data: SurveyResultCreateInput!): SurveyResult!
+  createTrackingEvent(data: TrackingEventCreateInput!): TrackingEvent!
+  createStudent(data: StudentCreateInput!): Student!
   createInstructor(data: InstructorCreateInput!): Instructor!
   createQuestionAttempt(data: QuestionAttemptCreateInput!): QuestionAttempt!
   createConceptConfidence(data: ConceptConfidenceCreateInput!): ConceptConfidence!
   createQuestion(data: QuestionCreateInput!): Question!
   updateInstructorPasswordResetToken(data: InstructorPasswordResetTokenUpdateInput!, where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
-  updateStudent(data: StudentUpdateInput!, where: StudentWhereUniqueInput!): Student
   updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
   updatePendingCourseInvite(data: PendingCourseInviteUpdateInput!, where: PendingCourseInviteWhereUniqueInput!): PendingCourseInvite
   updateQuiz(data: QuizUpdateInput!, where: QuizWhereUniqueInput!): Quiz
   updateOption(data: OptionUpdateInput!, where: OptionWhereUniqueInput!): Option
   updateQuizAttempt(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereUniqueInput!): QuizAttempt
   updateSurveyResult(data: SurveyResultUpdateInput!, where: SurveyResultWhereUniqueInput!): SurveyResult
+  updateTrackingEvent(data: TrackingEventUpdateInput!, where: TrackingEventWhereUniqueInput!): TrackingEvent
+  updateStudent(data: StudentUpdateInput!, where: StudentWhereUniqueInput!): Student
   updateInstructor(data: InstructorUpdateInput!, where: InstructorWhereUniqueInput!): Instructor
   updateQuestionAttempt(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
   updateConceptConfidence(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
   deleteInstructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
-  deleteStudent(where: StudentWhereUniqueInput!): Student
   deleteCourse(where: CourseWhereUniqueInput!): Course
   deletePendingCourseInvite(where: PendingCourseInviteWhereUniqueInput!): PendingCourseInvite
   deleteQuiz(where: QuizWhereUniqueInput!): Quiz
   deleteOption(where: OptionWhereUniqueInput!): Option
   deleteQuizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   deleteSurveyResult(where: SurveyResultWhereUniqueInput!): SurveyResult
+  deleteTrackingEvent(where: TrackingEventWhereUniqueInput!): TrackingEvent
+  deleteStudent(where: StudentWhereUniqueInput!): Student
   deleteInstructor(where: InstructorWhereUniqueInput!): Instructor
   deleteQuestionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
   deleteConceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   deleteQuestion(where: QuestionWhereUniqueInput!): Question
   upsertInstructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!, create: InstructorPasswordResetTokenCreateInput!, update: InstructorPasswordResetTokenUpdateInput!): InstructorPasswordResetToken!
-  upsertStudent(where: StudentWhereUniqueInput!, create: StudentCreateInput!, update: StudentUpdateInput!): Student!
   upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
   upsertPendingCourseInvite(where: PendingCourseInviteWhereUniqueInput!, create: PendingCourseInviteCreateInput!, update: PendingCourseInviteUpdateInput!): PendingCourseInvite!
   upsertQuiz(where: QuizWhereUniqueInput!, create: QuizCreateInput!, update: QuizUpdateInput!): Quiz!
   upsertOption(where: OptionWhereUniqueInput!, create: OptionCreateInput!, update: OptionUpdateInput!): Option!
   upsertQuizAttempt(where: QuizAttemptWhereUniqueInput!, create: QuizAttemptCreateInput!, update: QuizAttemptUpdateInput!): QuizAttempt!
   upsertSurveyResult(where: SurveyResultWhereUniqueInput!, create: SurveyResultCreateInput!, update: SurveyResultUpdateInput!): SurveyResult!
+  upsertTrackingEvent(where: TrackingEventWhereUniqueInput!, create: TrackingEventCreateInput!, update: TrackingEventUpdateInput!): TrackingEvent!
+  upsertStudent(where: StudentWhereUniqueInput!, create: StudentCreateInput!, update: StudentUpdateInput!): Student!
   upsertInstructor(where: InstructorWhereUniqueInput!, create: InstructorCreateInput!, update: InstructorUpdateInput!): Instructor!
   upsertQuestionAttempt(where: QuestionAttemptWhereUniqueInput!, create: QuestionAttemptCreateInput!, update: QuestionAttemptUpdateInput!): QuestionAttempt!
   upsertConceptConfidence(where: ConceptConfidenceWhereUniqueInput!, create: ConceptConfidenceCreateInput!, update: ConceptConfidenceUpdateInput!): ConceptConfidence!
   upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
-  updateManyStudents(data: StudentUpdateManyMutationInput!, where: StudentWhereInput): BatchPayload!
   updateManyCourses(data: CourseUpdateManyMutationInput!, where: CourseWhereInput): BatchPayload!
   updateManyPendingCourseInvites(data: PendingCourseInviteUpdateManyMutationInput!, where: PendingCourseInviteWhereInput): BatchPayload!
   updateManyQuizzes(data: QuizUpdateManyMutationInput!, where: QuizWhereInput): BatchPayload!
   updateManyOptions(data: OptionUpdateManyMutationInput!, where: OptionWhereInput): BatchPayload!
   updateManyQuizAttempts(data: QuizAttemptUpdateManyMutationInput!, where: QuizAttemptWhereInput): BatchPayload!
   updateManySurveyResults(data: SurveyResultUpdateManyMutationInput!, where: SurveyResultWhereInput): BatchPayload!
+  updateManyTrackingEvents(data: TrackingEventUpdateManyMutationInput!, where: TrackingEventWhereInput): BatchPayload!
+  updateManyStudents(data: StudentUpdateManyMutationInput!, where: StudentWhereInput): BatchPayload!
   updateManyInstructors(data: InstructorUpdateManyMutationInput!, where: InstructorWhereInput): BatchPayload!
   updateManyQuestionAttempts(data: QuestionAttemptUpdateManyMutationInput!, where: QuestionAttemptWhereInput): BatchPayload!
   updateManyConceptConfidences(data: ConceptConfidenceUpdateManyMutationInput!, where: ConceptConfidenceWhereInput): BatchPayload!
   updateManyQuestions(data: QuestionUpdateManyMutationInput!, where: QuestionWhereInput): BatchPayload!
   deleteManyInstructorPasswordResetTokens(where: InstructorPasswordResetTokenWhereInput): BatchPayload!
-  deleteManyStudents(where: StudentWhereInput): BatchPayload!
   deleteManyCourses(where: CourseWhereInput): BatchPayload!
   deleteManyPendingCourseInvites(where: PendingCourseInviteWhereInput): BatchPayload!
   deleteManyQuizzes(where: QuizWhereInput): BatchPayload!
   deleteManyOptions(where: OptionWhereInput): BatchPayload!
   deleteManyQuizAttempts(where: QuizAttemptWhereInput): BatchPayload!
   deleteManySurveyResults(where: SurveyResultWhereInput): BatchPayload!
+  deleteManyTrackingEvents(where: TrackingEventWhereInput): BatchPayload!
+  deleteManyStudents(where: StudentWhereInput): BatchPayload!
   deleteManyInstructors(where: InstructorWhereInput): BatchPayload!
   deleteManyQuestionAttempts(where: QuestionAttemptWhereInput): BatchPayload!
   deleteManyConceptConfidences(where: ConceptConfidenceWhereInput): BatchPayload!
@@ -2846,37 +2865,40 @@ input PendingCourseInviteWhereUniqueInput {
 
 type Query {
   instructorPasswordResetTokens(where: InstructorPasswordResetTokenWhereInput, orderBy: InstructorPasswordResetTokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InstructorPasswordResetToken]!
-  students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student]!
   courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course]!
   pendingCourseInvites(where: PendingCourseInviteWhereInput, orderBy: PendingCourseInviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PendingCourseInvite]!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz]!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option]!
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt]!
   surveyResults(where: SurveyResultWhereInput, orderBy: SurveyResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SurveyResult]!
+  trackingEvents(where: TrackingEventWhereInput, orderBy: TrackingEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TrackingEvent]!
+  students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student]!
   instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor]!
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt]!
   conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence]!
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
   instructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
-  student(where: StudentWhereUniqueInput!): Student
   course(where: CourseWhereUniqueInput!): Course
   pendingCourseInvite(where: PendingCourseInviteWhereUniqueInput!): PendingCourseInvite
   quiz(where: QuizWhereUniqueInput!): Quiz
   option(where: OptionWhereUniqueInput!): Option
   quizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   surveyResult(where: SurveyResultWhereUniqueInput!): SurveyResult
+  trackingEvent(where: TrackingEventWhereUniqueInput!): TrackingEvent
+  student(where: StudentWhereUniqueInput!): Student
   instructor(where: InstructorWhereUniqueInput!): Instructor
   questionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
   conceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   question(where: QuestionWhereUniqueInput!): Question
   instructorPasswordResetTokensConnection(where: InstructorPasswordResetTokenWhereInput, orderBy: InstructorPasswordResetTokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorPasswordResetTokenConnection!
-  studentsConnection(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StudentConnection!
   coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
   pendingCourseInvitesConnection(where: PendingCourseInviteWhereInput, orderBy: PendingCourseInviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PendingCourseInviteConnection!
   quizzesConnection(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizConnection!
   optionsConnection(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OptionConnection!
   quizAttemptsConnection(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizAttemptConnection!
   surveyResultsConnection(where: SurveyResultWhereInput, orderBy: SurveyResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SurveyResultConnection!
+  trackingEventsConnection(where: TrackingEventWhereInput, orderBy: TrackingEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TrackingEventConnection!
+  studentsConnection(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StudentConnection!
   instructorsConnection(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorConnection!
   questionAttemptsConnection(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionAttemptConnection!
   conceptConfidencesConnection(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ConceptConfidenceConnection!
@@ -4983,6 +5005,11 @@ input StudentCreateManyWithoutCoursesInput {
   connect: [StudentWhereUniqueInput!]
 }
 
+input StudentCreateOneInput {
+  create: StudentCreateInput
+  connect: StudentWhereUniqueInput
+}
+
 input StudentCreateOneWithoutQuizAttemptsInput {
   create: StudentCreateWithoutQuizAttemptsInput
   connect: StudentWhereUniqueInput
@@ -5258,6 +5285,15 @@ input StudentSubscriptionWhereInput {
   node: StudentWhereInput
 }
 
+input StudentUpdateDataInput {
+  ltiUserId: String
+  email: String
+  name: String
+  courses: CourseUpdateManyWithoutStudentsInput
+  quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
+  surveyResults: SurveyResultUpdateManyWithoutStudentInput
+}
+
 input StudentUpdateInput {
   ltiUserId: String
   email: String
@@ -5293,6 +5329,15 @@ input StudentUpdateManyWithoutCoursesInput {
 input StudentUpdateManyWithWhereNestedInput {
   where: StudentScalarWhereInput!
   data: StudentUpdateManyDataInput!
+}
+
+input StudentUpdateOneInput {
+  create: StudentCreateInput
+  connect: StudentWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: StudentUpdateDataInput
+  upsert: StudentUpsertNestedInput
 }
 
 input StudentUpdateOneRequiredWithoutQuizAttemptsInput {
@@ -5336,6 +5381,11 @@ input StudentUpdateWithoutSurveyResultsDataInput {
 input StudentUpdateWithWhereUniqueWithoutCoursesInput {
   where: StudentWhereUniqueInput!
   data: StudentUpdateWithoutCoursesDataInput!
+}
+
+input StudentUpsertNestedInput {
+  update: StudentUpdateDataInput!
+  create: StudentCreateInput!
 }
 
 input StudentUpsertWithoutQuizAttemptsInput {
@@ -5541,13 +5591,14 @@ input StudentWhereUniqueInput {
 
 type Subscription {
   instructorPasswordResetToken(where: InstructorPasswordResetTokenSubscriptionWhereInput): InstructorPasswordResetTokenSubscriptionPayload
-  student(where: StudentSubscriptionWhereInput): StudentSubscriptionPayload
   course(where: CourseSubscriptionWhereInput): CourseSubscriptionPayload
   pendingCourseInvite(where: PendingCourseInviteSubscriptionWhereInput): PendingCourseInviteSubscriptionPayload
   quiz(where: QuizSubscriptionWhereInput): QuizSubscriptionPayload
   option(where: OptionSubscriptionWhereInput): OptionSubscriptionPayload
   quizAttempt(where: QuizAttemptSubscriptionWhereInput): QuizAttemptSubscriptionPayload
   surveyResult(where: SurveyResultSubscriptionWhereInput): SurveyResultSubscriptionPayload
+  trackingEvent(where: TrackingEventSubscriptionWhereInput): TrackingEventSubscriptionPayload
+  student(where: StudentSubscriptionWhereInput): StudentSubscriptionPayload
   instructor(where: InstructorSubscriptionWhereInput): InstructorSubscriptionPayload
   questionAttempt(where: QuestionAttemptSubscriptionWhereInput): QuestionAttemptSubscriptionPayload
   conceptConfidence(where: ConceptConfidenceSubscriptionWhereInput): ConceptConfidenceSubscriptionPayload
@@ -5885,5 +5936,205 @@ input SurveyResultWhereInput {
 }
 
 input SurveyResultWhereUniqueInput {
+  id: ID
+}
+
+type TrackingEvent implements Node {
+  id: ID!
+  createdAt: DateTime!
+  student: Student
+  instructor: Instructor
+  action: TrackingEventAction!
+  context: Json!
+}
+
+enum TrackingEventAction {
+  STUDENT_REVIEW_QUIZ_ATTEMPT
+  STUDENT_REVIEW_CONCEPT
+}
+
+"""A connection to a list of items."""
+type TrackingEventConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [TrackingEventEdge]!
+  aggregate: AggregateTrackingEvent!
+}
+
+input TrackingEventCreateInput {
+  action: TrackingEventAction!
+  context: Json!
+  student: StudentCreateOneInput
+  instructor: InstructorCreateOneInput
+}
+
+"""An edge in a connection."""
+type TrackingEventEdge {
+  """The item at the end of the edge."""
+  node: TrackingEvent!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum TrackingEventOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  action_ASC
+  action_DESC
+  context_ASC
+  context_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type TrackingEventPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  action: TrackingEventAction!
+  context: Json!
+}
+
+type TrackingEventSubscriptionPayload {
+  mutation: MutationType!
+  node: TrackingEvent
+  updatedFields: [String!]
+  previousValues: TrackingEventPreviousValues
+}
+
+input TrackingEventSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TrackingEventSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TrackingEventSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TrackingEventSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: TrackingEventWhereInput
+}
+
+input TrackingEventUpdateInput {
+  action: TrackingEventAction
+  context: Json
+  student: StudentUpdateOneInput
+  instructor: InstructorUpdateOneInput
+}
+
+input TrackingEventUpdateManyMutationInput {
+  action: TrackingEventAction
+  context: Json
+}
+
+input TrackingEventWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TrackingEventWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TrackingEventWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TrackingEventWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  action: TrackingEventAction
+
+  """All values that are not equal to given value."""
+  action_not: TrackingEventAction
+
+  """All values that are contained in given list."""
+  action_in: [TrackingEventAction!]
+
+  """All values that are not contained in given list."""
+  action_not_in: [TrackingEventAction!]
+  student: StudentWhereInput
+  instructor: InstructorWhereInput
+}
+
+input TrackingEventWhereUniqueInput {
   id: ID
 }
