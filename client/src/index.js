@@ -41,7 +41,7 @@ const defaultOptions = {
     },
   };
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
     link: httpLinkWithAuthToken,
     cache: new InMemoryCache(),
     defaultOptions: defaultOptions

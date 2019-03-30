@@ -30,6 +30,7 @@ import QuizReviewPage from './student/QuizReviewPage';
 
 import PageNotFound from './shared/PageNotFound';
 import QuestionImporter from './instructor/QuestionImporter';
+import withGraphQLTracking from './AppTracker';
 
 // Load QuizEditor separately, since it has large dependencies not needed for the rest of the app
 const QuizEditor = Loadable({
@@ -76,4 +77,5 @@ class App extends Component {
   }
 }
 
-export default App;
+// Set up react-tracking, with a custom dispatch function
+export default withGraphQLTracking(App);
