@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
 import ButterToast, { ToastTemplate } from '../shared/Toast';
+import track from 'react-tracking';
 
 import { formatScore, wadayanoScore, confidenceAnalysis, predictedScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
@@ -27,6 +28,18 @@ class QuizReview extends Component {
         this.state = {
             showReviewForConcept: null,
         };
+    }
+
+    // Show modal with questions for a specific concept
+    showConceptReview(result) {
+        this.setState({ showReviewForConcept: result.concept });
+        this.props.tracking.trackEvent({
+            action: 'STUDENT_REVIEW_CONCEPT',
+            concept: result.concept,
+            conceptScore: result.score,
+            conceptPredictedScore: result.predictedScore,
+            conceptWadayanoScore: result.wadayanoScore,
+        });
     }
 
     // Calculate results for each concept
@@ -115,7 +128,7 @@ class QuizReview extends Component {
                             <footer>
                                 <button
                                     className="button is-primary is-block is-fullwidth"
-                                    onClick = {() => this.setState({ showReviewForConcept: result.concept })}
+                                    onClick = {() => this.showConceptReview(result)}
                                 >
                                     View Details
                                 </button>
@@ -156,6 +169,11 @@ QuizReview.propTypes = {
 QuizReview.defaultProps = {
     hideTitle: false
 };
+
+QuizReview = track(props => ({
+    page: 'QuizReview',
+    quizAttemptId: props.quizAttemptId
+}))(QuizReview);
 
 const QUIZ_ATTEMPT_QUERY = gql`
   query quizAttemptQuery($id: ID!) {
