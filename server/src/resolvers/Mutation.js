@@ -755,8 +755,6 @@ function trackEvent(root, args, context, info) {
     if (userId === null) {
         return;
     }
-    console.log("HI!!!!!!!!!!");
-
 
     // Save the tracking event, and connect it to the user
     const { event } = args;
