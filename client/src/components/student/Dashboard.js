@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import TimeAgo from 'react-timeago';
+import track from 'react-tracking';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
@@ -17,13 +18,31 @@ import { formatScore, wadayanoScore, predictedScore } from '../../utils';
  */
 class Dashboard extends Component {
 
+    reviewQuizAttempt(attempt, e) {
+        if (e) {
+            e.stopPropagation();
+        }
+        this.props.tracking.trackEvent({
+            action: 'STUDENT_REVIEW_QUIZ_ATTEMPT',
+            quizAttemptId: attempt.id,
+            quizTitle: attempt.quiz.title,
+            quizType: attempt.quiz.type,
+            quizAttemptScore: attempt.score,
+            quizAttemptWadayanoScore: wadayanoScore(attempt),
+            quizAttemptPredictedScore: predictedScore(attempt)
+        });
+        this.props.history.push('/student/quiz/review/' + attempt.id);
+    }
+
   render() {
 
-    if ((this.props.courseQuery && this.props.courseQuery.loading) || (this.props.quizAttemptsQuery && this.props.quizAttemptsQuery.loading)) {
+    if ((this.props.courseQuery && this.props.courseQuery.loading) ||
+        (this.props.quizAttemptsQuery && this.props.quizAttemptsQuery.loading)) {
         return <LoadingBox />;
     }
 
-    if ((this.props.courseQuery && this.props.courseQuery.error) || (this.props.quizAttemptsQuery && this.props.quizAttemptsQuery.error)) {
+    if ((this.props.courseQuery && this.props.courseQuery.error) ||
+        (this.props.quizAttemptsQuery && this.props.quizAttemptsQuery.error)) {
         return <ErrorBox><p>Couldn’t load dashboard. Please try again later.</p></ErrorBox>;
     }
 
@@ -156,25 +175,21 @@ class Dashboard extends Component {
                 </thead>
                 <tbody>
                     {pastAttempts.map((attempt) => 
-                        <tr key={attempt.id}>
+                        <tr key={attempt.id} onClick={(e) => this.reviewQuizAttempt(attempt, e)}>
                             <td data-title="Completed" style={{whiteSpace: "nowrap"}}>
                                 <TimeAgo date={attempt.completed} />
                             </td>
-                            <td data-title="Quiz">
-                                <Link to={"/student/quiz/review/" + attempt.id} className="has-text-black is-block">
-                                    {attempt.quiz.title}
-                                </Link>
-                            </td>
+                            <td data-title="Quiz">{attempt.quiz.title}</td>
                             <td data-title="Questions">{attempt.quiz.questions.length}</td>
                             <td data-title="Type">{QUIZ_TYPE_NAMES[attempt.quiz.type]}</td>
                             <td data-title="Score">{attempt.completed ? formatScore(attempt.score) : "n/a"}</td>
                             <td data-title="Predicted Score">{attempt.completed ? formatScore(predictedScore(attempt)) : "n/a"}</td>
                             <td data-title="Wadayano Score">{attempt.completed ? formatScore(wadayanoScore(attempt)) : "n/a"}</td>
                             <td data-title="Review">
-                                <Link to={"/student/quiz/review/" + attempt.id} className="button is-info is-outlined">
+                                <button onClick={(e) => this.reviewQuizAttempt(attempt, e)} className="button is-info is-outlined">
                                     <span className="icon"><i className="fas fa-history"></i></span>
                                     <span>Review</span>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     )}
@@ -280,6 +295,11 @@ const QUIZ_ATTEMPTS_QUERY = gql`
         }
     }
 `;
+
+Dashboard = track(props => ({
+    page: 'Dashboard',
+    courseId: props.match.params.courseId,
+}))(Dashboard);
 
 export default withAuthCheck(compose(
     graphql(COURSE_QUERY, {
