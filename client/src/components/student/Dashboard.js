@@ -9,7 +9,7 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import { withAuthCheck } from '../shared/AuthCheck';
-import { formatScore, wadayanoScore } from '../../utils';
+import { formatScore, wadayanoScore, predictedScore } from '../../utils';
 
 /**
  * This page presents tables of unfinished quiz attempts, available practice quizzes,
@@ -149,6 +149,7 @@ class Dashboard extends Component {
                         </th>
                         <th>Type</th>
                         <th>Score</th>
+                        <th style={{whiteSpace: "nowrap"}}>Predicted Score</th>
                         <th style={{whiteSpace: "nowrap"}}>Wadayano Score</th>
                         <th>Review</th>
                     </tr>
@@ -167,6 +168,7 @@ class Dashboard extends Component {
                             <td data-title="Questions">{attempt.quiz.questions.length}</td>
                             <td data-title="Type">{QUIZ_TYPE_NAMES[attempt.quiz.type]}</td>
                             <td data-title="Score">{attempt.completed ? formatScore(attempt.score) : "n/a"}</td>
+                            <td data-title="Predicted Score">{attempt.completed ? formatScore(predictedScore(attempt)) : "n/a"}</td>
                             <td data-title="Wadayano Score">{attempt.completed ? formatScore(wadayanoScore(attempt)) : "n/a"}</td>
                             <td data-title="Review">
                                 <Link to={"/student/quiz/review/" + attempt.id} className="button is-info is-outlined">
@@ -270,6 +272,11 @@ const QUIZ_ATTEMPTS_QUERY = gql`
                 isConfident
             }
             score
+            conceptConfidences {
+                id
+                concept
+                confidence
+            }
         }
     }
 `;
