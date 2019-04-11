@@ -57,6 +57,7 @@ class ConceptSelector extends Component {
             <React.Fragment>
                 <input
                     value={this.props.concept}
+                    autoFocus={this.props.autoFocus}
                     onFocus={this.handleFocus}
                     onChange={this.handleInputChange}
                     className="input is-inline"
@@ -73,13 +74,15 @@ class ConceptSelector extends Component {
 ConceptSelector.propTypes = {
     concept: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
+    autoFocus: PropTypes.bool,
     // Concept suggestions will be fetched from all quizzes in the given course
     courseId: PropTypes.string,
     placeholder: PropTypes.string
 };
 
 ConceptSelector.defaultProps = {
-    placeholder: 'Concept'
+    placeholder: 'Concept',
+    autoFocus: false
 };
 
 // Get the concepts from the whole course

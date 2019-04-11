@@ -425,7 +425,12 @@ export class QuestionEditor extends Component {
         const metadataEditor = isExpanded && (
             <div className="panel-block quiz-editor-question-concept">
                 <label className="is-inline" style={{marginRight: "1rem"}}>Concept</label>
-                <ConceptSelector concept={question.concept} onChange={(c) => this.handleConceptChange(c)} courseId={this.props.courseId} />
+                <ConceptSelector
+                    concept={question.concept}
+                    onChange={(c) => this.handleConceptChange(c)}
+                    courseId={this.props.courseId}
+                    autoFocus={true}
+                />
 
                 <OptionSelector
                     className="quiz-editor-question-type"
