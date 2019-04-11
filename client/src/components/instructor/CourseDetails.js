@@ -198,7 +198,7 @@ export class CourseDetails extends Component {
         <section>
             <h4 className="title is-4">Student Dashboard</h4>
             <div className="is-flex-tablet">
-                <span>Students in your course can access the Student Dashboard to practice quizzes and review past quiz performance. Simply place an LTI link on a content page or somewhere accessible in your LMS.<br /></span>
+                <span>Students in your course can access the Student Dashboard to practice quizzes and review past quiz performance. Simply place an LTI link on a content page or student-accessible location in your LMS.<br /></span>
                 <button style={{marginLeft: "1rem"}} className="button is-light"
                     onClick={() => this.showLTISetup('dashboard', course.id)}>
                     <span className="icon">
