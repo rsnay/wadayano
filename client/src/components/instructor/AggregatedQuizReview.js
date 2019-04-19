@@ -254,28 +254,30 @@ class AggregatedQuizReview extends Component {
                 </div>
                 <div className="box">
                     <h3 className="title">Concepts</h3>
-                    <table className="table is-striped is-hoverable is-fullwidth">
-                        <thead>
-                            <tr>
-                                <th>Concept</th>
-                                <th>Average Score</th>
-                                <th>Average Predicted Score</th>
-                                <th>Average Wadayano Score</th>
-                                <th>View Questions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {concepts.map(concept => { return (
-                                <tr key={concept} className="has-cursor-pointer" onClick={() => this.setState({ showConceptModal: concept })}>
-                                    <td>{concept}</td>
-                                    <td>{formatScore(conceptAverageScores.get(concept), 0)}</td>
-                                    <td>{formatScore(conceptAveragePredictedScores.get(concept),0)}</td>
-                                    <td>{formatScore(conceptAverageWadayanoScores.get(concept),0)}</td>
-                                    <td><button className="button is-light" onClick={() => this.setState({ showConceptModal: concept })}>View Questions</button></td>
+                    <div className="table-wrapper">
+                        <table className="table is-striped is-hoverable is-fullwidth is-vcentered">
+                            <thead>
+                                <tr>
+                                    <th>Concept</th>
+                                    <th>Average Score</th>
+                                    <th>Average Predicted Score</th>
+                                    <th>Average Wadayano Score</th>
+                                    <th>View Questions</th>
                                 </tr>
-                            )})}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {concepts.map(concept => { return (
+                                    <tr key={concept} className="has-cursor-pointer" onClick={() => this.setState({ showConceptModal: concept })}>
+                                        <td>{concept}</td>
+                                        <td>{formatScore(conceptAverageScores.get(concept), 0)}</td>
+                                        <td>{formatScore(conceptAveragePredictedScores.get(concept),0)}</td>
+                                        <td>{formatScore(conceptAverageWadayanoScores.get(concept),0)}</td>
+                                        <td><button className="button is-light" onClick={() => this.setState({ showConceptModal: concept })}>View Questions</button></td>
+                                    </tr>
+                                )})}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <Modal
