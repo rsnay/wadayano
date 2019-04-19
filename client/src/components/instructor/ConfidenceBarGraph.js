@@ -8,7 +8,10 @@ const MAX_WIDTH = 100;
 const ConfidenceGraphRow = ({ confidence, count, max }) => {
     return (
         <tr>
-            <td>{confidence.text}</td><td className="emoji-cell">{confidence.emoji}</td>
+            <td>{confidence.text}</td>
+            <td className="emoji-cell">
+                <span className={"confidence-emoji is-medium " + confidence.key}></span>
+            </td>
             <td>
                 <span className="chart-bar" style={{width: (count / max) * MAX_WIDTH + "px"}}></span>
                 <span className="chart-bar-label">{count}</span>

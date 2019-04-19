@@ -26,25 +26,22 @@ export const SHORT_ANSWER = 'SHORT_ANSWER';
 export const DEFAULT_QUESTION_TYPE = MULTIPLE_CHOICE;
 export const QUESTION_TYPE_NAMES = { MULTIPLE_CHOICE: 'Multiple Choice', SHORT_ANSWER: 'Short Answer' };
 
+// The keys are used for css classes to display the specific emoji
 export const CONFIDENCES = {
     'OVERCONFIDENT': {
         key: 'OVERCONFIDENT',
-        text: 'Overconfident',
-        emoji: '🤦‍'
+        text: 'Overconfident'
     },
     'ACCURATE': {
         key: 'ACCURATE',
-        text: 'Accurate',
-        emoji: '🧘'
+        text: 'Accurate'
     },
     'UNDERCONFIDENT': {
         key: 'UNDERCONFIDENT',
-        text: 'Underconfident',
-        emoji: '🙍'
+        text: 'Underconfident'
     },
     'MIXED': {
         key: 'MIXED',
-        text: 'Mixed',
-        emoji: '🤷'
+        text: 'Mixed'
     }
 };

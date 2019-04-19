@@ -17,7 +17,7 @@ export default class WadayanoScore extends Component{
         };
     }
 
-    render(){
+    render() {
         return(
             <React.Fragment>
                 <div className="columns is-gapless is-multiline wadyano-score-container">
@@ -30,7 +30,7 @@ export default class WadayanoScore extends Component{
                         </h2>
                         <div>
                             <span className="subtitle is-4">
-                                <span className="emoji">{this.props.confidenceAnalysis.emoji}</span> {this.props.confidenceAnalysis.text}
+                                <span className={"confidence-emoji is-medium " + this.props.confidenceAnalysis.key}></span> {this.props.confidenceAnalysis.text}
                             </span>
                             <span className="question-mark-circle" onClick={() => this.setState({ displayHelpText: true }) }>?</span>
                         </div>
@@ -59,6 +59,6 @@ WadayanoScore.propTypes = {
     // The object returned from utils.confidenceAnalysis matches this shape
     confidenceAnalysis: PropTypes.shape({
         text: PropTypes.string.isRequired,
-        emoji: PropTypes.string.isRequired
+        key: PropTypes.string.isRequired
     }).isRequired
 };

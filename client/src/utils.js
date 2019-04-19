@@ -83,7 +83,7 @@ export function wadayanoScore(quizAttempt, concept = null) {
 }
 
 // Analyze a student’s confidence for a given quiz attempt (optionally for a specific concept, for which quizAttempt.questionAttempts[i].question.concept must be included)
-// Returns an object: { text: "Accurate", emoji: "🧘" }
+// Returns an object: { text: "Accurate", key: "ACCURATE" }
 export function confidenceAnalysis(quizAttempt, concept = null){
 
     const questionAttempts = filterByConcept(quizAttempt, concept);

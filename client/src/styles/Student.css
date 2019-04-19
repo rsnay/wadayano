@@ -12,16 +12,15 @@
     cursor: pointer;
 }
 
-.emoji {
-    transition: all .15s ease; 
-    display: inline-block;
-}
-.emoji:hover {
-    transform: scale(2);
-}
-
 .wadyano-score-container, .wadyano-score-container h2 {
     margin: 0!important;
+}
+.wadyano-score-container .confidence-emoji {
+    vertical-align: bottom;
+    /* Set relative position and z-index so that emoji doesn't
+       underlap the “View Details” button when hovered and zoomed */
+    position: relative;
+    z-index: 10;
 }
 
 .wadayano-score-logo {

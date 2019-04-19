@@ -147,7 +147,9 @@ class QuizScores extends Component {
                                 <td>{formatScore(student.highestScore)}</td>
                                 <td>{formatScore(student.predictedScore)}</td>
                                 <td>{formatScore(student.wadayanoScore)}</td>
-                                <td>{student.confidenceAnalysis.emoji}&nbsp;{student.confidenceAnalysis.text}</td>
+                                <td>
+                                    <span className={"confidence-emoji is-medium " + student.confidenceAnalysis.key}></span>&nbsp;{student.confidenceAnalysis.text}
+                                </td>
                                 <td>
                                     <button className="button is-light"
                                         onClick={() => this.showStudentAttempts(student)}>
@@ -166,7 +168,7 @@ class QuizScores extends Component {
 
             scoresTable = (
                 <div className="table-wrapper">
-                    <table className="table is-striped is-hoverable is-fullwidth survey-results-table">
+                    <table className="table is-striped is-hoverable is-fullwidth is-vcentered survey-results-table">
                         <thead>
                             <tr className="sticky-header sortable-header">
                                 {columns.map(col => (

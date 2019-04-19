@@ -235,13 +235,13 @@ class AggregatedQuizReview extends Component {
             <div>
                 <div className="columns is-desktop">
                     <div className="column">
-                        <div className="box" style={{minHeight: "280px"}}>
+                        <div className="box" style={{minHeight: "315px"}}>
                             {barGraphLegend(averageScore, averagePredictedScore)}
                             <ScoresBarGraph scoreSeries={[predictedScores, scores]} />
                         </div>
                     </div>
                     <div className="column">
-                        <div className="box" style={{minHeight: "280px"}}>
+                        <div className="box" style={{minHeight: "315px"}}>
                             {averageWadayanoScoreLabel(averageWadayanoScore)}
                             <ConfidenceBarGraph
                                 overconfident={confidenceAnalysisCounts.OVERCONFIDENT}

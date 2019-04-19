@@ -6,7 +6,7 @@ import { formatScore } from '../../utils';
 
 const NUM_BARS = 10;
 // Height of max bar (in px). Make sure this jives with what the main CSS file has
-const MAX_HEIGHT = 175;
+const MAX_HEIGHT = 210;
 const BAR_COLORS = ['hsl(48, 100%, 67%)','hsl(204, 86%, 53%)'];
 
 export default class ScoresBarGraph extends Component {

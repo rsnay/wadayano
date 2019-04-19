@@ -89,6 +89,10 @@ button.is-light:focus, a.is-light:focus {
     }
 }
 
+table.is-vcentered td {
+    vertical-align: middle!important;
+}
+
 /* Responsive tables */
 /* Largely from https://elvery.net/demo/responsive-tables/#no-more-tables */
 @media only screen and (max-width: 750px) {
@@ -147,4 +151,39 @@ button.is-light:focus, a.is-light:focus {
  
 	/* Label the data */
 	.responsive-table td:before { content: attr(data-title); }
+}
+
+/* Emojis are from Twemoji: https://twemoji.twitter.com/
+    Copyright 2019 Twitter, Inc and other contributors
+    Graphics licensed under CC-BY 4.0: https://creativecommons.org/licenses/by/4.0/
+*/
+.confidence-emoji {
+    transition: all .15s ease; 
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: bottom;
+}
+.confidence-emoji:hover {
+    transform: scale(2);
+}
+.confidence-emoji.is-medium {
+    width: 1.5em;
+    height: 1.5em;
+}
+.confidence-emoji.is-medium:hover {
+    transform: scale(2);
+}
+/* Class names match all-caps constants from client/src/constants.js */
+.confidence-emoji.OVERCONFIDENT {
+    background-image: url('../twemoji/1f926-200d-2642-fe0f.svg');
+}
+.confidence-emoji.ACCURATE {
+    background-image: url('../twemoji/1f9d8-200d-2640-fe0f.svg');
+}
+.confidence-emoji.UNDERCONFIDENT {
+    background-image: url('../twemoji/1f64d-200d-2640-fe0f.svg');
+}
+.confidence-emoji.MIXED {
+    background-image: url('../twemoji/1f937-200d-2642-fe0f.svg');
 }
