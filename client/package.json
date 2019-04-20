@@ -5,7 +5,7 @@
   "dependencies": {
     "@tinymce/tinymce-react": "^3.0.1",
     "apollo-client-preset": "^1.0.8",
-    "bulma": "^0.7.1",
+    "bulma": "^0.7.4",
     "butter-toast": "^3.1.0",
     "dom": "^0.0.3",
     "graphql": "^0.13.2",
