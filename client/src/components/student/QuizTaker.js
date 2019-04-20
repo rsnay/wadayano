@@ -58,6 +58,12 @@ class QuizTaker extends Component {
       const quizAttempt = result.data.startOrResumeQuizAttempt;
       const quiz = quizAttempt.quiz;
 
+      // Make sure there are questions in the quiz
+      if (quiz.questions.length === 0) {
+        this.setState({ error: "There are no questions in this quiz.", isLoading: false });
+        return;
+      }
+
       // Get current location of quiz attempt (number already answered) and resume from there
       // Questions are randomized using a seed based on the quiz attempt ID (and original order from Prisma is always the same), so order is guaranteed
       const currentQuestionIndex = quizAttempt.questionAttempts.length;
@@ -206,14 +212,6 @@ class QuizTaker extends Component {
 
     // Quiz loaded from apollo/graphql mutation
     let { quiz } = this.state;
-
-    // Make sure there are questions in the quiz
-    if (quiz.questions.length === 0) {
-      return <ErrorBox>
-        <p>There are no questions in this quiz.</p>
-        <Link to="/student">Return to dashboard</Link>
-      </ErrorBox>
-    }
 
     let currentView;
     switch (this.state.phase) {
