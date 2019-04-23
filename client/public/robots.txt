@@ -1,6 +1,7 @@
 User-agent: *
-Allow: /$
+Allow: /
 Allow: /login$
 Allow: /signup$
-Disallow: /
+Disallow: /instructor
+Disallow: /student
 # For more information, see https://developers.google.com/search/reference/robots_txt#order-of-precedence-for-group-member-records
