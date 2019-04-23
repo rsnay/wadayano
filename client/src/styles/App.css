@@ -187,3 +187,14 @@ table.is-vcentered td {
 .confidence-emoji.MIXED {
     background-image: url('../twemoji/1f937-200d-2642-fe0f.svg');
 }
+
+/* Welcome landing page */
+.welcome-page .title {
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+}
+.welcome-page .tile img {
+    width: 100%;
+    max-width: 70vw;
+    text-align: center;
+}
