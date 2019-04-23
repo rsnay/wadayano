@@ -28,6 +28,23 @@ import InsightsImage from '../../img/welcome_insights.png';
 
     render() {
 
+        const authButtons = (
+            <p className="buttons is-centered auth-buttons">
+                <Link to="/login" className="button is-info">
+                    <span className="icon">
+                        <i className="fas fa-sign-in-alt"></i>
+                    </span>
+                    <span>Log In</span>
+                </Link>
+                <Link to="/signup" className="button is-info">
+                    <span className="icon">
+                        <i className="fas fa-user-plus"></i>
+                    </span>
+                    <span>Sign Up</span>
+                </Link>
+            </p>
+        );
+
         return (
             <main>
             <section class="hero is-bold is-primary">
@@ -44,20 +61,7 @@ import InsightsImage from '../../img/welcome_insights.png';
             </section>
 
             <div className="container welcome-page">
-            <p className="buttons is-centered" style={{marginTop: "2rem", marginBottom: "-2.2rem"}}>
-                <Link to="/login" className="button is-info">
-                    <span className="icon">
-                        <i className="fas fa-sign-in-alt"></i>
-                    </span>
-                    <span>Log In</span>
-                </Link>
-                <Link to="/signup" className="button is-info">
-                    <span className="icon">
-                        <i className="fas fa-user-plus"></i>
-                    </span>
-                    <span>Sign Up</span>
-                </Link>
-            </p>
+            {authButtons}
 
             <div class="section tile is-ancestor">
                 <div class="tile is-parent">
@@ -109,6 +113,7 @@ import InsightsImage from '../../img/welcome_insights.png';
                         <i className="fas fa-chevron-right"></i>
                     </span>
                 </Link>
+            {authButtons}
             </section>
             </div>
             </main>
