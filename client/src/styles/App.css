@@ -198,12 +198,25 @@ table.is-vcentered td {
     margin-bottom: -2.2rem!important;
 }
 .welcome-page .auth-buttons .button {
-    padding: 2rem;
+    padding: 1.75rem;
     font-size: 1.25rem;
 }
 .welcome-page .auth-buttons .button:not(:last-child) {
     margin-right: 1.5rem!important;
 }
+
+/* Prevent horizontal scrolling on mobile (https://github.com/jgthms/bulma/issues/449#issuecomment-282548314) */
+.tile.is-ancestor {
+	margin: 0!important;
+}
+@media screen and (min-width: 768px) {
+	.tile.is-ancestor {
+	    margin-left: -0.75rem;
+	    margin-right: -0.75rem;
+	    margin-top: -0.75rem;
+	}
+}
+
 .welcome-page .tile p {
     line-height: 160%;
 }
