@@ -1,0 +1,212 @@
+{
+    "apollo-client-preset": {
+        "licenses": "MIT",
+        "repository": "https://github.com/apollographql/apollo-client",
+        "licenseUrl": "https://github.com/apollographql/apollo-client",
+        "parents": "wadayano-client"
+    },
+    "bcryptjs": {
+        "licenses": "MIT",
+        "repository": "https://github.com/dcodeIO/bcrypt.js",
+        "licenseUrl": "https://github.com/dcodeIO/bcrypt.js/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "body-parser": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expressjs/body-parser",
+        "licenseUrl": "https://github.com/expressjs/body-parser/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "bulma": {
+        "licenses": "MIT",
+        "repository": "https://github.com/jgthms/bulma",
+        "licenseUrl": "https://github.com/jgthms/bulma/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "butter-toast": {
+        "licenses": "UNLICENSED",
+        "repository": "https://github.com/ealush/butter-toast",
+        "licenseUrl": "https://github.com/ealush/butter-toast",
+        "parents": "wadayano-client"
+    },
+    "dom": {
+        "licenses": "MIT",
+        "repository": "https://github.com/shtylman/dom",
+        "licenseUrl": "https://github.com/shtylman/dom",
+        "parents": "wadayano-client"
+    },
+    "express": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expressjs/express",
+        "licenseUrl": "https://github.com/expressjs/express/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "graphql-cli": {
+        "licenses": "MIT",
+        "repository": "https://github.com/graphql-cli/graphql-cli",
+        "licenseUrl": "https://github.com/graphql-cli/graphql-cli/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "graphql-shield": {
+        "licenses": "MIT",
+        "repository": "https://github.com/maticzav/graphql-shield",
+        "licenseUrl": "https://github.com/maticzav/graphql-shield",
+        "parents": "wadayano-server"
+    },
+    "graphql-tag": {
+        "licenses": "MIT",
+        "repository": "https://github.com/apollostack/graphql-tag",
+        "licenseUrl": "https://github.com/apollostack/graphql-tag/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "graphql-yoga": {
+        "licenses": "MIT",
+        "repository": "https://github.com/prisma/graphql-yoga",
+        "licenseUrl": "https://github.com/prisma/graphql-yoga/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "graphql": {
+        "licenses": "MIT",
+        "repository": "http://github.com/graphql/graphql-js",
+        "licenseUrl": "http://github.com/graphql/graphql-js/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "immutability-helper": {
+        "licenses": "MIT",
+        "repository": "https://github.com/kolodny/immutability-helper",
+        "licenseUrl": "https://github.com/kolodny/immutability-helper/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "ims-lti": {
+        "licenses": "MIT",
+        "repository": "https://github.com/omsmith/ims-lti",
+        "licenseUrl": "https://github.com/omsmith/ims-lti/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "json5": {
+        "licenses": "MIT",
+        "repository": "https://github.com/json5/json5",
+        "licenseUrl": "https://github.com/json5/json5/raw/master/LICENSE.md",
+        "parents": "wadayano-client"
+    },
+    "jsonwebtoken": {
+        "licenses": "MIT",
+        "repository": "https://github.com/auth0/node-jsonwebtoken",
+        "licenseUrl": "https://github.com/auth0/node-jsonwebtoken/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "node-sass-chokidar": {
+        "licenses": "MIT",
+        "repository": "https://github.com/michaelwayman/node-sass-chokidar",
+        "licenseUrl": "https://github.com/michaelwayman/node-sass-chokidar/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "node-ses": {
+        "licenses": "MIT",
+        "repository": "https://github.com/aheckmann/node-ses",
+        "licenseUrl": "https://github.com/aheckmann/node-ses/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "prisma-binding": {
+        "licenses": "MIT",
+        "repository": "https://github.com/graphcool/graphcool-binding",
+        "licenseUrl": "https://github.com/graphcool/graphcool-binding",
+        "parents": "wadayano-server"
+    },
+    "prop-types": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/prop-types",
+        "licenseUrl": "https://github.com/facebook/prop-types/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-apollo": {
+        "licenses": "MIT",
+        "repository": "https://github.com/apollographql/react-apollo",
+        "licenseUrl": "https://github.com/apollographql/react-apollo/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-aria-modal": {
+        "licenses": "MIT",
+        "repository": "https://github.com/davidtheclark/react-aria-modal",
+        "licenseUrl": "https://github.com/davidtheclark/react-aria-modal/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-dom": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react",
+        "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-loadable": {
+        "licenses": "MIT",
+        "repository": "https://github.com/thejameskyle/react-loadable",
+        "licenseUrl": "https://github.com/thejameskyle/react-loadable/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-router-dom": {
+        "licenses": "MIT",
+        "repository": "https://github.com/ReactTraining/react-router",
+        "licenseUrl": "https://github.com/ReactTraining/react-router/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-router": {
+        "licenses": "MIT",
+        "repository": "https://github.com/ReactTraining/react-router",
+        "licenseUrl": "https://github.com/ReactTraining/react-router/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-scripts": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/create-react-app",
+        "licenseUrl": "https://github.com/facebook/create-react-app/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-scroll-into-view-if-needed": {
+        "licenses": "MIT",
+        "repository": "https://github.com/icd2k3/react-scroll-into-view-if-needed",
+        "licenseUrl": "https://github.com/icd2k3/react-scroll-into-view-if-needed/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-show-more": {
+        "licenses": "ISC",
+        "repository": "https://github.com/One-com/react-show-more",
+        "licenseUrl": "https://github.com/One-com/react-show-more/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-timeago": {
+        "licenses": "MIT",
+        "repository": "https://github.com/naman34/react-timeago",
+        "licenseUrl": "https://github.com/naman34/react-timeago/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-tooltip": {
+        "licenses": "MIT",
+        "repository": "https://github.com/wwayne/react-tooltip",
+        "licenseUrl": "https://github.com/wwayne/react-tooltip/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-tracking": {
+        "licenses": "Apache-2.0",
+        "repository": "https://github.com/NYTimes/react-tracking",
+        "licenseUrl": "https://github.com/NYTimes/react-tracking/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react",
+        "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "strip-js": {
+        "licenses": "MIT",
+        "repository": "https://github.com/shivanshu3/strip-js",
+        "licenseUrl": "https://github.com/shivanshu3/strip-js/raw/master/LICENSE",
+        "parents": "wadayano-server"
+    },
+    "tinymce": {
+        "licenses": "LGPL-2.1",
+        "repository": "https://github.com/tinymce/tinymce-dist",
+        "licenseUrl": "https://github.com/tinymce/tinymce-dist/raw/master/license.txt",
+        "parents": "wadayano-client"
+    }
+}

@@ -29,6 +29,9 @@ import QuizTaker from './student/QuizTaker';
 import SurveyTaker from './student/SurveyTaker';
 import QuizReviewPage from './student/QuizReviewPage';
 
+import TermsOfUse from './shared/TermsOfUse';
+import PrivacyPolicy from './shared/PrivacyPolicy';
+import About from './shared/About';
 import PageNotFound from './shared/PageNotFound';
 import QuestionImporter from './instructor/QuestionImporter';
 import withGraphQLTracking from './AppTracker';
@@ -71,6 +74,9 @@ class App extends Component {
             <Route path="/student/quiz/:quizId" component={QuizTaker} />
             <Route path="/student/survey/:courseId" component={SurveyTaker} />
 
+            <Route exact path="/terms" component={TermsOfUse} />
+            <Route exact path="/privacy" component={PrivacyPolicy} />
+            <Route exact path="/about" component={About} />
             <Route component={PageNotFound} />
 
           </Switch>
