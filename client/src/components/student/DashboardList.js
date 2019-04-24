@@ -25,6 +25,7 @@ class DashboardList extends Component {
         }
 
         let courses = this.props.studentQuery.currentStudent.courses;
+        const studentName = this.props.studentQuery.currentStudent.name;
 
         // If there's only one course, redirect to that dashboard
         if (courses.length === 1) {
@@ -39,8 +40,10 @@ class DashboardList extends Component {
 
                     <h3 className="title is-3">
                         My Courses
-                        <span className="is-pulled-right">{this.props.studentQuery.currentStudent.name}</span>
+                        <span className="is-pulled-right is-hidden-mobile has-text-weight-normal">{studentName}</span>
                     </h3>
+                    {/* On mobile, display student name on a separate line */}
+                    <h3 className="title is-3 is-hidden-tablet has-text-weight-normal">{studentName}</h3>
 
                     <div className="tile is-ancestor" style={{flexWrap: "wrap"}}>
 
