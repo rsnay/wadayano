@@ -46,6 +46,30 @@ input[type=radio] {
     cursor: pointer;
 }
 
+/* Sticky footer (goes to bottom of viewport if page isn’t tall enough)
+   Based on https://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/
+*/
+.app {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+.app-content {
+    flex: 1;
+}
+.app-footer {
+    padding: 0.5rem;
+    background: whitesmoke;
+    font-size: 12px;
+}
+.footer-item {
+    margin: 0.5rem;
+    color: #4a4a4a;
+}
+a.footer-item:hover {
+    text-decoration: underline;
+}
+
 /* Hide firefox dotted focus on buttons */
 button::-moz-focus-inner { 
     border: 0; 
