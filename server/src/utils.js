@@ -1,9 +1,56 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const {APP_SECRET } = require('../config');
 
+/**
+ * Tests whether an email address has a valid format
+ * (not if the address actually exists)
+ * Used for signup and updating profile.
+ * @param {string} email 
+ * @returns {boolean} if the email has a valid format
+ */
 function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
+}
+
+/**
+ * Checks a password against wadayano’s password requirements.
+ * Used for signup, password reset, and updating profile.
+ * @param {string} password 
+ * @throws Will throw an error with a message describing the failed requirement
+ * @returns {void}
+ */
+function validatePasswordComplexity(password) {
+  if (password && password !== null && password.length > 0) {
+    // Check that password is at least 6 characters
+    if (password.length < 6) {
+      throw new Error('Password must be at least 6 characters');
+    }
+  } else {
+    throw new Error('No password was given');
+  }
+}
+
+/**
+ * Generates a password hash to store in the database.
+ * Used for signup, password reset, and updating profile.
+ * @param {string} password password to hash
+ * @returns {string} password hash
+ */
+async function hashPassword(password) {
+  const saltLength = 10;
+  return bcrypt.hash(password, saltLength);
+}
+
+/**
+ * Check if a user-provided password matches a hashed password
+ * Used for login and updating profile.
+ * @param {string} plaintextPassword user-provided password
+ * @param {string} hashedPassword password hash from database to check again
+ */
+async function checkHashedPassword(plaintextPassword, hashedPassword) {
+  return bcrypt.compare(plaintextPassword, hashedPassword);
 }
 
 // Extracts user ID and role (instructor or not) from the JWT. Returns { userId: "string", isInstructor: true/false }
@@ -72,6 +119,9 @@ const delay = ms => new Promise(res => setTimeout(res, ms))
 
 module.exports = {
     validateEmail,
+    validatePasswordComplexity,
+    hashPassword,
+    checkHashedPassword,
     getUserInfo,
     instructorCheck,
     instructorCourseCheck,

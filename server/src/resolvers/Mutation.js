@@ -1,8 +1,7 @@
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const stripJs = require('strip-js');
 const { APP_SECRET, FEEDBACK_EMAIL_ADDRESS } = require('../../config');
-const { getUserInfo, instructorCheck, instructorCourseCheck, validateEmail, delay } = require('../utils');
+const { getUserInfo, validateEmail, validatePasswordComplexity, hashPassword, checkHashedPassword, delay } = require('../utils');
 const { postGrade } = require('../lti');
 const { sendEmail } = require('../email');
 const emailTemplates = require('../emailTemplates');
@@ -277,7 +276,7 @@ async function instructorLogin(root, args, context, info) {
     }
 
     // Check that password is valid
-    const valid = await bcrypt.compare(args.password, instructor.password);
+    const valid = await checkHashedPassword(args.password, instructor.password);
     if (!valid) {
         throw new Error('Invalid email and/or password');
     }
@@ -299,12 +298,12 @@ async function instructorSignup(root, args, context, info) {
     if (!validateEmail(email)) {
         throw new Error('Invalid email address');
     }
-    // Check that password is at least 6 characters
-    if (args.password.length < 6) {
-        throw new Error('Password must be at least 6 characters');
-    }
+
+    // Validate password (and allow exceptions to bubble up)
+    validatePasswordComplexity(args.password);
+
     // Hash password
-    const password = await bcrypt.hash(args.password, 10);
+    const password = await hashPassword(args.password);
     // Create instructor account
     const instructor = await context.db.mutation.createInstructor({
         data: { email, password },
@@ -383,13 +382,11 @@ async function instructorResetPassword(root, args, context, info) {
         throw Error('This password reset request has expired.');
     }
 
-    // Check that password is at least 6 characters
-    if (args.password.length < 6) {
-        throw new Error('Password must be at least 6 characters');
-    }
+    // Validate password (and allow exceptions to bubble up)
+    validatePasswordComplexity(args.password);
 
     // Hash new password
-    const password = await bcrypt.hash(args.password, 10);
+    const password = await hashPassword(args.password);
 
     // Set new password on the instructor
     const updatedInstructor = await context.db.mutation.updateInstructor({
