@@ -57,7 +57,7 @@ class Header extends Component {
                 <div id="header-main-menu" className="navbar-menu">
                     <div className="navbar-start">
                         {this.isInstructor && <NavLink activeClassName="is-active" to="/instructor/courses" className="navbar-item">Courses</NavLink>}
-                        {/*this.isInstructor && <NavLink activeClassName="is-active" to="/instructor/profile" className="navbar-item">Profile</NavLink>*/}
+                        {this.isInstructor && <NavLink activeClassName="is-active" to="/instructor/profile" className="navbar-item">Profile</NavLink>}
                         {this.isStudent && <NavLink activeClassName="is-active" to="/student/dashboard" className="navbar-item">Dashboard</NavLink>}
                     </div>
 
