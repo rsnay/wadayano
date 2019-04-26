@@ -175,3 +175,6 @@ progress::-webkit-progress-value {
     vertical-align: middle;
     cursor: pointer;
 }
+.quiz-table td a {
+    text-decoration: none!important;
+}
