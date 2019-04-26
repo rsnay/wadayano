@@ -409,6 +409,55 @@ async function instructorResetPassword(root, args, context, info) {
     };
 }
 
+async function instructorUpdateProfile(root, args, context, info) {
+    // The graphql-shield permissions ensure that the user is an instructor
+    // Get given instructor’s current password
+    const instructor = await context.db.query.instructor({ where: { id: args.id }}, `{ id, password }`);
+    if (!instructor) {
+        // If not found, return false
+        return false;
+    }
+
+    // Verify that correct current password was provided
+    console.log(args.currentPassword, instructor.password);
+    const valid = await checkHashedPassword(args.currentPassword, instructor.password);
+    if (!valid) {
+        throw new Error('Current password was incorrect.');
+    }
+
+    let updatedProfile = {};
+
+    // Update email, if present
+    if (args.newEmail && args.newEmail !== null && args.newEmail.length > 0) {
+        // Lower-case email
+        const newEmail = args.newEmail.toLowerCase();
+        // Validate email
+        if (!validateEmail(newEmail)) {
+            throw new Error('Invalid new email address');
+        }
+        updatedProfile.email = newEmail;
+    }
+
+    // Update password, if present
+    if (args.newPassword && args.newPassword !== null && args.newPassword.length > 0) {
+        // Validate new password (and allow exceptions to bubble up)
+        validatePasswordComplexity(args.newPassword);
+
+        // Hash new password
+        const newHashedPassword = await hashPassword(args.newPassword);
+        updatedProfile.password = newHashedPassword;
+    }
+
+    // Set new email and password on the instructor
+    await context.db.mutation.updateInstructor({
+        where: { id: args.id },
+        data: { ...updatedProfile },
+    }, `{ id }`);
+
+    // Return success
+    return true;
+}
+
 async function sendFeedback(root, args, context, info) {
     // Determine if user exists, if not sending anonymously
     const { isInstructor, userId } = getUserInfo(context);
@@ -782,6 +831,7 @@ module.exports = {
     instructorSignup,
     instructorRequestPasswordReset,
     instructorResetPassword,
+    instructorUpdateProfile,
     sendFeedback,
     startOrResumeQuizAttempt,
     completeQuizAttempt,

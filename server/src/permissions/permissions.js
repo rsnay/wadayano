@@ -33,6 +33,7 @@ const Permissions = {
         instructorLogin: allow,
         instructorRequestPasswordReset: allow,
         instructorResetPassword: allow,
+        instructorUpdateProfile: rules.isInstructor,
         sendFeedback: rules.isAuthenticated,
       
         /* The following mutations handle their own permissions already.
