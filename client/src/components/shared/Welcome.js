@@ -47,13 +47,13 @@ import InsightsImage from '../../img/welcome_insights.png';
 
         return (
             <main>
-            <section class="hero is-bold is-primary">
-                <div class="hero-body">
-                    <div class="container">
-                    <h1 class="title">
+            <section className="hero is-bold is-primary">
+                <div className="hero-body">
+                    <div className="container">
+                    <h1 className="title">
                         <img src={Logo} alt="wadayano" style={{maxHeight: "6rem", height: "6rem", marginLeft: "-2rem"}} />
                     </h1>
-                    <h2 class="subtitle">
+                    <h2 className="subtitle">
                         Supporting knowledge monitoring development
                     </h2>
                     </div>
@@ -63,11 +63,11 @@ import InsightsImage from '../../img/welcome_insights.png';
             <div className="container welcome-page">
             {authButtons}
 
-            <div class="section tile is-ancestor">
-                <div class="tile is-parent">
-                <article class="tile is-child box">
-                    <h2 class="title">Student Quizzes</h2>
-                    <p class="content">
+            <div className="section tile is-ancestor">
+                <div className="tile is-parent">
+                <article className="tile is-child box">
+                    <h2 className="title">Student Quizzes</h2>
+                    <p className="content">
                     Help your students better monitor <b>what they know</b> and <b>what they don’t</b> know in your courses with online quizzes.
                     <br /><br />
                     We integrate with popular learning management systems via LTI, creating a seamless experience for your students.
@@ -77,10 +77,10 @@ import InsightsImage from '../../img/welcome_insights.png';
                 </article>
                 </div>
 
-                <div class="tile is-parent">
-                <article class="tile is-child box">
-                    <h2 class="title">Confidence Analysis</h2>
-                    <p class="content">
+                <div className="tile is-parent">
+                <article className="tile is-child box">
+                    <h2 className="title">Confidence Analysis</h2>
+                    <p className="content">
                     Students estimate how well they know each quiz concept and indicate whether they are confident in their response to each question.
                     <br /><br />
                     In addition to getting a normal quiz score, they receive a wadayano score that indicates how accurate their predictions were.
@@ -90,10 +90,10 @@ import InsightsImage from '../../img/welcome_insights.png';
                 </article>
                 </div>
 
-                <div class="tile is-parent">
-                <article class="tile is-child box">
-                    <h2 class="title">Instructor Insights</h2>
-                    <p class="content">
+                <div className="tile is-parent">
+                <article className="tile is-child box">
+                    <h2 className="title">Instructor Insights</h2>
+                    <p className="content">
                     Review predicted and wadayano scores by quiz and concept to see where students over- and underestimate their own knowledge.
                     <br /><br />
                     Make informed course adjustments and ensure that the balance of quiz items meets students’ needs.

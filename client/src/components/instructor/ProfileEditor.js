@@ -140,7 +140,7 @@ class ProfileEditor extends Component {
                 {this.state.error && <p className="notification is-danger">{this.state.error}</p> }
 
                 <div className="field">
-                    <label class="label">Current Password</label>
+                    <label className="label">Current Password</label>
                     <p className="control has-icons-left">
                         <input
                             required
@@ -158,7 +158,7 @@ class ProfileEditor extends Component {
                 </div>
 
                 <div className="field">
-                    <label class="label">Email Address</label>
+                    <label className="label">Email Address</label>
                     <p className="control has-icons-left has-icons-right">
                         <input
                             value={newEmail}
@@ -176,7 +176,7 @@ class ProfileEditor extends Component {
                 </div>
 
                 <div className="field">
-                    <label class="label">New Password</label>
+                    <label className="label">New Password</label>
                     <p className="control has-icons-left">
                         <input
                             value={newPassword}

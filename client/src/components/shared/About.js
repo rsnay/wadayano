@@ -20,9 +20,9 @@ import licenses from '../../licenses.json';
 
                 When students take a quiz on wadayano, they estimate how well they know each quiz concept and indicate whether they are confident in their response to each question. In addition to getting a normal quiz score, they receive a wadayano score that indicates how accurate their predictions were (with a corresponding emoji):
                 <br /><br />
-                <div class="columns is-size-4">
+                <div className="columns is-size-4">
                     {Object.keys(CONFIDENCES).map(confidence => 
-                        <div class="column">
+                        <div className="column">
                             <span className={"confidence-emoji is-medium " + CONFIDENCES[confidence].key}></span> {CONFIDENCES[confidence].text}
                         </div>
                     )}
