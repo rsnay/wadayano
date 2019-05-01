@@ -16,6 +16,7 @@ import Breadcrumbs from '../shared/Breadcrumbs';
 import QuestionEditor from './QuestionEditor';
 import QuizInfoForm from './QuizInfoForm';
 import QuizJSONImportModal from './QuizJSONImportModal';
+import LTISetupModal from './LTISetupModal';
 
 const MAX_NAVBAR_QUESTIONS = 20;
 
@@ -239,6 +240,34 @@ export class QuizEditor extends Component {
 
     let quiz = this.props.quizQuery.quiz;
 
+    const addToLMSSection = (
+        <section>
+            <h4 className="title is-4">Add Quiz to LMS</h4>
+            <div className="is-flex-tablet">
+                {quiz.type === 'GRADED' ?
+                    <span className="flex-1">Students launch graded quizzes directly from the course LMS.<br /> To make this quiz available to students, create an LTI assignment or link for this quiz.<br /></span>
+                  : 
+                    <span className="flex-1">Students can launch all practice quizzes from their wadayano dashboard.<br /> You can also add a direct LTI link to this quiz.<br /></span>
+                }
+                <button style={{marginLeft: "1rem"}} className="button is-light"
+                    onClick={() => this.setState({ displayLtiSetup: true })}>
+                    <span className="icon">
+                    <i className="fas fa-link"></i>
+                    </span>
+                    <span>Add Quiz to LMS</span>
+                </button>
+            </div>
+            <LTISetupModal
+                action={'quiz'}
+                objectId={quiz.id}
+                consumerKey={quiz.course.id}
+                sharedSecret={quiz.course.ltiSecret}
+                closeModal={() => this.setState({ displayLtiSetup: false })}
+                modalState={this.state.displayLtiSetup}
+            />
+        </section>
+    );
+
     const quizInfoModal = (
         <Modal
             modalState={this.state.showQuizInfoModal}
@@ -312,6 +341,8 @@ export class QuizEditor extends Component {
         {questionList}
         {newQuestionButton}
 
+        {addToLMSSection}
+
         {quizInfoModal}
 
         </div>
@@ -331,6 +362,7 @@ const QUIZ_QUERY = gql`
         course {
             id
             title
+            ltiSecret
         }
         questions {
             id
