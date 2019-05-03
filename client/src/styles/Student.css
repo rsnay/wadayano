@@ -81,9 +81,14 @@ progress::-webkit-progress-value {
     padding-left: 1.2rem;
     border: solid #92cdf7 1px;
 }
+
+/* Display of the actual correct answer: green border, no letter circle background */
 .question-option-container.is-review.actual-correct {
     border: solid hsl(141, 71%, 48%) 1px!important;
     border-radius: 5px;
+}
+.question-option-container.is-review.actual-correct .question-option-letter {
+    background: transparent;
 }
 
 .question-option-container:hover .question-option-letter {
