@@ -240,7 +240,8 @@ export class QuizEditor extends Component {
 
     let quiz = this.props.quizQuery.quiz;
 
-    const addToLMSSection = (
+    // Show a section hinting instructor to add quiz to the LMS if there are > 0 saved questions
+    const addToLMSSection = this.state.orderedQuestionIds.length > 0 && (
         <section>
             <h4 className="title is-4">Add Quiz to LMS</h4>
             <div className="is-flex-tablet">
