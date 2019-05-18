@@ -18,7 +18,7 @@ export default function withCourseScores(ComposedComponent) {
 
         componentWillReceiveProps(nextProps) {
             // Workaround for no callback after apollo query finishes loading.
-            if (nextProps.courseQuery && !nextProps.courseQuery.loading && !nextProps.courseQuery.error) {
+            if (nextProps.courseQuery && !nextProps.courseQuery.error && nextProps.courseQuery.course) {
     
                 // Prepare data for the sortable table
                 const course = nextProps.courseQuery.course;
@@ -122,7 +122,7 @@ export default function withCourseScores(ComposedComponent) {
     return graphql(COURSE_QUERY, {
         name: 'courseQuery',
         options: (props) => {
-            return { variables: { id:props.match.params.courseId } }
+            return { fetchPolicy: 'cache-and-network', variables: { id:props.match.params.courseId } }
         }
     })(WithCourseScores);
 }
