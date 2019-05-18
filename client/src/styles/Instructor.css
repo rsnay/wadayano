@@ -25,6 +25,7 @@
     white-space: nowrap;
     overflow: hidden;
     flex: 1;
+    margin-right: 0.7rem;
 }
 
 .question-editor {
