@@ -5,21 +5,23 @@
 
 # Users
 type Instructor {
-    id: ID! @unique
+    id: ID! @id
     email: String! @unique
     password: String!
-    createdAt: DateTime!
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
     courses: [Course!]!
 }
 
 type InstructorPasswordResetToken {
-    id: ID! @unique
-    createdAt: DateTime!
-    instructor: Instructor!
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+    instructor: Instructor! @relation(link: TABLE)
 }
 
 type Student {
-    id: ID! @unique
+    id: ID! @id
     # This is a simplistic approach, where each student has to be created and logged in via LTI.
     ltiUserId: String! @unique
     # If one student is in multiple courses that each have a different LTI user ID, they will have multiple 'accounts' on wadayano, so email isn't necessarily unique
@@ -29,15 +31,18 @@ type Student {
     # If a student is deleted, delete their quiz and survey attempts (note that the other side of this relation, on quizAttempt or surveyResult is SET_NULL, e.g. deleting an attempt removes it from the student, but doesn't delete the student)
     quizAttempts: [QuizAttempt!]! @relation(name: "StudentQuizAttempts", onDelete: CASCADE)
     surveyResults: [SurveyResult!]! @relation(name: "StudentSurveyResults", onDelete: CASCADE)
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
 }
 
 # Course data hierarchy
 type Course {
-    id: ID! @unique
+    id: ID! @id
     title: String!
     number: String
     lmsUrl: String
-    createdAt: DateTime!
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
     quizzes: [Quiz!]! @relation(name: "CourseQuizzes", onDelete: CASCADE)
     instructors: [Instructor!]!
     students: [Student!]!
@@ -48,10 +53,11 @@ type Course {
 }
 
 type PendingCourseInvite {
-    id: ID! @unique
-    createdAt: DateTime!
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
     email: String!
-    course: Course! @relation(name: "CoursePendingCourseInvite", onDelete: SET_NULL)
+    course: Course! @relation(link: TABLE, name: "CoursePendingCourseInvite", onDelete: SET_NULL)
 }
 
 enum QuizType {
@@ -60,14 +66,15 @@ enum QuizType {
 }
 
 type Quiz {
-    id: ID! @unique
-    createdAt: DateTime!
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
     quizAttempts: [QuizAttempt!]! @relation(name: "QuizQuizAttempts", onDelete: CASCADE)
     questions: [Question!]! @relation(name: "QuizQuestions", onDelete: CASCADE)
     # orderedQuestionIds is not used, but is here to support future question reordering
     # Currently, questions in quizzes are presented in a random order
-    orderedQuestionIds: [ID!]
-    course: Course  @relation(name: "CourseQuizzes", onDelete: SET_NULL)
+    orderedQuestionIds: [ID!] @scalarList(strategy: RELATION)
+    course: Course @relation(link: TABLE, name: "CourseQuizzes", onDelete: SET_NULL)
     title: String!
     type: QuizType!
 }
@@ -78,18 +85,22 @@ enum QuestionType {
 }
 
 type Question {
-    id: ID! @unique
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
     # options and correctShortAnswers may be empty arrays, but must be present
     options: [Option!]! @relation(name: "QuestionOptions", onDelete: CASCADE)
-    correctShortAnswers: [String!]!
+    correctShortAnswers: [String!]! @scalarList(strategy: RELATION)
     prompt: String!
     concept: String
     type: QuestionType!
 }
 
 type Option {
-    id: ID! @unique
-    question: Question @relation(name: "QuestionOptions", onDelete: SET_NULL)
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+    question: Question @relation(link: TABLE, name: "QuestionOptions", onDelete: SET_NULL)
     # On the application-level graphql server, the isCorrect resolver is overwritten to always return false for students
     isCorrect: Boolean
     text: String!
@@ -100,10 +111,11 @@ type Option {
 
 # Student quiz attempt data
 type QuizAttempt {
-    id: ID! @unique
-    student: Student! @relation(name: "StudentQuizAttempts", onDelete: SET_NULL)
-    quiz: Quiz! @relation(name: "QuizQuizAttempts", onDelete: SET_NULL)
-    createdAt: DateTime!
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+    student: Student! @relation(link: TABLE, name: "StudentQuizAttempts", onDelete: SET_NULL)
+    quiz: Quiz! @relation(link: TABLE, name: "QuizQuizAttempts", onDelete: SET_NULL)
     ltiSessionInfo: Json
     completed: DateTime
     postSucceeded: Boolean # True/false if it was a graded attempt. Null if practice attempt
@@ -113,28 +125,32 @@ type QuizAttempt {
 }
 
 type QuestionAttempt {
-    id: ID! @unique
-    createdAt: DateTime!
-    question: Question!
-    option: Option @relation(name: "SelectedAnswerAttemptRelation", onDelete: SET_NULL)
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+    question: Question! @relation(link: TABLE)
+    option: Option @relation(link: TABLE, name: "SelectedAnswerAttemptRelation", onDelete: SET_NULL)
     shortAnswer: String # Original student-inputted short answer
     isCorrect: Boolean! # Yes, this is duplicating isCorrect from Option, but student should be able to review their past attempts without us always having to expose isCorrect on Options or the correctShortAnswers
-    correctOption: Option @relation(name: "CorrectAnswerAttemptRelation", onDelete: SET_NULL) # See note for isCorrect
-    correctShortAnswer: String  # See note for isCorrect
+    correctOption: Option @relation(link: TABLE, name: "CorrectAnswerAttemptRelation", onDelete: SET_NULL) # See note for isCorrect
+    correctShortAnswer: String # See note for isCorrect
     isConfident: Boolean!
 }
 
 type ConceptConfidence {
-    id: ID! @unique
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
     concept: String
     confidence: Int
 }
  
 type SurveyResult {
-    id: ID! @unique
-    createdAt: DateTime!
-    course: Course! @relation(name: "CourseSurveyResults", onDelete: SET_NULL)
-    student: Student! @relation(name: "StudentSurveyResults", onDelete: SET_NULL)
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+    course: Course! @relation(link: TABLE, name: "CourseSurveyResults", onDelete: SET_NULL)
+    student: Student! @relation(link: TABLE, name: "StudentSurveyResults", onDelete: SET_NULL)
     answers: Json!
  }
 
@@ -144,12 +160,13 @@ enum TrackingEventAction {
 }
 
 type TrackingEvent {
-    id: ID! @unique
-    createdAt: DateTime!
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
     # Since Prisma currently doesn’t support polymorphic relations (ETA Q3 2019),
     # store either a student or instructor. See https://github.com/prisma/prisma/issues/83#issuecomment-477160057
-    student: Student
-    instructor: Instructor
+    student: Student @relation(link: TABLE)
+    instructor: Instructor @relation(link: TABLE)
     action: TrackingEventAction!
     context: Json!
 }
