@@ -42,7 +42,10 @@ class AggregatedQuizReview extends Component {
 
     componentWillReceiveProps(nextProps) {
         // Workaround for no callback after apollo query finishes loading.
-        if (nextProps.quizQuery && !nextProps.quizQuery.loading && !nextProps.quizQuery.error) {
+        // Rather than check if query is ‘loading,’ check if it doesn’t have data, since
+        // the cache-and-network fetch policy is used, which returns data from cache but
+        // still sets loading=true while it re-fetches
+        if (nextProps.quizQuery && !nextProps.quizQuery.error && nextProps.quizQuery.quiz) {
             try {
                 this.processData(nextProps);
             } catch (error) {
@@ -171,7 +174,7 @@ class AggregatedQuizReview extends Component {
             conceptAverageWadayanoScores.set(concept, conceptAverageWadayanoScore);
         });
 
-        console.log(scores, wadayanoScores, confidenceAnalysisCounts);
+        // console.log(scores, wadayanoScores, confidenceAnalysisCounts);
 
         this.setState({
             isLoading: false,
@@ -194,7 +197,7 @@ class AggregatedQuizReview extends Component {
             return <ErrorBox><p>Couldn’t load quiz report. {this.state.error}</p></ErrorBox>;
         }
 
-        if (this.state.isLoading || (this.props.quizQuery && this.props.quizQuery.loading)) {
+        if (this.state.isLoading || (this.props.quizQuery && !this.props.quizQuery.quiz)) {
             return <LoadingBox />;
         }
 
@@ -348,7 +351,6 @@ export const QUIZ_QUERY = gql`
 export default graphql(QUIZ_QUERY, {
     name: 'quizQuery',
     options: (props) => {
-    console.log(props);
-    return { variables: { id: props.quizId } }
+    return { fetchPolicy: 'cache-and-network', variables: { id: props.quizId } }
     }
 })(AggregatedQuizReview);

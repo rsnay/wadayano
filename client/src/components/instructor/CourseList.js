@@ -13,7 +13,7 @@ export class CourseList extends Component {
 
   render() {
 
-    if (this.props.instructorQuery && this.props.instructorQuery.loading) {
+    if (this.props.instructorQuery && !this.props.instructorQuery.currentInstructor) {
         return <LoadingBox />;
     }
 
@@ -90,5 +90,8 @@ export const INSTRUCTOR_QUERY = gql`
 `
 
 export default withAuthCheck(compose(
-    graphql(INSTRUCTOR_QUERY, {name:"instructorQuery"}),
-) (CourseList), { instructor: true});
+    graphql(INSTRUCTOR_QUERY, {
+        name: 'instructorQuery',
+        options: { fetchPolicy: 'cache-and-network' }
+    }),
+) (CourseList), { instructor: true });

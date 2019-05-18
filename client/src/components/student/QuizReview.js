@@ -67,7 +67,7 @@ class QuizReview extends Component {
     }
 
     render() {
-        if (this.props.quizAttemptQuery && this.props.quizAttemptQuery.loading) {
+        if (this.props.quizAttemptQuery && !this.props.quizAttemptQuery.quizAttempt) {
             return <LoadingBox />;
         }
 
@@ -187,6 +187,6 @@ const QUIZ_ATTEMPT_QUERY = gql`
 export default graphql(QUIZ_ATTEMPT_QUERY, {
       name: 'quizAttemptQuery',
       options: (props) => {
-        return { variables: { id: props.quizAttemptId } }
+        return { fetchPolicy: 'cache-and-network', variables: { id: props.quizAttemptId } }
       }
 })(QuizReview);

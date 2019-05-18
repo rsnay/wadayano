@@ -48,7 +48,7 @@ export class CourseDetails extends Component {
 
   render() {
 
-    if (this.props.courseQuery && this.props.courseQuery.loading) {
+    if (this.props.courseQuery && !this.props.courseQuery.course) {
         return <LoadingBox />;
     }
 
@@ -89,7 +89,7 @@ export class CourseDetails extends Component {
               }}>
                   <td data-title="Title">{quiz.title}</td>
                   <td data-title="Type">{QUIZ_TYPE_NAMES[quiz.type]}</td>
-                  {scoresLoaded ? ((scores.get(quiz.id).studentCount > 0) ? 
+                  {(scoresLoaded && scores.get(quiz.id)) ? ((scores.get(quiz.id).studentCount > 0) ? 
                                         <React.Fragment>
                                             <td>{scores.get(quiz.id).studentCount} / {course.students.length}</td>
                                             <td>{formatScore(scores.get(quiz.id).averageScore, 0)}</td>
@@ -314,7 +314,7 @@ export default withAuthCheck(withCourseScores(compose(
     graphql(COURSE_QUERY, {
         name: 'courseQuery',
         options: (props) => {
-            return { variables: { id:props.match.params.courseId } }
+            return { fetchPolicy: 'cache-and-network', variables: { id:props.match.params.courseId } }
         }
     }),
     graphql(CREATE_QUIZ, {name:"createQuizMutation"})

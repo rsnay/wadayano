@@ -33,7 +33,7 @@ class AggregatedQuestionReview extends Component {
         return <ErrorBox><p>Couldn’t load question report.</p></ErrorBox>;
     }
 
-    if (query && query.loading) {
+    if (query && !query.course) {
         return (<React.Fragment>
             {promptView}
             <LoadingBox style={{maxWidth: "100%"}} />
@@ -198,10 +198,13 @@ const COURSE_QUERY = gql`
 export default graphql(COURSE_QUERY, {
       name: 'courseQuery',
       options: (props) => {
-        return { variables: {
-            courseId: props.courseId,
-            quizId: props.quizId, 
-            questionId: props.question.id
-        } }
+        return {
+            fetchPolicy: 'cache-and-network',
+            variables: {
+                courseId: props.courseId,
+                quizId: props.quizId, 
+                questionId: props.question.id
+            }
+        }
       }
-    }) (AggregatedQuestionReview);
+}) (AggregatedQuestionReview);

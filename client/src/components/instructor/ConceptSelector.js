@@ -37,7 +37,7 @@ class ConceptSelector extends Component {
         const filterText = this.props.concept.trim();
         const lowerCaseFilterText = filterText.toLowerCase();
         // Use course concepts, if loaded
-        const concepts = (this.props.conceptsQuery && !this.props.conceptsQuery.loading && !this.props.conceptsQuery.error && this.props.conceptsQuery.courseConcepts) ? this.props.conceptsQuery.courseConcepts : [];
+        const concepts = (this.props.conceptsQuery && !this.props.conceptsQuery.error && this.props.conceptsQuery.courseConcepts) ? this.props.conceptsQuery.courseConcepts : [];
         // Perform filtering
         let filteredConcepts = concepts.filter(concept => (concept.toLowerCase().includes(lowerCaseFilterText)));
 
@@ -95,6 +95,6 @@ const CONCEPTS_QUERY = gql`
 export default graphql(CONCEPTS_QUERY, {
     name: 'conceptsQuery',
     options: (props) => {
-        return { variables: { id: props.courseId } }
+        return { fetchPolicy: 'cache-and-network', variables: { id: props.courseId } }
     }
 }) (ConceptSelector);

@@ -13,7 +13,8 @@ import Breadcrumbs from '../shared/Breadcrumbs';
 import { formatScore, predictedScore, wadayanoScore, confidenceAnalysis, stringCompare } from '../../utils';
 import { QUIZ_TYPE_NAMES } from '../../constants';
 import QuizReview from '../student/QuizReview';
-import AggregatedQuizReview from './AggregatedQuizReview';
+
+import AggregatedQuizReview, { QUIZ_QUERY } from './AggregatedQuizReview';
 
 /**
  * Displays an <AggregatedQuizReview /> component and a table of all students in the course,
@@ -34,7 +35,10 @@ class QuizScores extends Component {
 
     componentWillReceiveProps(nextProps) {
         // Workaround for no callback after apollo query finishes loading.
-        if (nextProps.quizQuery && !nextProps.quizQuery.loading && !nextProps.quizQuery.error) {
+        // Rather than check if query is ‘loading,’ check if it doesn’t have data, since
+        // the cache-and-network fetch policy is used, which returns data from cache but
+        // still sets loading=true while it re-fetches
+        if (nextProps.quizQuery && !nextProps.quizQuery.error && nextProps.quizQuery.quiz) {
 
             // Prepare data for the sortable table
             const quiz = nextProps.quizQuery.quiz;
@@ -115,7 +119,7 @@ class QuizScores extends Component {
             return <ErrorBox><p>Couldn’t load quiz scores.</p></ErrorBox>;
         }
 
-        if (this.state.isLoading || (this.props.quizQuery && this.props.quizQuery.loading)) {
+        if (this.state.isLoading || (this.props.quizQuery && !this.props.quizQuery.quiz)) {
             return <LoadingBox />;
         }
     
@@ -266,46 +270,14 @@ const sortFunctions = {
 };
 
 // Get the quiz and attempts
-const QUIZ_QUERY = gql`
-  query quizQuery($id: ID!) {
-    quiz(id:$id){
-        id
-        title
-        type
-        course {
-            id
-            title
-            students {
-                id
-                name
-            }
-        }
-        quizAttempts(where:{completed_not:null}) {
-            id
-            student {
-                id
-            }
-            createdAt
-            completed
-            score
-            questionAttempts {
-                id
-                isCorrect
-                isConfident
-            }
-            conceptConfidences {
-                id
-                confidence
-            }
-        }
-    }
-  }
-`;
+// QUIZ_QUERY is imported from AggregatedQuizReview, since that query fetches everything
+// (and more) that this component needs. If both use the same query, Apollo can cache the
+// result for quicker initial display. This does lead to increased component coupling, though.
 
 export default withAuthCheck(compose(
     graphql(QUIZ_QUERY, {name: 'quizQuery',
         options: (props) => {
-            return { variables: { id:props.match.params.quizId } }
+            return { fetchPolicy: 'cache-and-network', variables: { id:props.match.params.quizId } }
         }
     }),
 ) (QuizScores), { instructor: true });

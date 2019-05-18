@@ -16,7 +16,7 @@ import LoadingBox from '../shared/LoadingBox';
 class DashboardList extends Component {
     render() {
 
-        if (this.props.studentQuery && this.props.studentQuery.loading) {
+        if (this.props.studentQuery && !this.props.studentQuery.currentStudent) {
             return <LoadingBox />;
         }
 
@@ -87,5 +87,8 @@ const STUDENT_QUERY = gql`
 `;
 
 export default withAuthCheck(compose(
-    graphql(STUDENT_QUERY, {name: 'studentQuery'})
+    graphql(STUDENT_QUERY, {
+        name: 'studentQuery',
+        options: { fetchPolicy: 'cache-and-network' }
+    })
 )(DashboardList), { student: true });
