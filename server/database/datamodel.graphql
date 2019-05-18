@@ -17,7 +17,7 @@ type InstructorPasswordResetToken {
     id: ID! @id
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
-    instructor: Instructor! @relation(link: TABLE)
+    instructor: Instructor! @relation(link: INLINE)
 }
 
 type Student {
@@ -57,7 +57,7 @@ type PendingCourseInvite {
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
     email: String!
-    course: Course! @relation(link: TABLE, name: "CoursePendingCourseInvite", onDelete: SET_NULL)
+    course: Course! @relation(link: INLINE, name: "CoursePendingCourseInvite", onDelete: SET_NULL)
 }
 
 enum QuizType {
@@ -74,7 +74,7 @@ type Quiz {
     # orderedQuestionIds is not used, but is here to support future question reordering
     # Currently, questions in quizzes are presented in a random order
     orderedQuestionIds: [ID!] @scalarList(strategy: RELATION)
-    course: Course @relation(link: TABLE, name: "CourseQuizzes", onDelete: SET_NULL)
+    course: Course @relation(link: INLINE, name: "CourseQuizzes", onDelete: SET_NULL)
     title: String!
     type: QuizType!
 }
@@ -100,7 +100,7 @@ type Option {
     id: ID! @id
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
-    question: Question @relation(link: TABLE, name: "QuestionOptions", onDelete: SET_NULL)
+    question: Question @relation(link: INLINE, name: "QuestionOptions", onDelete: SET_NULL)
     # On the application-level graphql server, the isCorrect resolver is overwritten to always return false for students
     isCorrect: Boolean
     text: String!
@@ -114,8 +114,8 @@ type QuizAttempt {
     id: ID! @id
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
-    student: Student! @relation(link: TABLE, name: "StudentQuizAttempts", onDelete: SET_NULL)
-    quiz: Quiz! @relation(link: TABLE, name: "QuizQuizAttempts", onDelete: SET_NULL)
+    student: Student! @relation(link: INLINE, name: "StudentQuizAttempts", onDelete: SET_NULL)
+    quiz: Quiz! @relation(link: INLINE, name: "QuizQuizAttempts", onDelete: SET_NULL)
     ltiSessionInfo: Json
     completed: DateTime
     postSucceeded: Boolean # True/false if it was a graded attempt. Null if practice attempt
@@ -128,11 +128,11 @@ type QuestionAttempt {
     id: ID! @id
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
-    question: Question! @relation(link: TABLE)
-    option: Option @relation(link: TABLE, name: "SelectedAnswerAttemptRelation", onDelete: SET_NULL)
+    question: Question! @relation(link: INLINE)
+    option: Option @relation(link: INLINE, name: "SelectedAnswerAttemptRelation", onDelete: SET_NULL)
     shortAnswer: String # Original student-inputted short answer
     isCorrect: Boolean! # Yes, this is duplicating isCorrect from Option, but student should be able to review their past attempts without us always having to expose isCorrect on Options or the correctShortAnswers
-    correctOption: Option @relation(link: TABLE, name: "CorrectAnswerAttemptRelation", onDelete: SET_NULL) # See note for isCorrect
+    correctOption: Option @relation(link: INLINE, name: "CorrectAnswerAttemptRelation", onDelete: SET_NULL) # See note for isCorrect
     correctShortAnswer: String # See note for isCorrect
     isConfident: Boolean!
 }
@@ -149,8 +149,8 @@ type SurveyResult {
     id: ID! @id
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
-    course: Course! @relation(link: TABLE, name: "CourseSurveyResults", onDelete: SET_NULL)
-    student: Student! @relation(link: TABLE, name: "StudentSurveyResults", onDelete: SET_NULL)
+    course: Course! @relation(link: INLINE, name: "CourseSurveyResults", onDelete: SET_NULL)
+    student: Student! @relation(link: INLINE, name: "StudentSurveyResults", onDelete: SET_NULL)
     answers: Json!
  }
 
@@ -165,8 +165,8 @@ type TrackingEvent {
     updatedAt: DateTime! @updatedAt
     # Since Prisma currently doesn’t support polymorphic relations (ETA Q3 2019),
     # store either a student or instructor. See https://github.com/prisma/prisma/issues/83#issuecomment-477160057
-    student: Student @relation(link: TABLE)
-    instructor: Instructor @relation(link: TABLE)
+    student: Student @relation(link: INLINE)
+    instructor: Instructor @relation(link: INLINE)
     action: TrackingEventAction!
     context: Json!
 }
