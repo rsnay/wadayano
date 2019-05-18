@@ -27,6 +27,14 @@ const middlewareAuthLink = new ApolloLink((operation, forward) => {
 
 const httpLinkWithAuthToken = middlewareAuthLink.concat(httpLink);
 
+/**
+ * Note about fetchPolicy: some queries use cache-and-network for better UX. For these components,
+ * rather than check if query is ‘loading,’ check if it doesn’t have the expected data,
+ * since the cache-and-network fetch policy returns data from cache but still sets
+ * loading=true while it re-fetches the query.
+ * For now, leave network-only as the default for queries, since there can be unintended side effects
+ * with cache-and-network; configure individual queries as necessary—this also removes some of the ‘magic’
+ */
 const defaultOptions = {
     watchQuery: {
       fetchPolicy: 'cache-and-network',
