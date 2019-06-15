@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 // https://reactjs.org/docs/update.html
 import update from 'immutability-helper';
 
-import { withAuthCheck } from '../shared/AuthCheck';
+import withAuthCheck from '../shared/AuthCheck';
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
 import ErrorBox from '../shared/ErrorBox';

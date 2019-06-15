@@ -1,22 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 /**
  * A simple loading spinner, in the wadayano primary color.
  */
-export default class LoadingBox extends Component {
-    render() {
-        return (
-            <div className="container section" style={this.props.style}>
-                <center>
-                    <div className="button is-large is-primary is-loading">Loading</div>
-                    {this.props.children}
-                </center>
-            </div>
-        );
-    }
-}
+const LoadingBox = ({ style, children }) => (
+  <div className="container section" style={style}>
+    <center>
+      <div className="button is-large is-primary is-loading">Loading</div>
+      {children}
+    </center>
+  </div>
+);
 
 LoadingBox.propTypes = {
-    children: PropTypes.element
+  style: PropTypes.object,
+  children: PropTypes.element,
 };
+
+export default React.memo(LoadingBox);

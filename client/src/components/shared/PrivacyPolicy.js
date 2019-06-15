@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 /**
  * “Privacy Policy” page
@@ -9,30 +9,25 @@ const PrivacyPolicy = () => (
   <section className="container section content">
     <h1 className="title is-1 has-text-weight-light">Privacy Policy</h1>
     <p>Effective date: May 22, 2019</p>
+    <p>wadayano (“us”, “we”, or “our”) operates the wadayano.com website (the “Service”).</p>
     <p>
-      wadayano (“us”, “we”, or “our”) operates the wadayano.com website (the
-      “Service”).
-    </p>
-    <p>
-      We use your data to provide and improve the Service. By using the Service,
-      you agree to the collection and use of information in accordance with this
-      policy. Unless otherwise defined in this Privacy Policy, terms used in
-      this Privacy Policy have the same meanings as in our Terms and Conditions,
-      accessible from wadayano.com/terms.
+      We use your data to provide and improve the Service. By using the Service, you agree to the
+      collection and use of information in accordance with this policy. Unless otherwise defined in
+      this Privacy Policy, terms used in this Privacy Policy have the same meanings as in our Terms
+      and Conditions, accessible from wadayano.com/terms.
     </p>
     <h2>Information Collection and Use</h2>
     <hr />
     <p>
-      We collect several different types of information for various purposes to
-      provide and improve our Service to you.
+      We collect several different types of information for various purposes to provide and improve
+      our Service to you.
     </p>
     <h3>Types of Data Collected</h3>
     <h4>Personal Data</h4>
     <p>
-      While using our Service, we may ask you to provide us with certain
-      personally identifiable information that can be used to contact or
-      identify you (“Personal Data”). This Personal Data may include, but is not
-      limited to:
+      While using our Service, we may ask you to provide us with certain personally identifiable
+      information that can be used to contact or identify you (“Personal Data”). This Personal Data
+      may include, but is not limited to:
     </p>
     <ul>
       <li>Email address</li>
@@ -41,28 +36,25 @@ const PrivacyPolicy = () => (
     </ul>
     <h4>Usage Data</h4>
     <p>
-      We may also collect information about how the Service is accessed and used
-      (“Usage Data”). This Usage Data may include information such as your
-      computer’s Internet Protocol address (e.g. IP address), browser type,
-      browser version, the pages of our Service that you visit, actions taken on
-      those pages, the time and date of your visit, and other diagnostic data.
+      We may also collect information about how the Service is accessed and used (“Usage Data”).
+      This Usage Data may include information such as your computer’s Internet Protocol address
+      (e.g. IP address), browser type, browser version, the pages of our Service that you visit,
+      actions taken on those pages, the time and date of your visit, and other diagnostic data.
     </p>
     <h4>Tracking &amp; Cookies Data</h4>
     <p>
-      We use cookies and/or similar browser storage technologies to track the
-      activity on our Service and hold certain information. For example,
-      information about your account and a login token are stored to keep you
-      logged in for subsequent visits to the Service.
+      We use cookies and/or similar browser storage technologies to track the activity on our
+      Service and hold certain information. For example, information about your account and a login
+      token are stored to keep you logged in for subsequent visits to the Service.
     </p>
     <p>
-      Cookies are files with small amount of data which may include an anonymous
-      unique identifier. Cookies are sent to your browser from a website and
-      stored on your device.
+      Cookies are files with small amount of data which may include an anonymous unique identifier.
+      Cookies are sent to your browser from a website and stored on your device.
     </p>
     <p>
-      You can instruct your browser to refuse all cookies or to indicate when a
-      cookie is being sent. However, if you do not accept cookies, you may not
-      be able to use some portions of our Service.
+      You can instruct your browser to refuse all cookies or to indicate when a cookie is being
+      sent. However, if you do not accept cookies, you may not be able to use some portions of our
+      Service.
     </p>
     <h2>Use of Data</h2>
     <hr />
@@ -71,132 +63,113 @@ const PrivacyPolicy = () => (
       <li>To provide and maintain the Service</li>
       <li>To notify you about changes to our Service</li>
       <li>
-        To allow you to participate in interactive features of our Service when
-        you choose to do so
+        To allow you to participate in interactive features of our Service when you choose to do so
       </li>
       <li>To provide customer care and support</li>
-      <li>
-        To provide analysis or valuable information so that we can improve the
-        Service
-      </li>
+      <li>To provide analysis or valuable information so that we can improve the Service</li>
       <li>To monitor the usage of the Service</li>
       <li>To detect, prevent and address technical issues</li>
     </ul>
     <h2>Transfer of Data</h2>
     <hr />
     <p>
-      Your information, including Personal Data, may be transferred to &mdash;
-      and maintained on &mdash; computers located outside of your state,
-      province, country or other governmental jurisdiction where the data
-      protection laws may differ than those from your jurisdiction.
+      Your information, including Personal Data, may be transferred to &mdash; and maintained on
+      &mdash; computers located outside of your state, province, country or other governmental
+      jurisdiction where the data protection laws may differ than those from your jurisdiction.
     </p>
     <p>
-      If you are located outside United States and choose to provide information
-      to us, please note that we transfer the data, including Personal Data, to
-      United States and process it there. If you reside in the European Union,
-      you should not use the Service at this time.
+      If you are located outside United States and choose to provide information to us, please note
+      that we transfer the data, including Personal Data, to United States and process it there. If
+      you reside in the European Union, you should not use the Service at this time.
     </p>
     <p>
-      Your consent to this Privacy Policy followed by your submission of such
-      information represents your agreement to that transfer.
+      Your consent to this Privacy Policy followed by your submission of such information represents
+      your agreement to that transfer.
     </p>
     <p>
-      wadayano will take all steps reasonably necessary to ensure that your data
-      is treated securely and in accordance with this Privacy Policy and no
-      transfer of your Personal Data will take place to an organization or a
-      country unless there are adequate controls in place including the security
-      of your data and other personal information.
+      wadayano will take all steps reasonably necessary to ensure that your data is treated securely
+      and in accordance with this Privacy Policy and no transfer of your Personal Data will take
+      place to an organization or a country unless there are adequate controls in place including
+      the security of your data and other personal information.
     </p>
     <h2>Disclosure of Data</h2>
     <hr />
     <h3>Legal Requirements</h3>
     <p>
-      wadayano may disclose your Personal Data in the good faith belief that
-      such action is necessary to:
+      wadayano may disclose your Personal Data in the good faith belief that such action is
+      necessary to:
     </p>
     <ul>
       <li>To comply with a legal obligation</li>
       <li>To protect and defend the rights or property of wadayano</li>
-      <li>
-        To prevent or investigate possible wrongdoing in connection with the
-        Service
-      </li>
-      <li>
-        To protect the personal safety of users of the Service or the public
-      </li>
+      <li>To prevent or investigate possible wrongdoing in connection with the Service</li>
+      <li>To protect the personal safety of users of the Service or the public</li>
       <li>To protect against legal liability</li>
     </ul>
     <h2>Security of Data</h2>
     <hr />
     <p>
-      The security of your data is important to us, but no method of
-      transmission over the Internet, or method of electronic storage is 100%
-      secure. While we strive to use commercially acceptable means to protect
-      your Personal Data, we cannot guarantee its absolute security.
+      The security of your data is important to us, but no method of transmission over the Internet,
+      or method of electronic storage is 100% secure. While we strive to use commercially acceptable
+      means to protect your Personal Data, we cannot guarantee its absolute security.
     </p>
     <h2>Service Providers</h2>
     <hr />
     <p>
-      We may employ third party companies and individuals to facilitate our
-      Service (“Service Providers”), to provide the Service on our behalf, to
-      perform Service-related services or to assist us in analyzing how our
-      Service is used.
+      We may employ third party companies and individuals to facilitate our Service (“Service
+      Providers”), to provide the Service on our behalf, to perform Service-related services or to
+      assist us in analyzing how our Service is used.
     </p>
     <p>
-      These third parties have access to your Personal Data only to perform
-      these tasks on our behalf and are obligated not to disclose or use it for
-      any other purpose. For example, if you forget your password, we use a
-      third-party service to send you an email.
+      These third parties have access to your Personal Data only to perform these tasks on our
+      behalf and are obligated not to disclose or use it for any other purpose. For example, if you
+      forget your password, we use a third-party service to send you an email.
     </p>
     <h3>Analytics</h3>
     <p>
-      Analytics that we collect about actions taken on our Service are not
-      transferred to a third party.
+      Analytics that we collect about actions taken on our Service are not transferred to a third
+      party.
     </p>
     <h2>Links To Other Sites</h2>
     <hr />
     <p>
-      Our Service may contain links to other sites that are not operated by us.
-      If you click on a third-party link, you will be directed to that third
-      party’s site. We strongly advise you to review the Privacy Policy of every
-      site you visit.
+      Our Service may contain links to other sites that are not operated by us. If you click on a
+      third-party link, you will be directed to that third party’s site. We strongly advise you to
+      review the Privacy Policy of every site you visit.
     </p>
     <p>
-      We have no control over and assume no responsibility for the content,
-      privacy policies or practices of any third-party sites or services.
+      We have no control over and assume no responsibility for the content, privacy policies or
+      practices of any third-party sites or services.
     </p>
     <h2>Children’s Privacy</h2>
     <hr />
     <p>Our Service does not address anyone under the age of 18 (“Children”).</p>
     <p>
-      We do not knowingly collect personally identifiable information from
-      anyone under the age of 18. If you are a parent or guardian and you are
-      aware that your Children has provided us with Personal Data, please
-      contact us. If we become aware that we have collected Personal Data from
-      children without verification of parental consent, we will take steps to
-      remove that information from our servers.
+      We do not knowingly collect personally identifiable information from anyone under the age of
+      18. If you are a parent or guardian and you are aware that your Children has provided us with
+      Personal Data, please contact us. If we become aware that we have collected Personal Data from
+      children without verification of parental consent, we will take steps to remove that
+      information from our servers.
     </p>
     <h2>Changes to this Privacy Policy</h2>
     <hr />
     <p>
-      We may update our Privacy Policy from time to time. We will notify you of
-      any changes by posting the new Privacy Policy on this page.
+      We may update our Privacy Policy from time to time. We will notify you of any changes by
+      posting the new Privacy Policy on this page.
     </p>
     <p>
-      We will let you know via email and/or a prominent notice on our Service,
-      prior to the change becoming effective and update the “effective date” at
-      the top of this Privacy Policy.
+      We will let you know via email and/or a prominent notice on our Service, prior to the change
+      becoming effective and update the “effective date” at the top of this Privacy Policy.
     </p>
     <p>
-      You are advised to review this Privacy Policy periodically for any
-      changes. Changes to this Privacy Policy are effective when they are posted
-      on this page.
+      You are advised to review this Privacy Policy periodically for any changes. Changes to this
+      Privacy Policy are effective when they are posted on this page.
     </p>
     <h2>Contact Us</h2>
     <hr />
     <p>
-      If you have any questions about this Privacy Policy, please contact us at
-      {' '}<Link to="/feedback">wadayano.com/feedback</Link>
+      If you have any questions about this Privacy Policy, please contact us at{' '}
+      <Link to="/feedback">wadayano.com/feedback</Link>
     </p>
   </section>
 );

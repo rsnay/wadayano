@@ -8,16 +8,16 @@ import ButterToast from './butter-toast-lean';
 export default ButterToast;
 
 export const ToastTemplate = ({ dismiss, className, content }) => (
-    <div className={"notification " + className} onClick={dismiss}>
-        <button className="delete"></button>
-        {content}
-    </div>
+  <div className={`notification ${className}`} onClick={dismiss}>
+    <button className="delete" type="button" />
+    {content}
+  </div>
 );
 
 ToastTemplate.propTypes = {
-    dismiss: PropTypes.func,
-    className: PropTypes.string,
-    content: PropTypes.string.isRequired
+  dismiss: PropTypes.func,
+  className: PropTypes.string,
+  content: PropTypes.string.isRequired,
 };
 
 /*

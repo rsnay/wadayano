@@ -1,3 +1,4 @@
+/* eslint-disable */
 
 // Modified from https://github.com/AlexLibs/client-side-csv-generator
 /*

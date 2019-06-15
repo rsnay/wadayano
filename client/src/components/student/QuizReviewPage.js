@@ -1,39 +1,34 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { withAuthCheck } from '../shared/AuthCheck';
-
+import withAuthCheck from '../shared/AuthCheck';
 import QuizReview from './QuizReview';
 
-class QuizReviewPage extends Component {
-  render() {
+const QuizReviewPage = ({
+  match: {
+    params: { quizAttemptId },
+  },
+  hideTitle = false,
+  hideFooter = false,
+}) => (
+  <section className="section">
+    <div className="container">
+      <div>
+        <QuizReview quizAttemptId={quizAttemptId} hideTitle={hideTitle} />
 
-    const quizAttemptId = this.props.match.params.quizAttemptId;
-
-    return (
-      <section className="section">
-        <div className="container">
-
-          <div>
-
-            <QuizReview quizAttemptId={quizAttemptId} hideTitle={this.props.hideTitle} />
-
-            {!this.props.hideFooter &&
-              <React.Fragment>
-              <hr />
-              <p className="control">
-                    <Link to="/student" className="button is-medium">
-                        Return to Dashboard
-                    </Link>
-              </p>
-              </React.Fragment>
-            }
-          </div>
-
-        </div>
-      </section>
-    );
-  }
-}
+        {!hideFooter && (
+          <React.Fragment>
+            <hr />
+            <p className="control">
+              <Link to="/student" className="button is-medium">
+                Return to Dashboard
+              </Link>
+            </p>
+          </React.Fragment>
+        )}
+      </div>
+    </div>
+  </section>
+);
 
 export default withAuthCheck(QuizReviewPage, { student: true, instructor: true });

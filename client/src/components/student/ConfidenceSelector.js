@@ -1,45 +1,52 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 /**
  * Button group with thumbs-up and thumbs-down buttons to rate or display confidence.
  * Used in QuestionTaker and QuestionReview components.
  */
-export default class ConfidenceSelector extends Component {
-    render() {
-        return (
-            <div className="question-confidence-selector">
-                <h5>{this.props.title || "I’m confident: "}</h5>
-                <div className="buttons has-addons">
-                    <button
-                        autoFocus={this.props.autoFocus}
-                        disabled={this.props.disabled}
-                        className={"button is-rounded " + (this.props.confident === true ? "is-active is-link" : "")}
-                        onClick={() => this.props.onChange(true)}
-                    >
-                        <span className="icon is-small">
-                            <i className="fas fa-thumbs-up"></i>
-                        </span>
-                    </button>
+const ConfidenceSelector = ({
+  autoFocus = false,
+  disabled = false,
+  confident = null,
+  title = 'I’m confident: ',
+  onChange,
+}) => (
+  <div className="question-confidence-selector">
+    <h5>{title}</h5>
+    <div className="buttons has-addons">
+      <button
+        autoFocus={autoFocus}
+        disabled={disabled}
+        className={`button is-rounded ${confident === true ? 'is-active is-link' : ''}`}
+        onClick={() => onChange(true)}
+        type="button"
+      >
+        <span className="icon is-small">
+          <i className="fas fa-thumbs-up" />
+        </span>
+      </button>
 
-                    <button
-                        disabled={this.props.disabled}
-                        className={"button is-rounded " + (this.props.confident === false ? "is-active is-link" : "")}
-                        onClick={() => this.props.onChange(false)}
-                    >
-                        <span className="icon is-small">
-                            <i className="fas fa-thumbs-down"></i>
-                        </span>
-                    </button>
-                </div>
-            </div>
-        );
-    }
-}
+      <button
+        disabled={disabled}
+        className={`button is-rounded ${confident === false ? 'is-active is-link' : ''}`}
+        onClick={() => onChange(false)}
+        type="button"
+      >
+        <span className="icon is-small">
+          <i className="fas fa-thumbs-down" />
+        </span>
+      </button>
+    </div>
+  </div>
+);
 
 ConfidenceSelector.propTypes = {
-    autoFocus: PropTypes.bool,
-    disabled: PropTypes.bool,
-    confident: PropTypes.bool,
-    title: PropTypes.string
+  autoFocus: PropTypes.bool,
+  disabled: PropTypes.bool,
+  confident: PropTypes.bool,
+  title: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
 };
+
+export default ConfidenceSelector;

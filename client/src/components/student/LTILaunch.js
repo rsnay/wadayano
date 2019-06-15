@@ -11,36 +11,37 @@ import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_STUDENT } from '../../constants';
  * to be used for auth, and then redirects to wherever the launch should actually go.
  */
 export default class LTILaunch extends Component {
-    
-    constructor(props) {
-        super(props);
-        
-        this.state = {
-            error: '',
-        };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      error: '',
+    };
+  }
+
+  componentDidMount() {
+    try {
+      const { params } = this.props.match;
+      // Save auth token
+      localStorage.setItem(AUTH_TOKEN, params.token);
+      localStorage.setItem(AUTH_ROLE, AUTH_ROLE_STUDENT);
+      // Redirect
+      this.props.history.replace(`/student/${params.action}/${params.parameter1}`);
+    } catch (error) {
+      // Display error
+      this.setState({ error: 'Something went wrong with the LTI launch. Please try again.' });
     }
-    
-    componentDidMount() {
-        try {
-            const { params } = this.props.match;
-            // Save auth token
-            localStorage.setItem(AUTH_TOKEN, params.token);
-            localStorage.setItem(AUTH_ROLE, AUTH_ROLE_STUDENT);
-            // Redirect
-            this.props.history.replace(`/student/${params.action}/${params.parameter1}`);
-        } catch (error) {
-            // Display error
-            this.setState({ error: 'Something went wrong with the LTI launch. Please try again.'});
-        }
+  }
+
+  render() {
+    const { error } = this.state;
+    if (error) {
+      return (
+        <ErrorBox>
+          <p>{error}</p>
+        </ErrorBox>
+      );
     }
-    
-    render() {
-        if (this.state.error) {
-            return (
-                <ErrorBox><p>{this.state.error}</p></ErrorBox>
-            );
-        } else {
-            return <LoadingBox />;
-        }
-    }
+    return <LoadingBox />;
+  }
 }
