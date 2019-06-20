@@ -9,7 +9,7 @@ const TermsOfUse = () => (
   <section className="container section content">
     <h1 className="title is-1 has-text-weight-light">Terms of Use</h1>
     <p>A placeholder paragraph</p>
-    <p>Yet another paragraph</p>
+    <p>Terms for wadayano to come</p>
   </section>
 );
 
