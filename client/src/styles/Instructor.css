@@ -8,6 +8,7 @@
 
 /* Quiz Editor */
 .concept-tag {
+    color:black;
     margin: 0.25rem;
     cursor: pointer;
     border: none;
