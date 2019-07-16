@@ -118,7 +118,7 @@ class QuizReview extends Component {
             />
           </div>
         </div>
-
+        <p className="title">Concepts in this Quiz</p>
         {/* Concept-specific result cards */}
         <div className="tile is-ancestor" style={{ flexWrap: 'wrap' }}>
           {conceptResults.map(result => (

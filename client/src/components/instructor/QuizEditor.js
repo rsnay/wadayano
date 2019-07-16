@@ -250,6 +250,7 @@ export class QuizEditor extends Component {
                   : 
                     <span className="flex-1">Students can launch all practice quizzes from their wadayano dashboard.<br /> You can also add a direct LTI link to this quiz.<br /></span>
                 }
+                <br/><span className="flex-1">When taking a quiz, students will see questions in a random order.<br/></span>
                 <button style={{marginLeft: "1rem"}} className="button is-light"
                     onClick={() => this.setState({ displayLtiSetup: true })}>
                     <span className="icon">

@@ -15,8 +15,10 @@
 }
 .concept-tag:hover {
     background-color: #d4d4d4!important;
+    color:black;
 }
 .concept-tag:focus {
+    color:black;
     outline: none;
     border: solid gray 1px;
     background-color: #d4d4d4!important;

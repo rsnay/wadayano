@@ -3507,7 +3507,7 @@ a.box:active {
     color: #fff; }
   .tag:not(body).is-link {
     background-color: #3273dc;
-    color: #fff; }
+    color: #000; } /*use to be #fff*/
   .tag:not(body).is-info {
     background-color: #209cee;
     color: #fff; }

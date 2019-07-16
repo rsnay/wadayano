@@ -244,9 +244,6 @@ class Dashboard extends Component {
               <div className="message-header">
                 <h4 className="title is-4 has-text-white">Unfinished Quiz Attempts</h4>
               </div>
-              <div className="message-body">
-                <p>Need to pause during a quiz? Simply close the quiz, and resume it here.</p>
-              </div>
               {unfinishedAttemptsTable}
             </section>
           )}
