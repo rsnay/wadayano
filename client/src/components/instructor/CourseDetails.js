@@ -19,6 +19,8 @@ import withCourseScores from './CourseScoresProvider';
 import { formatScore } from '../../utils';
 import CourseInstructors from './CourseInstructors';
 
+import Title from '../shared/Title';
+
 export class CourseDetails extends Component {
   constructor(props) {
     super(props);
@@ -195,6 +197,9 @@ export class CourseDetails extends Component {
 
           <section>
             <h4 className="title is-4">{course.title}</h4>
+            <head>
+              <Title title={`wadayano | ${course.title}`}/>
+            </head>
             <div className="is-flex-tablet">
               <span style={{ flex: 1 }}>
                 <label className="label">Title: {course.title}</label>

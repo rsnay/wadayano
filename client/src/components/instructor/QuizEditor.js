@@ -18,6 +18,8 @@ import QuizInfoForm from './QuizInfoForm';
 import QuizJSONImportModal from './QuizJSONImportModal';
 import LTISetupModal from './LTISetupModal';
 
+import Title from '../shared/Title';
+
 const MAX_NAVBAR_QUESTIONS = 20;
 
 /**
@@ -290,6 +292,9 @@ export class QuizEditor extends Component {
     return (
       <section className="section">
         <div className="container">
+            <head>
+                <Title title={`wadayano | ${quiz.title} Editor`}/>
+            </head>
 
         <Breadcrumbs links={[
             { to: "/instructor/courses", title: "Course List" },

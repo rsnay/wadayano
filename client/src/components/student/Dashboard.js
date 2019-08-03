@@ -12,6 +12,8 @@ import LoadingBox from '../shared/LoadingBox';
 import withAuthCheck from '../shared/AuthCheck';
 import { formatScore, wadayanoScore, predictedScore } from '../../utils';
 
+import Title from '../shared/Title'
+
 /**
  * This page presents tables of unfinished quiz attempts, available practice quizzes,
  * and past quiz attempts for a given course. (Based on the student currently logged in).
@@ -235,6 +237,9 @@ class Dashboard extends Component {
 
     return (
       <section className="section">
+      <head>
+        <Title title={`wadayano | ${course.title}`}/>
+      </head>
         <div className="container">
           <h3 className="title is-3">{course.title} Dashboard</h3>
           <hr />

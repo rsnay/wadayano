@@ -13,6 +13,8 @@ import ButterToast, { ToastTemplate } from '../shared/Toast';
 import { shuffleArray } from '../../utils';
 import fragments from '../../fragments';
 
+import Title from '../shared/Title';
+
 // Different phases or stages of the quiz-taking experience
 // Student is redirected to the quiz review page after these
 const phases = {
@@ -257,6 +259,9 @@ class QuizTaker extends Component {
     return (
       <section className="section">
         <div className="container">
+          <head>
+            <Title title={`wadayano | ${quiz.title}`}/>
+          </head>
           {/* Bigger header with title, and progress bar for tablet and larger */}
           <div className="columns is-hidden-mobile">
             <div className="column">

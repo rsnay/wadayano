@@ -18,6 +18,8 @@ import ConfidenceBarGraph from './ConfidenceBarGraph';
 import ScoresBarGraph from './ScoresBarGraph';
 import fragments from '../../fragments';
 
+import Title from '../shared/Title';
+
 class AggregatedQuizReview extends Component {
   constructor(props) {
     super(props);
@@ -258,6 +260,9 @@ class AggregatedQuizReview extends Component {
     return (
       <div>
         <div className="columns is-desktop">
+          <head>
+            <Title title={`wadayano | ${quiz.title} Class Scores`}/>
+          </head>
           <div className="column">
             <div className="box" style={{ minHeight: '315px' }}>
               {barGraphLegend(averageScore, averagePredictedScore)}

@@ -16,6 +16,8 @@ import Modal from '../shared/Modal';
 import WadayanoScore from '../shared/WadayanoScore';
 import fragments from '../../fragments';
 
+import Title from '../shared/Title';
+
 /**
  * This component (used in the student QuizReviewPage and in the instructor QuizScores) displays
  * overall scores (actual, wadayano, and predicted) for the quiz and for the quiz’s concepts.
@@ -102,7 +104,12 @@ class QuizReview extends Component {
 
     return (
       <div className="quiz-review-container">
-        {/* Title and overall results */}
+        {/* Title and overall results */
+        <head>
+          <Title title={`wadayano | ${quizAttempt.quiz.title} Review`}/>
+        <title>Test</title>
+        </head>
+        }
         <div className="columns">
           <div className="column is-6">
             {!this.props.hideTitle && <h1 className="subtitle is-2">{quizAttempt.quiz.title}</h1>}

@@ -9,6 +9,8 @@ import CreateCourseForm from './CreateCourseForm';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
+import Title from '../shared/Title';
+
 const CourseList = ({ instructorQuery }) => {
   if (instructorQuery && instructorQuery.error) {
     return (
@@ -27,6 +29,9 @@ const CourseList = ({ instructorQuery }) => {
   return (
     <section className="section">
       <div className="container">
+        <head>
+          <Title title={`wadayano | Course List`}/>
+        </head>
         <h1 className="title">Courses</h1>
         <hr />
         <div className="tile is-ancestor" style={{ flexWrap: 'wrap' }}>
