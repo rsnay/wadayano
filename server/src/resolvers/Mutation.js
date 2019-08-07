@@ -795,6 +795,31 @@ async function submitSurveyResult(root, args, context, info) {
     }, info);
 }
 
+async function submitCourseConsent(root, args, context, info) {
+    // Check for valid student login
+    const studentId = getUserInfo(context).userId;
+    const { courseId, consent } = args;
+
+    // If a student changes their consent, it replaces their previous consent
+    await context.db.mutation.deleteManyCourseConsents({
+        where: {
+            student: { id: studentId },
+            course: { id: courseId }
+        }
+    }, `{ count }`);
+
+    // Save the consent, and connect it to the user and course
+    await context.db.mutation.createCourseConsent({
+        data: {
+            consent,
+            student: { connect: { id: studentId } },
+            course: { connect: { id: courseId } }
+        }
+    });
+
+    return true;
+}
+
 function trackEvent(root, args, context, info) {
     // Check for valid login (student or instructor)
     const { userId, isInstructor } = getUserInfo(context);
@@ -838,5 +863,6 @@ module.exports = {
     attemptQuestion,
     rateConcepts,
     submitSurveyResult,
+    submitCourseConsent,
     trackEvent
 }
