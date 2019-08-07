@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import TimeAgo from 'react-timeago';
 import track from 'react-tracking';
+
+import compose from '../../compose';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 

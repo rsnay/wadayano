@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import compose from '../../compose';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 import OptionSelector from '../shared/OptionSelector';
 

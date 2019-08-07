@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
