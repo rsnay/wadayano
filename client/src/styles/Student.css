@@ -180,3 +180,15 @@ progress::-webkit-progress-value {
 .quiz-table td a {
     text-decoration: none!important;
 }
+
+/* Course Consent Form */
+.consent-form-frame {
+    width: 100%;
+    height: calc(100vh - 290px);
+}
+.consent-form-options-container {
+    margin: 12px auto;
+    width: auto;
+    display: inline-block;
+    text-align: left;
+}

@@ -23,6 +23,7 @@ import SurveyResults from './instructor/SurveyResults';
 import ProfileEditor from './instructor/ProfileEditor';
 
 import LTILaunch from './student/LTILaunch';
+import CourseConsentForm from './student/CourseConsentForm';
 import DashboardList from './student/DashboardList';
 import Dashboard from './student/Dashboard';
 import QuizTaker from './student/QuizTaker';
@@ -63,8 +64,20 @@ const App = () => (
         <Route path="/instructor/survey/results/:courseId" component={SurveyResults} />
         <Route exact path="/instructor/profile" component={ProfileEditor} />
 
-        {/* Allow flexibility in redirecting to another route when launching via LTI. Route /student/launch/fakeToken/quiz/id1 would redirect to /student/quiz/id1 */}
+        {/* When a student launches, the server will redirect to either /student/launch or /student/consent,
+            both of which will redirect to the desired content */}
+        {/* Allow flexibility in redirecting to another route when launching via LTI.
+            The route `/student/launch/fakeToken/quiz/id1` would redirect to `/student/quiz/id1` */}
         <Route path="/student/launch/:token/:action/:parameter1" component={LTILaunch} />
+        {/* Presents the consent form and redirects to the given action/param as does LTILaunch.
+            This is a separate route/component, as regular LTILaunch may not have the course ID */}
+        <Route
+          path="/student/consent/:token/:courseId/:action/:parameter1"
+          component={CourseConsentForm}
+        />
+        {/* Allow a student to review or change their consent */}
+        <Route path="/student/consent/:courseId" component={CourseConsentForm} />
+
         <Route exact path="/student" component={DashboardList} />
         <Route exact path="/student/dashboard" component={DashboardList} />
         <Route exact path="/student/dashboard/:courseId" component={Dashboard} />
