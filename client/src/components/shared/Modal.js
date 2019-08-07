@@ -2,7 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AriaModal from 'react-aria-modal';
 
-const Modal = ({ children, closeModal, modalState, title, showFooter, cardClassName }) => {
+const Modal = ({
+  children,
+  closeModal,
+  modalState,
+  title,
+  showFooter,
+  cardClassName,
+  showCloseButton = true,
+}) => {
   if (!modalState) {
     return null;
   }
@@ -21,7 +29,7 @@ const Modal = ({ children, closeModal, modalState, title, showFooter, cardClassN
         <div className={`modal-card ${cardClassName}`}>
           <header className="modal-card-head">
             <p className="modal-card-title">{title}</p>
-            <button className="delete" onClick={closeModal} type="button" />
+            {showCloseButton && <button className="delete" onClick={closeModal} type="button" />}
           </header>
           <section className="modal-card-body">
             <div className="content">{children}</div>
@@ -45,6 +53,7 @@ Modal.propTypes = {
   title: PropTypes.string,
   showFooter: PropTypes.bool,
   cardClassName: PropTypes.string,
+  showCloseButton: PropTypes.bool,
 };
 
 export default Modal;
