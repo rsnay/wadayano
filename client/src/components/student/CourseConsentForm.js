@@ -32,6 +32,7 @@ const SUBMIT_COURSE_CONSENT_MUTATION = gql`
   }
 `;
 
+// Consent preference is saved in the database as a string
 const consentOptions = [
   { value: 'yes', title: 'Yes, I consent' },
   { value: 'no', title: 'No, I do not consent' },
