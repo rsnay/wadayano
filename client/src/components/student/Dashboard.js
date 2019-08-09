@@ -238,7 +238,23 @@ class Dashboard extends Component {
     return (
       <section className="section">
         <div className="container">
-          <h3 className="title is-3">{course.title} Dashboard</h3>
+          <div className="is-flex-tablet">
+            <h1 className="title is-3" style={{ flex: 1 }}>
+              {course.title} Dashboard
+            </h1>
+            {course.consentFormUrl && (
+              <Link
+                to={`/student/consent/${course.id}`}
+                className="button is-light"
+                style={{ marginBottom: '1rem' }}
+              >
+                <span className="icon">
+                  <i className="fas fa-clipboard-check" />
+                </span>
+                <span>Review Consent Form</span>
+              </Link>
+            )}
+          </div>
           <hr />
 
           {unfinishedAttempts.length > 0 && (
@@ -287,6 +303,7 @@ const COURSE_QUERY = gql`
       id
       title
       lmsUrl
+      consentFormUrl
       quizzes(where: { type: PRACTICE }) {
         id
         title
