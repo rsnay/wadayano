@@ -14,6 +14,7 @@ import OptionSelector from '../shared/OptionSelector';
 const STUDENT_QUERY = courseId => gql`
   query {
     currentStudent {
+      id
       courses(where: { id: "${courseId}" }) {
         id
         title
