@@ -355,6 +355,7 @@ export const COURSE_QUERY = gql`
       title
       number
       lmsUrl
+      consentFormUrl
       ltiSecret
       students {
         id

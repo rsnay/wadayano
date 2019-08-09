@@ -47,6 +47,16 @@ class CourseInfoForm extends Component {
         hint:
           'Since students must launch graded quizzes from the LMS, wadayano can provide a link to the LMS to make it easier for students. Enter a course-specific URL that works for students, perhaps pointing to the assignments page.',
       },
+      {
+        id: 'consentFormUrl',
+        type: 'url',
+        title: 'Consent Form URL',
+        required: false,
+        maxLength: 2000,
+        placeholder: 'e.g. link to a PDF or Google Docs viewer',
+        hint:
+          'Enable consent if you are conducting research in your course and intend to publish the results. Students will be shown this form and required to provide yes/no consent when first accessing the course. Students can review the form and change their consent at any time from the course dashboard.',
+      },
     ];
     // Load default value for each field from props (if undefined, set to '' to keep the form fields as controlled components)
     this.fields.forEach(field => {

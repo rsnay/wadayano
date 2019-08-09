@@ -58,6 +58,7 @@ input CourseInfoUpdateInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
 }
 
 # Use a restricted and modified subset of QuizUpdateInput (rather than Prisma’s full one), to avoid changing students’ quiz attempts, the parent course, etc.
