@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
+import { Redirect } from 'react-router';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
@@ -40,6 +41,7 @@ const consentOptions = [
  * This component handles an LTI launch, as does LTILaunch, but presents a course consent form
  * before redirecting to wherever the launch should actually go.
  * See the LTILaunch component for more details.
+ * If action is not present in the route, it will just display the consent for the student to change.
  */
 const CourseConsentForm = ({
   match: {
@@ -49,24 +51,19 @@ const CourseConsentForm = ({
   const [error, setError] = useState();
   const [consent, setConsent] = useState('none');
   const [saving, setSaving] = useState(false);
+  const [redirect, setRedirect] = useState(false);
 
+  // Save auth token (this would be better in an effect, but it must be done before the query fires)
+  if (token) {
+    localStorage.setItem(AUTH_TOKEN, token);
+    localStorage.setItem(AUTH_ROLE, AUTH_ROLE_STUDENT);
+  }
+
+  // Fetch course and current consent
   const student = useQuery(STUDENT_QUERY(courseId));
   const [submitMutation] = useMutation(SUBMIT_COURSE_CONSENT_MUTATION, {
     variables: { courseId, consent },
   });
-
-  useEffect(() => {
-    try {
-      // Save auth token
-      localStorage.setItem(AUTH_TOKEN, token);
-      localStorage.setItem(AUTH_ROLE, AUTH_ROLE_STUDENT);
-      // Redirect
-      // TODO do once consent is submitted
-      // this.props.history.replace(`/student/${params.action}/${params.parameter1}`);
-    } catch (err) {
-      setError('Something went wrong with the LTI launch. Please try again.');
-    }
-  }, [token]);
 
   // Set selected consent to previously-saved value
   useEffect(() => {
@@ -89,6 +86,7 @@ const CourseConsentForm = ({
       );
     }
     setSaving(false);
+    setRedirect(true);
   };
 
   if (student.loading) {
@@ -101,6 +99,14 @@ const CourseConsentForm = ({
         <p>{error || student.error.toString()}</p>
       </ErrorBox>
     );
+  }
+
+  if (redirect) {
+    // If there’s an action, it’s a first launch, and redirect should not push new history entry
+    if (action) {
+      return <Redirect to={`/student/${action}/${parameter1}`} />;
+    }
+    return <Redirect push to={`/student/dashboard/${courseId}`} />;
   }
 
   // Get the first course and courseConsent objects (there will only be one of each)

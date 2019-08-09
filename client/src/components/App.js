@@ -72,7 +72,7 @@ const App = () => (
         {/* Presents the consent form and redirects to the given action/param as does LTILaunch.
             This is a separate route/component, as regular LTILaunch may not have the course ID */}
         <Route
-          path="/student/consent/:token/:courseId/:action/:parameter1"
+          path="/student/consent/:courseId/:token/:action/:parameter1"
           component={CourseConsentForm}
         />
         {/* Allow a student to review or change their consent */}

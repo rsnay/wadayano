@@ -184,7 +184,7 @@ progress::-webkit-progress-value {
 /* Course Consent Form */
 .consent-form-frame {
     width: 100%;
-    height: calc(100vh - 290px);
+    height: calc(100vh - 390px);
 }
 .consent-form-options-container {
     margin: 12px auto;
