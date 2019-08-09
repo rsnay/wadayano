@@ -96,7 +96,7 @@ const CourseConsentForm = ({
   if (error || student.error) {
     return (
       <ErrorBox>
-        <p>{error || student.error.toString()}</p>
+        <p>{error || 'Error loading consent form. Please try again later.'}</p>
       </ErrorBox>
     );
   }
