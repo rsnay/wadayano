@@ -67,13 +67,18 @@ class Header extends Component {
               </NavLink>
             )}
             {this.isStudent && (
-              <NavLink activeClassName="is-active" to={`/student/dashboard` } className="navbar-item">
+              <NavLink activeClassName="is-active" to="/student/dashboard" className="navbar-item">
                 Dashboard
               </NavLink>
             )}
           </div>
 
           <div className="navbar-end">
+            {this.isInstructor && (
+              <NavLink activeClassName="is-active" to="/instructor/help" className="navbar-item">
+                Help
+              </NavLink>
+            )}
             {this.isLoggedIn && (
               <NavLink
                 activeClassName="is-active is-pulled-right"

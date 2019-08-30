@@ -21,6 +21,7 @@ import QuizScores from './instructor/QuizScores';
 import SurveyEditor from './instructor/SurveyEditor';
 import SurveyResults from './instructor/SurveyResults';
 import ProfileEditor from './instructor/ProfileEditor';
+import Help from './instructor/Help';
 
 import LTILaunch from './student/LTILaunch';
 import DashboardList from './student/DashboardList';
@@ -62,6 +63,7 @@ const App = () => (
         <Route path="/instructor/survey/edit/:courseId" component={SurveyEditor} />
         <Route path="/instructor/survey/results/:courseId" component={SurveyResults} />
         <Route exact path="/instructor/profile" component={ProfileEditor} />
+        <Route exact path="/instructor/help" component={Help} />
 
         {/* Allow flexibility in redirecting to another route when launching via LTI. Route /student/launch/fakeToken/quiz/id1 would redirect to /student/quiz/id1 */}
         <Route path="/student/launch/:token/:action/:parameter1" component={LTILaunch} />

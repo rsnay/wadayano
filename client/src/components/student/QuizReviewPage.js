@@ -20,7 +20,7 @@ const QuizReviewPage = ({
           <React.Fragment>
             <hr />
             <p className="control">
-              <Link to="/student" className="button is-medium">
+              <Link to="/student/dashboard" className="button is-medium">
                 Return to Dashboard
               </Link>
             </p>
