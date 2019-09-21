@@ -12,7 +12,7 @@ const WadayanoScore = ({ score, confidenceAnalysis }) => {
   const [displayHelpText, setDisplayHelpText] = useState(false);
 
   return (
-    <React.Fragment>
+    <>
       <div className="columns is-gapless is-multiline wadyano-score-container">
         <div className="column wadayano-score-logo">
           <img src={Logo} alt="wadayano" />
@@ -42,7 +42,7 @@ const WadayanoScore = ({ score, confidenceAnalysis }) => {
           <li>Lower scores may indicate that you are over- or under-confident.</li>
         </ul>
       </Modal>
-    </React.Fragment>
+    </>
   );
 };
 

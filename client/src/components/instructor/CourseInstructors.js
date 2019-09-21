@@ -109,7 +109,7 @@ class CourseInstructors extends Component {
     const { course } = this.props.courseQuery;
 
     return (
-      <React.Fragment>
+      <>
         <div className="is-flex-tablet">
           <span style={{ flex: '1 1 0%' }}>
             {course.instructors.map(instructor => (
@@ -161,7 +161,7 @@ class CourseInstructors extends Component {
             />
           </span>
         ))}
-      </React.Fragment>
+      </>
     );
   }
 }

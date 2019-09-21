@@ -168,7 +168,7 @@ class QuizScores extends Component {
           >
             <td style={{ whiteSpace: 'nowrap' }}>{student.name}</td>
             {student.attempts > 0 ? (
-              <React.Fragment>
+              <>
                 <td>{student.attempts}</td>
                 <td>{formatScore(student.highestScore)}</td>
                 <td>{formatScore(student.predictedScore)}</td>
@@ -191,7 +191,7 @@ class QuizScores extends Component {
                     <span>View Report</span>
                   </button>
                 </td>
-              </React.Fragment>
+              </>
             ) : (
               <td colSpan="6">
                 <i>Quiz not taken</i>
