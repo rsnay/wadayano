@@ -55,9 +55,8 @@ const About = () => (
     </p>
     <p>Wadayano makes use of the following open source projects:</p>
     {/* To update this table, run
-            > `npm-license-crawler --production --onlyDirectDependencies --omitVersion --json client/src/licenses.json`
-        in the repository root directory. The license crawler will need to be installed globally:
-            > `npm i npm-license-crawler -g`
+          > `npx npm-license-crawler --production --onlyDirectDependencies --omitVersion --json client/src/licenses.json`
+        in the repository root directory.
     */}
     <table className="table is-striped is-vcentered">
       <thead>
