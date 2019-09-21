@@ -1,9 +1,9 @@
 # wadayano frontend
-- Requirements: recent NPM/Yarn installation
+- Requirements: recent NPM installation
 - Get started by running these commands in this directory:
-  - `yarn`
-  - `yarn build-css`
-  - `yarn start`
+  - `npm i`
+  - `npm run build-css`
+  - `npm start`
 - Open `localhost:3000` (3000 is default port) in a browser
 
 *Following is the default README.md from create-react-app*
