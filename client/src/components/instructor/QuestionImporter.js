@@ -184,7 +184,7 @@ class QuestionImporter extends Component {
           <br /> <br />
           <div
             style={{
-              position: 'fixed',
+              position: 'sticky',
               bottom: 0,
               backgroundColor: 'white',
               padding: '1rem',
