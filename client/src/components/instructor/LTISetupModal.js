@@ -85,7 +85,7 @@ class LTISetupModal extends Component {
     }
 
     const lmsSelector = (
-      <React.Fragment>
+      <>
         <label className="label is-medium" htmlFor="lmsSelector">
           Select your LMS
           <br />
@@ -100,7 +100,7 @@ class LTISetupModal extends Component {
           ]}
         />
         <br />
-      </React.Fragment>
+      </>
     );
 
     const launchUrl = formatUrl(this.state.lmsId, this.props.action, this.props.objectId);

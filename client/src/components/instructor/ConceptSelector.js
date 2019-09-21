@@ -74,7 +74,7 @@ class ConceptSelector extends Component {
     );
 
     return (
-      <React.Fragment>
+      <>
         <input
           value={this.props.concept}
           autoFocus={this.props.autoFocus}
@@ -86,7 +86,7 @@ class ConceptSelector extends Component {
           placeholder={this.props.placeholder}
         />
         {suggestionsList}
-      </React.Fragment>
+      </>
     );
   }
 }
