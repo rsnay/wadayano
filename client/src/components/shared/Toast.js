@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ButterToast from 'butter-toast';
+import ButterToast from 'butter-toast/dist/lean.min';
 
 // Export the lean ButterToast class, as well as our template
 // See ButterToast docs: https://github.com/ealush/butter-toast
