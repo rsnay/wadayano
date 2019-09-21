@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import '../styles/App.css';
 import '../styles/Instructor.css';
 import '../styles/Student.css';
 import '../styles/BulmaConfig.css';
 
 import { Switch, Route } from 'react-router-dom';
-import Loadable from 'react-loadable';
 import Header from './shared/Header';
 import Footer from './shared/Footer';
 
@@ -38,13 +37,10 @@ import QuestionImporter from './instructor/QuestionImporter';
 import withGraphQLTracking from './AppTracker';
 
 // Load QuizEditor separately, since it has large dependencies not needed for the rest of the app
-const QuizEditor = Loadable({
-  loader: () => import('./instructor/QuizEditor'),
-  loading: LoadingBox,
-});
+const QuizEditor = lazy(() => import('./instructor/QuizEditor'));
 
 const App = () => (
-  <React.Fragment>
+  <Suspense fallback={<LoadingBox />}>
     <div className="app-content">
       <Header />
       <Switch>
@@ -92,7 +88,7 @@ const App = () => (
       </Switch>
     </div>
     <Footer />
-  </React.Fragment>
+  </Suspense>
 );
 
 // Set up react-tracking, with a custom dispatch function
