@@ -20,7 +20,7 @@ import withCourseScores from './CourseScoresProvider';
 import { formatScore } from '../../utils';
 import CourseInstructors from './CourseInstructors';
 
-export class CourseDetails extends Component {
+class CourseDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
