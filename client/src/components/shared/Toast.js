@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// The lean build of butter-toast is simply copied into our src directory, since using the npm package was causing production build issues.
-import ButterToast from './butter-toast-lean';
+import ButterToast from 'butter-toast';
 
 // Export the lean ButterToast class, as well as our template
 // See ButterToast docs: https://github.com/ealush/butter-toast
@@ -9,7 +8,7 @@ export default ButterToast;
 
 export const ToastTemplate = ({ dismiss, className, content }) => (
   <div className={`notification ${className}`} onClick={dismiss}>
-    <button className="delete" type="button" />
+    <button className="delete" type="button" title="Dismiss" aria-label="Dismiss Notification" />
     {content}
   </div>
 );
