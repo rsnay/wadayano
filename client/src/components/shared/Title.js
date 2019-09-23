@@ -7,7 +7,6 @@ class Title extends React.Component {
     }
     render(){
       return null;
-      );
     }
   }
 
