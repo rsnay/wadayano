@@ -6,7 +6,7 @@ class Title extends React.Component {
       document.title = this.props.title;
     }
     render(){
-      return(
+      return null;
         <div>
         </div>
       );
