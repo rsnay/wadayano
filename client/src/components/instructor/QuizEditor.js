@@ -247,12 +247,14 @@ export class QuizEditor extends Component {
         <section>
             <h4 className="title is-4">Add Quiz to LMS</h4>
             <div className="is-flex-tablet">
-                {quiz.type === 'GRADED' ?
-                    <span className="flex-1">Students launch graded quizzes directly from the course LMS.<br /> To make this quiz available to students, create an LTI assignment or link for this quiz.<br /></span>
-                  : 
-                    <span className="flex-1">Students can launch all practice quizzes from their wadayano dashboard.<br /> You can also add a direct LTI link to this quiz.<br /></span>
-                }
-                <br/><span className="flex-1">When taking a quiz, students will see questions in a random order.<br/></span>
+                <span className="flex-1">
+                    {quiz.type === 'GRADED' ?
+                        <>Students launch graded quizzes directly from the course LMS.<br /> To make this quiz available to students, create an LTI assignment or link for this quiz.<br /></>
+                    : 
+                        <>Students can launch all practice quizzes (including this one) from their wadayano dashboard.<br /> You can also add a direct LTI link to this quiz.<br /></>
+                    }
+                    When taking a quiz, students will see questions in a random order.
+                </span>
                 <button style={{marginLeft: "1rem"}} className="button is-light"
                     onClick={() => this.setState({ displayLtiSetup: true })}>
                     <span className="icon">
