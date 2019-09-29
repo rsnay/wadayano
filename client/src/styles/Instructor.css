@@ -8,17 +8,17 @@
 
 /* Quiz Editor */
 .concept-tag {
-    color:black;
+    color: black;
     margin: 0.25rem;
     cursor: pointer;
     border: none;
 }
 .concept-tag:hover {
     background-color: #d4d4d4!important;
-    color:black;
+    color: black!important;
 }
 .concept-tag:focus {
-    color:black;
+    color: black;
     outline: none;
     border: solid gray 1px;
     background-color: #d4d4d4!important;

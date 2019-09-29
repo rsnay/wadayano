@@ -7,7 +7,6 @@ import React from 'react';
 const TermsOfUse = () => (
   <section className="container section content">
     <h1 className="title is-1 has-text-weight-light">Terms of Use</h1>
-    <h2><strong>Terms and Conditions</strong></h2>
 
       <p>Welcome to Wadayano!</p>
 
