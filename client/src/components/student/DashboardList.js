@@ -7,10 +7,9 @@ import gql from 'graphql-tag';
 import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
 
+import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-
-import Title from '../shared/Title'
 
 /**
  * This page displays cards for all of a students’s courses to navigate to
@@ -45,9 +44,7 @@ const DashboardList = ({ studentQuery }) => {
 
   return (
     <section className="section">
-      <head>
-        <Title title='wadayano | My Courses'/>
-      </head>
+      <PageTitle title='wadayano | My Courses'/>
       <div className="container">
         <h3 className="title is-3">
           My Courses

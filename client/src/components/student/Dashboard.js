@@ -9,12 +9,11 @@ import compose from '../../compose';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
+import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import withAuthCheck from '../shared/AuthCheck';
 import { formatScore, wadayanoScore, predictedScore } from '../../utils';
-
-import Title from '../shared/Title'
 
 /**
  * This page presents tables of unfinished quiz attempts, available practice quizzes,
@@ -239,9 +238,7 @@ class Dashboard extends Component {
 
     return (
       <section className="section">
-      <head>
-        <Title title={`wadayano | ${course.title}`}/>
-      </head>
+        <PageTitle title={`wadayano | ${course.title}`}/>
         <div className="container">
           <div className="is-flex-tablet">
             <h1 className="title is-3" style={{ flex: 1 }}>

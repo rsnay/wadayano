@@ -7,6 +7,7 @@ import track from 'react-tracking';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import { formatScore, wadayanoScore, confidenceAnalysis, predictedScore } from '../../utils';
+import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
@@ -15,8 +16,6 @@ import Modal from '../shared/Modal';
 
 import WadayanoScore from '../shared/WadayanoScore';
 import fragments from '../../fragments';
-
-import Title from '../shared/Title';
 
 /**
  * This component (used in the student QuizReviewPage and in the instructor QuizScores) displays
@@ -104,12 +103,8 @@ class QuizReview extends Component {
 
     return (
       <div className="quiz-review-container">
-        {/* Title and overall results */
-        <head>
-          <Title title={`wadayano | ${quizAttempt.quiz.title} Review`}/>
-        <title>Test</title>
-        </head>
-        }
+        <PageTitle title={`wadayano | ${quizAttempt.quiz.title} Review`}/>
+        {/* Title and overall results */}
         <div className="columns">
           <div className="column is-6">
             {!this.props.hideTitle && <h1 className="subtitle is-2">{quizAttempt.quiz.title}</h1>}

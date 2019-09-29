@@ -7,10 +7,9 @@ import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
 import CreateCourseForm from './CreateCourseForm';
 
+import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
-
-import Title from '../shared/Title';
 
 const CourseList = ({ instructorQuery }) => {
   if (instructorQuery && instructorQuery.error) {
@@ -30,9 +29,7 @@ const CourseList = ({ instructorQuery }) => {
   return (
     <section className="section">
       <div className="container">
-        <head>
-          <Title title={`wadayano | Course List`}/>
-        </head>
+        <PageTitle title={`wadayano | Course List`}/>
         <h1 className="title">Courses</h1>
         <hr />
         <div className="tile is-ancestor" style={{ flexWrap: 'wrap' }}>

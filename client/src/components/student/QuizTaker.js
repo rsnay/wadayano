@@ -5,6 +5,7 @@ import { Prompt } from 'react-router';
 
 import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
+import PageTitle from '../shared/PageTitle';
 import ConceptRater from './ConceptRater';
 import QuestionTaker from './QuestionTaker';
 import ErrorBox from '../shared/ErrorBox';
@@ -13,8 +14,6 @@ import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import { shuffleArray } from '../../utils';
 import fragments from '../../fragments';
-
-import Title from '../shared/Title';
 
 // Different phases or stages of the quiz-taking experience
 // Student is redirected to the quiz review page after these
@@ -260,9 +259,7 @@ class QuizTaker extends Component {
     return (
       <section className="section">
         <div className="container">
-          <head>
-            <Title title={`wadayano | ${quiz.title}`}/>
-          </head>
+          <PageTitle title={`wadayano | ${quiz.title}`}/>
           {/* Bigger header with title, and progress bar for tablet and larger */}
           <div className="columns is-hidden-mobile">
             <div className="column">

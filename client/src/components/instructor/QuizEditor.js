@@ -9,6 +9,7 @@ import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
+import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import Modal from '../shared/Modal';
@@ -18,8 +19,6 @@ import QuestionEditor from './QuestionEditor';
 import QuizInfoForm from './QuizInfoForm';
 import QuizJSONImportModal from './QuizJSONImportModal';
 import LTISetupModal from './LTISetupModal';
-
-import Title from '../shared/Title';
 
 const MAX_NAVBAR_QUESTIONS = 20;
 
@@ -293,9 +292,7 @@ export class QuizEditor extends Component {
     return (
       <section className="section">
         <div className="container">
-            <head>
-                <Title title={`wadayano | ${quiz.title} Editor`}/>
-            </head>
+            <PageTitle title={`wadayano | ${quiz.title} Editor`}/>
 
         <Breadcrumbs links={[
             { to: "/instructor/courses", title: "Course List" },
