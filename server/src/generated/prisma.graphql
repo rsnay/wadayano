@@ -1,11 +1,15 @@
-# source: http://wadayano.com:4466/wadayano/dev2
-# timestamp: Sat May 18 2019 15:15:31 GMT-0600 (Mountain Daylight Time)
+# source: http://wadayano.com:4466/wadayano/dev
+# timestamp: Tue Aug 06 2019 23:09:13 GMT-0600 (GMT-06:00)
 
 type AggregateConceptConfidence {
   count: Int!
 }
 
 type AggregateCourse {
+  count: Int!
+}
+
+type AggregateCourseConsent {
   count: Int!
 }
 
@@ -527,6 +531,7 @@ type Course implements Node {
   title: String!
   number: String
   lmsUrl: String
+  consentFormUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz!]
@@ -548,11 +553,438 @@ type CourseConnection {
   aggregate: AggregateCourse!
 }
 
+type CourseConsent implements Node {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  course: Course!
+  student: Student!
+  consent: String!
+}
+
+"""A connection to a list of items."""
+type CourseConsentConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CourseConsentEdge]!
+  aggregate: AggregateCourseConsent!
+}
+
+input CourseConsentCreateInput {
+  id: ID
+  consent: String!
+  course: CourseCreateOneInput!
+  student: StudentCreateOneWithoutCourseConsentsInput!
+}
+
+input CourseConsentCreateManyWithoutStudentInput {
+  create: [CourseConsentCreateWithoutStudentInput!]
+  connect: [CourseConsentWhereUniqueInput!]
+}
+
+input CourseConsentCreateWithoutStudentInput {
+  id: ID
+  consent: String!
+  course: CourseCreateOneInput!
+}
+
+"""An edge in a connection."""
+type CourseConsentEdge {
+  """The item at the end of the edge."""
+  node: CourseConsent!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CourseConsentOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  consent_ASC
+  consent_DESC
+}
+
+type CourseConsentPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  consent: String!
+}
+
+input CourseConsentScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CourseConsentScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CourseConsentScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CourseConsentScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  consent: String
+
+  """All values that are not equal to given value."""
+  consent_not: String
+
+  """All values that are contained in given list."""
+  consent_in: [String!]
+
+  """All values that are not contained in given list."""
+  consent_not_in: [String!]
+
+  """All values less than the given value."""
+  consent_lt: String
+
+  """All values less than or equal the given value."""
+  consent_lte: String
+
+  """All values greater than the given value."""
+  consent_gt: String
+
+  """All values greater than or equal the given value."""
+  consent_gte: String
+
+  """All values containing the given string."""
+  consent_contains: String
+
+  """All values not containing the given string."""
+  consent_not_contains: String
+
+  """All values starting with the given string."""
+  consent_starts_with: String
+
+  """All values not starting with the given string."""
+  consent_not_starts_with: String
+
+  """All values ending with the given string."""
+  consent_ends_with: String
+
+  """All values not ending with the given string."""
+  consent_not_ends_with: String
+}
+
+type CourseConsentSubscriptionPayload {
+  mutation: MutationType!
+  node: CourseConsent
+  updatedFields: [String!]
+  previousValues: CourseConsentPreviousValues
+}
+
+input CourseConsentSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CourseConsentSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CourseConsentSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CourseConsentSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CourseConsentWhereInput
+}
+
+input CourseConsentUpdateInput {
+  consent: String
+  course: CourseUpdateOneRequiredInput
+  student: StudentUpdateOneRequiredWithoutCourseConsentsInput
+}
+
+input CourseConsentUpdateManyDataInput {
+  consent: String
+}
+
+input CourseConsentUpdateManyMutationInput {
+  consent: String
+}
+
+input CourseConsentUpdateManyWithoutStudentInput {
+  create: [CourseConsentCreateWithoutStudentInput!]
+  connect: [CourseConsentWhereUniqueInput!]
+  set: [CourseConsentWhereUniqueInput!]
+  disconnect: [CourseConsentWhereUniqueInput!]
+  delete: [CourseConsentWhereUniqueInput!]
+  update: [CourseConsentUpdateWithWhereUniqueWithoutStudentInput!]
+  updateMany: [CourseConsentUpdateManyWithWhereNestedInput!]
+  deleteMany: [CourseConsentScalarWhereInput!]
+  upsert: [CourseConsentUpsertWithWhereUniqueWithoutStudentInput!]
+}
+
+input CourseConsentUpdateManyWithWhereNestedInput {
+  where: CourseConsentScalarWhereInput!
+  data: CourseConsentUpdateManyDataInput!
+}
+
+input CourseConsentUpdateWithoutStudentDataInput {
+  consent: String
+  course: CourseUpdateOneRequiredInput
+}
+
+input CourseConsentUpdateWithWhereUniqueWithoutStudentInput {
+  where: CourseConsentWhereUniqueInput!
+  data: CourseConsentUpdateWithoutStudentDataInput!
+}
+
+input CourseConsentUpsertWithWhereUniqueWithoutStudentInput {
+  where: CourseConsentWhereUniqueInput!
+  update: CourseConsentUpdateWithoutStudentDataInput!
+  create: CourseConsentCreateWithoutStudentInput!
+}
+
+input CourseConsentWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CourseConsentWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CourseConsentWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CourseConsentWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  consent: String
+
+  """All values that are not equal to given value."""
+  consent_not: String
+
+  """All values that are contained in given list."""
+  consent_in: [String!]
+
+  """All values that are not contained in given list."""
+  consent_not_in: [String!]
+
+  """All values less than the given value."""
+  consent_lt: String
+
+  """All values less than or equal the given value."""
+  consent_lte: String
+
+  """All values greater than the given value."""
+  consent_gt: String
+
+  """All values greater than or equal the given value."""
+  consent_gte: String
+
+  """All values containing the given string."""
+  consent_contains: String
+
+  """All values not containing the given string."""
+  consent_not_contains: String
+
+  """All values starting with the given string."""
+  consent_starts_with: String
+
+  """All values not starting with the given string."""
+  consent_not_starts_with: String
+
+  """All values ending with the given string."""
+  consent_ends_with: String
+
+  """All values not ending with the given string."""
+  consent_not_ends_with: String
+  course: CourseWhereInput
+  student: StudentWhereInput
+}
+
+input CourseConsentWhereUniqueInput {
+  id: ID
+}
+
 input CourseCreateInput {
   id: ID
   title: String!
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String!
   survey: Json
   quizzes: QuizCreateManyWithoutCourseInput
@@ -570,6 +1002,11 @@ input CourseCreateManyWithoutInstructorsInput {
 input CourseCreateManyWithoutStudentsInput {
   create: [CourseCreateWithoutStudentsInput!]
   connect: [CourseWhereUniqueInput!]
+}
+
+input CourseCreateOneInput {
+  create: CourseCreateInput
+  connect: CourseWhereUniqueInput
 }
 
 input CourseCreateOneWithoutPendingCourseInvitesInput {
@@ -592,6 +1029,7 @@ input CourseCreateWithoutInstructorsInput {
   title: String!
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String!
   survey: Json
   quizzes: QuizCreateManyWithoutCourseInput
@@ -605,6 +1043,7 @@ input CourseCreateWithoutPendingCourseInvitesInput {
   title: String!
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String!
   survey: Json
   quizzes: QuizCreateManyWithoutCourseInput
@@ -618,6 +1057,7 @@ input CourseCreateWithoutQuizzesInput {
   title: String!
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String!
   survey: Json
   instructors: InstructorCreateManyWithoutCoursesInput
@@ -631,6 +1071,7 @@ input CourseCreateWithoutStudentsInput {
   title: String!
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String!
   survey: Json
   quizzes: QuizCreateManyWithoutCourseInput
@@ -644,6 +1085,7 @@ input CourseCreateWithoutSurveyResultsInput {
   title: String!
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String!
   survey: Json
   quizzes: QuizCreateManyWithoutCourseInput
@@ -670,6 +1112,8 @@ enum CourseOrderByInput {
   number_DESC
   lmsUrl_ASC
   lmsUrl_DESC
+  consentFormUrl_ASC
+  consentFormUrl_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -685,6 +1129,7 @@ type CoursePreviousValues {
   title: String!
   number: String
   lmsUrl: String
+  consentFormUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
   ltiSecret: String!
@@ -860,6 +1305,46 @@ input CourseScalarWhereInput {
 
   """All values not ending with the given string."""
   lmsUrl_not_ends_with: String
+  consentFormUrl: String
+
+  """All values that are not equal to given value."""
+  consentFormUrl_not: String
+
+  """All values that are contained in given list."""
+  consentFormUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  consentFormUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  consentFormUrl_lt: String
+
+  """All values less than or equal the given value."""
+  consentFormUrl_lte: String
+
+  """All values greater than the given value."""
+  consentFormUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  consentFormUrl_gte: String
+
+  """All values containing the given string."""
+  consentFormUrl_contains: String
+
+  """All values not containing the given string."""
+  consentFormUrl_not_contains: String
+
+  """All values starting with the given string."""
+  consentFormUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  consentFormUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  consentFormUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  consentFormUrl_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -985,10 +1470,25 @@ input CourseSubscriptionWhereInput {
   node: CourseWhereInput
 }
 
+input CourseUpdateDataInput {
+  title: String
+  number: String
+  lmsUrl: String
+  consentFormUrl: String
+  ltiSecret: String
+  survey: Json
+  quizzes: QuizUpdateManyWithoutCourseInput
+  instructors: InstructorUpdateManyWithoutCoursesInput
+  students: StudentUpdateManyWithoutCoursesInput
+  surveyResults: SurveyResultUpdateManyWithoutCourseInput
+  pendingCourseInvites: PendingCourseInviteUpdateManyWithoutCourseInput
+}
+
 input CourseUpdateInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String
   survey: Json
   quizzes: QuizUpdateManyWithoutCourseInput
@@ -1002,6 +1502,7 @@ input CourseUpdateManyDataInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String
   survey: Json
 }
@@ -1010,6 +1511,7 @@ input CourseUpdateManyMutationInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String
   survey: Json
 }
@@ -1043,6 +1545,13 @@ input CourseUpdateManyWithWhereNestedInput {
   data: CourseUpdateManyDataInput!
 }
 
+input CourseUpdateOneRequiredInput {
+  create: CourseCreateInput
+  connect: CourseWhereUniqueInput
+  update: CourseUpdateDataInput
+  upsert: CourseUpsertNestedInput
+}
+
 input CourseUpdateOneRequiredWithoutPendingCourseInvitesInput {
   create: CourseCreateWithoutPendingCourseInvitesInput
   connect: CourseWhereUniqueInput
@@ -1070,6 +1579,7 @@ input CourseUpdateWithoutInstructorsDataInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String
   survey: Json
   quizzes: QuizUpdateManyWithoutCourseInput
@@ -1082,6 +1592,7 @@ input CourseUpdateWithoutPendingCourseInvitesDataInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String
   survey: Json
   quizzes: QuizUpdateManyWithoutCourseInput
@@ -1094,6 +1605,7 @@ input CourseUpdateWithoutQuizzesDataInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String
   survey: Json
   instructors: InstructorUpdateManyWithoutCoursesInput
@@ -1106,6 +1618,7 @@ input CourseUpdateWithoutStudentsDataInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String
   survey: Json
   quizzes: QuizUpdateManyWithoutCourseInput
@@ -1118,6 +1631,7 @@ input CourseUpdateWithoutSurveyResultsDataInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
   ltiSecret: String
   survey: Json
   quizzes: QuizUpdateManyWithoutCourseInput
@@ -1134,6 +1648,11 @@ input CourseUpdateWithWhereUniqueWithoutInstructorsInput {
 input CourseUpdateWithWhereUniqueWithoutStudentsInput {
   where: CourseWhereUniqueInput!
   data: CourseUpdateWithoutStudentsDataInput!
+}
+
+input CourseUpsertNestedInput {
+  update: CourseUpdateDataInput!
+  create: CourseCreateInput!
 }
 
 input CourseUpsertWithoutPendingCourseInvitesInput {
@@ -1332,6 +1851,46 @@ input CourseWhereInput {
 
   """All values not ending with the given string."""
   lmsUrl_not_ends_with: String
+  consentFormUrl: String
+
+  """All values that are not equal to given value."""
+  consentFormUrl_not: String
+
+  """All values that are contained in given list."""
+  consentFormUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  consentFormUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  consentFormUrl_lt: String
+
+  """All values less than or equal the given value."""
+  consentFormUrl_lte: String
+
+  """All values greater than the given value."""
+  consentFormUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  consentFormUrl_gte: String
+
+  """All values containing the given string."""
+  consentFormUrl_contains: String
+
+  """All values not containing the given string."""
+  consentFormUrl_not_contains: String
+
+  """All values starting with the given string."""
+  consentFormUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  consentFormUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  consentFormUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  consentFormUrl_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -2184,78 +2743,84 @@ scalar Long
 
 type Mutation {
   createInstructorPasswordResetToken(data: InstructorPasswordResetTokenCreateInput!): InstructorPasswordResetToken!
-  createCourse(data: CourseCreateInput!): Course!
   createPendingCourseInvite(data: PendingCourseInviteCreateInput!): PendingCourseInvite!
+  createCourseConsent(data: CourseConsentCreateInput!): CourseConsent!
   createQuiz(data: QuizCreateInput!): Quiz!
   createOption(data: OptionCreateInput!): Option!
   createQuizAttempt(data: QuizAttemptCreateInput!): QuizAttempt!
   createSurveyResult(data: SurveyResultCreateInput!): SurveyResult!
   createTrackingEvent(data: TrackingEventCreateInput!): TrackingEvent!
   createQuestionAttempt(data: QuestionAttemptCreateInput!): QuestionAttempt!
+  createCourse(data: CourseCreateInput!): Course!
   createConceptConfidence(data: ConceptConfidenceCreateInput!): ConceptConfidence!
   createStudent(data: StudentCreateInput!): Student!
   createQuestion(data: QuestionCreateInput!): Question!
   createInstructor(data: InstructorCreateInput!): Instructor!
   updateInstructorPasswordResetToken(data: InstructorPasswordResetTokenUpdateInput!, where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
-  updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
   updatePendingCourseInvite(data: PendingCourseInviteUpdateInput!, where: PendingCourseInviteWhereUniqueInput!): PendingCourseInvite
+  updateCourseConsent(data: CourseConsentUpdateInput!, where: CourseConsentWhereUniqueInput!): CourseConsent
   updateQuiz(data: QuizUpdateInput!, where: QuizWhereUniqueInput!): Quiz
   updateOption(data: OptionUpdateInput!, where: OptionWhereUniqueInput!): Option
   updateQuizAttempt(data: QuizAttemptUpdateInput!, where: QuizAttemptWhereUniqueInput!): QuizAttempt
   updateSurveyResult(data: SurveyResultUpdateInput!, where: SurveyResultWhereUniqueInput!): SurveyResult
   updateTrackingEvent(data: TrackingEventUpdateInput!, where: TrackingEventWhereUniqueInput!): TrackingEvent
   updateQuestionAttempt(data: QuestionAttemptUpdateInput!, where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
+  updateCourse(data: CourseUpdateInput!, where: CourseWhereUniqueInput!): Course
   updateConceptConfidence(data: ConceptConfidenceUpdateInput!, where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   updateStudent(data: StudentUpdateInput!, where: StudentWhereUniqueInput!): Student
   updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
   updateInstructor(data: InstructorUpdateInput!, where: InstructorWhereUniqueInput!): Instructor
   deleteInstructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
-  deleteCourse(where: CourseWhereUniqueInput!): Course
   deletePendingCourseInvite(where: PendingCourseInviteWhereUniqueInput!): PendingCourseInvite
+  deleteCourseConsent(where: CourseConsentWhereUniqueInput!): CourseConsent
   deleteQuiz(where: QuizWhereUniqueInput!): Quiz
   deleteOption(where: OptionWhereUniqueInput!): Option
   deleteQuizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   deleteSurveyResult(where: SurveyResultWhereUniqueInput!): SurveyResult
   deleteTrackingEvent(where: TrackingEventWhereUniqueInput!): TrackingEvent
   deleteQuestionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
+  deleteCourse(where: CourseWhereUniqueInput!): Course
   deleteConceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   deleteStudent(where: StudentWhereUniqueInput!): Student
   deleteQuestion(where: QuestionWhereUniqueInput!): Question
   deleteInstructor(where: InstructorWhereUniqueInput!): Instructor
   upsertInstructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!, create: InstructorPasswordResetTokenCreateInput!, update: InstructorPasswordResetTokenUpdateInput!): InstructorPasswordResetToken!
-  upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
   upsertPendingCourseInvite(where: PendingCourseInviteWhereUniqueInput!, create: PendingCourseInviteCreateInput!, update: PendingCourseInviteUpdateInput!): PendingCourseInvite!
+  upsertCourseConsent(where: CourseConsentWhereUniqueInput!, create: CourseConsentCreateInput!, update: CourseConsentUpdateInput!): CourseConsent!
   upsertQuiz(where: QuizWhereUniqueInput!, create: QuizCreateInput!, update: QuizUpdateInput!): Quiz!
   upsertOption(where: OptionWhereUniqueInput!, create: OptionCreateInput!, update: OptionUpdateInput!): Option!
   upsertQuizAttempt(where: QuizAttemptWhereUniqueInput!, create: QuizAttemptCreateInput!, update: QuizAttemptUpdateInput!): QuizAttempt!
   upsertSurveyResult(where: SurveyResultWhereUniqueInput!, create: SurveyResultCreateInput!, update: SurveyResultUpdateInput!): SurveyResult!
   upsertTrackingEvent(where: TrackingEventWhereUniqueInput!, create: TrackingEventCreateInput!, update: TrackingEventUpdateInput!): TrackingEvent!
   upsertQuestionAttempt(where: QuestionAttemptWhereUniqueInput!, create: QuestionAttemptCreateInput!, update: QuestionAttemptUpdateInput!): QuestionAttempt!
+  upsertCourse(where: CourseWhereUniqueInput!, create: CourseCreateInput!, update: CourseUpdateInput!): Course!
   upsertConceptConfidence(where: ConceptConfidenceWhereUniqueInput!, create: ConceptConfidenceCreateInput!, update: ConceptConfidenceUpdateInput!): ConceptConfidence!
   upsertStudent(where: StudentWhereUniqueInput!, create: StudentCreateInput!, update: StudentUpdateInput!): Student!
   upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
   upsertInstructor(where: InstructorWhereUniqueInput!, create: InstructorCreateInput!, update: InstructorUpdateInput!): Instructor!
-  updateManyCourses(data: CourseUpdateManyMutationInput!, where: CourseWhereInput): BatchPayload!
   updateManyPendingCourseInvites(data: PendingCourseInviteUpdateManyMutationInput!, where: PendingCourseInviteWhereInput): BatchPayload!
+  updateManyCourseConsents(data: CourseConsentUpdateManyMutationInput!, where: CourseConsentWhereInput): BatchPayload!
   updateManyQuizzes(data: QuizUpdateManyMutationInput!, where: QuizWhereInput): BatchPayload!
   updateManyOptions(data: OptionUpdateManyMutationInput!, where: OptionWhereInput): BatchPayload!
   updateManyQuizAttempts(data: QuizAttemptUpdateManyMutationInput!, where: QuizAttemptWhereInput): BatchPayload!
   updateManySurveyResults(data: SurveyResultUpdateManyMutationInput!, where: SurveyResultWhereInput): BatchPayload!
   updateManyTrackingEvents(data: TrackingEventUpdateManyMutationInput!, where: TrackingEventWhereInput): BatchPayload!
   updateManyQuestionAttempts(data: QuestionAttemptUpdateManyMutationInput!, where: QuestionAttemptWhereInput): BatchPayload!
+  updateManyCourses(data: CourseUpdateManyMutationInput!, where: CourseWhereInput): BatchPayload!
   updateManyConceptConfidences(data: ConceptConfidenceUpdateManyMutationInput!, where: ConceptConfidenceWhereInput): BatchPayload!
   updateManyStudents(data: StudentUpdateManyMutationInput!, where: StudentWhereInput): BatchPayload!
   updateManyQuestions(data: QuestionUpdateManyMutationInput!, where: QuestionWhereInput): BatchPayload!
   updateManyInstructors(data: InstructorUpdateManyMutationInput!, where: InstructorWhereInput): BatchPayload!
   deleteManyInstructorPasswordResetTokens(where: InstructorPasswordResetTokenWhereInput): BatchPayload!
-  deleteManyCourses(where: CourseWhereInput): BatchPayload!
   deleteManyPendingCourseInvites(where: PendingCourseInviteWhereInput): BatchPayload!
+  deleteManyCourseConsents(where: CourseConsentWhereInput): BatchPayload!
   deleteManyQuizzes(where: QuizWhereInput): BatchPayload!
   deleteManyOptions(where: OptionWhereInput): BatchPayload!
   deleteManyQuizAttempts(where: QuizAttemptWhereInput): BatchPayload!
   deleteManySurveyResults(where: SurveyResultWhereInput): BatchPayload!
   deleteManyTrackingEvents(where: TrackingEventWhereInput): BatchPayload!
   deleteManyQuestionAttempts(where: QuestionAttemptWhereInput): BatchPayload!
+  deleteManyCourses(where: CourseWhereInput): BatchPayload!
   deleteManyConceptConfidences(where: ConceptConfidenceWhereInput): BatchPayload!
   deleteManyStudents(where: StudentWhereInput): BatchPayload!
   deleteManyQuestions(where: QuestionWhereInput): BatchPayload!
@@ -3233,40 +3798,43 @@ input PendingCourseInviteWhereUniqueInput {
 
 type Query {
   instructorPasswordResetTokens(where: InstructorPasswordResetTokenWhereInput, orderBy: InstructorPasswordResetTokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InstructorPasswordResetToken]!
-  courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course]!
   pendingCourseInvites(where: PendingCourseInviteWhereInput, orderBy: PendingCourseInviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PendingCourseInvite]!
+  courseConsents(where: CourseConsentWhereInput, orderBy: CourseConsentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CourseConsent]!
   quizzes(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Quiz]!
   options(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Option]!
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt]!
   surveyResults(where: SurveyResultWhereInput, orderBy: SurveyResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SurveyResult]!
   trackingEvents(where: TrackingEventWhereInput, orderBy: TrackingEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TrackingEvent]!
   questionAttempts(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionAttempt]!
+  courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course]!
   conceptConfidences(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ConceptConfidence]!
   students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student]!
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
   instructors(where: InstructorWhereInput, orderBy: InstructorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Instructor]!
   instructorPasswordResetToken(where: InstructorPasswordResetTokenWhereUniqueInput!): InstructorPasswordResetToken
-  course(where: CourseWhereUniqueInput!): Course
   pendingCourseInvite(where: PendingCourseInviteWhereUniqueInput!): PendingCourseInvite
+  courseConsent(where: CourseConsentWhereUniqueInput!): CourseConsent
   quiz(where: QuizWhereUniqueInput!): Quiz
   option(where: OptionWhereUniqueInput!): Option
   quizAttempt(where: QuizAttemptWhereUniqueInput!): QuizAttempt
   surveyResult(where: SurveyResultWhereUniqueInput!): SurveyResult
   trackingEvent(where: TrackingEventWhereUniqueInput!): TrackingEvent
   questionAttempt(where: QuestionAttemptWhereUniqueInput!): QuestionAttempt
+  course(where: CourseWhereUniqueInput!): Course
   conceptConfidence(where: ConceptConfidenceWhereUniqueInput!): ConceptConfidence
   student(where: StudentWhereUniqueInput!): Student
   question(where: QuestionWhereUniqueInput!): Question
   instructor(where: InstructorWhereUniqueInput!): Instructor
   instructorPasswordResetTokensConnection(where: InstructorPasswordResetTokenWhereInput, orderBy: InstructorPasswordResetTokenOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InstructorPasswordResetTokenConnection!
-  coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
   pendingCourseInvitesConnection(where: PendingCourseInviteWhereInput, orderBy: PendingCourseInviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PendingCourseInviteConnection!
+  courseConsentsConnection(where: CourseConsentWhereInput, orderBy: CourseConsentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConsentConnection!
   quizzesConnection(where: QuizWhereInput, orderBy: QuizOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizConnection!
   optionsConnection(where: OptionWhereInput, orderBy: OptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OptionConnection!
   quizAttemptsConnection(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuizAttemptConnection!
   surveyResultsConnection(where: SurveyResultWhereInput, orderBy: SurveyResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SurveyResultConnection!
   trackingEventsConnection(where: TrackingEventWhereInput, orderBy: TrackingEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TrackingEventConnection!
   questionAttemptsConnection(where: QuestionAttemptWhereInput, orderBy: QuestionAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionAttemptConnection!
+  coursesConnection(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CourseConnection!
   conceptConfidencesConnection(where: ConceptConfidenceWhereInput, orderBy: ConceptConfidenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ConceptConfidenceConnection!
   studentsConnection(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StudentConnection!
   questionsConnection(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionConnection!
@@ -5595,6 +6163,7 @@ type Student implements Node {
   courses(where: CourseWhereInput, orderBy: CourseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Course!]
   quizAttempts(where: QuizAttemptWhereInput, orderBy: QuizAttemptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuizAttempt!]
   surveyResults(where: SurveyResultWhereInput, orderBy: SurveyResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SurveyResult!]
+  courseConsents(where: CourseConsentWhereInput, orderBy: CourseConsentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CourseConsent!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5617,6 +6186,7 @@ input StudentCreateInput {
   courses: CourseCreateManyWithoutStudentsInput
   quizAttempts: QuizAttemptCreateManyWithoutStudentInput
   surveyResults: SurveyResultCreateManyWithoutStudentInput
+  courseConsents: CourseConsentCreateManyWithoutStudentInput
 }
 
 input StudentCreateManyWithoutCoursesInput {
@@ -5626,6 +6196,11 @@ input StudentCreateManyWithoutCoursesInput {
 
 input StudentCreateOneInput {
   create: StudentCreateInput
+  connect: StudentWhereUniqueInput
+}
+
+input StudentCreateOneWithoutCourseConsentsInput {
+  create: StudentCreateWithoutCourseConsentsInput
   connect: StudentWhereUniqueInput
 }
 
@@ -5639,6 +6214,16 @@ input StudentCreateOneWithoutSurveyResultsInput {
   connect: StudentWhereUniqueInput
 }
 
+input StudentCreateWithoutCourseConsentsInput {
+  id: ID
+  ltiUserId: String!
+  email: String!
+  name: String!
+  courses: CourseCreateManyWithoutStudentsInput
+  quizAttempts: QuizAttemptCreateManyWithoutStudentInput
+  surveyResults: SurveyResultCreateManyWithoutStudentInput
+}
+
 input StudentCreateWithoutCoursesInput {
   id: ID
   ltiUserId: String!
@@ -5646,6 +6231,7 @@ input StudentCreateWithoutCoursesInput {
   name: String!
   quizAttempts: QuizAttemptCreateManyWithoutStudentInput
   surveyResults: SurveyResultCreateManyWithoutStudentInput
+  courseConsents: CourseConsentCreateManyWithoutStudentInput
 }
 
 input StudentCreateWithoutQuizAttemptsInput {
@@ -5655,6 +6241,7 @@ input StudentCreateWithoutQuizAttemptsInput {
   name: String!
   courses: CourseCreateManyWithoutStudentsInput
   surveyResults: SurveyResultCreateManyWithoutStudentInput
+  courseConsents: CourseConsentCreateManyWithoutStudentInput
 }
 
 input StudentCreateWithoutSurveyResultsInput {
@@ -5664,6 +6251,7 @@ input StudentCreateWithoutSurveyResultsInput {
   name: String!
   courses: CourseCreateManyWithoutStudentsInput
   quizAttempts: QuizAttemptCreateManyWithoutStudentInput
+  courseConsents: CourseConsentCreateManyWithoutStudentInput
 }
 
 """An edge in a connection."""
@@ -5960,6 +6548,7 @@ input StudentUpdateDataInput {
   courses: CourseUpdateManyWithoutStudentsInput
   quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
   surveyResults: SurveyResultUpdateManyWithoutStudentInput
+  courseConsents: CourseConsentUpdateManyWithoutStudentInput
 }
 
 input StudentUpdateInput {
@@ -5969,6 +6558,7 @@ input StudentUpdateInput {
   courses: CourseUpdateManyWithoutStudentsInput
   quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
   surveyResults: SurveyResultUpdateManyWithoutStudentInput
+  courseConsents: CourseConsentUpdateManyWithoutStudentInput
 }
 
 input StudentUpdateManyDataInput {
@@ -6009,6 +6599,13 @@ input StudentUpdateOneInput {
   upsert: StudentUpsertNestedInput
 }
 
+input StudentUpdateOneRequiredWithoutCourseConsentsInput {
+  create: StudentCreateWithoutCourseConsentsInput
+  connect: StudentWhereUniqueInput
+  update: StudentUpdateWithoutCourseConsentsDataInput
+  upsert: StudentUpsertWithoutCourseConsentsInput
+}
+
 input StudentUpdateOneRequiredWithoutQuizAttemptsInput {
   create: StudentCreateWithoutQuizAttemptsInput
   connect: StudentWhereUniqueInput
@@ -6023,12 +6620,22 @@ input StudentUpdateOneRequiredWithoutSurveyResultsInput {
   upsert: StudentUpsertWithoutSurveyResultsInput
 }
 
+input StudentUpdateWithoutCourseConsentsDataInput {
+  ltiUserId: String
+  email: String
+  name: String
+  courses: CourseUpdateManyWithoutStudentsInput
+  quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
+  surveyResults: SurveyResultUpdateManyWithoutStudentInput
+}
+
 input StudentUpdateWithoutCoursesDataInput {
   ltiUserId: String
   email: String
   name: String
   quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
   surveyResults: SurveyResultUpdateManyWithoutStudentInput
+  courseConsents: CourseConsentUpdateManyWithoutStudentInput
 }
 
 input StudentUpdateWithoutQuizAttemptsDataInput {
@@ -6037,6 +6644,7 @@ input StudentUpdateWithoutQuizAttemptsDataInput {
   name: String
   courses: CourseUpdateManyWithoutStudentsInput
   surveyResults: SurveyResultUpdateManyWithoutStudentInput
+  courseConsents: CourseConsentUpdateManyWithoutStudentInput
 }
 
 input StudentUpdateWithoutSurveyResultsDataInput {
@@ -6045,6 +6653,7 @@ input StudentUpdateWithoutSurveyResultsDataInput {
   name: String
   courses: CourseUpdateManyWithoutStudentsInput
   quizAttempts: QuizAttemptUpdateManyWithoutStudentInput
+  courseConsents: CourseConsentUpdateManyWithoutStudentInput
 }
 
 input StudentUpdateWithWhereUniqueWithoutCoursesInput {
@@ -6055,6 +6664,11 @@ input StudentUpdateWithWhereUniqueWithoutCoursesInput {
 input StudentUpsertNestedInput {
   update: StudentUpdateDataInput!
   create: StudentCreateInput!
+}
+
+input StudentUpsertWithoutCourseConsentsInput {
+  update: StudentUpdateWithoutCourseConsentsDataInput!
+  create: StudentCreateWithoutCourseConsentsInput!
 }
 
 input StudentUpsertWithoutQuizAttemptsInput {
@@ -6295,6 +6909,9 @@ input StudentWhereInput {
   surveyResults_every: SurveyResultWhereInput
   surveyResults_some: SurveyResultWhereInput
   surveyResults_none: SurveyResultWhereInput
+  courseConsents_every: CourseConsentWhereInput
+  courseConsents_some: CourseConsentWhereInput
+  courseConsents_none: CourseConsentWhereInput
 }
 
 input StudentWhereUniqueInput {
@@ -6304,14 +6921,15 @@ input StudentWhereUniqueInput {
 
 type Subscription {
   instructorPasswordResetToken(where: InstructorPasswordResetTokenSubscriptionWhereInput): InstructorPasswordResetTokenSubscriptionPayload
-  course(where: CourseSubscriptionWhereInput): CourseSubscriptionPayload
   pendingCourseInvite(where: PendingCourseInviteSubscriptionWhereInput): PendingCourseInviteSubscriptionPayload
+  courseConsent(where: CourseConsentSubscriptionWhereInput): CourseConsentSubscriptionPayload
   quiz(where: QuizSubscriptionWhereInput): QuizSubscriptionPayload
   option(where: OptionSubscriptionWhereInput): OptionSubscriptionPayload
   quizAttempt(where: QuizAttemptSubscriptionWhereInput): QuizAttemptSubscriptionPayload
   surveyResult(where: SurveyResultSubscriptionWhereInput): SurveyResultSubscriptionPayload
   trackingEvent(where: TrackingEventSubscriptionWhereInput): TrackingEventSubscriptionPayload
   questionAttempt(where: QuestionAttemptSubscriptionWhereInput): QuestionAttemptSubscriptionPayload
+  course(where: CourseSubscriptionWhereInput): CourseSubscriptionPayload
   conceptConfidence(where: ConceptConfidenceSubscriptionWhereInput): ConceptConfidenceSubscriptionPayload
   student(where: StudentSubscriptionWhereInput): StudentSubscriptionPayload
   question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload

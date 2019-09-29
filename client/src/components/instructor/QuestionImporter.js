@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import compose from '../../compose';
 import { QUIZ_TYPE_NAMES } from '../../constants';
 import withAuthCheck from '../shared/AuthCheck';
 
@@ -183,7 +184,7 @@ class QuestionImporter extends Component {
           <br /> <br />
           <div
             style={{
-              position: 'fixed',
+              position: 'sticky',
               bottom: 0,
               backgroundColor: 'white',
               padding: '1rem',

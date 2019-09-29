@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 
+import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
@@ -167,7 +168,7 @@ class QuizScores extends Component {
           >
             <td style={{ whiteSpace: 'nowrap' }}>{student.name}</td>
             {student.attempts > 0 ? (
-              <React.Fragment>
+              <>
                 <td>{student.attempts}</td>
                 <td>{formatScore(student.highestScore)}</td>
                 <td>{formatScore(student.predictedScore)}</td>
@@ -190,7 +191,7 @@ class QuizScores extends Component {
                     <span>View Report</span>
                   </button>
                 </td>
-              </React.Fragment>
+              </>
             ) : (
               <td colSpan="6">
                 <i>Quiz not taken</i>

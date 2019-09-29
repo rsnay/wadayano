@@ -19,9 +19,3 @@
 .env.production.local
 
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-client/src/TSPSolver.py
-node_modules/
-yarn.lock

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Prompt } from 'react-router';
-import { ApolloConsumer, graphql, compose } from 'react-apollo';
+import { ApolloConsumer, graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 // https://reactjs.org/docs/update.html
 import update from 'immutability-helper';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
+import compose from '../../compose';
 import { ALPHABET, QUESTION_TYPE_NAMES, DEFAULT_QUESTION_TYPE, MULTIPLE_CHOICE, SHORT_ANSWER } from '../../constants';
 import ErrorBox from '../shared/ErrorBox';
 import ConceptSelector from './ConceptSelector';

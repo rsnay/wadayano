@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Prompt } from 'react-router';
 
+import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
 import ConceptRater from './ConceptRater';
 import QuestionTaker from './QuestionTaker';

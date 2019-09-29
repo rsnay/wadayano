@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import ReactTooltip from 'react-tooltip';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
+import compose from '../../compose';
 
 import withAuthCheck from '../shared/AuthCheck';
 
@@ -21,7 +22,7 @@ import CourseInstructors from './CourseInstructors';
 
 import Title from '../shared/Title';
 
-export class CourseDetails extends Component {
+class CourseDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -105,14 +106,14 @@ export class CourseDetails extends Component {
                   <td data-title="Type">{QUIZ_TYPE_NAMES[quiz.type]}</td>
                   {scoresLoaded && scores.get(quiz.id) ? (
                     scores.get(quiz.id).studentCount > 0 ? (
-                      <React.Fragment>
+                      <>
                         <td>
                           {scores.get(quiz.id).studentCount} / {course.students.length}
                         </td>
                         <td>{formatScore(scores.get(quiz.id).averageScore, 0)}</td>
                         <td>{formatScore(scores.get(quiz.id).averagePredictedScore, 0)}</td>
                         <td>{formatScore(scores.get(quiz.id).averageWadayanoScore, 0)}</td>
-                      </React.Fragment>
+                      </>
                     ) : (
                       <td colSpan="4">
                         <i>Quiz not taken</i>
@@ -153,7 +154,7 @@ export class CourseDetails extends Component {
         border
         class="quiz-options-menu"
         getContent={dataTip => (
-          <React.Fragment>
+          <>
             <Link to={`/instructor/quiz/${dataTip}/scores`} className="navbar-item">
               <span className="icon">
                 <i className="fas fa-chart-bar" />
@@ -180,7 +181,7 @@ export class CourseDetails extends Component {
               </span>
               <span>Add to LMS</span>
             </a>
-          </React.Fragment>
+          </>
         )}
       />
     );
@@ -359,6 +360,7 @@ export const COURSE_QUERY = gql`
       title
       number
       lmsUrl
+      consentFormUrl
       ltiSecret
       students {
         id

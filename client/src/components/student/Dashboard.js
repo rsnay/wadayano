@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import TimeAgo from 'react-timeago';
 import track from 'react-tracking';
+
+import compose from '../../compose';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
@@ -241,7 +243,23 @@ class Dashboard extends Component {
         <Title title={`wadayano | ${course.title}`}/>
       </head>
         <div className="container">
-          <h3 className="title is-3">{course.title} Dashboard</h3>
+          <div className="is-flex-tablet">
+            <h1 className="title is-3" style={{ flex: 1 }}>
+              {course.title} Dashboard
+            </h1>
+            {course.consentFormUrl && (
+              <Link
+                to={`/student/consent/${course.id}`}
+                className="button is-light"
+                style={{ marginBottom: '1rem' }}
+              >
+                <span className="icon">
+                  <i className="fas fa-clipboard-check" />
+                </span>
+                <span>Review Consent Form</span>
+              </Link>
+            )}
+          </div>
           <hr />
 
           {unfinishedAttempts.length > 0 && (
@@ -287,6 +305,7 @@ const COURSE_QUERY = gql`
       id
       title
       lmsUrl
+      consentFormUrl
       quizzes(where: { type: PRACTICE }) {
         id
         title

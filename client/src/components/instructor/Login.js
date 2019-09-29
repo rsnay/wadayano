@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
+
+import compose from '../../compose';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
 import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR } from '../../constants';

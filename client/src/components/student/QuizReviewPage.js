@@ -17,14 +17,14 @@ const QuizReviewPage = ({
         <QuizReview quizAttemptId={quizAttemptId} hideTitle={hideTitle} />
 
         {!hideFooter && (
-          <React.Fragment>
+          <>
             <hr />
             <p className="control">
               <Link to="/student/dashboard" className="button is-medium">
                 Return to Dashboard
               </Link>
             </p>
-          </React.Fragment>
+          </>
         )}
       </div>
     </div>

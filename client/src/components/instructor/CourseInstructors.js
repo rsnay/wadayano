@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Redirect } from 'react-router-dom';
 
+import compose from '../../compose';
 import ErrorBox from '../shared/ErrorBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
@@ -108,7 +109,7 @@ class CourseInstructors extends Component {
     const { course } = this.props.courseQuery;
 
     return (
-      <React.Fragment>
+      <>
         <div className="is-flex-tablet">
           <span style={{ flex: '1 1 0%' }}>
             {course.instructors.map(instructor => (
@@ -160,7 +161,7 @@ class CourseInstructors extends Component {
             />
           </span>
         ))}
-      </React.Fragment>
+      </>
     );
   }
 }

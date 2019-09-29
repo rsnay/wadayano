@@ -41,11 +41,11 @@ class AggregatedQuestionReview extends Component {
 
     if (query && !query.course) {
       return (
-        <React.Fragment>
+        <>
           {promptView}
           <LoadingBox style={{ maxWidth: '100%' }} />
           <hr />
-        </React.Fragment>
+        </>
       );
     }
 

@@ -37,7 +37,7 @@ async function handleLaunch(config, db, req, res) {
         where: {
             id: courseId
        }
-    }, `{ ltiSecret }`);
+    }, `{ ltiSecret, consentFormUrl }`);
     console.log(courseInfo);
     if (!courseInfo || !courseInfo.ltiSecret) {
         res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -75,17 +75,26 @@ async function handleLaunch(config, db, req, res) {
                 _upsertQuizAttempt(db, studentId, quizId, provider.body);
             }
 
-            let redirectURL = `${CLIENT_BASE_URL}/student/launch/${token}/${action}/${objectId}`;
+            let redirectUrl;
+            // If the course has a consent form the student has not seen, go to the form
+            const consentRequired = courseInfo.consentFormUrl && courseInfo.consentFormUrl.trim().length > 0;
+            const consentSaved = await _checkStudentCourseConsent(db, studentId, courseId);
+            if (consentRequired && !consentSaved) {
+                redirectUrl = `${CLIENT_BASE_URL}/student/consent/${courseId}/${token}/${action}/${objectId}`;
+            } else {
+                // Otherwise redirect to the desired content
+                redirectUrl = `${CLIENT_BASE_URL}/student/launch/${token}/${action}/${objectId}`;
+            }
 
             // CLIENT_BASE_URL should be '' on production
             if (req.hostname.indexOf('wadayano.com') >= 0) {
-                redirectURL.replace(CLIENT_BASE_URL, '');
+                redirectUrl.replace(CLIENT_BASE_URL, '');
             }
             
             // For some reason, immediately redirecting (either via http, meta tag, or javascript) will fail if it's launched in an iframe. So just give them a link to continue in a new window if we detect it's in an iframe.
-            //res.redirect(redirectURL); // Won't work in an iframe
+            //res.redirect(redirectUrl); // Won't work in an iframe
             res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(`<html><body><script>function inIframe(){try{return window.self!==window.top}catch(n){return!0}} !inIframe() && window.location.replace('${redirectURL}');</script><h3><a href="${redirectURL}" target="_blank">Continue &gt;</a></h3></body></html>`);
+            res.end(`<html><body><script>function inIframe(){try{return window.self!==window.top}catch(n){return!0}} !inIframe() && window.location.replace('${redirectUrl}');</script><h3><a href="${redirectUrl}" target="_blank">Continue &gt;</a></h3></body></html>`);
         }
     });
 }
@@ -192,6 +201,25 @@ async function _upsertQuizAttempt(db, studentId, quizId, ltiSessionInfo) {
         });
         console.log('Created new quiz attempt');
     }
+}
+
+/**
+ * Checks if a student has saved a consent preference for a course
+ * @param {*} db - Prisma DB instance
+ * @param {*} studentId - student's internal user ID (NOT LTI user_id)
+ * @param {*} courseId - internal Course ID
+ * @returns {boolean} true if the student has saved consent
+ */
+async function _checkStudentCourseConsent(db, studentId, courseId) {
+    const courseConsents = await db.query.courseConsents({
+        where: {
+            student: { id: studentId },
+            course: { id: courseId }
+        }
+    });
+    const consentSaved = courseConsents && courseConsents.length > 0;
+    console.log(courseConsents, consentSaved);
+    return consentSaved;
 }
 
 

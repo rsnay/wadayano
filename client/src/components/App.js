@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import '../styles/App.css';
 import '../styles/Instructor.css';
 import '../styles/Student.css';
 import '../styles/BulmaConfig.css';
 
 import { Switch, Route } from 'react-router-dom';
-import Loadable from 'react-loadable';
 import Header from './shared/Header';
 import Footer from './shared/Footer';
 
@@ -24,6 +23,7 @@ import ProfileEditor from './instructor/ProfileEditor';
 import Help from './instructor/Help';
 
 import LTILaunch from './student/LTILaunch';
+import CourseConsentForm from './student/CourseConsentForm';
 import DashboardList from './student/DashboardList';
 import Dashboard from './student/Dashboard';
 import QuizTaker from './student/QuizTaker';
@@ -38,13 +38,10 @@ import QuestionImporter from './instructor/QuestionImporter';
 import withGraphQLTracking from './AppTracker';
 
 // Load QuizEditor separately, since it has large dependencies not needed for the rest of the app
-const QuizEditor = Loadable({
-  loader: () => import('./instructor/QuizEditor'),
-  loading: LoadingBox,
-});
+const QuizEditor = lazy(() => import('./instructor/QuizEditor'));
 
 const App = () => (
-  <React.Fragment>
+  <Suspense fallback={<LoadingBox />}>
     <div className="app-content">
       <Header />
       <Switch>
@@ -65,8 +62,20 @@ const App = () => (
         <Route exact path="/instructor/profile" component={ProfileEditor} />
         <Route exact path="/instructor/help" component={Help} />
 
-        {/* Allow flexibility in redirecting to another route when launching via LTI. Route /student/launch/fakeToken/quiz/id1 would redirect to /student/quiz/id1 */}
+        {/* When a student launches, the server will redirect to either /student/launch or /student/consent,
+            both of which will redirect to the desired content */}
+        {/* Allow flexibility in redirecting to another route when launching via LTI.
+            The route `/student/launch/fakeToken/quiz/id1` would redirect to `/student/quiz/id1` */}
         <Route path="/student/launch/:token/:action/:parameter1" component={LTILaunch} />
+        {/* Presents the consent form and redirects to the given action/param as does LTILaunch.
+            This is a separate route/component, as regular LTILaunch may not have the course ID */}
+        <Route
+          path="/student/consent/:courseId/:token/:action/:parameter1"
+          component={CourseConsentForm}
+        />
+        {/* Allow a student to review or change their consent */}
+        <Route path="/student/consent/:courseId" component={CourseConsentForm} />
+
         <Route exact path="/student" component={DashboardList} />
         <Route exact path="/student/dashboard" component={DashboardList} />
         <Route exact path="/student/dashboard/:courseId" component={Dashboard} />
@@ -81,7 +90,7 @@ const App = () => (
       </Switch>
     </div>
     <Footer />
-  </React.Fragment>
+  </Suspense>
 );
 
 // Set up react-tracking, with a custom dispatch function

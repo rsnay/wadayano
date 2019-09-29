@@ -31,6 +31,7 @@ type Student {
     # If a student is deleted, delete their quiz and survey attempts (note that the other side of this relation, on quizAttempt or surveyResult is SET_NULL, e.g. deleting an attempt removes it from the student, but doesn't delete the student)
     quizAttempts: [QuizAttempt!]! @relation(name: "StudentQuizAttempts", onDelete: CASCADE)
     surveyResults: [SurveyResult!]! @relation(name: "StudentSurveyResults", onDelete: CASCADE)
+    courseConsents: [CourseConsent!]! @relation(name: "StudentCourseConsents", onDelete: CASCADE)
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
 }
@@ -41,6 +42,7 @@ type Course {
     title: String!
     number: String
     lmsUrl: String
+    consentFormUrl: String
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
     quizzes: [Quiz!]! @relation(name: "CourseQuizzes", onDelete: CASCADE)
@@ -58,6 +60,15 @@ type PendingCourseInvite {
     updatedAt: DateTime! @updatedAt
     email: String!
     course: Course! @relation(link: INLINE, name: "CoursePendingCourseInvite", onDelete: SET_NULL)
+}
+
+type CourseConsent {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+    course: Course! @relation(link: INLINE, name: "CourseCourseConsents", onDelete: SET_NULL)
+    student: Student! @relation(link: INLINE, name: "StudentCourseConsents", onDelete: SET_NULL)
+    consent: String!
 }
 
 enum QuizType {

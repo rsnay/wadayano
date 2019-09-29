@@ -1,8 +1,26 @@
 {
-    "apollo-client-preset": {
+    "apollo-cache-inmemory": {
         "licenses": "MIT",
         "repository": "https://github.com/apollographql/apollo-client",
-        "licenseUrl": "https://github.com/apollographql/apollo-client",
+        "licenseUrl": "https://github.com/apollographql/apollo-client/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "apollo-client": {
+        "licenses": "MIT",
+        "repository": "https://github.com/apollographql/apollo-client",
+        "licenseUrl": "https://github.com/apollographql/apollo-client/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "apollo-link-http": {
+        "licenses": "MIT",
+        "repository": "https://github.com/apollographql/apollo-link",
+        "licenseUrl": "https://github.com/apollographql/apollo-link/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "apollo-link": {
+        "licenses": "MIT",
+        "repository": "https://github.com/apollographql/apollo-link",
+        "licenseUrl": "https://github.com/apollographql/apollo-link/raw/master/LICENSE",
         "parents": "wadayano-client"
     },
     "bcryptjs": {
@@ -29,10 +47,10 @@
         "licenseUrl": "https://github.com/ealush/butter-toast",
         "parents": "wadayano-client"
     },
-    "dom": {
+    "core-js": {
         "licenses": "MIT",
-        "repository": "https://github.com/shtylman/dom",
-        "licenseUrl": "https://github.com/shtylman/dom",
+        "repository": "https://github.com/zloirock/core-js",
+        "licenseUrl": "https://github.com/zloirock/core-js/raw/master/LICENSE",
         "parents": "wadayano-client"
     },
     "express": {
@@ -137,12 +155,6 @@
         "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
         "parents": "wadayano-client"
     },
-    "react-loadable": {
-        "licenses": "MIT",
-        "repository": "https://github.com/thejameskyle/react-loadable",
-        "licenseUrl": "https://github.com/thejameskyle/react-loadable/raw/master/LICENSE",
-        "parents": "wadayano-client"
-    },
     "react-router-dom": {
         "licenses": "MIT",
         "repository": "https://github.com/ReactTraining/react-router",
@@ -187,8 +199,8 @@
     },
     "react-tracking": {
         "licenses": "Apache-2.0",
-        "repository": "https://github.com/NYTimes/react-tracking",
-        "licenseUrl": "https://github.com/NYTimes/react-tracking/raw/master/LICENSE",
+        "repository": "https://github.com/nytimes/react-tracking",
+        "licenseUrl": "https://github.com/nytimes/react-tracking/raw/master/LICENSE",
         "parents": "wadayano-client"
     },
     "react": {

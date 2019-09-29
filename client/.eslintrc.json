@@ -32,8 +32,7 @@
       {
         "code": 100,
         "tabWidth": 2,
-        "comments": 150,
-        "ignoreComments": false,
+        "ignoreComments": true,
         "ignoreTrailingComments": true,
         "ignoreUrls": true,
         "ignoreStrings": true,

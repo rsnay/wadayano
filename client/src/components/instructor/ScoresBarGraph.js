@@ -87,7 +87,7 @@ export default class ScoresBarGraph extends Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         <table className="scores-bar-graph">
           <tbody>
             <tr>{barCells}</tr>
@@ -104,7 +104,7 @@ export default class ScoresBarGraph extends Component {
           </tbody>
         </table>
         <ReactTooltip />
-      </React.Fragment>
+      </>
     );
   }
 }

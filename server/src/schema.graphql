@@ -40,6 +40,7 @@ type Mutation {
   attemptQuestion(quizAttemptId: ID!, questionId: ID!, type: QuestionType!, optionId: ID, shortAnswer: String, isConfident: Boolean!): QuestionAttempt!
 
   submitSurveyResult(courseId: ID!, answers: Json!): SurveyResult
+  submitCourseConsent(courseId: ID!, consent: String!): Boolean!
 
   trackEvent(event: TrackingEventCreateInput!): TrackingEvent
 }
@@ -57,6 +58,7 @@ input CourseInfoUpdateInput {
   title: String
   number: String
   lmsUrl: String
+  consentFormUrl: String
 }
 
 # Use a restricted and modified subset of QuizUpdateInput (rather than Prisma’s full one), to avoid changing students’ quiz attempts, the parent course, etc.
