@@ -86,7 +86,7 @@ class SurveyTaker extends Component {
             onChange={answers => this.setState({ answers })}
           />
 
-          {course.survey.questions && course.survey.questions.length > 0 && (
+          {course.survey && course.survey.questions && course.survey.questions.length > 0 && (
             <div className="field is-grouped">
               <p className="control">
                 <button
