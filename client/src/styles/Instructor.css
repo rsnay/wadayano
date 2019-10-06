@@ -1,9 +1,14 @@
 /* Course Details */
 .instructor-tag {
     border: solid #d4d4d4 1px;
+    margin: 0.25rem;
+    padding-right: 0!important;
 }
 .instructor-tag button.is-rounded {
     height: 100%;
+}
+.instructor-tag-pending {
+    margin: 0.25rem;
 }
 
 /* Quiz Editor */
