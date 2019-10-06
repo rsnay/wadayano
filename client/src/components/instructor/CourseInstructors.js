@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { graphql, useQuery, useMutation } from 'react-apollo';
+import { useQuery, useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Redirect } from 'react-router-dom';
 
-import compose from '../../compose';
 import ErrorBox from '../shared/ErrorBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
