@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
@@ -10,38 +11,45 @@ import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_STUDENT } from '../../constants';
  * This component just takes the student auth token passed in the route, saves it in localStorage
  * to be used for auth, and then redirects to wherever the launch should actually go.
  */
-export default class LTILaunch extends Component {
-  constructor(props) {
-    super(props);
+const LTILaunch = ({
+  match: {
+    params: { token, action, parameter1 },
+  },
+  history,
+}) => {
+  const [error, setError] = useState('');
 
-    this.state = {
-      error: '',
-    };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     try {
-      const { params } = this.props.match;
       // Save auth token
-      localStorage.setItem(AUTH_TOKEN, params.token);
+      localStorage.setItem(AUTH_TOKEN, token);
       localStorage.setItem(AUTH_ROLE, AUTH_ROLE_STUDENT);
       // Redirect
-      this.props.history.replace(`/student/${params.action}/${params.parameter1}`);
-    } catch (error) {
+      history.replace(`/student/${action}/${parameter1}`);
+    } catch (err) {
       // Display error
-      this.setState({ error: 'Something went wrong with the LTI launch. Please try again.' });
+      setError('Something went wrong with the LTI launch. Please try again.');
     }
-  }
+  }, [action, history, parameter1, token]);
 
-  render() {
-    const { error } = this.state;
-    if (error) {
-      return (
-        <ErrorBox>
-          <p>{error}</p>
-        </ErrorBox>
-      );
-    }
-    return <LoadingBox />;
-  }
-}
+  return error ? (
+    <ErrorBox>
+      <p>{error}</p>
+    </ErrorBox>
+  ) : (
+    <LoadingBox />
+  );
+};
+
+LTILaunch.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      token: PropTypes.string.isRequired,
+      action: PropTypes.string.isRequired,
+      parameter1: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  history: PropTypes.object.isRequired,
+};
+
+export default LTILaunch;
