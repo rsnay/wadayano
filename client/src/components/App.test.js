@@ -1,9 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import { render } from '../test-utils';
+import Welcome from './shared/Welcome';
 
 it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
+  const { debug, getByText } = render(<Welcome />);
 });
