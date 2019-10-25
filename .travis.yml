@@ -14,5 +14,7 @@ before_deploy:
 deploy:
   provider: surge
   skip_cleanup: true
-  domain: wadayano-preview.surge.sh
+  domain: ${TRAVIS_BRANCH}.wadayano-preview.surge.sh
   project: ./build/
+  on:
+    all_branches: true
