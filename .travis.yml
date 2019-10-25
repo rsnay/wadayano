@@ -9,5 +9,7 @@ cache:
 script:
   - npm test
   - npm run build
-on:
-  branch: master
+deploy:
+  provider: surge
+  skip_cleanup: true
+  project: ./build/
