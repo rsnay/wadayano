@@ -1,0 +1,13 @@
+language: node_js
+before_install:
+  - cd client
+node_js:
+  - "stable"
+cache:
+  directories:
+    - node_modules
+script:
+  - npm test
+  - npm run build
+on:
+  branch: master
