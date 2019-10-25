@@ -9,7 +9,10 @@ cache:
 script:
   - npm test
   - npm run build
+before_deploy:
+  - cp ./build/index.html ./build/200.html
 deploy:
   provider: surge
   skip_cleanup: true
+  domain: wadayano-preview.surge.sh
   project: ./build/
