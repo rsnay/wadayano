@@ -9,6 +9,7 @@ import compose from '../../compose';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
+import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import withAuthCheck from '../shared/AuthCheck';
@@ -237,6 +238,7 @@ class Dashboard extends Component {
 
     return (
       <section className="section">
+        <PageTitle title={`wadayano | ${course.title}`}/>
         <div className="container">
           <div className="is-flex-tablet">
             <h1 className="title is-3" style={{ flex: 1 }}>
@@ -261,9 +263,6 @@ class Dashboard extends Component {
             <section className="message is-info">
               <div className="message-header">
                 <h4 className="title is-4 has-text-white">Unfinished Quiz Attempts</h4>
-              </div>
-              <div className="message-body">
-                <p>Need to pause during a quiz? Simply close the quiz, and resume it here.</p>
               </div>
               {unfinishedAttemptsTable}
             </section>

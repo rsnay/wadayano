@@ -7,6 +7,7 @@ import track from 'react-tracking';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import { formatScore, wadayanoScore, confidenceAnalysis, predictedScore } from '../../utils';
+import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 
@@ -102,6 +103,7 @@ class QuizReview extends Component {
 
     return (
       <div className="quiz-review-container">
+        <PageTitle title={`wadayano | ${quizAttempt.quiz.title} Review`}/>
         {/* Title and overall results */}
         <div className="columns">
           <div className="column is-6">
@@ -118,7 +120,7 @@ class QuizReview extends Component {
             />
           </div>
         </div>
-
+        <p className="title">Concepts in this Quiz</p>
         {/* Concept-specific result cards */}
         <div className="tile is-ancestor" style={{ flexWrap: 'wrap' }}>
           {conceptResults.map(result => (

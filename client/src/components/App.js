@@ -20,6 +20,7 @@ import QuizScores from './instructor/QuizScores';
 import SurveyEditor from './instructor/SurveyEditor';
 import SurveyResults from './instructor/SurveyResults';
 import ProfileEditor from './instructor/ProfileEditor';
+import Help from './instructor/Help';
 
 import LTILaunch from './student/LTILaunch';
 import CourseConsentForm from './student/CourseConsentForm';
@@ -59,6 +60,7 @@ const App = () => (
         <Route path="/instructor/survey/edit/:courseId" component={SurveyEditor} />
         <Route path="/instructor/survey/results/:courseId" component={SurveyResults} />
         <Route exact path="/instructor/profile" component={ProfileEditor} />
+        <Route exact path="/instructor/help" component={Help} />
 
         {/* When a student launches, the server will redirect to either /student/launch or /student/consent,
             both of which will redirect to the desired content */}
