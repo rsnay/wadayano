@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Prompt } from 'react-router';
-import { graphql } from 'react-apollo';
+import { useMutation, useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
@@ -55,62 +54,61 @@ function stringifySurvey(survey) {
   return text.trim();
 }
 
-class SurveyEditor extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      surveyLoaded: false,
-      newSurveyText: '',
-      isSaving: false,
-      isDirty: false,
-      formatModalVisible: false,
-    };
-  }
-
-  // If navigating away from this component and back to it, apollo won't reload the query, but automatically populate the courseQuery prop. So handle that case on component mount.
-  componentDidMount() {
-    // If the
-    if (
-      !this.state.surveyLoaded &&
-      this.props.courseQuery &&
-      !this.props.courseQuery.loading &&
-      this.props.courseQuery.course.survey
-    ) {
-      this.setState({
-        newSurveyText: stringifySurvey(this.props.courseQuery.course.survey),
-        surveyLoaded: true,
-      });
+// Get the course information
+const COURSE_QUERY = gql`
+  query courseQuery($courseId: ID!) {
+    course(id: $courseId) {
+      id
+      title
+      survey
     }
   }
+`;
 
-  // This is kind of a react anti-pattern to seed state from props, but without a proper callback for when the apollo query finishes loading, it's the easiest way.
-  componentWillReceiveProps(nextProps) {
-    if (
-      !nextProps.courseQuery.error &&
-      !nextProps.courseQuery.loading &&
-      !this.state.surveyLoaded
-    ) {
-      this.setState({
-        newSurveyText: stringifySurvey(nextProps.courseQuery.course.survey),
-        surveyLoaded: true,
-      });
+const SAVE_SURVEY = gql`
+  mutation saveSurveyMutation($courseId: ID!, $survey: Json!) {
+    updateSurvey(courseId: $courseId, survey: $survey) {
+      id
+      survey
     }
   }
+`;
 
-  componentDidUpdate() {
+const SurveyEditor = ({
+  match: {
+    params: { courseId },
+  },
+  history,
+}) => {
+  const [newSurveyText, setNewSurveyText] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [formatModalVisible, setFormatModalVisible] = useState(false);
+
+  const { loading, error, data: course } = useQuery(COURSE_QUERY, { variables: { courseId } });
+  const [saveSurveyMutation] = useMutation(SAVE_SURVEY);
+
+  console.log(loading, error, course);
+
+  useEffect(() => {
+    // Parse the survey text when it loads
+    if (!loading && !error && course.course && course.course.survey) {
+      setNewSurveyText(stringifySurvey(course.course.survey));
+    }
+  }, [loading, error, course]);
+
+  useEffect(() => {
     // If the survey has been modified, have the browser confirm before user leaves the page
-    if (this.state.isDirty) {
+    if (isDirty) {
       window.onbeforeunload = () => true;
     } else {
       window.onbeforeunload = undefined;
     }
-  }
-
-  componentWillUnmount() {
-    // Remove leave confirmation when the user navigates away
-    window.onbeforeunload = undefined;
-  }
+    return () => {
+      // Remove leave confirmation when the user navigates away
+      window.onbeforeunload = undefined;
+    };
+  }, [isDirty]);
 
   /* Structure of survey object:
        survey = {
@@ -139,29 +137,28 @@ class SurveyEditor extends Component {
        }
     */
 
-  async saveSurvey() {
-    this.setState({ isSaving: true });
+  const saveSurvey = async () => {
+    setIsSaving(true);
     try {
-      const courseId = this.props.courseQuery.course.id;
       // Save the new survey
-      const result = await this.props.saveSurveyMutation({
+      const result = await saveSurveyMutation({
         variables: {
           courseId,
-          survey: parseSurveyText(this.state.newSurveyText),
+          survey: parseSurveyText(newSurveyText),
         },
       });
       // Handle errors
       if (result.errors && result.errors.length > 0) {
         throw result;
       }
-      this.setState({ isSaving: false, isDirty: false }, () => {
-        ButterToast.raise({
-          content: <ToastTemplate content="Survey saved successfully." className="is-success" />,
-        });
-        // Redirect to course details after successful save
-        this.props.history.push(`/instructor/course/${courseId}`);
+      setIsSaving(false);
+      setIsDirty(false);
+      ButterToast.raise({
+        content: <ToastTemplate content="Survey saved successfully." className="is-success" />,
       });
-    } catch (error) {
+      // Redirect to course details after successful save
+      history.push(`/instructor/course/${courseId}`);
+    } catch (err) {
       ButterToast.raise({
         content: (
           <ToastTemplate
@@ -170,121 +167,120 @@ class SurveyEditor extends Component {
           />
         ),
       });
-      this.setState({ isSaving: false });
+      setIsSaving(false);
     }
+  };
+
+  if (error) {
+    return (
+      <ErrorBox>
+        <p>Couldn’t load course survey</p>
+      </ErrorBox>
+    );
   }
 
-  render() {
-    if (this.props.courseQuery && this.props.courseQuery.loading) {
-      return <LoadingBox />;
-    }
+  if (loading) {
+    return <LoadingBox />;
+  }
 
-    if (this.props.courseQuery && this.props.courseQuery.error) {
-      return (
-        <ErrorBox>
-          <p>Couldn’t load course survey</p>
-        </ErrorBox>
-      );
-    }
-
-    const { course } = this.props.courseQuery;
-
-    return (
-      <section className="section">
-        <div className="container">
-          <Breadcrumbs
-            links={[
-              { to: '/instructor/courses', title: 'Course List' },
-              { to: `/instructor/course/${course.id}`, title: course.title },
-              {
-                to: `/instructor/survey/edit/${course.id}`,
-                title: 'Edit Course Survey',
-                active: true,
-              },
-            ]}
-          />
-          <h3 className="title is-3">Course Survey</h3>
-          <i>
-            Note: modifying the survey (except for adding new questions to the very end) after
-            students have taken it will invalidate existing student responses.
-          </i>
-          <br />
-          <br />
-          <div className="columns">
-            <div className="column is-6">
-              <h4 className="subtitle is-4">
-                Editor
-                <button
-                  style={{ height: 'inherit', padding: '0 0 0 0.5rem' }}
-                  className="button is-text is-pulled-right"
-                  onClick={() => this.setState({ formatModalVisible: true })}
-                  type="button"
-                >
-                  <span className="icon is-small">
-                    <i className="fas fa-question-circle" />
-                  </span>
-                  <span>Formatting hints</span>
-                </button>
-              </h4>
-
-              <textarea
-                className="textarea is-medium survey-editor"
-                rows={10}
-                value={this.state.newSurveyText}
-                placeholder="Click “Formatting Hints” above to get started creating your survey."
-                onChange={e => this.setState({ newSurveyText: e.target.value, isDirty: true })}
-              />
-            </div>
-            <div className="column is-6">
-              <h4 className="subtitle is-4">Preview</h4>
-
-              <SurveyView survey={parseSurveyText(this.state.newSurveyText)} />
-            </div>
-          </div>
-          <br /> <br />
-          <div className="field is-grouped">
-            <p className="control">
-              <Link className="button" to={`/instructor/course/${course.id}`}>
-                Cancel
-              </Link>
-            </p>
-            <p className="control">
+  return (
+    <section className="section">
+      <div className="container">
+        <Breadcrumbs
+          links={[
+            { to: '/instructor/courses', title: 'Course List' },
+            { to: `/instructor/course/${courseId}`, title: course.course.title },
+            {
+              to: `/instructor/survey/edit/${courseId}`,
+              title: 'Edit Course Survey',
+              active: true,
+            },
+          ]}
+        />
+        <h3 className="title is-3">Course Survey</h3>
+        <i>
+          Note: modifying the survey (except for adding new questions to the very end) after
+          students have taken it will invalidate existing student responses.
+        </i>
+        <br />
+        <br />
+        <div className="columns">
+          <div className="column is-6">
+            <h4 className="subtitle is-4">
+              Editor
               <button
-                className={`button is-primary${this.state.isSaving ? ' is-loading' : ''}`}
-                onClick={() => this.saveSurvey()}
-                type="submit"
+                style={{ height: 'inherit', padding: '0 0 0 0.5rem' }}
+                className="button is-text is-pulled-right"
+                onClick={() => setFormatModalVisible(true)}
+                type="button"
               >
-                Save Survey
+                <span className="icon is-small">
+                  <i className="fas fa-question-circle" />
+                </span>
+                <span>Formatting hints</span>
               </button>
-            </p>
+            </h4>
+
+            <textarea
+              className="textarea is-medium survey-editor"
+              rows={10}
+              value={newSurveyText}
+              placeholder="Click “Formatting Hints” above to get started creating your survey."
+              onChange={e => {
+                setNewSurveyText(e.target.value);
+                setIsDirty(true);
+              }}
+            />
           </div>
-          {/* If the survey has been modified, have react router confirm before user navigates away */}
-          <Prompt
-            when={this.state.isDirty}
-            message="Do you want to discard your unsaved changes to this survey?"
-          />
-          {this.state.formatModalVisible && (
-            <Modal
-              modalState
-              closeModal={() => this.setState({ formatModalVisible: false })}
-              title="Survey Formatting"
-              showFooter
+          <div className="column is-6">
+            <h4 className="subtitle is-4">Preview</h4>
+            <SurveyView survey={parseSurveyText(newSurveyText)} />
+          </div>
+        </div>
+        <br /> <br />
+        <div className="field is-grouped">
+          <p className="control">
+            <Link className="button" to={`/instructor/course/${courseId}`}>
+              Cancel
+            </Link>
+          </p>
+          <p className="control">
+            <button
+              className={`button is-primary${isSaving ? ' is-loading' : ''}`}
+              onClick={saveSurvey}
+              type="submit"
             >
-              <ol>
-                <li>Type a question on one line.</li>
-                <li>Put each option for that question on a new line.</li>
-                <li>
-                  Add an extra blank line between the last option and the text of the next question.
-                </li>
-                <li>Repeat for the next question.</li>
-              </ol>
-              Example:
-              <textarea
-                wrap="off"
-                className="textarea is-medium survey-editor"
-                style={{ overflowY: 'hidden' }}
-                rows={11}
-                value={`How many hours do you spend doing homework each day?
+              Save Survey
+            </button>
+          </p>
+        </div>
+        {/* If the survey was modified, have react router confirm before user navigates away */}
+        <Prompt
+          when={isDirty}
+          message="Do you want to discard your unsaved changes to this survey?"
+        />
+        {formatModalVisible && (
+          <Modal
+            modalState
+            closeModal={() => setFormatModalVisible(false)}
+            title="Survey Formatting"
+            showFooter
+          >
+            <ol>
+              <li>Type a question on one line.</li>
+              <li>Put each option for that question on a new line.</li>
+              <li>
+                Add an extra blank line between the last option and the text of the next question.
+              </li>
+              <li>Repeat for the next question.</li>
+            </ol>
+            Example:
+            <textarea
+              wrap="off"
+              className="textarea is-medium survey-editor"
+              style={{ overflowY: 'hidden' }}
+              rows={11}
+              value={`How many hours do you spend doing homework each day?
 0–2
 2–4
 4–6
@@ -295,44 +291,12 @@ How many hours do you sleep each night?
 5–7
 7–9
 ...and so forth`}
-              />
-            </Modal>
-          )}
-        </div>
-      </section>
-    );
-  }
-}
+            />
+          </Modal>
+        )}
+      </div>
+    </section>
+  );
+};
 
-// Get the course information
-const COURSE_QUERY = gql`
-  query courseQuery($id: ID!) {
-    course(id: $id) {
-      id
-      title
-      survey
-    }
-  }
-`;
-
-const SAVE_SURVEY = gql`
-  mutation saveSurveyMutation($courseId: ID!, $survey: Json!) {
-    updateSurvey(courseId: $courseId, survey: $survey) {
-      id
-      survey
-    }
-  }
-`;
-
-export default withAuthCheck(
-  compose(
-    graphql(COURSE_QUERY, {
-      name: 'courseQuery',
-      options: props => {
-        return { variables: { id: props.match.params.courseId } };
-      },
-    }),
-    graphql(SAVE_SURVEY, { name: 'saveSurveyMutation' })
-  )(SurveyEditor),
-  { instructor: true }
-);
+export default withAuthCheck(SurveyEditor, { instructor: true });

@@ -9,6 +9,7 @@ import compose from '../../compose';
 
 import withAuthCheck from '../shared/AuthCheck';
 
+import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import LoadingBox from '../shared/LoadingBox';
 import Modal from '../shared/Modal';
@@ -196,6 +197,7 @@ class CourseDetails extends Component {
 
           <section>
             <h4 className="title is-4">{course.title}</h4>
+            <PageTitle title={`wadayano | ${course.title}`}/>
             <div className="is-flex-tablet">
               <span style={{ flex: 1 }}>
                 <label className="label">Title: {course.title}</label>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 /**
  * “Terms of Use” page
@@ -8,8 +7,7 @@ import { Link } from 'react-router-dom';
 const TermsOfUse = () => (
   <section className="container section content">
     <h1 className="title is-1 has-text-weight-light">Terms of Use</h1>
-    <p>A placeholder paragraph</p>
-    <p>Terms for wadayano to come</p>
+      <p>Welcome to wadayano!</p>
   </section>
 );
 

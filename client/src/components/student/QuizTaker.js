@@ -5,6 +5,7 @@ import { Prompt } from 'react-router';
 
 import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
+import PageTitle from '../shared/PageTitle';
 import ConceptRater from './ConceptRater';
 import QuestionTaker from './QuestionTaker';
 import ErrorBox from '../shared/ErrorBox';
@@ -258,6 +259,7 @@ class QuizTaker extends Component {
     return (
       <section className="section">
         <div className="container">
+          <PageTitle title={`wadayano | ${quiz.title}`}/>
           {/* Bigger header with title, and progress bar for tablet and larger */}
           <div className="columns is-hidden-mobile">
             <div className="column">

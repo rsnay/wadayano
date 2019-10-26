@@ -1,47 +1,39 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 /**
  * Controlled component to display a group of numeric rating buttons,
  * and pass up the current value when the selection changes
  */
-class NumericRater extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedValue: null,
-    };
-  }
+const NumericRater = ({ minRating, maxRating, onChange, autoFocus }) => {
+
+  const [selectedValue, setSelectedValue] = useState(null);
 
   // Called when a button is clicked
-  buttonClickHandler(i) {
-    return () => {
-      this.setState({ selectedValue: i });
-      this.props.onChange(i);
-    };
+  const buttonClickHandler = i => {
+    setSelectedValue(i);
+    onChange(i);
   }
 
-  render() {
-    const ratingButtons = [];
-    // Loop to make buttons
-    for (let i = this.props.minRating; i <= this.props.maxRating; i++) {
-      ratingButtons.push(
-        <button
-          key={i.toString()}
-          autoFocus={
-            i === this.props.minRating && this.props.autoFocus /* Only autofocus first button */
-          }
-          className={`button ${this.state.selectedValue === i ? 'is-selected is-info' : ''}`}
-          onClick={this.buttonClickHandler(i)}
-          type="button"
-        >
-          {i}
-        </button>
-      );
-    }
-    // Put buttons in a group
-    return <div className="buttons has-addons">{ratingButtons}</div>;
+  const ratingButtons = [];
+  // Loop to make buttons
+  for (let i = minRating; i <= maxRating; i++) {
+    ratingButtons.push(
+      <button
+        key={i.toString()}
+        autoFocus={
+          i === minRating && autoFocus /* Only autofocus first button */
+        }
+        className={`button ${selectedValue === i ? 'is-selected is-info' : ''}`}
+        onClick={() => buttonClickHandler(i)}
+        type="button"
+      >
+        {i}
+      </button>
+    );
   }
+  // Put buttons in a group
+  return <div className="buttons has-addons">{ratingButtons}</div>;
 }
 
 NumericRater.defaultProps = {
