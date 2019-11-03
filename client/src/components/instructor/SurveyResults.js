@@ -9,7 +9,7 @@ import withAuthCheck from '../shared/AuthCheck';
 import CsvGenerator from './CsvGenerator';
 
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
 class SurveyResults extends Component {
@@ -61,7 +61,7 @@ class SurveyResults extends Component {
 
   render() {
     if (this.props.courseQuery && this.props.courseQuery.loading) {
-      return <LoadingBox />;
+      return <Spinner />;
     }
 
     if (this.props.courseQuery && this.props.courseQuery.error) {

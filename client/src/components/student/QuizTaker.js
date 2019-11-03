@@ -9,7 +9,7 @@ import PageTitle from '../shared/PageTitle';
 import ConceptRater from './ConceptRater';
 import QuestionTaker from './QuestionTaker';
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import { shuffleArray } from '../../utils';
@@ -204,7 +204,7 @@ class QuizTaker extends Component {
 
   render() {
     if (this.state.isLoading) {
-      return <LoadingBox />;
+      return <Spinner />;
     }
 
     if (this.state.error) {

@@ -7,7 +7,7 @@ import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 class ProfileEditor extends Component {
@@ -117,7 +117,7 @@ class ProfileEditor extends Component {
 
   render() {
     if (this.props.instructorQuery && this.props.instructorQuery.loading) {
-      return <LoadingBox />;
+      return <Spinner />;
     }
 
     if (this.props.instructorQuery && this.props.instructorQuery.error) {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import { formatScore, confidenceAnalysis, predictedScore, wadayanoScore } from '../../utils';
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import Logo from '../../logo_boxed.svg';
@@ -215,7 +215,7 @@ class AggregatedQuizReview extends Component {
     }
 
     if (this.state.isLoading || (this.props.quizQuery && !this.props.quizQuery.quiz)) {
-      return <LoadingBox />;
+      return <Spinner />;
     }
 
     // Quiz object from database

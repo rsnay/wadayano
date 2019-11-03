@@ -7,7 +7,7 @@ import gql from 'graphql-tag';
 import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import SurveyView from '../shared/SurveyView';
 import Modal from '../shared/Modal';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
@@ -180,7 +180,7 @@ const SurveyEditor = ({
   }
 
   if (loading) {
-    return <LoadingBox />;
+    return <Spinner />;
   }
 
   return (

@@ -12,7 +12,7 @@ import Welcome from './shared/Welcome';
 import Login from './instructor/Login';
 import ResetPassword from './instructor/ResetPassword';
 import FeedbackForm from './shared/FeedbackForm';
-import LoadingBox from './shared/LoadingBox';
+import Spinner from './shared/Spinner';
 
 import CourseList from './instructor/CourseList';
 import CourseDetails from './instructor/CourseDetails';
@@ -41,7 +41,7 @@ import withGraphQLTracking from './AppTracker';
 const QuizEditor = lazy(() => import('./instructor/QuizEditor'));
 
 const App = () => (
-  <Suspense fallback={<LoadingBox />}>
+  <Suspense fallback={<Spinner />}>
     <div className="app-content">
       <Header />
       <Switch>

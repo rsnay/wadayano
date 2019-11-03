@@ -6,7 +6,7 @@ import { useQuery, useMutation } from 'react-apollo';
 import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import SurveyView from '../shared/SurveyView';
 
 // Get the course information
@@ -63,7 +63,7 @@ const SurveyTaker = ({
   }
 
   if (loading) {
-    return <LoadingBox />;
+    return <Spinner />;
   }
 
   if (error) {

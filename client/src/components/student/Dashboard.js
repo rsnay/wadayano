@@ -11,7 +11,7 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import withAuthCheck from '../shared/AuthCheck';
 import { formatScore, wadayanoScore, predictedScore } from '../../utils';
 
@@ -41,7 +41,7 @@ class Dashboard extends Component {
       (this.props.courseQuery && this.props.courseQuery.loading) ||
       (this.props.quizAttemptsQuery && this.props.quizAttemptsQuery.loading)
     ) {
-      return <LoadingBox />;
+      return <Spinner />;
     }
 
     if (

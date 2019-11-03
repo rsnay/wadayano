@@ -9,7 +9,7 @@ import CreateCourseForm from './CreateCourseForm';
 
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 
 const CourseList = ({ instructorQuery }) => {
   if (instructorQuery && instructorQuery.error) {
@@ -21,7 +21,7 @@ const CourseList = ({ instructorQuery }) => {
   }
 
   if (instructorQuery && !instructorQuery.currentInstructor) {
-    return <LoadingBox />;
+    return <Spinner />;
   }
 
   const { courses } = instructorQuery.currentInstructor;
