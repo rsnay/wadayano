@@ -67,7 +67,7 @@ const unsavedAlertMessage = 'You have unsaved questions in this quiz. Do you wan
  * It handles saving and deleting the question itself, and provides callbacks to alert the QuizEditor.
  * This is currently the most complex component in wadayano!
  */
-export class QuestionEditor extends Component {
+class QuestionEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
