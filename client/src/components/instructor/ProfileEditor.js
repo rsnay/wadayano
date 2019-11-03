@@ -29,18 +29,18 @@ class ProfileEditor extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  // This is kind of a react anti-pattern to seed state from props, but without a proper callback for when the apollo query finishes loading, it's the easiest way.
-  componentWillReceiveProps(nextProps) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     if (
       !nextProps.instructorQuery.error &&
       !nextProps.instructorQuery.loading &&
-      !this.state.instructorLoaded
+      !prevState.instructorLoaded
     ) {
-      this.setState({
+      return {
         newEmail: nextProps.instructorQuery.currentInstructor.email,
         instructorLoaded: true,
-      });
+      };
     }
+    return null;
   }
 
   // When the update button is pressed or form is submitted via enter key
