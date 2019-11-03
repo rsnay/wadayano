@@ -11,7 +11,7 @@ import Modal from '../shared/Modal';
  * Modal component to show a form (used within QuizEditor) requesting question JSON to import.
  * This component saves the data into the quiz, and signals the parent component to reload when it saves.
  */
-export class QuizJSONImportModal extends Component {
+class QuizJSONImportModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
