@@ -29,7 +29,7 @@ const CourseList = ({ instructorQuery }) => {
   return (
     <section className="section">
       <div className="container">
-        <PageTitle title={`wadayano | Course List`}/>
+        <PageTitle title={`wadayano | Courses`}/>
         <h1 className="title">Courses</h1>
         <hr />
         <div className="tile is-ancestor" style={{ flexWrap: 'wrap' }}>
