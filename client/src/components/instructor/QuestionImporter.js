@@ -8,7 +8,7 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import { stripTags } from '../../utils';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
@@ -83,7 +83,7 @@ class QuestionImporter extends Component {
 
   render() {
     if (this.state.isSaving || (this.props.quizQuery && this.props.quizQuery.loading)) {
-      return <LoadingBox />;
+      return <Spinner />;
     }
 
     if (this.props.quizQuery && this.props.quizQuery.error) {

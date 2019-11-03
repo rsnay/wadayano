@@ -7,7 +7,7 @@ import ReactTooltip from 'react-tooltip';
 import ErrorBox from '../shared/ErrorBox';
 import ConfidenceSelector from '../student/ConfidenceSelector';
 import { ALPHABET, MULTIPLE_CHOICE } from '../../constants';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import { formatScore } from '../../utils';
 
 const SHORT_ANSWERS_TO_DISPLAY = 5;
@@ -43,7 +43,7 @@ class AggregatedQuestionReview extends Component {
       return (
         <>
           {promptView}
-          <LoadingBox style={{ maxWidth: '100%' }} />
+          <Spinner style={{ maxWidth: '100%' }} />
           <hr />
         </>
       );

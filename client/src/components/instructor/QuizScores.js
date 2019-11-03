@@ -6,7 +6,7 @@ import compose from '../../compose';
 import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import Modal from '../shared/Modal';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
@@ -133,7 +133,7 @@ class QuizScores extends Component {
     }
 
     if (this.state.isLoading || (this.props.quizQuery && !this.props.quizQuery.quiz)) {
-      return <LoadingBox />;
+      return <Spinner />;
     }
 
     const { quiz } = this.props.quizQuery;

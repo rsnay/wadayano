@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { Redirect } from 'react-router';
 
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
 import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_STUDENT } from '../../constants';
@@ -92,7 +92,7 @@ const CourseConsentForm = ({
   };
 
   if (student.loading) {
-    return <LoadingBox />;
+    return <Spinner />;
   }
 
   if (error || student.error) {

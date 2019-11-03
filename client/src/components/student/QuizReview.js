@@ -9,7 +9,7 @@ import ButterToast, { ToastTemplate } from '../shared/Toast';
 import { formatScore, wadayanoScore, confidenceAnalysis, predictedScore } from '../../utils';
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 
 import QuestionReview from './QuestionReview';
 import Modal from '../shared/Modal';
@@ -72,7 +72,7 @@ class QuizReview extends Component {
 
   render() {
     if (this.props.quizAttemptQuery && !this.props.quizAttemptQuery.quizAttempt) {
-      return <LoadingBox />;
+      return <Spinner />;
     }
 
     if (this.props.quizAttemptQuery && this.props.quizAttemptQuery.error) {

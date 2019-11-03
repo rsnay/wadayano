@@ -9,7 +9,7 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import Modal from '../shared/Modal';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
@@ -154,7 +154,7 @@ const QuizEditor = ({
   }
 
   if (isLoading) {
-    return <LoadingBox />;
+    return <Spinner />;
   }
 
   const { quiz } = quizQuery;

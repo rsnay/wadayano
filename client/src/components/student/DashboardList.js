@@ -8,7 +8,7 @@ import withAuthCheck from '../shared/AuthCheck';
 
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 
 // Get the student’s current courses
 const STUDENT_QUERY = gql`
@@ -34,7 +34,7 @@ const DashboardList = () => {
   });
 
   if (!data || !data.currentStudent) {
-    return <LoadingBox />;
+    return <Spinner />;
   }
 
   if (error) {

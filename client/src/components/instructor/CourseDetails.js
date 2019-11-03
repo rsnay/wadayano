@@ -11,7 +11,7 @@ import withAuthCheck from '../shared/AuthCheck';
 
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
-import LoadingBox from '../shared/LoadingBox';
+import Spinner from '../shared/Spinner';
 import Modal from '../shared/Modal';
 import LTISetupModal from './LTISetupModal';
 import CourseInfoForm from './CourseInfoForm';
@@ -49,7 +49,7 @@ class CourseDetails extends Component {
 
   render() {
     if (this.props.courseQuery && !this.props.courseQuery.course) {
-      return <LoadingBox />;
+      return <Spinner />;
     }
 
     if (this.props.courseQuery && this.props.courseQuery.error) {
