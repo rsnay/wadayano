@@ -1,0 +1,20 @@
+language: node_js
+before_install:
+  - cd client
+node_js:
+  - "stable"
+cache:
+  directories:
+    - node_modules
+script:
+  - npm test
+  - npm run build
+before_deploy:
+  - cp ./build/index.html ./build/200.html
+deploy:
+  provider: surge
+  skip_cleanup: true
+  domain: ${TRAVIS_BRANCH}-wadayano-preview.surge.sh
+  project: ./client/build/
+  on:
+    all_branches: true
