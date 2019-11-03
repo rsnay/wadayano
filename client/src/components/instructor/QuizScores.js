@@ -235,7 +235,7 @@ class QuizScores extends Component {
           <div className="container">
             <Breadcrumbs
               links={[
-                { to: '/instructor/courses', title: 'Course List' },
+                { to: '/instructor/courses', title: 'Courses' },
                 { to: `/instructor/course/${course.id}`, title: course.title },
                 // { to: "/instructor/quiz/" + quiz.id, title: quiz.title },
                 {

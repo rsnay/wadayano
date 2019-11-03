@@ -296,7 +296,7 @@ const QuizEditor = ({
 
         <Breadcrumbs
           links={[
-            { to: '/instructor/courses', title: 'Course List' },
+            { to: '/instructor/courses', title: 'Courses' },
             { to: `/instructor/course/${quiz.course.id}`, title: quiz.course.title },
             { to: `/instructor/quiz/${quiz.id}`, title: quiz.title, active: true },
           ]}

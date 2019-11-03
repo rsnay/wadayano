@@ -188,7 +188,7 @@ const SurveyEditor = ({
       <div className="container">
         <Breadcrumbs
           links={[
-            { to: '/instructor/courses', title: 'Course List' },
+            { to: '/instructor/courses', title: 'Courses' },
             { to: `/instructor/course/${courseId}`, title: course.course.title },
             {
               to: `/instructor/survey/edit/${courseId}`,
