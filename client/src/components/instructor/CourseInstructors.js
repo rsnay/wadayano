@@ -8,8 +8,8 @@ import ErrorBox from '../shared/ErrorBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 // Get course instructors and pending invites
-const COURSE_QUERY = gql`
-  query courseQuery($id: ID!) {
+const COURSE_INSTRUCTORS_QUERY = gql`
+  query courseInstructorsQuery($id: ID!) {
     course(id: $id) {
       id
       instructors {
@@ -42,7 +42,7 @@ const REMOVE_INSTRUCTOR = gql`
  * Intended for use in CourseDetails
  */
 const CourseInstructors = ({ courseId }) => {
-  const { error, loading, data: course, refetch } = useQuery(COURSE_QUERY, {
+  const { error, loading, data, refetch } = useQuery(COURSE_INSTRUCTORS_QUERY, {
     variables: { id: courseId },
   });
   const [inviteInstructorMutation] = useMutation(INVITE_INSTRUCTOR);
@@ -133,7 +133,7 @@ const CourseInstructors = ({ courseId }) => {
   }
 
   // If loading for the first time, don’t render anything (course.course will be populated when refetching)
-  if (loading && (!course || !course.course || !course.course.instructors)) {
+  if (loading && (!data || !data.course || !data.course.instructors)) {
     return null;
   }
 
@@ -141,7 +141,7 @@ const CourseInstructors = ({ courseId }) => {
     <>
       <div className="is-flex-tablet">
         <span style={{ flex: '1 1 0%' }}>
-          {course.course.instructors.map(instructor => (
+          {data.course.instructors.map(instructor => (
             <span
               className="tag is-white is-large is-rounded instructor-tag"
               key={instructor.email}
@@ -174,7 +174,7 @@ const CourseInstructors = ({ courseId }) => {
         </button>
         <br />
       </div>
-      {course.course.pendingCourseInvites.map(invite => (
+      {data.course.pendingCourseInvites.map(invite => (
         <span
           className="tag is-warning is-large is-rounded instructor-tag-pending"
           key={invite.email}
