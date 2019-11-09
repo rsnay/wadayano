@@ -204,7 +204,7 @@ const QuizEditor = ({
       questionId={id}
       questionIndex={index}
       defaultPrompt={prompt}
-      defaultExpanded={id.startsWith(TEMP_ID_PREFIX)}
+      isNew={id.startsWith(TEMP_ID_PREFIX)}
       onDelete={() => onQuestionDelete(id)}
       onNewSave={onNewQuestionSaved}
     />
@@ -213,7 +213,7 @@ const QuizEditor = ({
   const newQuestionButton = (
     <div className="panel question-editor no-select" onClick={addQuestion}>
       <p className="panel-heading is-flex">
-        <i style={{ paddingLeft: '1rem' }}>New Question</i>
+        <i style={{ paddingLeft: '1rem', cursor: 'pointer' }}>New Question</i>
         <span className="is-pulled-right is-flex question-editor-button-group">
           <button className="button" onClick={addQuestion} type="button">
             <span className="icon">
