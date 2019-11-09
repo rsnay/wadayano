@@ -25,8 +25,8 @@ const unsavedAlertMessage =
   'You have unsaved questions in this quiz. Do you want to discard these changes?';
 
 const QUESTION_QUERY = gql`
-  query questionEditorQuestionQuery($id: ID!) {
-    question(id: $id) {
+  query questionEditorQuestionQuery($questionId: ID!) {
+    question(id: $questionId) {
       ...InstructorFullQuestion
     }
   }
@@ -43,8 +43,8 @@ const ADD_QUESTION_MUTATION = gql`
 `;
 
 const UPDATE_QUESTION_MUTATION = gql`
-  mutation updateQuestionMutation($id: ID!, $data: QuestionUpdateInput!) {
-    updateQuestion(id: $id, data: $data) {
+  mutation updateQuestionMutation($questionId: ID!, $data: QuestionUpdateInput!) {
+    updateQuestion(id: $questionId, data: $data) {
       ...InstructorFullQuestion
     }
   }
@@ -52,8 +52,8 @@ const UPDATE_QUESTION_MUTATION = gql`
 `;
 
 const DELETE_QUESTION_MUTATION = gql`
-  mutation deleteQuestionMutation($id: ID!) {
-    deleteQuestion(id: $id) {
+  mutation deleteQuestionMutation($questionId: ID!) {
+    deleteQuestion(id: $questionId) {
       id
     }
   }
@@ -101,14 +101,14 @@ const QuestionEditor = ({
   onDelete,
   onNewSave,
 }) => {
+  // New questions default to expanded
+  const [isExpanded, setIsExpanded] = useState(isNew);
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [error, setError] = useState(null);
   // Modified question object
   const [question, setQuestion] = useState(initialQuestion(isNew, questionId));
-
-  console.log('QuestionEditor render', question);
 
   const handleBeforeUnload = useCallback(
     e => {
@@ -124,13 +124,10 @@ const QuestionEditor = ({
   useEffect(() => {
     // Add beforeunload listener to alert user of unsaved changes
     window.addEventListener('beforeunload', handleBeforeUnload);
-
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [handleBeforeUnload]);
 
-  const [fetchQuestion, questionQuery] = useLazyQuery(QUESTION_QUERY, {
-    variables: { id: questionId },
-  });
+  const [loadQuestion, questionQuery] = useLazyQuery(QUESTION_QUERY, { variables: { questionId } });
 
   const [addQuestionMutation] = useMutation(ADD_QUESTION_MUTATION);
   const [updateQuestionMutation] = useMutation(UPDATE_QUESTION_MUTATION);
@@ -143,6 +140,7 @@ const QuestionEditor = ({
     if (!questionQuery.error && !questionQuery.loading && questionQuery.data) {
       if (questionQuery.data.question) {
         setQuestion(questionQuery.data.question);
+        setIsExpanded(true);
       } else {
         setError('Error loading question: question not found');
       }
@@ -159,13 +157,9 @@ const QuestionEditor = ({
     }
     setIsDeleting(true);
     setIsDirty(false);
-    setQuestion(null);
+    setIsExpanded(false);
     try {
-      const result = await deleteQuestionMutation({
-        variables: {
-          id: questionId,
-        },
-      });
+      const result = await deleteQuestionMutation({ variables: { questionId } });
       if (result.errors && result.errors.length > 0) {
         throw result;
       }
@@ -288,15 +282,10 @@ const QuestionEditor = ({
         onNewSave(questionId, result.data.addQuestion);
       } else {
         // Otherwise update it
-        await updateQuestionMutation({
-          variables: {
-            id: questionId,
-            data: updatedQuestion,
-          },
-        });
+        await updateQuestionMutation({ variables: { questionId, data: updatedQuestion } });
       }
-      // Collapse editor (remove question) and mark as not dirty or loading
-      setQuestion(null);
+      // Collapse editor and mark as not dirty or loading
+      setIsExpanded(false);
       setIsDirty(false);
       setIsLoading(false);
     } catch (err) {
@@ -310,26 +299,24 @@ const QuestionEditor = ({
     // If it’s a new question, it hasn’t been saved to server, so ‘delete’ the question to remove it entirely
     if (isNew) {
       // If there is content in the prompt, confirm deletion
-      if (question.prompt.trim() !== '') {
-        if (
-          !window.confirm(
-            'This question has never been saved, so its content will be lost. Remove this question?'
-          )
-        ) {
-          return;
-        }
+      if (
+        question.prompt.trim() !== '' &&
+        !window.confirm(
+          'This question has never been saved, so its content will be lost. Remove this question?'
+        )
+      ) {
+        return;
       }
       // Remove the question
-      setIsDeleting(true);
-      setIsDirty(false);
       if (onDelete) {
         onDelete();
       }
     } else {
-      // If it’s been previously saved, just clear the question and mark not dirty
-      setQuestion(null);
-      setIsDirty(false);
+      // If it’s been previously saved, reset the question to what the server last returned
+      setQuestion(questionQuery.data ? questionQuery.data.question : null);
     }
+    setIsDirty(false);
+    setIsExpanded(false);
   }
 
   function handlePromptChange(newPrompt) {
@@ -396,9 +383,6 @@ const QuestionEditor = ({
     setIsDirty(true);
   }
 
-  // Show expanded view (actual editor) if a question has been loaded (or new skeleton question)
-  const isExpanded = question !== null;
-
   if (error) {
     return (
       <ErrorBox>
@@ -427,7 +411,7 @@ const QuestionEditor = ({
     <button
       className={`button${isLoading ? ' is-loading' : ''}`}
       disabled={isDeleting}
-      onClick={fetchQuestion}
+      onClick={loadQuestion}
       type="button"
     >
       <span className="icon">
@@ -552,6 +536,7 @@ const QuestionEditor = ({
       {correctShortAnswers.map((shortAnswer, index) => (
         <input
           value={shortAnswer}
+          // eslint-disable-next-line react/no-array-index-key
           key={index}
           onChange={e => handleShortAnswerChange(index, e.target.value)}
           placeholder="Add a correct answer"
@@ -566,7 +551,7 @@ const QuestionEditor = ({
     <div className="panel question-editor" id={elementId}>
       {!isExpanded && (
         <p className="panel-heading is-flex">
-          <span className="question-editor-title" onClick={fetchQuestion}>
+          <span className="question-editor-title" onClick={loadQuestion}>
             {questionIndex !== null && `${questionIndex + 1}. `}
             {stripTags(question ? question.prompt : defaultPrompt)}
           </span>
