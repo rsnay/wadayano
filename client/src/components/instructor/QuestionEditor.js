@@ -3,26 +3,8 @@ import PropTypes from 'prop-types';
 import { Prompt } from 'react-router';
 import { useLazyQuery, useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
-// https://reactjs.org/docs/update.html
 import update from 'immutability-helper';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
-
-// eslint-disable-next-line no-unused-vars
-// tinymce import is required but never used by reference, so add eslint exception
-/* eslint-disable no-unused-vars */
-import tinymce from 'tinymce/tinymce';
-
-// TinyMCE imports and config
-import 'tinymce/themes/silver/theme';
-import 'tinymce/plugins/autoresize';
-import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/textcolor';
-/* eslint-enable no-unused-vars */
-import { Editor } from '@tinymce/tinymce-react';
 
 import {
   ALPHABET,
@@ -31,43 +13,13 @@ import {
   MULTIPLE_CHOICE,
   SHORT_ANSWER,
 } from '../../constants';
-import ErrorBox from '../shared/ErrorBox';
-import ConceptSelector from './ConceptSelector';
-
 import { stripTags } from '../../utils';
 import fragments from '../../fragments';
+
+import ErrorBox from '../shared/ErrorBox';
+import ConceptSelector from './ConceptSelector';
+import { PromptEditor, OptionEditor } from './RichTextEditor';
 import OptionSelector from '../shared/OptionSelector';
-
-// Main editor configuration
-const tinymceConfig = {
-  skin_url: '/tinymce/skins/oxide',
-  plugins: 'autoresize charmap hr image link lists textcolor',
-  toolbar:
-    'undo redo | bold italic underline | bullist numlist | outdent indent | superscript subscript | hr image link charmap',
-  contextmenu: 'cut copy paste | link removeformat',
-  formats: {
-    h1: { block: 'h1', classes: 'title is-1' },
-    h2: { block: 'h2', classes: 'title is-2' },
-    h3: { block: 'h3', classes: 'title is-3' },
-    h4: { block: 'h4', classes: 'title is-4' },
-    h5: { block: 'h5', classes: 'title is-5' },
-    h6: { block: 'h6', classes: 'title is-6' },
-  },
-  menubar: false,
-  statusbar: false,
-  branding: false,
-  autoresize_max_height: 500,
-  default_link_target: '_blank',
-  target_list: false,
-};
-
-// Smaller toolbar on inline editor for options
-const tinymceInlineConfig = {
-  ...tinymceConfig,
-  inline: true,
-  toolbar:
-    'undo redo | bold italic underline | outdent indent | superscript subscript | image charmap',
-};
 
 const unsavedAlertMessage =
   'You have unsaved questions in this quiz. Do you want to discard these changes?';
@@ -503,10 +455,9 @@ const QuestionEditor = ({
       <span className="quiz-editor-question-prompt-placeholder">
         {question.prompt.trim() === '' ? <>Question&nbsp;Prompt</> : ''}
       </span>
-      <Editor
+      <PromptEditor
         value={question.prompt}
         onEditorChange={newPrompt => handlePromptChange(newPrompt)}
-        init={tinymceConfig}
       />
     </ScrollIntoViewIfNeeded>
   );
@@ -578,10 +529,9 @@ const QuestionEditor = ({
                         : '(Leave option empty to hide on quiz)'}
                     </span>
                   )}
-                  <Editor
+                  <OptionEditor
                     value={option.text}
                     onEditorChange={newOption => handleOptionChange(optionIndex, newOption)}
-                    init={tinymceInlineConfig}
                   />
                 </span>
               </div>
