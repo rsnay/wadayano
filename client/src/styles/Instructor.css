@@ -72,13 +72,6 @@
     border-bottom-left-radius: 4px!important;
 }
 
-.question-editor .drag-handle {
-    padding: 1rem;
-    margin-top: -1rem;
-    margin-left: -1rem;
-    padding-right: 2rem;
-    margin-bottom: -1rem;
-}
 .question-editor .panel-heading button {
     margin-right: 0.3rem;
 }

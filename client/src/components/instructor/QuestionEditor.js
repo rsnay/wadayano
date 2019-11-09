@@ -376,13 +376,6 @@ class QuestionEditor extends Component {
             return <ErrorBox><p>{error}</p></ErrorBox>;
         }
 
-        // If this is part of a reorderable list, show a drag handle
-        const dragHandle = this.props.dragHandleProps && (
-            <span {...this.props.dragHandleProps} className="icon is-inline-block is-flex drag-handle">
-                <i className="fas fa-grip-vertical"></i>
-            </span>
-        );
-
         const saveButton = isExpanded && (
             <button className={"button is-primary" + (isLoading ? " is-loading" : "")} onClick={this.saveQuestion}>
                 <span>Save</span>
@@ -512,7 +505,6 @@ class QuestionEditor extends Component {
             <div className="panel question-editor" id={this.props.elementId}>
                 {!isExpanded && (
                 <p className="panel-heading is-flex">
-                    {dragHandle}
 
                     <span className="question-editor-title" onClick={this.loadQuestion}>
                         {this.props.questionIndex !== null && `${this.props.questionIndex + 1}. `}
@@ -567,7 +559,6 @@ QuestionEditor.propTypes = {
     questionIndex: PropTypes.number,
     defaultPrompt: PropTypes.string,
     defaultExpanded: PropTypes.bool,
-    dragHandleProps: PropTypes.object,
     onDelete: PropTypes.func,
     onNewSave: PropTypes.func
 };
