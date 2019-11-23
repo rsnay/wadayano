@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import ReactTooltip from 'react-tooltip';
@@ -50,12 +50,10 @@ export const CREATE_QUIZ = gql`
   }
 `;
 
-const CourseDetails = ({
-  history,
-  match: {
-    params: { courseId },
-  },
-}) => {
+const CourseDetails = () => {
+  const { courseId } = useParams();
+  const history = useHistory();
+
   const [displayLtiSetupAction, setDisplayLtiSetupAction] = useState(null);
   const [displayLtiSetupObjectId, setDisplayLtiSetupObjectId] = useState(null);
   const [displayCourseInfoForm, setDisplayCourseInfoForm] = useState(false);
