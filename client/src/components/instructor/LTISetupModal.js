@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../shared/Modal';
 import CopyableTextInput from '../shared/CopyableTextInput';
@@ -71,58 +71,59 @@ function formatUrl(lmsId, action, objectId) {
  * Provides a modal dialog with LTI setup instructions and configuration info.
  * The elements of the config are passed via props, and formatted in here, according to the selected LMS.
  */
-class LTISetupModal extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      lmsId: LMS.LEARNING_SUITE.id,
-    };
+const LTISetupModal = ({
+  action,
+  objectId,
+  consumerKey,
+  sharedSecret,
+  closeModal,
+  modalState,
+  title,
+}) => {
+  const [lmsId, setLmsId] = useState(LMS.LEARNING_SUITE.id);
+
+  if (!modalState) {
+    return null;
   }
 
-  render() {
-    if (!this.props.modalState) {
-      return null;
-    }
-
-    const lmsSelector = (
-      <>
-        <label className="label is-medium" htmlFor="lmsSelector">
-          Select your LMS
-          <br />
-        </label>
-        <OptionSelector
-          id="lmsSelector"
-          value={this.state.lmsId}
-          onChange={value => this.setState({ lmsId: value })}
-          options={[
-            { value: LMS.LEARNING_SUITE.id, title: 'Learning Suite' },
-            { value: LMS.CANVAS.id, title: 'Canvas' },
-          ]}
-        />
+  const lmsSelector = (
+    <>
+      <label className="label is-medium" htmlFor="lmsSelector">
+        Select your LMS
         <br />
-      </>
-    );
+      </label>
+      <OptionSelector
+        id="lmsSelector"
+        value={lmsId}
+        onChange={value => setLmsId(value)}
+        options={[
+          { value: LMS.LEARNING_SUITE.id, title: 'Learning Suite' },
+          { value: LMS.CANVAS.id, title: 'Canvas' },
+        ]}
+      />
+      <br />
+    </>
+  );
 
-    const launchUrl = formatUrl(this.state.lmsId, this.props.action, this.props.objectId);
+  const launchUrl = formatUrl(lmsId, action, objectId);
 
-    return (
-      <Modal
-        modalState
-        closeModal={this.props.closeModal}
-        showFooter
-        title={this.props.title || 'Add to Learning Management System'}
-      >
-        {lmsSelector}
-        {LMS[this.state.lmsId].hint}
-        <CopyableTextInput readOnly label="Launch URL" value={launchUrl} />
-        <br />
-        <CopyableTextInput readOnly label="Consumer Key" value={this.props.consumerKey} />
-        <br />
-        <CopyableTextInput readOnly label="Shared Secret" value={this.props.sharedSecret} />
-      </Modal>
-    );
-  }
-}
+  return (
+    <Modal
+      modalState
+      closeModal={closeModal}
+      showFooter
+      title={title || 'Add to Learning Management System'}
+    >
+      {lmsSelector}
+      {LMS[lmsId].hint}
+      <CopyableTextInput readOnly label="Launch URL" value={launchUrl} />
+      <br />
+      <CopyableTextInput readOnly label="Consumer Key" value={consumerKey} />
+      <br />
+      <CopyableTextInput readOnly label="Shared Secret" value={sharedSecret} />
+    </Modal>
+  );
+};
 
 LTISetupModal.propTypes = {
   action: PropTypes.string.isRequired,
@@ -132,7 +133,6 @@ LTISetupModal.propTypes = {
   closeModal: PropTypes.func.isRequired,
   modalState: PropTypes.bool.isRequired,
   title: PropTypes.string,
-  showFooter: PropTypes.bool,
 };
 
 export default LTISetupModal;
