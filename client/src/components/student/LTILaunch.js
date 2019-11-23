@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useHistory, useParams } from 'react-router-dom';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
@@ -11,12 +11,10 @@ import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_STUDENT } from '../../constants';
  * This component just takes the student auth token passed in the route, saves it in localStorage
  * to be used for auth, and then redirects to wherever the launch should actually go.
  */
-const LTILaunch = ({
-  match: {
-    params: { token, action, parameter1 },
-  },
-  history,
-}) => {
+const LTILaunch = () => {
+  const { token, action, parameter1 } = useParams();
+  const history = useHistory();
+
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -39,17 +37,6 @@ const LTILaunch = ({
   ) : (
     <Spinner />
   );
-};
-
-LTILaunch.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      token: PropTypes.string.isRequired,
-      action: PropTypes.string.isRequired,
-      parameter1: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
-  history: PropTypes.object.isRequired,
 };
 
 export default LTILaunch;
