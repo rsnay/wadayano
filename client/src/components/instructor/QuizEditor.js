@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -63,11 +63,8 @@ function scrollToQuestionId(questionId) {
  * This page component displays quiz info, and manages QuestionEditors corresponding to the questions in the quiz.
  * The actual saving of changes to quiz questions or quiz info happens in the QuestionEditor and QuizInfoForm components, respectively.
  */
-const QuizEditor = ({
-  match: {
-    params: { quizId },
-  },
-}) => {
+const QuizEditor = () => {
+  const { quizId } = useParams();
   // Keep separate loading state (even though query has its own) for finer control
   // Initial load and refetching after importing JSON should display spinner
   // Refetch after saving quiz info should not display spinner so that question editor state is not lost (only the title and quiz type would have been updated)

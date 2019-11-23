@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import gql from 'graphql-tag';
 
 import { useQuery, useMutation } from 'react-apollo';
@@ -29,11 +29,8 @@ const SUBMIT_SURVEY = gql`
   }
 `;
 
-const SurveyTaker = ({
-  match: {
-    params: { courseId },
-  },
-}) => {
+const SurveyTaker = () => {
+  const { courseId } = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [answers, setAnswers] = useState({});

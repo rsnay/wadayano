@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { Prompt } from 'react-router';
 import { useMutation, useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -74,12 +74,9 @@ const SAVE_SURVEY = gql`
   }
 `;
 
-const SurveyEditor = ({
-  match: {
-    params: { courseId },
-  },
-  history,
-}) => {
+const SurveyEditor = () => {
+  const { courseId } = useParams();
+  const history = useHistory();
   const [newSurveyText, setNewSurveyText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);

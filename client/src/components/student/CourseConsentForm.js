@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-apollo';
+import { useParams } from 'react-router-dom';
 import gql from 'graphql-tag';
 import { Redirect } from 'react-router';
 
@@ -45,11 +46,8 @@ const consentOptions = [
  * See the LTILaunch component for more details.
  * If action is not present in the route, it will just display the consent for the student to change.
  */
-const CourseConsentForm = ({
-  match: {
-    params: { token, courseId, action, parameter1 },
-  },
-}) => {
+const CourseConsentForm = () => {
+  const { token, courseId, action, parameter1 } = useParams();
   const [error, setError] = useState();
   const [consent, setConsent] = useState('none');
   const [saving, setSaving] = useState(false);
