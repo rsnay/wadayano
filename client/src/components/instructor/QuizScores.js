@@ -15,7 +15,6 @@ import {
   predictedScore,
   wadayanoScore,
   confidenceAnalysis,
-  stringCompare,
 } from '../../utils';
 import { QUIZ_TYPE_NAMES } from '../../constants';
 import QuizReview from '../student/QuizReview';
