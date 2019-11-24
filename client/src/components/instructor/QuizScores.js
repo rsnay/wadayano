@@ -21,6 +21,7 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 import QuizReview from '../student/QuizReview';
 
 import AggregatedQuizReview, { QUIZ_QUERY } from './AggregatedQuizReview';
+import { sortFunctions } from '../../sort-utils';
 
 /**
  * Displays an <AggregatedQuizReview /> component and a table of all students in the course,
@@ -302,28 +303,6 @@ class QuizScores extends Component {
     );
   }
 }
-
-// How to weight the confidence analysis labels for sorting
-const confidenceAnalysisWeights = {
-  // '0' denotes quiz not taken
-  '0': 0,
-  Mixed: 1,
-  Underconfident: 2,
-  Accurate: 3,
-  Overconfident: 4,
-};
-
-// Functions to define sorting on the various columns
-const sortFunctions = {
-  name: (a, b) => stringCompare(a.name, b.name),
-  attempts: (a, b) => a.attempts - b.attempts,
-  highestScore: (a, b) => a.highestScore - b.highestScore,
-  predictedScore: (a, b) => a.predictedScore - b.predictedScore,
-  wadayanoScore: (a, b) => a.wadayanoScore - b.wadayanoScore,
-  confidenceAnalysis: (a, b) =>
-    confidenceAnalysisWeights[a.confidenceAnalysis.text] -
-    confidenceAnalysisWeights[b.confidenceAnalysis.text],
-};
 
 // Get the quiz and attempts
 // QUIZ_QUERY is imported from AggregatedQuizReview, since that query fetches everything
