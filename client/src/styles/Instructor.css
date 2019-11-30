@@ -258,7 +258,7 @@
     margin-bottom: -0.4rem!important;
 }
 .scores-bar-graph td {
-    text-align: center;
+    text-align: center!important;
     vertical-align: bottom!important;
     border-bottom: none!important;
     border-top: none!important;

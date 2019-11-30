@@ -81,6 +81,9 @@ const AggregatedQuizReview = ({ quizId }) => {
   const [currentConceptModal, setCurrentConceptModel] = useState(null);
   const [sortColumn, setSortColumn] = useState('concept');
   const [sortAscending, setSortAscending] = useState(true);
+  // Flag for whether the scores bar graph shows separate series for actual
+  // and predicted scores, or one combined (actual - predicted) score series.
+  const [showCombinedBarGraph, setShowCombinedBarGraph] = useState(false);
 
   // Will hold data for aggregated graphs
   const [aggregatedScores, setAggregatedScores] = useState(null);
@@ -125,6 +128,9 @@ const AggregatedQuizReview = ({ quizId }) => {
     const predictedScores = [];
     let averagePredictedScore = 0;
 
+    const predictedScoreDifferences = [];
+    let averagePredictedScoreDifference = 0;
+
     const wadayanoScores = [];
     let averageWadayanoScore = 0;
 
@@ -145,6 +151,7 @@ const AggregatedQuizReview = ({ quizId }) => {
     studentFirstAttempts.forEach(attempt => {
       // Overall score, wadayano score, and confidence analysis
       const attemptPredictedScore = predictedScore(attempt);
+      const attemptPredictedScoreDifference = attempt.score - attemptPredictedScore;
       const attemptWadayanoScore = wadayanoScore(attempt);
       const attemptConfidenceAnalysis = confidenceAnalysis(attempt);
 
@@ -153,6 +160,9 @@ const AggregatedQuizReview = ({ quizId }) => {
 
       predictedScores.push(attemptPredictedScore);
       averagePredictedScore += attemptPredictedScore;
+
+      predictedScoreDifferences.push(attemptPredictedScoreDifference);
+      averagePredictedScoreDifference += attemptPredictedScoreDifference;
 
       wadayanoScores.push(attemptWadayanoScore);
       averageWadayanoScore += attemptWadayanoScore;
@@ -190,9 +200,10 @@ const AggregatedQuizReview = ({ quizId }) => {
       }
     });
 
-    // Find average overall score and Wadayano Score
+    // Find average scores. Note that studentCount includes only those who attempted this quiz.
     averageScore /= studentCount;
     averagePredictedScore /= studentCount;
+    averagePredictedScoreDifference /= studentCount;
     averageWadayanoScore /= studentCount;
 
     // Find average concept-level score, predicted score, and Wadayano Score
@@ -226,7 +237,9 @@ const AggregatedQuizReview = ({ quizId }) => {
       scores,
       averageScore,
       predictedScores,
+      predictedScoreDifferences,
       averagePredictedScore,
+      averagePredictedScoreDifference,
       wadayanoScores,
       averageWadayanoScore,
       confidenceAnalysisCounts,
@@ -297,7 +310,9 @@ const AggregatedQuizReview = ({ quizId }) => {
     scores,
     averageScore,
     predictedScores,
+    predictedScoreDifferences,
     averagePredictedScore,
+    averagePredictedScoreDifference,
     averageWadayanoScore,
     confidenceAnalysisCounts,
   } = aggregatedScores;
@@ -310,16 +325,32 @@ const AggregatedQuizReview = ({ quizId }) => {
     </div>
   );
 
-  const barGraphLegend = (average, averagePredicted) => (
+  const barGraphLegend = (
     <div className="is-flex-desktop scores-bar-graph-legend">
-      <h4 className="subtitle is-flex flex-1">
-        <span className="has-text-warning">■&nbsp;&nbsp;</span>
-        Predicted ({formatScore(averagePredicted, 0)}&nbsp;average)
-      </h4>
-      <h4 className="subtitle is-flex flex-1">
-        <span className="has-text-info">■&nbsp;&nbsp;</span>
-        Score ({formatScore(average, 0)}&nbsp;average)
-      </h4>
+      {showCombinedBarGraph ? (
+        <h4 className="subtitle is-flex flex-1">
+          <span className="has-text-success">■&nbsp;&nbsp;</span>
+          Actual - Predicted Score ({formatScore(averagePredictedScoreDifference, 0)}&nbsp;average)
+        </h4>
+      ) : (
+        <>
+          <h4 className="subtitle is-flex flex-1">
+            <span className="has-text-warning">■&nbsp;&nbsp;</span>
+            Predicted ({formatScore(averagePredictedScore, 0)}&nbsp;average)
+          </h4>
+          <h4 className="subtitle is-flex flex-1">
+            <span className="has-text-info">■&nbsp;&nbsp;</span>
+            Score ({formatScore(averageScore, 0)}&nbsp;average)
+          </h4>
+        </>
+      )}
+      <button
+        className="button is-light"
+        type="button"
+        onClick={() => setShowCombinedBarGraph(!showCombinedBarGraph)}
+      >
+        {showCombinedBarGraph ? 'View Separate' : 'View Combined'}
+      </button>
     </div>
   );
 
@@ -329,8 +360,18 @@ const AggregatedQuizReview = ({ quizId }) => {
         <PageTitle title={`wadayano | ${quiz.title} Class Scores`} />
         <div className="column">
           <div className="box" style={{ minHeight: '315px' }}>
-            {barGraphLegend(averageScore, averagePredictedScore)}
-            <ScoresBarGraph scoreSeries={[predictedScores, scores]} />
+            {barGraphLegend}
+            {/* Rendering these in a ternary would be cleaner, but causes issues with tooltips */}
+            {showCombinedBarGraph && (
+              <ScoresBarGraph
+                scoreSeries={[predictedScoreDifferences]}
+                numBars={11}
+                barColors={['#23d160']}
+                lowerThreshold={-0.5}
+                upperThreshold={0.6}
+              />
+            )}
+            {!showCombinedBarGraph && <ScoresBarGraph scoreSeries={[predictedScores, scores]} />}
           </div>
         </div>
         <div className="column">
