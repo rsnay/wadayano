@@ -359,23 +359,31 @@ const AggregatedQuizReview = ({ quizId }) => {
       <div className="columns is-desktop">
         <PageTitle title={`wadayano | ${quiz.title} Class Scores`} />
         <div className="column">
-          <div className="box" style={{ minHeight: '315px' }}>
+          <div className="box" style={{ minHeight: '325px' }}>
             {barGraphLegend}
             {/* Rendering these in a ternary would be cleaner, but causes issues with tooltips */}
             {showCombinedBarGraph && (
-              <ScoresBarGraph
-                scoreSeries={[predictedScoreDifferences]}
-                numBars={11}
-                barColors={['#23d160']}
-                lowerThreshold={-0.5}
-                upperThreshold={0.6}
-              />
+              <>
+                <ScoresBarGraph
+                  scoreSeries={[predictedScoreDifferences]}
+                  numBars={11}
+                  barColors={['#23d160']}
+                  lowerThreshold={-0.5}
+                  upperThreshold={0.6}
+                />
+                <table className="confidence-axis-labels">
+                  <tr>
+                    <td>Underconfident</td>
+                    <td>Overconfident</td>
+                  </tr>
+                </table>
+              </>
             )}
             {!showCombinedBarGraph && <ScoresBarGraph scoreSeries={[predictedScores, scores]} />}
           </div>
         </div>
         <div className="column">
-          <div className="box" style={{ minHeight: '315px' }}>
+          <div className="box" style={{ minHeight: '325px' }}>
             {averageWadayanoScoreLabel(averageWadayanoScore)}
             <ConfidenceBarGraph
               overconfident={confidenceAnalysisCounts.OVERCONFIDENT}
