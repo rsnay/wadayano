@@ -307,6 +307,10 @@
 .scores-bar-graph-legend h4 {
     padding-right: 0.5rem;
 }
+.scores-bar-graph-legend button {
+    margin-top: -0.5rem;
+    margin-right: -0.5rem;
+}
 
 /* Aggregated confidence analysis bar graph */
 .confidence-bar-graph td {
