@@ -258,7 +258,7 @@
     margin-bottom: -0.4rem!important;
 }
 .scores-bar-graph td {
-    text-align: center;
+    text-align: center!important;
     vertical-align: bottom!important;
     border-bottom: none!important;
     border-top: none!important;
@@ -291,8 +291,21 @@
     padding: 0;
     font-size: 50%;
 }
+.confidence-axis-labels {
+    margin: -0.5rem 0 -1rem 0;
+}
+.confidence-axis-labels td {
+    border: none!important;
+    font-size: 60%;
+    padding: 0.5rem 0 0 1rem!important;
+    text-align: center!important;
+}
 .scores-bar-graph-legend h4 {
     padding-right: 0.5rem;
+}
+.scores-bar-graph-legend button {
+    margin-top: -0.5rem;
+    margin-right: -0.5rem;
 }
 
 /* Aggregated confidence analysis bar graph */
