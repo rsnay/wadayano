@@ -300,10 +300,6 @@
     padding: 0.5rem 0 0 1rem!important;
     text-align: center!important;
 }
-.confidence-axis-labels td:last-of-type {
-    /* text-align: right; */
-    /* padding: 0.5rem 1rem 0 0!important; */
-}
 .scores-bar-graph-legend h4 {
     padding-right: 0.5rem;
 }
