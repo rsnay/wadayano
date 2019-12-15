@@ -51,7 +51,7 @@ const About = () => (
     </p>
     <p>
       Emoji artwork is provided by <a href="https://twemoji.twitter.com/">Twemoji</a>, licensed
-      under <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>.
+      under <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>. Colors in the artwork have been modified for wadayano.
     </p>
     <p>Wadayano makes use of the following open source projects:</p>
     {/* To update this table, run
