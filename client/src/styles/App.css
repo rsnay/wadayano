@@ -200,16 +200,16 @@ table.is-vcentered td {
 }
 /* Class names match all-caps constants from client/src/constants.js */
 .confidence-emoji.OVERCONFIDENT {
-    background-image: url('../twemoji/1f926-200d-2642-fe0f.svg');
+    background-image: url('../twemoji/1f926.svg');
 }
 .confidence-emoji.ACCURATE {
-    background-image: url('../twemoji/1f9d8-200d-2640-fe0f.svg');
+    background-image: url('../twemoji/1f9d8.svg');
 }
 .confidence-emoji.UNDERCONFIDENT {
-    background-image: url('../twemoji/1f64d-200d-2640-fe0f.svg');
+    background-image: url('../twemoji/1f64d.svg');
 }
 .confidence-emoji.MIXED {
-    background-image: url('../twemoji/1f937-200d-2642-fe0f.svg');
+    background-image: url('../twemoji/1f937.svg');
 }
 
 /* Welcome landing page */
