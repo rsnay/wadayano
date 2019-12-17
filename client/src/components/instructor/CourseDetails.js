@@ -372,9 +372,6 @@ const CourseDetails = () => {
           onCancel={() => setDisplayCourseInfoForm(false)}
           onSave={() => {
             setDisplayCourseInfoForm(false);
-            ButterToast.raise({
-              content: <ToastTemplate content="Course info saved." className="is-success" />,
-            });
             refetch();
           }}
         />
