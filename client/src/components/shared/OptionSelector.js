@@ -14,6 +14,7 @@ const OptionSelector = ({
   value,
   defaultValue,
   onChange,
+  inputRef,
   options,
 }) => {
   if (type === 'radio') {
@@ -28,6 +29,7 @@ const OptionSelector = ({
                 value={option.value}
                 checked={defaultValue ? undefined : value === option.value}
                 defaultChecked={defaultValue ? defaultValue === option.value : undefined}
+                ref={inputRef}
                 onChange={() => onChange(option.value)}
               />
               {option.title || option.value}
@@ -44,6 +46,7 @@ const OptionSelector = ({
         name={name}
         value={value || undefined}
         defaultValue={defaultValue || undefined}
+        ref={inputRef}
         onChange={e => onChange(e.target.value)}
       >
         {options.map(option => (
@@ -74,6 +77,7 @@ OptionSelector.propTypes = {
   value: PropTypes.string,
   defaultValue: PropTypes.string,
   onChange: PropTypes.func,
+  inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.any })]),
   options: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string,
