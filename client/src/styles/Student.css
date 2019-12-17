@@ -97,6 +97,7 @@ progress::-webkit-progress-value {
     width: 3.5rem!important;
     height: 3.5rem!important;
     text-align: center;
+    transition: background ease-out 0.15s;
 }
 .question-option-letter span {
     margin: auto;
@@ -123,6 +124,7 @@ progress::-webkit-progress-value {
 .question-confidence-selector button {
     height: 3rem;
     width: 5rem;
+    transition: background ease-out 0.15s;
 }
 
 /* Survey */
