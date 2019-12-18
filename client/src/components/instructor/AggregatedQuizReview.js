@@ -68,6 +68,7 @@ export const QUIZ_QUERY = gql`
   ${fragments.instructorFullQuestion}
 `;
 
+// If new columns are added here, corresponding sort functions should be added in `../../sort-utils'
 const columns = [
   { title: 'Concept', columnId: 'concept', sortable: true },
   { title: 'Average Score', columnId: 'averageScore', sortable: true },
