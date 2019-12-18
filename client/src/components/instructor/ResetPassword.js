@@ -18,6 +18,7 @@ const RESET_PASSWORD_MUTATION = gql`
 /**
  * Page that allows an instructor to reset account password. Acessible
  * through an email, which has a URL including the password reset token.
+ * This form uses react-hook-form (https://react-hook-form.com/)
  */
 const ResetPassword = () => {
   // Password reset token from URL

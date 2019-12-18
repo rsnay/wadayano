@@ -30,6 +30,11 @@ const REQUEST_PASSWORD_RESET_MUTATION = gql`
   }
 `;
 
+/**
+ * Page for instructors to log in and sign up
+ * The page switches modes based on the /login or /signup route
+ * This form uses react-hook-form (https://react-hook-form.com/)
+ */
 const Login = () => {
   const location = useLocation();
   const history = useHistory();

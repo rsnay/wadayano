@@ -36,6 +36,10 @@ const INSTRUCTOR_UPDATE_PROFILE_MUTATION = gql`
   }
 `;
 
+/**
+ * Page that allows instructors to edit their email address and/or password.
+ * This form uses react-hook-form (https://react-hook-form.com/)
+ */
 const ProfileEditor = () => {
   const history = useHistory();
 
