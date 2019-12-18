@@ -242,9 +242,6 @@
     margin-left: -2rem;
     margin-top: -1.5rem;
 }
-.quiz-attempt-selector li:first-child {
-    margin-top: 0.25em;
-}
 
 /* Bar graphs */
 .chart-bar {
