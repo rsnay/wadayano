@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
-
 import useForm from 'react-hook-form';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
@@ -17,6 +16,7 @@ export const ADD_COURSE = gql`
 /**
  * Card with a simple form to create a new course.
  * Intended for use in CourseList.
+ * This form uses react-hook-form (https://react-hook-form.com/)
  */
 const CreateCourseForm = () => {
   const [isCreating, setIsCreating] = useState(false);

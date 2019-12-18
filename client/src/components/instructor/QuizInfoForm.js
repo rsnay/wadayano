@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
-
 import useForm from 'react-hook-form';
+
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 import OptionSelector from '../shared/OptionSelector';
 
@@ -26,6 +26,7 @@ const QUIZ_DELETE = gql`
 
 /**
  * A form, intended for inclusion in a modal dialog in the quiz editor, to edit quiz information or delete the quiz.
+ * This form uses react-hook-form (https://react-hook-form.com/)
  */
 const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
   const [isSaving, setIsSaving] = useState(false);

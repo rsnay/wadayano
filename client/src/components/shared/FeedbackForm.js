@@ -15,6 +15,7 @@ const SEND_FEEDBACK_MUTATION = gql`
 /**
  * Page that lets logged-in instructors and students send us feedback.
  * If feedback is marked as anonymous, the user’s ID won’t be with the message.
+ * This form uses react-hook-form (https://react-hook-form.com/)
  */
 const FeedbackForm = () => {
   const [error, setError] = useState('');

@@ -3,12 +3,17 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
-
 import useForm from 'react-hook-form';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
-// List of fields to edit
-// New fields to be edited need to be added here, passed in as part of the `course` prop, and added to the CourseInfoUpdateInput input type in the server’s schema.graphql
+// List of course fields to edit
+/**
+ * New fields to be edited need to be:
+ * • added to the server’s datamodel.graphql (and server re-deployed)
+ * • added below
+ * • passed to this component as part of the `course` prop
+ * • added to the CourseInfoUpdateInput input type in the server’s schema.graphql
+ */
 const fields = [
   {
     id: 'title',
@@ -66,7 +71,11 @@ const DELETE_COURSE = gql`
   }
 `;
 
-// A form, intended for inclusion in a modal dialog on the course details page, to edit various course information or delete the course.
+/**
+ * A form, intended for inclusion in a modal dialog on the course details page,
+ * to edit various course information or delete the course.
+ * This form uses react-hook-form (https://react-hook-form.com/)
+ */
 const CourseInfoForm = ({ course, onCancel, onSave }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
