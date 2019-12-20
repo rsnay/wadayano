@@ -19,7 +19,7 @@ function randomCorrectFeedback() {
 
 // This is basically a non-interactive stripped-down version of the QuestionTaker component, to be used in the post-question and post-quiz review
 const QuestionReview = ({ question, questionAttempt: attempt }) => {
-  // Eliminate blanks options
+  // Hide blank options
   const questionOptions = question.options.filter(option => option.text.trim() !== '');
 
   const isMultipleChoice = question.type === MULTIPLE_CHOICE;
@@ -59,7 +59,7 @@ const QuestionReview = ({ question, questionAttempt: attempt }) => {
         state = optionReviewState.INCORRECT;
       }
 
-      return <OptionReview key={option.id} state={state} text={option.text} index={index} />;
+      return <OptionReview key={option.id} state={state} html={option.text} index={index} />;
     });
   } else {
     // Display incorrect student short answer, and one correct short answer
