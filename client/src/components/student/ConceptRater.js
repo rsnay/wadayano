@@ -96,6 +96,7 @@ const ConceptRater = ({ conceptQuestionCounts, quizAttemptId, onConceptsRated })
 
   const submitButton = (
     <ScrollIntoViewIfNeeded>
+      <hr />
       <button
         autoFocus
         className={`button is-primary${isSubmitting ? ' is-loading' : ''}`}
@@ -115,7 +116,6 @@ const ConceptRater = ({ conceptQuestionCounts, quizAttemptId, onConceptsRated })
         For each topic, mark how many questions you expect to answer correctly.
       </p>
       {conceptSliders}
-      <br />
       {error && <p className="notification is-danger">{error}</p>}
       {ratings.length === conceptQuestionCounts.size && submitButton}
     </div>
