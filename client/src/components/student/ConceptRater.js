@@ -1,110 +1,126 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { graphql } from 'react-apollo';
+import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 import NumericRater from '../shared/NumericRater';
 
+const RATE_CONCEPTS_MUTATION = gql`
+  mutation RateConcepts(
+    $quizAttemptId: ID!
+    $conceptConfidences: [ConceptConfidenceCreateInput!]!
+  ) {
+    rateConcepts(quizAttemptId: $quizAttemptId, conceptConfidences: $conceptConfidences) {
+      id
+    }
+  }
+`;
+
 /**
  * Component used in QuizTaker to have the student estimate # of questions they
  * will answer correctly for each concept. See PropTypes details at the end.
  */
-class ConceptRater extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ratings: [],
-      isSubmitting: false,
-    };
-  }
+const ConceptRater = ({ conceptQuestionCounts, quizAttemptId, onConceptsRated }) => {
+  const [ratings, setRatings] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  const [rateConceptsMutation] = useMutation(RATE_CONCEPTS_MUTATION);
 
   // Called when one of the ratings changes for a concept
-  setRating(concept, newConfidence) {
-    // If there's a rating for this concept, update it
-    const { ratings } = this.state;
-    let exists = false;
-    ratings.forEach(rating => {
-      if (rating.concept === concept) {
-        rating.confidence = newConfidence;
-        exists = true;
-      }
-    });
-    // Otherwise add a rating
-    if (!exists) {
-      ratings.push({ concept, confidence: newConfidence });
-    }
-    this.setState({ ratings });
-  }
+  const setRating = (concept, newConfidence) => {
+    // Remove any previous rating for this concept
+    const newRatings = ratings.filter(c => c.concept !== concept);
+    // Add new rating
+    newRatings.push({ concept, confidence: newConfidence });
+    setRatings(newRatings);
+  };
 
   // Sends the concept confidences/ratings to the server
-  async submitConceptRatings() {
+  const submitConceptRatings = async () => {
     // Prevent re-submission while loading
-    if (this.state.isSubmitting) {
+    if (isSubmitting) {
       return;
     }
-    this.setState({ isSubmitting: true });
+    setIsSubmitting(true);
+    setError(null);
 
-    await this.props.rateConceptsMutation({
-      variables: {
-        quizAttemptId: this.props.quizAttemptId,
-        conceptConfidences: this.state.ratings,
-      },
-    });
-    // Tell QuizTaker to continue
-    this.props.onConceptsRated();
-  }
-
-  render() {
-    const conceptSliders = [];
-
-    this.props.conceptQuestionCounts.forEach((questionCount, concept) => {
-      conceptSliders.push(
-        <div key={concept}>
-          <h4 className="subtitle is-4">
-            {concept}
-            <span className="question-count">
-              {questionCount === 1 ? '1 Question' : `${questionCount} Questions`}
-            </span>
-          </h4>
-          <NumericRater
-            minRating={0}
-            maxRating={questionCount}
-            onChange={newConfidence => this.setRating(concept, newConfidence)}
-          />
-          <br />
-        </div>
+    try {
+      const result = await rateConceptsMutation({
+        variables: {
+          quizAttemptId,
+          conceptConfidences: ratings,
+        },
+      });
+      if (result.errors && result.errors.length > 0) {
+        throw result;
+      }
+      // Tell QuizTaker to continue
+      onConceptsRated();
+    } catch (e) {
+      let message = '';
+      if (e.errors && e.errors.length > 0) {
+        message = e.errors[0].message;
+      }
+      setError(
+        `Error submitting answers. If this error continues, please reload the page and try again. ${message}`
       );
-    });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    const submitButton = (
-      <ScrollIntoViewIfNeeded>
-        <button
-          autoFocus
-          className={`button is-primary${this.state.isSubmitting ? ' is-loading' : ''}`}
-          onClick={() => this.submitConceptRatings()}
-          type="submit"
-        >
-          Start Quiz
-        </button>
-      </ScrollIntoViewIfNeeded>
-    );
+  const conceptSliders = [];
 
-    return (
-      <div>
-        <p className="notification">
-          This quiz includes the following topics.
-          <br />
-          For each topic, mark how many questions you expect to answer correctly.
-          <br />
-        </p>
-        {conceptSliders}
+  conceptQuestionCounts.forEach((questionCount, concept) => {
+    conceptSliders.push(
+      // Eslint thinks this is an array index, but it is actually a map key
+      // eslint-disable-next-line react/no-array-index-key
+      <div key={concept}>
+        <h4 className="subtitle is-4">
+          {concept}
+          <span className="question-count">
+            {questionCount === 1 ? '1 Question' : `${questionCount} Questions`}
+          </span>
+        </h4>
+        <NumericRater
+          minRating={0}
+          maxRating={questionCount}
+          onChange={newConfidence => setRating(concept, newConfidence)}
+        />
         <br />
-        {this.state.ratings.length === this.props.conceptQuestionCounts.size && submitButton}
       </div>
     );
-  }
-}
+  });
+
+  const submitButton = (
+    <ScrollIntoViewIfNeeded>
+      <button
+        autoFocus
+        className={`button is-primary${isSubmitting ? ' is-loading' : ''}`}
+        onClick={() => submitConceptRatings()}
+        type="submit"
+        disabled={isSubmitting}
+      >
+        Start Quiz
+      </button>
+    </ScrollIntoViewIfNeeded>
+  );
+
+  return (
+    <div>
+      <p className="notification">
+        This quiz includes the following topics. <br />
+        For each topic, mark how many questions you expect to answer correctly.
+      </p>
+      {conceptSliders}
+      <br />
+      {error && <p className="notification is-danger">{error}</p>}
+      {ratings.length === conceptQuestionCounts.size && submitButton}
+    </div>
+  );
+};
 
 ConceptRater.propTypes = {
   // Required { key: conceptName --> value: questionCount} Map object
@@ -122,15 +138,4 @@ ConceptRater.propTypes = {
   onConceptsRated: PropTypes.func.isRequired,
 };
 
-const RATE_CONCEPTS_MUTATION = gql`
-  mutation RateConcepts(
-    $quizAttemptId: ID!
-    $conceptConfidences: [ConceptConfidenceCreateInput!]!
-  ) {
-    rateConcepts(quizAttemptId: $quizAttemptId, conceptConfidences: $conceptConfidences) {
-      id
-    }
-  }
-`;
-
-export default graphql(RATE_CONCEPTS_MUTATION, { name: 'rateConceptsMutation' })(ConceptRater);
+export default ConceptRater;
