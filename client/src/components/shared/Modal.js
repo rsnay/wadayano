@@ -29,7 +29,9 @@ const Modal = ({
         <div className={`modal-card ${cardClassName}`}>
           <header className="modal-card-head">
             <p className="modal-card-title">{title}</p>
-            {showCloseButton && <button className="delete" onClick={closeModal} type="button" />}
+            {showCloseButton && (
+              <button className="delete" onClick={closeModal} type="button" aria-label="Close" />
+            )}
           </header>
           <section className="modal-card-body">
             <div className="content">{children}</div>
