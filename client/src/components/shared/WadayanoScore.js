@@ -18,7 +18,7 @@ const WadayanoScore = ({ score, confidenceAnalysis }) => {
           <img src={Logo} alt="wadayano" />
         </div>
         <div className="column">
-          <h2 className="subtitle is-4">Wadayano Score: {formatScore(score)}</h2>
+          <h4 className="subtitle is-4">Wadayano Score: {formatScore(score)}</h4>
           <div>
             <span className="subtitle is-4">
               <span className={`confidence-emoji is-medium ${confidenceAnalysis.key}`} />{' '}
