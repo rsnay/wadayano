@@ -46,7 +46,7 @@ ConfidenceSelector.propTypes = {
   disabled: PropTypes.bool,
   confident: PropTypes.bool,
   title: PropTypes.string,
-  onChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
 };
 
 export default ConfidenceSelector;
