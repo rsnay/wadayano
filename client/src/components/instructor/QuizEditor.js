@@ -4,7 +4,6 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import withAuthCheck from '../shared/AuthCheck';
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
 import PageTitle from '../shared/PageTitle';
@@ -325,7 +324,7 @@ const QuizEditor = () => {
             Questions
           </h2>
           <Link
-            to={`/instructor/quiz/${quiz.id}/import-questions`}
+            to={`/instructor/quiz/${quiz.id}/import`}
             className="button is-light"
             style={{ marginBottom: '1rem' }}
           >
@@ -375,4 +374,4 @@ const QuizEditor = () => {
   );
 };
 
-export default withAuthCheck(QuizEditor, { instructor: true });
+export default QuizEditor;

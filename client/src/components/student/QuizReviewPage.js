@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useParams, Link } from 'react-router-dom';
 
-import withAuthCheck from '../shared/AuthCheck';
 import QuizReview from './QuizReview';
 
 const QuizReviewPage = ({ hideTitle = false, hideFooter = false }) => {
@@ -30,4 +29,4 @@ QuizReviewPage.propTypes = {
   hideFooter: PropTypes.bool,
 };
 
-export default withAuthCheck(QuizReviewPage, { student: true, instructor: true });
+export default QuizReviewPage;

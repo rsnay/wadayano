@@ -4,8 +4,6 @@ import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import useForm from 'react-hook-form';
 
-import withAuthCheck from './AuthCheck';
-
 const SEND_FEEDBACK_MUTATION = gql`
   mutation SendFeedbackMutation($anonymous: Boolean!, $message: String!) {
     sendFeedback(anonymous: $anonymous, message: $message)
@@ -125,4 +123,4 @@ const FeedbackForm = () => {
   );
 };
 
-export default withAuthCheck(FeedbackForm, { instructor: true, student: true });
+export default FeedbackForm;

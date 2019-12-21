@@ -6,8 +6,6 @@ import ReactTooltip from 'react-tooltip';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
-import withAuthCheck from '../shared/AuthCheck';
-
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
@@ -380,4 +378,4 @@ const CourseDetails = () => {
   );
 };
 
-export default withAuthCheck(CourseDetails, { instructor: true });
+export default CourseDetails;

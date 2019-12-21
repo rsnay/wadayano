@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from 'react-apollo';
 
-import withAuthCheck from '../shared/AuthCheck';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
@@ -321,4 +320,4 @@ const QuizScores = () => {
 
 // Get the quiz and attempts
 
-export default withAuthCheck(QuizScores, { instructor: true });
+export default QuizScores;

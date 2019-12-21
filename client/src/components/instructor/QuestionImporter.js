@@ -4,7 +4,6 @@ import { useMutation, useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
-import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
@@ -186,7 +185,7 @@ const QuestionImporter = () => {
             { to: `/instructor/course/${quiz.course.id}`, title: quiz.course.title },
             { to: `/instructor/quiz/${quiz.id}`, title: quiz.title },
             {
-              to: `/instructor/quiz/${quiz.id}/import-questions`,
+              to: `/instructor/quiz/${quiz.id}/import`,
               title: 'Import Questions',
               active: true,
             },
@@ -239,4 +238,4 @@ const IMPORT_QUESTIONS = gql`
   }
 `;
 
-export default withAuthCheck(QuestionImporter, { instructor: true });
+export default QuestionImporter;

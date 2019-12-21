@@ -4,8 +4,6 @@ import { Redirect } from 'react-router';
 import { useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import withAuthCheck from '../shared/AuthCheck';
-
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
@@ -86,4 +84,4 @@ const DashboardList = () => {
   );
 };
 
-export default withAuthCheck(DashboardList, { student: true });
+export default DashboardList;
