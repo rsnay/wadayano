@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import withAuthCheck from '../shared/AuthCheck';
 import CreateCourseForm from './CreateCourseForm';
 
 import PageTitle from '../shared/PageTitle';
@@ -105,4 +104,4 @@ const CourseList = () => {
   );
 };
 
-export default withAuthCheck(CourseList, { instructor: true });
+export default CourseList;

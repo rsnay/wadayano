@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import gql from 'graphql-tag';
 
 import { useQuery, useMutation } from 'react-apollo';
-import withAuthCheck from '../shared/AuthCheck';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
@@ -120,4 +119,4 @@ const SurveyTaker = () => {
   );
 };
 
-export default withAuthCheck(SurveyTaker, { student: true });
+export default SurveyTaker;

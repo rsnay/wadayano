@@ -10,7 +10,6 @@ import { QUIZ_TYPE_NAMES } from '../../constants';
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
-import withAuthCheck from '../shared/AuthCheck';
 import { formatScore, wadayanoScore, predictedScore } from '../../utils';
 
 // Get the course information and info about practice quizzes
@@ -342,4 +341,4 @@ const Dashboard = () => {
   );
 };
 
-export default withAuthCheck(Dashboard, { student: true });
+export default Dashboard;

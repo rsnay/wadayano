@@ -4,8 +4,6 @@ import { Prompt } from 'react-router';
 import { useMutation, useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import withAuthCheck from '../shared/AuthCheck';
-
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
 import SurveyView from '../shared/SurveyView';
@@ -296,4 +294,4 @@ How many hours do you sleep each night?
   );
 };
 
-export default withAuthCheck(SurveyEditor, { instructor: true });
+export default SurveyEditor;

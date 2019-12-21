@@ -4,7 +4,6 @@ import { useQuery, useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import useForm from 'react-hook-form';
 
-import withAuthCheck from '../shared/AuthCheck';
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
@@ -221,4 +220,4 @@ const ProfileEditor = () => {
   );
 };
 
-export default withAuthCheck(ProfileEditor, { instructor: true });
+export default ProfileEditor;

@@ -3,7 +3,6 @@ import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Prompt, useParams, useHistory } from 'react-router';
 
-import withAuthCheck from '../shared/AuthCheck';
 import PageTitle from '../shared/PageTitle';
 import ConceptRater from './ConceptRater';
 import QuestionTaker from './QuestionTaker';
@@ -294,4 +293,4 @@ const QuizTaker = () => {
   );
 };
 
-export default withAuthCheck(QuizTaker, { student: true });
+export default QuizTaker;
