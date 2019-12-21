@@ -68,7 +68,7 @@
     "graphql-shield": {
         "licenses": "MIT",
         "repository": "https://github.com/maticzav/graphql-shield",
-        "licenseUrl": "https://github.com/maticzav/graphql-shield",
+        "licenseUrl": "https://github.com/maticzav/graphql-shield/raw/master/LICENSE",
         "parents": "wadayano-server"
     },
     "graphql-tag": {
@@ -85,8 +85,8 @@
     },
     "graphql": {
         "licenses": "MIT",
-        "repository": "http://github.com/graphql/graphql-js",
-        "licenseUrl": "http://github.com/graphql/graphql-js/raw/master/LICENSE",
+        "repository": "https://github.com/graphql/graphql-js",
+        "licenseUrl": "https://github.com/graphql/graphql-js/raw/master/LICENSE",
         "parents": "wadayano-server"
     },
     "immutability-helper": {
@@ -112,12 +112,6 @@
         "repository": "https://github.com/auth0/node-jsonwebtoken",
         "licenseUrl": "https://github.com/auth0/node-jsonwebtoken/raw/master/LICENSE",
         "parents": "wadayano-server"
-    },
-    "node-sass-chokidar": {
-        "licenses": "MIT",
-        "repository": "https://github.com/michaelwayman/node-sass-chokidar",
-        "licenseUrl": "https://github.com/michaelwayman/node-sass-chokidar/raw/master/LICENSE",
-        "parents": "wadayano-client"
     },
     "node-ses": {
         "licenses": "MIT",
@@ -153,6 +147,12 @@
         "licenses": "MIT",
         "repository": "https://github.com/facebook/react",
         "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
+        "parents": "wadayano-client"
+    },
+    "react-hook-form": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-hook-form/react-hook-form",
+        "licenseUrl": "https://github.com/react-hook-form/react-hook-form/raw/master/LICENSE",
         "parents": "wadayano-client"
     },
     "react-router-dom": {
