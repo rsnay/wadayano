@@ -2,7 +2,7 @@ import { CONFIDENCES } from './constants';
 
 // Format a 0–1 float score to 33.3%, with the given number of  digits after the decimal point
 export function formatScore(score, mantissaDigits = 1) {
-  if (Number.isNaN(score)) {
+  if (Number.isNaN(score) || typeof score !== 'number') {
     score = 0;
   }
   return `${Math.round(score * 100 * Math.pow(10, mantissaDigits)) /
