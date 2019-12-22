@@ -20,3 +20,20 @@ describe('formatScore', () => {
     expect(formatScore({ score: 1 }, 1)).toBe('0%');
   });
 });
+
+describe('stripTags', () => {
+  test('does not modify input with no tags', () => {
+    const html = 'Some text with no tags, but a < and >.';
+    expect(stripTags(html)).toBe(html);
+  });
+  test('removes valid tags', () => {
+    const html = '<b>Some <u>text</u></b>';
+    const expected = 'Some text';
+    expect(stripTags(html)).toBe(expected);
+  });
+  test('removes invalid tags', () => {
+    const html = '<b>Unclosed tag';
+    const expected = 'Unclosed tag';
+    expect(stripTags(html)).toBe(expected);
+  });
+});
