@@ -4,7 +4,6 @@ import { useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 import ShowMore from 'react-show-more';
 
-import withAuthCheck from '../shared/AuthCheck';
 import CsvGenerator from './CsvGenerator';
 
 import ErrorBox from '../shared/ErrorBox';
@@ -196,4 +195,4 @@ const SurveyResults = () => {
   );
 };
 
-export default withAuthCheck(SurveyResults, { instructor: true });
+export default SurveyResults;

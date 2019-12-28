@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import { useLocation, useHistory } from 'react-router';
+import useForm from 'react-hook-form';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
@@ -28,12 +30,17 @@ const REQUEST_PASSWORD_RESET_MUTATION = gql`
   }
 `;
 
-const Login = ({ history, location, match: { path } }) => {
+/**
+ * Page for instructors to log in and sign up
+ * The page switches modes based on the /login or /signup route
+ * This form uses react-hook-form (https://react-hook-form.com/)
+ */
+const Login = () => {
+  const location = useLocation();
+  const history = useHistory();
+
   // Determine from URL to start in login or signup mode
-  const [signupMode, setSignupMode] = useState(path.match('signup'));
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [signupMode, setSignupMode] = useState(location.pathname.match('signup'));
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,9 +48,11 @@ const Login = ({ history, location, match: { path } }) => {
   const [instructorSignupMutation] = useMutation(SIGNUP_MUTATION);
   const [instructorRequestPasswordResetMutation] = useMutation(REQUEST_PASSWORD_RESET_MUTATION);
 
+  const { register, handleSubmit } = useForm();
+
   useEffect(() => {
-    setSignupMode(path.match('signup'));
-  }, [path]);
+    setSignupMode(location.pathname.match('signup'));
+  }, [location.pathname]);
 
   // If login or signup was successful, redirect to instructor view, or a 'from' redirect location, if passed in
   const redirect = () => {
@@ -52,14 +61,11 @@ const Login = ({ history, location, match: { path } }) => {
   };
 
   // Log in the instructor
-  async function logIn() {
+  async function logIn({ email, password }) {
     // Send login mutation
     try {
       const result = await instructorLoginMutation({
-        variables: {
-          email,
-          password,
-        },
+        variables: { email, password },
       });
       if (result.errors && result.errors.length > 0) {
         throw result;
@@ -82,7 +88,7 @@ const Login = ({ history, location, match: { path } }) => {
   }
 
   // Sign up a new instructor
-  async function signUp() {
+  async function signUp({ email, password, passwordConfirm }) {
     // Check that passwords match
     if (password !== passwordConfirm) {
       setError('Passwords do not match.');
@@ -99,10 +105,7 @@ const Login = ({ history, location, match: { path } }) => {
     // Send signup mutation
     try {
       const result = await instructorSignupMutation({
-        variables: {
-          email,
-          password,
-        },
+        variables: { email, password },
       });
       if (result.errors && result.errors.length > 0) {
         throw result;
@@ -139,10 +142,7 @@ const Login = ({ history, location, match: { path } }) => {
   }
 
   // When the log in or sign up button is pressed, or form is submitted via enter key
-  const submit = e => {
-    if (e) {
-      e.preventDefault();
-    }
+  const submit = formData => {
     // Prevent re-submission while loading
     if (isLoading) {
       return;
@@ -151,9 +151,9 @@ const Login = ({ history, location, match: { path } }) => {
     setError('');
     setIsLoading(true);
     if (signupMode) {
-      signUp();
+      signUp(formData);
     } else {
-      logIn();
+      logIn(formData);
     }
   };
 
@@ -166,9 +166,7 @@ const Login = ({ history, location, match: { path } }) => {
       return;
     }
     const result = await instructorRequestPasswordResetMutation({
-      variables: {
-        email: emailInput.trim(),
-      },
+      variables: { email: emailInput.trim() },
     });
     if (result.errors && result.errors.length > 0) {
       ButterToast.raise({
@@ -198,11 +196,6 @@ const Login = ({ history, location, match: { path } }) => {
     }
   }
 
-  let formCompleted = email && password;
-  if (signupMode) {
-    formCompleted = formCompleted && passwordConfirm;
-  }
-
   return (
     <section className="section no-select">
       <div className="container">
@@ -211,17 +204,19 @@ const Login = ({ history, location, match: { path } }) => {
           If you are a student using wadayano in a course, simply launch it from your LMS (e.g.
           Learning Suite or Canvas).
         </i>
-        <form className="column is-one-third-desktop is-half-tablet" onSubmit={submit}>
+        <form
+          className="column is-one-third-desktop is-half-tablet"
+          onSubmit={handleSubmit(submit)}
+        >
           {error && <p className="notification is-danger">{error}</p>}
 
           <div className="field">
             <p className="control has-icons-left has-icons-right">
               <input
+                name="email"
+                ref={register}
                 autoFocus
                 required
-                value={email}
-                name="email"
-                onChange={e => setEmail(e.target.value)}
                 className="input"
                 type="email"
                 maxLength={255}
@@ -236,10 +231,9 @@ const Login = ({ history, location, match: { path } }) => {
           <div className="field">
             <p className="control has-icons-left">
               <input
-                required
-                value={password}
                 name="password"
-                onChange={e => setPassword(e.target.value)}
+                ref={register}
+                required
                 className="input"
                 type="password"
                 placeholder="Password"
@@ -254,9 +248,8 @@ const Login = ({ history, location, match: { path } }) => {
             <div className="field">
               <p className="control has-icons-left">
                 <input
-                  value={passwordConfirm}
                   name="passwordConfirm"
-                  onChange={e => setPasswordConfirm(e.target.value)}
+                  ref={register}
                   className="input"
                   type="password"
                   placeholder="Confirm Password"
@@ -273,7 +266,7 @@ const Login = ({ history, location, match: { path } }) => {
               <button
                 className={`button is-primary${isLoading ? ' is-loading' : ''}`}
                 type="submit"
-                disabled={!formCompleted}
+                disabled={isLoading}
               >
                 {signupMode ? 'Sign Up' : 'Log In'}
               </button>

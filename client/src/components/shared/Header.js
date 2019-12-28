@@ -87,6 +87,11 @@ const Header = () => {
               Send Feedback
             </NavLink>
           )}
+          {!isLoggedIn && (
+            <NavLink activeClassName="is-active" to="/about" className="navbar-item">
+              About
+            </NavLink>
+          )}
           <div className="navbar-item">
             {isLoggedIn ? (
               <button className="button is-outlined" onClick={logOut} type="button">

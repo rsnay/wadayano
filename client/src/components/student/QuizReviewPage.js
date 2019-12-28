@@ -1,34 +1,32 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { useParams, Link } from 'react-router-dom';
 
-import withAuthCheck from '../shared/AuthCheck';
 import QuizReview from './QuizReview';
 
-const QuizReviewPage = ({
-  match: {
-    params: { quizAttemptId },
-  },
-  hideTitle = false,
-  hideFooter = false,
-}) => (
-  <section className="section">
-    <div className="container">
-      <div>
+const QuizReviewPage = ({ hideTitle = false, hideFooter = false }) => {
+  const { quizAttemptId } = useParams();
+  return (
+    <section className="section">
+      <div className="container">
         <QuizReview quizAttemptId={quizAttemptId} hideTitle={hideTitle} />
 
         {!hideFooter && (
           <>
             <hr />
-            <p className="control">
-              <Link to="/student/dashboard" className="button is-medium">
-                Return to Dashboard
-              </Link>
-            </p>
+            <Link to="/student/dashboard" className="button is-medium">
+              Return to Dashboard
+            </Link>
           </>
         )}
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
-export default withAuthCheck(QuizReviewPage, { student: true, instructor: true });
+QuizReviewPage.propTypes = {
+  hideTitle: PropTypes.bool,
+  hideFooter: PropTypes.bool,
+};
+
+export default QuizReviewPage;

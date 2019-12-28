@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import useForm from 'react-hook-form';
 
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 import OptionSelector from '../shared/OptionSelector';
@@ -25,34 +26,24 @@ const QUIZ_DELETE = gql`
 
 /**
  * A form, intended for inclusion in a modal dialog in the quiz editor, to edit quiz information or delete the quiz.
+ * This form uses react-hook-form (https://react-hook-form.com/)
  */
 const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const formElement = useRef(null);
+  const { register, handleSubmit } = useForm();
 
   const [saveQuizMutation] = useMutation(QUIZ_SAVE);
   const [deleteQuizMutation] = useMutation(QUIZ_DELETE);
   const history = useHistory();
 
-  const saveQuiz = async e => {
-    if (e) {
-      e.preventDefault();
-    }
+  const saveQuiz = async formData => {
     // Prevent re-submission while performing operation
     if (isSaving || isDeleting) {
       return;
     }
-    // Check that form is valid (e.g. for URL validation)
-    if (!formElement.current.reportValidity()) {
-      return;
-    }
-    // Collect data to update in the quiz
-    const quizData = {
-      title: document.getElementById(quiz.id).value,
-      type: Array.from(document.getElementsByName('quizType')).find(r => r.checked).value,
-    };
+    // Validation was already performed by react-hook-form
     setIsSaving(true);
 
     try {
@@ -60,7 +51,9 @@ const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
       const result = await saveQuizMutation({
         variables: {
           id: quiz.id,
-          data: quizData,
+          // The “name” attributes of the form elements match the
+          // quiz property names.
+          data: formData,
         },
       });
       if (result.errors && result.errors.length > 0) {
@@ -114,16 +107,17 @@ const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
   };
 
   return (
-    <form onSubmit={e => saveQuiz(e)} ref={formElement}>
+    <form onSubmit={handleSubmit(saveQuiz)}>
       <label className="label is-medium">
         Quiz Title
         <br />
         <input
+          name="title"
+          ref={register}
           className="input"
           type="text"
           placeholder="e.g. Lipids Review"
           defaultValue={quiz.title}
-          id={quiz.id}
           style={{ maxWidth: '42rem' }}
           required
           pattern="(.|\s)*\S(.|\s)*"
@@ -137,7 +131,8 @@ const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
       </label>
       <OptionSelector
         type="radio"
-        name="quizType"
+        name="type"
+        inputRef={register}
         defaultValue={quiz.type}
         options={[
           { value: 'GRADED', title: 'Graded quiz (must be launched from LMS)' },
@@ -166,7 +161,6 @@ const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
             className={`button is-primary${isSaving ? ' is-loading' : ''}`}
             type="submit"
             disabled={isSaving}
-            onClick={() => saveQuiz()}
           >
             Save Changes
           </button>

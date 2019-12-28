@@ -1,18 +1,38 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
+import { useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import compose from '../../compose';
-import withAuthCheck from '../shared/AuthCheck';
 import CreateCourseForm from './CreateCourseForm';
 
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
 
-const CourseList = ({ instructorQuery }) => {
-  if (instructorQuery && instructorQuery.error) {
+// Get all courses for current instructor
+export const INSTRUCTOR_QUERY = gql`
+  query instructorQuery {
+    currentInstructor {
+      id
+      courses {
+        id
+        title
+        quizzes {
+          id
+        }
+        students {
+          id
+        }
+      }
+    }
+  }
+`;
+
+const CourseList = () => {
+  const { error, data } = useQuery(INSTRUCTOR_QUERY);
+  console.log(data);
+
+  if (error) {
     return (
       <ErrorBox>
         <p>Couldn’t load courses.</p>
@@ -20,16 +40,16 @@ const CourseList = ({ instructorQuery }) => {
     );
   }
 
-  if (instructorQuery && !instructorQuery.currentInstructor) {
+  if (!data || (data && !data.currentInstructor)) {
     return <Spinner />;
   }
 
-  const { courses } = instructorQuery.currentInstructor;
+  const { courses } = data.currentInstructor;
 
   return (
     <section className="section">
       <div className="container">
-        <PageTitle title={`wadayano | Courses`}/>
+        <PageTitle title="wadayano | Courses" />
         <h1 className="title">Courses</h1>
         <hr />
         <div className="tile is-ancestor" style={{ flexWrap: 'wrap' }}>
@@ -84,31 +104,4 @@ const CourseList = ({ instructorQuery }) => {
   );
 };
 
-// Get all courses for current instructor
-export const INSTRUCTOR_QUERY = gql`
-  query instructorQuery {
-    currentInstructor {
-      id
-      courses {
-        id
-        title
-        quizzes {
-          id
-        }
-        students {
-          id
-        }
-      }
-    }
-  }
-`;
-
-export default withAuthCheck(
-  compose(
-    graphql(INSTRUCTOR_QUERY, {
-      name: 'instructorQuery',
-      options: { fetchPolicy: 'cache-and-network' },
-    })
-  )(CourseList),
-  { instructor: true }
-);
+export default CourseList;
