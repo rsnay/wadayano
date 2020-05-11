@@ -29,7 +29,7 @@
     "react-timeago": "^4.4.0",
     "react-tooltip": "^3.11.1",
     "react-tracking": "^7.1.0",
-    "tinymce": "^5.0.15"
+    "tinymce": "^5.2.2"
   },
   "scripts": {
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
