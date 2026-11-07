@@ -59,6 +59,16 @@ quizzes with `DELETE /api/courses/:id` and `DELETE /api/quizzes/:id`;
 quiz while preserving questions referenced by student attempts or another
 quiz. `POST /api/quizzes/:id/questions/import-json` validates and atomically
 imports up to 20 question objects.
+Course deletion removes course-scoped quizzes, attempts, confidence data,
+enrollments, consent, and survey responses; it preserves student/instructor
+accounts, tracking events, and question/option content, including content no
+longer used by a quiz. Quiz deletion removes that quiz's attempts while
+retaining question-attempt and confidence rows shared with other quizzes.
+Removing a question from a quiz preserves question content referenced by
+another quiz or historical attempt. These destructive retention behaviors were
+verified with isolated in-memory SQLite tests; source data and persistent local
+D1 were not modified. Reconcile these semantics with the legacy source before
+production migration.
 Students can start or resume an enrolled quiz with `POST
 /api/student/quizzes/:id/attempt`, save concept confidence with `POST
 /api/student/quiz-attempts/:id/concept-confidences`, submit answers with `POST

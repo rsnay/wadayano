@@ -106,7 +106,7 @@ const CourseInfoForm = ({ course, onCancel, onSave }) => {
 
   const deleteCourse = async () => {
     const response = window.prompt(
-      'Deleting this course will permanently delete all quizzes, students’ quizzes attempts, survey data, and other information associated with this course. This cannot be undone. Type ‘absolutely’ to delete this course.'
+      'Deleting this course permanently removes its quizzes, attempts, confidence data, consent, and survey responses. Student and instructor accounts, tracking events, and question/answer content remain, even if no quiz uses that content. This cannot be undone. Type ‘absolutely’ to delete this course.'
     );
     if (response === null) {
       return;
