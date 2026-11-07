@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
+import useApiQuery from '../../useApiQuery';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
@@ -16,29 +15,6 @@ import QuestionEditor from './QuestionEditor';
 import QuizInfoForm from './QuizInfoForm';
 import QuizJSONImportModal from './QuizJSONImportModal';
 import LTISetupModal from './LTISetupModal';
-
-// Get the quiz
-const QUIZ_QUERY = gql`
-  query quizQuery($id: ID!) {
-    quiz(id: $id) {
-      id
-      title
-      type
-      course {
-        id
-        title
-        ltiSecret
-      }
-      questions {
-        id
-        prompt
-      }
-      quizAttempts {
-        id
-      }
-    }
-  }
-`;
 
 const MAX_NAVBAR_QUESTIONS = 20;
 const TEMP_ID_PREFIX = '_new';
@@ -81,9 +57,9 @@ const QuizEditor = () => {
   const [savedQuestions, setSavedQuestions] = useState([]);
 
   // Get quiz data
-  const { queryLoading, error, data: quizQuery, refetch } = useQuery(QUIZ_QUERY, {
-    variables: { id: quizId },
-  });
+  const { loading: queryLoading, error, data: quizQuery, refetch } = useApiQuery(
+    `/api/quizzes/${encodeURIComponent(quizId)}`,
+  );
 
   useEffect(() => {
     if (quizQuery && !queryLoading && !error) {
@@ -141,7 +117,7 @@ const QuizEditor = () => {
     }
   };
 
-  if (quizQuery && error) {
+  if (error) {
     return (
       <ErrorBox>
         <p>Couldn’t load quiz.</p>
@@ -350,7 +326,7 @@ const QuizEditor = () => {
           )}
         </div>
 
-        {quiz.quizAttempts.length > 0 && (
+        {quiz.quizAttemptCount > 0 && (
           <div className="notification is-warning">
             <p>
               Students have taken (or started taking) this quiz. Changing quiz questions will

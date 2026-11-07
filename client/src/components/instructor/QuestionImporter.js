@@ -1,38 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useHistory } from '../../navigation';
-import { useMutation, useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
+import { apiRequest } from '../../api';
+import useApiQuery from '../../useApiQuery';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
 import { stripTags } from '../../utils';
 import Breadcrumbs from '../shared/Breadcrumbs';
-
-// Get all questions in all quizzes in the course that this quiz belongs to
-const QUIZ_QUERY = gql`
-  query quizQuery($id: ID!) {
-    quiz(id: $id) {
-      id
-      title
-      course {
-        id
-        title
-        quizzes {
-          id
-          title
-          type
-          questions {
-            id
-            prompt
-          }
-        }
-      }
-    }
-  }
-`;
 
 /**
  * Page that allows instructors to select individual questions (or all questions in a quiz) to import into a quiz.
@@ -44,20 +21,17 @@ const QuestionImporter = () => {
   const [questionIds, setQuestionIds] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
 
-  const { loading, error, data } = useQuery(QUIZ_QUERY, { variables: { id: quizId } });
-  const [importQuestionsMutation] = useMutation(IMPORT_QUESTIONS);
+  const { loading, error, data } = useApiQuery(
+    `/api/quizzes/${encodeURIComponent(quizId)}/importable-questions`,
+  );
 
   const importQuestions = async () => {
     setIsSaving(true);
     try {
-      // Send the mutation
-      const result = await importQuestionsMutation({
-        variables: { quizId, questionIds },
+      await apiRequest(`/api/quizzes/${encodeURIComponent(quizId)}/questions/import`, {
+        method: 'POST',
+        body: { questionIds },
       });
-      // Handle errors
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       // Redirect to quiz after successful save
       history.push(`/instructor/quiz/${quizId}`);
     } catch (error) {
@@ -230,13 +204,5 @@ const QuestionImporter = () => {
     </section>
   );
 };
-
-const IMPORT_QUESTIONS = gql`
-  mutation importQuestionsMutation($quizId: ID!, $questionIds: [ID!]!) {
-    importQuestions(quizId: $quizId, questionIds: $questionIds) {
-      id
-    }
-  }
-`;
 
 export default QuestionImporter;

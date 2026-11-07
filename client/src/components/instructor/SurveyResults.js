@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
 import ShowMore from 'react-show-more';
+import useApiQuery from '../../useApiQuery';
 
 import CsvGenerator from './CsvGenerator';
 
@@ -10,31 +9,11 @@ import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
-// Get the course information
-const COURSE_QUERY = gql`
-  query courseQuery($id: ID!) {
-    course(id: $id) {
-      id
-      title
-      survey
-      students {
-        id
-        name
-        surveyResults {
-          createdAt
-          answers
-          course {
-            id
-          }
-        }
-      }
-    }
-  }
-`;
-
 const SurveyResults = () => {
   const { courseId } = useParams();
-  const { loading, error, data } = useQuery(COURSE_QUERY, { variables: { id: courseId } });
+  const { loading, error, data } = useApiQuery(
+    `/api/courses/${encodeURIComponent(courseId)}/survey-results`,
+  );
 
   const downloadCsv = () => {
     // Check that data has loaded

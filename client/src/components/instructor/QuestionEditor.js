@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NavigationPrompt as Prompt } from '../shared/NavigationPrompt';
-import { useLazyQuery, useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import update from 'immutability-helper';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
@@ -14,7 +12,7 @@ import {
   SHORT_ANSWER,
 } from '../../constants';
 import { stripTags } from '../../utils';
-import fragments from '../../fragments';
+import { apiRequest } from '../../api';
 
 import ErrorBox from '../shared/ErrorBox';
 import ConceptSelector from './ConceptSelector';
@@ -23,41 +21,6 @@ import OptionSelector from '../shared/OptionSelector';
 
 const unsavedAlertMessage =
   'You have unsaved questions in this quiz. Do you want to discard these changes?';
-
-const QUESTION_QUERY = gql`
-  query questionEditorQuestionQuery($questionId: ID!) {
-    question(id: $questionId) {
-      ...InstructorFullQuestion
-    }
-  }
-  ${fragments.instructorFullQuestion}
-`;
-
-const ADD_QUESTION_MUTATION = gql`
-  mutation addQuestionMutation($quizId: ID!, $question: QuestionCreateInput!) {
-    addQuestion(quizId: $quizId, question: $question) {
-      ...InstructorFullQuestion
-    }
-  }
-  ${fragments.instructorFullQuestion}
-`;
-
-const UPDATE_QUESTION_MUTATION = gql`
-  mutation updateQuestionMutation($questionId: ID!, $data: QuestionUpdateInput!) {
-    updateQuestion(id: $questionId, data: $data) {
-      ...InstructorFullQuestion
-    }
-  }
-  ${fragments.instructorFullQuestion}
-`;
-
-const DELETE_QUESTION_MUTATION = gql`
-  mutation deleteQuestionMutation($questionId: ID!) {
-    deleteQuestion(id: $questionId) {
-      id
-    }
-  }
-`;
 
 // Used in question state initializer
 const initialQuestion = (isNew, questionId) => {
@@ -107,6 +70,11 @@ const QuestionEditor = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [error, setError] = useState(null);
+  const [questionQuery, setQuestionQuery] = useState({
+    loading: false,
+    error: null,
+    data: null,
+  });
   // Modified question object
   const [question, setQuestion] = useState(initialQuestion(isNew, questionId));
 
@@ -127,17 +95,25 @@ const QuestionEditor = ({
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [handleBeforeUnload]);
 
-  const [loadQuestion, questionQuery] = useLazyQuery(QUESTION_QUERY, { variables: { questionId } });
-
-  const [addQuestionMutation] = useMutation(ADD_QUESTION_MUTATION);
-  const [updateQuestionMutation] = useMutation(UPDATE_QUESTION_MUTATION);
-  const [deleteQuestionMutation] = useMutation(DELETE_QUESTION_MUTATION);
+  async function loadQuestion() {
+    setQuestionQuery({ loading: true, error: null, data: null });
+    try {
+      const data = await apiRequest(
+        `/api/quizzes/${encodeURIComponent(quizId)}/questions/${encodeURIComponent(questionId)}`,
+      );
+      setQuestionQuery({ loading: false, error: null, data });
+    } catch (queryError) {
+      setQuestionQuery({ loading: false, error: queryError, data: null });
+    }
+  }
 
   useEffect(() => {
     // Have overall loading state reflect query loading state
     setIsLoading(questionQuery.loading);
     // If the query loaded, set the question or an error
-    if (!questionQuery.error && !questionQuery.loading && questionQuery.data) {
+    if (questionQuery.error) {
+      setError('Error loading question. Please try again later.');
+    } else if (!questionQuery.loading && questionQuery.data) {
       if (questionQuery.data.question) {
         setQuestion(questionQuery.data.question);
         setIsExpanded(true);
@@ -150,7 +126,7 @@ const QuestionEditor = ({
   async function deleteQuestion() {
     if (
       !window.confirm(
-        'Are you sure you want to delete this question? All students’ attempts for this question will also be deleted.'
+        'Remove this question from the quiz? Existing student attempt records will be retained.'
       )
     ) {
       return;
@@ -159,10 +135,10 @@ const QuestionEditor = ({
     setIsDirty(false);
     setIsExpanded(false);
     try {
-      const result = await deleteQuestionMutation({ variables: { questionId } });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
+      await apiRequest(
+        `/api/quizzes/${encodeURIComponent(quizId)}/questions/${encodeURIComponent(questionId)}`,
+        { method: 'DELETE' },
+      );
       setIsDeleting(false);
       // Let the main editor know this question was deleted, so it can be hidden without having to reload entire quiz
       if (onDelete) {
@@ -170,8 +146,8 @@ const QuestionEditor = ({
       }
     } catch (e) {
       let message = 'Please try again later.';
-      if (e.errors && e.errors.length > 0) {
-        message = e.errors[0].message;
+      if (e.code === 'question_not_found') {
+        message = 'This question is no longer in the quiz.';
       }
 
       setError(`There was an error deleting this question: ${message}`);
@@ -238,51 +214,29 @@ const QuestionEditor = ({
       setIsLoading(false);
       return;
     }
-    // Prisma-specific syntax for nested update mutation
     const updatedQuestion = {
       type: question.type,
       prompt: question.prompt,
       concept: question.concept,
-      options: { update: [] },
-      correctShortAnswers: { set: question.correctShortAnswers },
+      options: question.options.map(({ id, text, isCorrect }) => ({ id, text, isCorrect })),
+      correctShortAnswers: question.correctShortAnswers,
     };
-    // Get updated options for this question
-    question.options.forEach(option => {
-      const updatedOption = {
-        where: { id: option.id },
-        data: {
-          text: option.text,
-          isCorrect: option.isCorrect,
-        },
-      };
-      // Add updated option to question mutation
-      updatedQuestion.options.update.push(updatedOption);
-    });
     try {
       if (isNew) {
-        // If this is a new question, restructure the data
-        const newQuestion = { ...updatedQuestion };
-        // Create options with only text and isCorrect (not ID)
-        newQuestion.options.create = newQuestion.options.update.map(o => {
-          return { text: o.data.text, isCorrect: o.data.isCorrect };
-        });
-        // Remove updated options list
-        delete newQuestion.options.update;
-        // Send addQuestion mutation
-        const result = await addQuestionMutation({
-          variables: {
-            quizId,
-            question: newQuestion,
-          },
-        });
+        const result = await apiRequest(
+          `/api/quizzes/${encodeURIComponent(quizId)}/questions`,
+          { method: 'POST', body: { question: updatedQuestion } },
+        );
 
         // Tell the quiz editor that this question is now saved in the database
         // Pass in the temp "_new0" ID, as well as the saved question, which will contain the actual ID from the database
         // This component relies on QuizEditor updating this QuestionEditor’s questionId prop with the new ID
-        onNewSave(questionId, result.data.addQuestion);
+        onNewSave(questionId, result.question);
       } else {
-        // Otherwise update it
-        await updateQuestionMutation({ variables: { questionId, data: updatedQuestion } });
+        await apiRequest(
+          `/api/quizzes/${encodeURIComponent(quizId)}/questions/${encodeURIComponent(questionId)}`,
+          { method: 'PUT', body: { question: updatedQuestion } },
+        );
       }
       // Collapse editor and mark as not dirty or loading
       setIsExpanded(false);

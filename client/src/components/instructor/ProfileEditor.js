@@ -1,40 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useHistory } from '../../navigation';
-import { useQuery, useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import useForm from 'react-hook-form';
+import useApiQuery from '../../useApiQuery';
+import { apiRequest } from '../../api';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
-
-// Get the instructor’s profile, so that email address can be pre-filled
-const INSTRUCTOR_QUERY = gql`
-  query instructorQuery {
-    currentInstructor {
-      id
-      email
-      createdAt
-    }
-  }
-`;
-
-const INSTRUCTOR_UPDATE_PROFILE_MUTATION = gql`
-  mutation instructorUpdateProfileMutation(
-    $id: ID!
-    $currentPassword: String!
-    $newEmail: String
-    $newPassword: String
-  ) {
-    instructorUpdateProfile(
-      id: $id
-      currentPassword: $currentPassword
-      newEmail: $newEmail
-      newPassword: $newPassword
-    )
-  }
-`;
 
 /**
  * Page that allows instructors to edit their email address and/or password.
@@ -43,8 +16,7 @@ const INSTRUCTOR_UPDATE_PROFILE_MUTATION = gql`
 const ProfileEditor = () => {
   const history = useHistory();
 
-  const { loading, error: queryError, data } = useQuery(INSTRUCTOR_QUERY);
-  const [instructorUpdateProfileMutation] = useMutation(INSTRUCTOR_UPDATE_PROFILE_MUTATION);
+  const { loading, error: queryError, data } = useApiQuery('/api/instructor');
 
   const [error, setError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -76,13 +48,10 @@ const ProfileEditor = () => {
 
     // Send update profile mutation
     try {
-      const { id } = data.currentInstructor;
-      const result = await instructorUpdateProfileMutation({
-        variables: { id, currentPassword, newEmail, newPassword },
+      await apiRequest('/api/instructor/profile', {
+        method: 'PATCH',
+        body: { currentPassword, newEmail, newPassword },
       });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       ButterToast.raise({
         content: <ToastTemplate content="Your profile was updated." className="is-success" />,
       });
@@ -91,12 +60,12 @@ const ProfileEditor = () => {
       history.push('/instructor/courses');
     } catch (e) {
       let message = 'Please try again later.';
-      if (e.errors && e.errors.length > 0) {
-        message = e.errors[0].message;
-      }
-      // Decode a specific error message
-      if (message.indexOf('unique constraint would be violated') >= 0) {
+      if (e.code === 'email_already_exists') {
         message = 'An existing instructor already has the given new email address.';
+      } else if (e.code === 'current_password_incorrect') {
+        message = 'The current password was incorrect.';
+      } else if (e.code === 'password_reset_required') {
+        message = 'Your password must be reset before your profile can be changed.';
       }
       setError(`Error updating profile: ${message}`);
       console.error(`Error updating profile: ${JSON.stringify(e)}`);
@@ -153,7 +122,7 @@ const ProfileEditor = () => {
             <input
               name="newEmail"
               ref={register}
-              defaultValue={data.currentInstructor.email}
+              defaultValue={data.email}
               className="input"
               type="email"
               maxLength={255}
@@ -216,7 +185,7 @@ const ProfileEditor = () => {
         If you need to delete your account, please <Link to="/feedback">contact us</Link>.
       </p>
 
-      {/* <pre>{JSON.stringify(data.currentInstructor)}</pre> */}
+      {/* <pre>{JSON.stringify(data)}</pre> */}
     </section>
   );
 };

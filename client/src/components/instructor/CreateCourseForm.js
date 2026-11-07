@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import { useHistory } from '../../navigation';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import useForm from 'react-hook-form';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
-
-export const ADD_COURSE = gql`
-  mutation addCourseMutation($title: String!) {
-    addCourse(title: $title) {
-      id
-    }
-  }
-`;
+import { apiRequest } from '../../api';
 
 /**
  * Card with a simple form to create a new course.
@@ -20,7 +11,6 @@ export const ADD_COURSE = gql`
  */
 const CreateCourseForm = () => {
   const [isCreating, setIsCreating] = useState(false);
-  const [addCourseMutation] = useMutation(ADD_COURSE);
   const { register, handleSubmit } = useForm();
   const history = useHistory();
 
@@ -39,9 +29,9 @@ const CreateCourseForm = () => {
     // Create the course
     setIsCreating(true);
     try {
-      const result = await addCourseMutation({ variables: { title } });
+      const course = await apiRequest('/api/courses', { method: 'POST', body: { title } });
       // Redirect to the new course
-      history.push(`/instructor/course/${result.data.addCourse.id}`);
+      history.push(`/instructor/course/${course.id}`);
     } catch (error) {
       ButterToast.raise({
         content: <ToastTemplate content="Error creating new course." className="is-danger" />,

@@ -1,77 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useQuery, useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import { Navigate } from 'react-router-dom';
+import useApiQuery from '../../useApiQuery';
+import { apiRequest } from '../../api';
 
 import ErrorBox from '../shared/ErrorBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
-
-// Get course instructors and pending invites
-const COURSE_INSTRUCTORS_QUERY = gql`
-  query courseInstructorsQuery($id: ID!) {
-    course(id: $id) {
-      id
-      instructors {
-        id
-        email
-      }
-      pendingCourseInvites {
-        id
-        createdAt
-        email
-      }
-    }
-  }
-`;
-
-const INVITE_INSTRUCTOR = gql`
-  mutation inviteInstructor($email: String!, $courseId: ID!) {
-    sendInstructorCourseInvite(email: $email, courseId: $courseId)
-  }
-`;
-
-const REMOVE_INSTRUCTOR = gql`
-  mutation removeInstructor($email: String!, $courseId: ID!) {
-    removeInstructorFromCourse(email: $email, courseId: $courseId)
-  }
-`;
 
 /**
  * Component to view, add, and remove instructors of a course.
  * Intended for use in CourseDetails
  */
 const CourseInstructors = ({ courseId }) => {
-  const { error, loading, data, refetch } = useQuery(COURSE_INSTRUCTORS_QUERY, {
-    variables: { id: courseId },
-  });
-  const [inviteInstructorMutation] = useMutation(INVITE_INSTRUCTOR);
-  const [removeInstructorMutation] = useMutation(REMOVE_INSTRUCTOR);
-
+  const { error, loading, data, refetch } = useApiQuery(
+    `/api/courses/${encodeURIComponent(courseId)}`,
+  );
   // Takes email address of an instructor to invite and sends to server
   async function inviteInstructor(email) {
-    // Send invite mutation
-    const result = await inviteInstructorMutation({
-      variables: {
-        courseId,
-        email,
-      },
-    });
-    // Show error, or success string from mutation
-    if (result.errors && result.errors.length > 0) {
+    try {
+      const result = await apiRequest(
+        `/api/courses/${encodeURIComponent(courseId)}/instructors`,
+        { method: 'POST', body: { email } },
+      );
       ButterToast.raise({
-        content: <ToastTemplate content={result.errors[0].message} className="is-danger" />,
-        timeout: 3000,
-      });
-    } else {
-      ButterToast.raise({
-        content: (
-          <ToastTemplate content={result.data.sendInstructorCourseInvite} className="is-success" />
-        ),
+        content: <ToastTemplate content={result.message} className="is-success" />,
         sticky: true,
       });
+    } catch (inviteError) {
+      ButterToast.raise({
+        content: (
+          <ToastTemplate
+            content={`Could not send invitation (${inviteError.code || 'request_failed'}).`}
+            className="is-danger"
+          />
+        ),
+        timeout: 12000,
+      });
+    } finally {
+      refetch();
     }
-    refetch();
   }
 
   // Asks for the email address of an instructor to invite and sends to server
@@ -92,31 +59,30 @@ const CourseInstructors = ({ courseId }) => {
     if (!window.confirm(`Are you sure you want to remove ${email} from this course?`)) {
       return;
     }
-    // Send remove mutation
-    const result = await removeInstructorMutation({
-      variables: {
-        courseId,
-        email: email.trim(),
-      },
-    });
-    // Show error, or success string from mutation
-    if (result.errors && result.errors.length > 0) {
+    try {
+      const result = await apiRequest(
+        `/api/courses/${encodeURIComponent(courseId)}/instructors`,
+        { method: 'DELETE', body: { email: email.trim() } },
+      );
       ButterToast.raise({
-        content: <ToastTemplate content={result.errors[0].message} className="is-danger" />,
-        timeout: 12000,
+        content: <ToastTemplate content={result.message} className="is-success" />,
       });
-    } else {
+    } catch (removeError) {
       ButterToast.raise({
         content: (
-          <ToastTemplate content={result.data.removeInstructorFromCourse} className="is-success" />
+          <ToastTemplate
+            content={`Could not remove instructor (${removeError.code || 'request_failed'}).`}
+            className="is-danger"
+          />
         ),
+        timeout: 12000,
       });
     }
     refetch();
   }
 
   if (error) {
-    if (error.message.indexOf('Not Authorised') !== -1) {
+    if (error.status === 403 || error.status === 404) {
       // In case an instructor removed themselves from the course, redirect back to the course list
       ButterToast.raise({
         content: (
@@ -136,6 +102,7 @@ const CourseInstructors = ({ courseId }) => {
   if (loading && (!data || !data.course || !data.course.instructors)) {
     return null;
   }
+  if (!data || !data.course) return null;
 
   return (
     <>

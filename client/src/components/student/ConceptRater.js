@@ -1,21 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 import NumericRater from '../shared/NumericRater';
-
-const RATE_CONCEPTS_MUTATION = gql`
-  mutation RateConcepts(
-    $quizAttemptId: ID!
-    $conceptConfidences: [ConceptConfidenceCreateInput!]!
-  ) {
-    rateConcepts(quizAttemptId: $quizAttemptId, conceptConfidences: $conceptConfidences) {
-      id
-    }
-  }
-`;
+import { apiRequest } from '../../api';
 
 /**
  * Component used in QuizTaker to have the student estimate # of questions they
@@ -25,8 +13,6 @@ const ConceptRater = ({ conceptQuestionCounts, quizAttemptId, onConceptsRated })
   const [ratings, setRatings] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
-
-  const [rateConceptsMutation] = useMutation(RATE_CONCEPTS_MUTATION);
 
   // Called when one of the ratings changes for a concept
   const setRating = (concept, newConfidence) => {
@@ -47,15 +33,10 @@ const ConceptRater = ({ conceptQuestionCounts, quizAttemptId, onConceptsRated })
     setError(null);
 
     try {
-      const result = await rateConceptsMutation({
-        variables: {
-          quizAttemptId,
-          conceptConfidences: ratings,
-        },
-      });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
+      await apiRequest(
+        `/api/student/quiz-attempts/${encodeURIComponent(quizAttemptId)}/concept-confidences`,
+        { method: 'POST', body: { conceptConfidences: ratings } },
+      );
       // Tell QuizTaker to continue
       onConceptsRated();
     } catch (e) {

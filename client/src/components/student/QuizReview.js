@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
 import { useTracking } from 'react-tracking';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
+import useApiQuery from '../../useApiQuery';
 import { formatScore, wadayanoScore, confidenceAnalysis, predictedScore } from '../../utils';
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
@@ -15,16 +14,6 @@ import QuestionReview from './QuestionReview';
 import Modal from '../shared/Modal';
 
 import WadayanoScore from '../shared/WadayanoScore';
-import fragments from '../../fragments';
-
-const QUIZ_ATTEMPT_QUERY = gql`
-  query quizAttemptQuery($id: ID!) {
-    quizAttempt(id: $id) {
-      ...StudentFullQuizAttempt
-    }
-  }
-  ${fragments.studentFullQuizAttempt}
-`;
 
 // Calculate results for each concept
 const calculateConceptResults = quizAttempt => {
@@ -63,10 +52,9 @@ const QuizReview = ({ quizAttemptId, hideTitle = false }) => {
   const [showReviewForConcept, setShowReviewForConcept] = useState(null);
   const tracking = useTracking();
 
-  const { error, data } = useQuery(QUIZ_ATTEMPT_QUERY, {
-    fetchPolicy: 'cache-and-network',
-    variables: { id: quizAttemptId },
-  });
+  const { error, data, loading } = useApiQuery(
+    `/api/quiz-attempts/${encodeURIComponent(quizAttemptId)}/review`,
+  );
 
   // Show modal with questions for a specific concept
   const showConceptReview = result => {
@@ -82,11 +70,11 @@ const QuizReview = ({ quizAttemptId, hideTitle = false }) => {
     });
   };
 
-  if (!(data && data.quizAttempt)) {
+  if (loading) {
     return <Spinner />;
   }
 
-  if (error) {
+  if (error || !data?.quizAttempt) {
     return (
       <ErrorBox>
         <p>Couldn’t load quiz results. Please try again later.</p>

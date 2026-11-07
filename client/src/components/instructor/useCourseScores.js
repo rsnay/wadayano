@@ -1,37 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
-
+import useApiQuery from '../../useApiQuery';
 import { predictedScore, wadayanoScore } from '../../utils';
-
-// Get completed quiz attempts for all quizzes in the course
-const COURSE_SCORES_QUERY = gql`
-  query aggregatedCourseScoresQuery($id: ID!) {
-    course(id: $id) {
-      id
-      quizzes {
-        id
-        quizAttempts(where: { completed_not: null }) {
-          id
-          student {
-            id
-          }
-          completed
-          score
-          questionAttempts {
-            id
-            isCorrect
-            isConfident
-          }
-          conceptConfidences {
-            id
-            confidence
-          }
-        }
-      }
-    }
-  }
-`;
 
 /**
  * Hook used by CourseDetails to load aggregated course/quiz scores.
@@ -43,11 +12,9 @@ const COURSE_SCORES_QUERY = gql`
  */
 function useCourseScores(courseId) {
   const [courseScores, setCourseScores] = useState(null);
-
-  const { loading, error, data } = useQuery(COURSE_SCORES_QUERY, {
-    fetchPolicy: 'cache-and-network',
-    variables: { id: courseId },
-  });
+  const { loading, error, data } = useApiQuery(
+    `/api/courses/${encodeURIComponent(courseId)}/scores`,
+  );
 
   useEffect(() => {
     // If loaded, prepare data for the sortable table
@@ -101,7 +68,7 @@ function useCourseScores(courseId) {
     }
   }, [data, error, loading]);
 
-  return courseScores;
+  return { courseScores, error };
 }
 
 export default useCourseScores;

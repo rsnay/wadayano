@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import { useParams } from 'react-router';
 import { useHistory } from '../../navigation';
 import { NavigationPrompt as Prompt } from '../shared/NavigationPrompt';
@@ -13,28 +11,9 @@ import Spinner from '../shared/Spinner';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 
 import { shuffleArray } from '../../utils';
-import fragments from '../../fragments';
+import { apiRequest } from '../../api';
 
 const useMountEffect = fn => useEffect(fn, []);
-
-const START_MUTATION = gql`
-  mutation StartMutation($quizId: ID!) {
-    startOrResumeQuizAttempt(quizId: $quizId) {
-      ...StudentFullQuizAttempt
-    }
-  }
-  ${fragments.studentFullQuizAttempt}
-`;
-
-const COMPLETE_MUTATION = gql`
-  mutation CompleteMutation($quizAttemptId: ID!) {
-    completeQuizAttempt(quizAttemptId: $quizAttemptId) {
-      isGraded
-      postSucceeded
-      error
-    }
-  }
-`;
 
 // Different phases or stages of the quiz-taking experience
 // Student is redirected to the quiz review page after these
@@ -58,19 +37,14 @@ const QuizTaker = () => {
   const [quizAttempt, setQuizAttempt] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
 
-  const [startMutation] = useMutation(START_MUTATION);
-  const [completeMutation] = useMutation(COMPLETE_MUTATION);
-
   // Sends the completeQuiz mutation and displays if grade postback was successful or not (if applicable)
   const completeQuiz = async quizAttemptId => {
     setIsLoading(true);
     try {
-      // Pass the quiz attempt ID to be completed
-      const result = await completeMutation({ variables: { quizAttemptId } });
-      console.log(result);
-
-      // A QuizGradePayload contains isGraded (bool!), postSucceeded (bool), error (string), and quizAttempt (quizAttempt!)
-      const quizGradePayload = result.data.completeQuizAttempt;
+      const quizGradePayload = await apiRequest(
+        `/api/student/quiz-attempts/${encodeURIComponent(quizAttemptId)}/complete`,
+        { method: 'POST' },
+      );
 
       // If it was graded, check if the LTI grade passback was successful or not
       if (quizGradePayload.isGraded && quizGradePayload.postSucceeded) {
@@ -94,11 +68,7 @@ const QuizTaker = () => {
       // Go to quiz review page (use replace instead of push so that browser back button will take student back to dashboard, not back to the quiz, which would start another attempt)
       history.replace(`/student/quiz/review/${quizAttemptId}`);
     } catch (e) {
-      // Catch errors
-      let message = '';
-      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
-        message += e.graphQLErrors[0].message;
-      }
+      const message = e.code || '';
       setError(
         `Error completing quiz. Please reload the page and try again. (Your progress will not be lost.) ${message}`
       );
@@ -113,13 +83,11 @@ const QuizTaker = () => {
       // When component is mounted, automatically start or resume the quiz attempt
       try {
         // Pass the quiz ID from the route into the query
-        const result = await startMutation({ variables: { quizId } });
-        if (result.errors && result.errors.length > 0) {
-          throw result;
-        }
-
-        // Quiz attempt and quiz data to store in state
-        const newQuizAttempt = result.data.startOrResumeQuizAttempt;
+        const result = await apiRequest(
+          `/api/student/quizzes/${encodeURIComponent(quizId)}/attempt`,
+          { method: 'POST' },
+        );
+        const newQuizAttempt = result.quizAttempt;
         const newQuiz = newQuizAttempt.quiz;
 
         // Make sure there are questions in the quiz
@@ -160,11 +128,7 @@ const QuizTaker = () => {
         setIsLoading(false);
         console.log('Quiz attempt: ', newQuizAttempt);
       } catch (e) {
-        // Catch errors
-        let message = 'Please try again later.';
-        if (e.errors && e.errors.length > 0) {
-          message = e.errors[0].message;
-        }
+        const message = e.code || 'Please try again later.';
         setError(`There was an error loading this quiz. ${message}`);
         console.error(`Quiz attempt load error: ${JSON.stringify(e)}`);
       }

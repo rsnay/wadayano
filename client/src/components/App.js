@@ -36,7 +36,7 @@ import PrivacyPolicy from './shared/PrivacyPolicy';
 import About from './shared/About';
 import PageNotFound from './shared/PageNotFound';
 import QuestionImporter from './instructor/QuestionImporter';
-import withGraphQLTracking from './AppTracker';
+import withTracking from './AppTracker';
 
 // Load QuizEditor separately, since it has large dependencies not needed for the rest of the app
 const QuizEditor = lazy(() => import('./instructor/QuizEditor'));
@@ -92,4 +92,4 @@ const App = () => (
 );
 
 // Set up react-tracking, with a custom dispatch function
-export default withGraphQLTracking(App);
+export default withTracking(App);

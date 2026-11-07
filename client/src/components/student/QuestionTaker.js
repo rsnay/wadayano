@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 import ErrorBox from '../shared/ErrorBox';
@@ -17,30 +15,7 @@ import {
   KEY_CODE_COMMA,
   KEY_CODE_PERIOD,
 } from '../../constants';
-import fragments from '../../fragments';
-
-const ATTEMPT_QUESTION_MUTATION = gql`
-  mutation AttemptQuestion(
-    $quizAttemptId: ID!
-    $questionId: ID!
-    $type: QuestionType!
-    $optionId: ID
-    $shortAnswer: String
-    $isConfident: Boolean!
-  ) {
-    attemptQuestion(
-      quizAttemptId: $quizAttemptId
-      questionId: $questionId
-      type: $type
-      optionId: $optionId
-      shortAnswer: $shortAnswer
-      isConfident: $isConfident
-    ) {
-      ...StudentFullQuestionAttempt
-    }
-  }
-  ${fragments.studentFullQuestionAttempt}
-`;
+import { apiRequest } from '../../api';
 
 /**
  * This component is used in QuizTaker, and is responsible for displaying a question,
@@ -57,8 +32,6 @@ const QuestionTaker = ({ quizAttemptId, question, onQuestionCompleted, onNextQue
   const [error, setError] = useState(null);
   // Will get sent from the server after attempting the question
   const [questionAttempt, setQuestionAttempt] = useState(null);
-
-  const [attemptQuestionMutation] = useMutation(ATTEMPT_QUESTION_MUTATION);
 
   // Allow multiple-choice options to be selected by pressing that letter on the keyboard (or ,. to select confidence).
   const handleKeyDown = useCallback(
@@ -117,30 +90,26 @@ const QuestionTaker = ({ quizAttemptId, question, onQuestionCompleted, onNextQue
     setIsSubmitting(true);
     try {
       // Send question attempt
-      const result = await attemptQuestionMutation({
-        variables: {
-          quizAttemptId,
-          questionId: question.id,
-          type: question.type,
-          optionId: selectedOption ? selectedOption.id : null,
-          shortAnswer,
-          isConfident,
+      const result = await apiRequest(
+        `/api/student/quiz-attempts/${encodeURIComponent(quizAttemptId)}/questions`,
+        {
+          method: 'POST',
+          body: {
+            questionId: question.id,
+            optionId: selectedOption ? selectedOption.id : null,
+            shortAnswer,
+            isConfident,
+          },
         },
-      });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
+      );
       // Get the actual question attempt result (which contains if student was correct, and actual correct answer)
-      setQuestionAttempt(result.data.attemptQuestion);
+      setQuestionAttempt(result.questionAttempt);
       setIsSubmitted(true);
       if (onQuestionCompleted) {
         onQuestionCompleted();
       }
     } catch (e) {
-      let message = '';
-      if (e.errors && e.errors.length > 0) {
-        message = e.errors[0].message;
-      }
+      const message = e.code || 'Please try again later.';
       setError(
         `Error submitting answer. If this error continues, please reload the page and try again. (Your progress up to this question will not be lost.) ${message}`
       );

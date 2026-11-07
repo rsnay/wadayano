@@ -1,28 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from '../../navigation';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import useForm from 'react-hook-form';
+import { apiRequest } from '../../api';
 
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 import OptionSelector from '../shared/OptionSelector';
-
-const QUIZ_SAVE = gql`
-  mutation quizSaveMutation($id: ID!, $data: QuizUpdateInput!) {
-    updateQuiz(id: $id, data: $data) {
-      id
-    }
-  }
-`;
-
-const QUIZ_DELETE = gql`
-  mutation quizDeleteMutation($id: ID!) {
-    deleteQuiz(id: $id) {
-      id
-    }
-  }
-`;
 
 /**
  * A form, intended for inclusion in a modal dialog in the quiz editor, to edit quiz information or delete the quiz.
@@ -34,8 +17,6 @@ const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
 
   const { register, handleSubmit } = useForm();
 
-  const [saveQuizMutation] = useMutation(QUIZ_SAVE);
-  const [deleteQuizMutation] = useMutation(QUIZ_DELETE);
   const history = useHistory();
 
   const saveQuiz = async formData => {
@@ -48,17 +29,10 @@ const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
 
     try {
       // Send the mutation
-      const result = await saveQuizMutation({
-        variables: {
-          id: quiz.id,
-          // The “name” attributes of the form elements match the
-          // quiz property names.
-          data: formData,
-        },
+      await apiRequest(`/api/quizzes/${encodeURIComponent(quiz.id)}`, {
+        method: 'PATCH',
+        body: formData,
       });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       ButterToast.raise({
         content: <ToastTemplate content="Quiz info saved." className="is-success" />,
       });
@@ -67,8 +41,7 @@ const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
       if (onSave) {
         onSave();
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       ButterToast.raise({
         content: <ToastTemplate content="Error saving quiz info." className="is-danger" />,
       });
@@ -83,22 +56,17 @@ const QuizInfoForm = ({ quiz, onCancel, onSave }) => {
     if (!window.confirm(confirmMessage)) {
       return;
     }
-    setIsDeleting(false);
+    setIsDeleting(true);
     try {
-      const result = await deleteQuizMutation({
-        variables: {
-          id: quiz.id,
-        },
+      await apiRequest(`/api/quizzes/${encodeURIComponent(quiz.id)}`, {
+        method: 'DELETE',
       });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       ButterToast.raise({
         content: <ToastTemplate content="Quiz was deleted." className="is-info" />,
       });
       // Redirect to course details after successful deletion
       history.push(`/instructor/course/${quiz.course.id}`);
-    } catch (error) {
+    } catch {
       setIsDeleting(false);
       ButterToast.raise({
         content: <ToastTemplate content="Error deleting quiz." className="is-danger" />,

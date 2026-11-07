@@ -1,0 +1,2 @@
+APP_SECRET=wadayano-local-demo-only-secret
+DEMO_STUDENT_ENABLED=true

@@ -1,32 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import gql from 'graphql-tag';
-
-import { useQuery, useMutation } from 'react-apollo';
+import useApiQuery from '../../useApiQuery';
+import { apiRequest } from '../../api';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
 import SurveyView from '../shared/SurveyView';
-
-// Get the course information
-const COURSE_QUERY = gql`
-  query courseQuery($id: ID!) {
-    course(id: $id) {
-      id
-      title
-      survey
-    }
-  }
-`;
-
-// Submit the survey results
-const SUBMIT_SURVEY = gql`
-  mutation saveSurveyMutation($courseId: ID!, $answers: Json!) {
-    submitSurveyResult(courseId: $courseId, answers: $answers) {
-      id
-    }
-  }
-`;
 
 const SurveyTaker = () => {
   const { courseId } = useParams();
@@ -34,8 +13,9 @@ const SurveyTaker = () => {
   const [isComplete, setIsComplete] = useState(false);
   const [answers, setAnswers] = useState({});
 
-  const { loading, error, data: course } = useQuery(COURSE_QUERY, { variables: { id: courseId } });
-  const [submitSurveyMutation] = useMutation(SUBMIT_SURVEY);
+  const { loading, error, data: course } = useApiQuery(
+    `/api/student/courses/${encodeURIComponent(courseId)}/survey`,
+  );
 
   // Submit the survey results
   async function submitSurvey() {
@@ -45,12 +25,10 @@ const SurveyTaker = () => {
     }
     setIsSubmitting(true);
     try {
-      await submitSurveyMutation({
-        variables: {
-          courseId,
-          answers,
-        },
-      });
+      await apiRequest(
+        `/api/student/courses/${encodeURIComponent(courseId)}/survey-results`,
+        { method: 'POST', body: { answers } },
+      );
       setIsComplete(true);
     } catch (err) {
       alert('There was an error submitting the survey. Please try again later.');

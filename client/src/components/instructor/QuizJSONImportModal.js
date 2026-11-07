@@ -1,20 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import JSON5 from 'json5';
 
 import useForm from 'react-hook-form';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 import Modal from '../shared/Modal';
-
-const SAVE_QUIZ_MUTATION = gql`
-  mutation quizSaveMutation($id: ID!, $data: QuizUpdateInput!) {
-    updateQuiz(id: $id, data: $data) {
-      id
-    }
-  }
-`;
+import { apiRequest } from '../../api';
 
 /**
  * Modal component to show a form (used within QuizEditor) requesting question JSON to import.
@@ -24,24 +15,18 @@ const SAVE_QUIZ_MUTATION = gql`
 const QuizJSONImportModal = ({ quizId, onClose }) => {
   const [isImporting, setIsImporting] = useState(false);
   const { handleSubmit, register } = useForm();
-  const [saveQuizMutation] = useMutation(SAVE_QUIZ_MUTATION);
 
   // Update the quiz with the new questions
   const importJSON = async ({ jsonInput }) => {
     setIsImporting(true);
     try {
       // Parse with JSON5 to be more lenient about non-quoted property names, trailing commas, etc.
-      const questionData = JSON5.parse(jsonInput.replace(/\r?\n|\r/g, ''));
-      // Send the mutation
-      const result = await saveQuizMutation({
-        variables: {
-          id: quizId,
-          data: { questions: { create: questionData } },
-        },
+      const parsedQuestions = JSON5.parse(jsonInput.replace(/\r?\n|\r/g, ''));
+      const questions = Array.isArray(parsedQuestions) ? parsedQuestions : [parsedQuestions];
+      await apiRequest(`/api/quizzes/${encodeURIComponent(quizId)}/questions/import-json`, {
+        method: 'POST',
+        body: { questions },
       });
-      if (result.errors && result.errors.length > 0) {
-        throw result.errors[0];
-      }
       ButterToast.raise({
         content: (
           <ToastTemplate content="Questions imported successfully." className="is-success" />

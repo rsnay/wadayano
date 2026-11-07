@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useHistory } from '../../navigation';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
 import TimeAgo from 'react-timeago';
 import { useTracking } from 'react-tracking';
+import useApiQuery from '../../useApiQuery';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
@@ -12,55 +11,6 @@ import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
 import { formatScore, wadayanoScore, predictedScore } from '../../utils';
-
-// Get the course information and info about practice quizzes
-const COURSE_QUERY = gql`
-  query courseQuery($id: ID!) {
-    course(id: $id) {
-      id
-      title
-      lmsUrl
-      consentFormUrl
-      quizzes(where: { type: PRACTICE }) {
-        id
-        title
-        questions {
-          id
-        }
-      }
-    }
-  }
-`;
-
-// Query all quiz attempts for the current student
-const QUIZ_ATTEMPTS_QUERY = gql`
-  query($courseId: ID!) {
-    currentStudentQuizAttempts(orderBy: completed_DESC, courseId: $courseId) {
-      id
-      quiz {
-        id
-        title
-        type
-        questions {
-          id
-        }
-      }
-      createdAt
-      completed
-      questionAttempts {
-        id
-        isCorrect
-        isConfident
-      }
-      score
-      conceptConfidences {
-        id
-        concept
-        confidence
-      }
-    }
-  }
-`;
 
 /**
  * This page presents tables of unfinished quiz attempts, available practice quizzes,
@@ -71,8 +21,9 @@ const Dashboard = () => {
   const { courseId } = useParams();
   const tracking = useTracking();
 
-  const courseQuery = useQuery(COURSE_QUERY, { variables: { id: courseId } });
-  const quizAttemptsQuery = useQuery(QUIZ_ATTEMPTS_QUERY, { variables: { courseId } });
+  const { loading, error, data } = useApiQuery(
+    `/api/student/courses/${encodeURIComponent(courseId)}/dashboard`,
+  );
 
   const reviewQuizAttempt = (attempt, e) => {
     if (e) {
@@ -92,11 +43,11 @@ const Dashboard = () => {
     history.push(`/student/quiz/review/${attempt.id}`);
   };
 
-  if ((courseQuery && courseQuery.loading) || (quizAttemptsQuery && quizAttemptsQuery.loading)) {
+  if (loading) {
     return <Spinner />;
   }
 
-  if ((courseQuery && courseQuery.error) || (quizAttemptsQuery && quizAttemptsQuery.error)) {
+  if (error || !data) {
     return (
       <ErrorBox>
         <p>Couldn’t load dashboard. Please try again later.</p>
@@ -104,11 +55,9 @@ const Dashboard = () => {
     );
   }
 
-  const { course } = courseQuery.data;
-  // Quizzes in course are filtered in query to only practice quizzes
+  const { course } = data;
   const practiceQuizzes = course.quizzes;
-  // Quiz attempts contains graded and practice quiz attempts
-  const quizAttempts = quizAttemptsQuery.data.currentStudentQuizAttempts;
+  const { quizAttempts } = data;
   const unfinishedAttempts = quizAttempts.filter(attempt => attempt.completed === null);
   const pastAttempts = quizAttempts.filter(attempt => attempt.completed !== null);
 
@@ -146,7 +95,7 @@ const Dashboard = () => {
                     {quiz.title}
                   </Link>
                 </td>
-                <td data-title="Questions">{quiz.questions.length}</td>
+                <td data-title="Questions">{quiz.questionCount}</td>
                 <td data-title="Actions">
                   <Link to={`/student/quiz/${quiz.id}`} className="button is-primary is-outlined">
                     <span className="icon">
@@ -198,9 +147,9 @@ const Dashboard = () => {
                   {attempt.quiz.title}
                 </Link>
               </td>
-              <td data-title="Questions">{attempt.quiz.questions.length}</td>
+              <td data-title="Questions">{attempt.quiz.questionCount}</td>
               <td data-title="Completion">
-                {formatScore(attempt.questionAttempts.length / attempt.quiz.questions.length)}
+                {formatScore(attempt.questionAttempts.length / attempt.quiz.questionCount)}
               </td>
               <td data-title="Resume">
                 <Link
@@ -247,7 +196,7 @@ const Dashboard = () => {
                   <TimeAgo date={attempt.completed} />
                 </td>
                 <td data-title="Quiz">{attempt.quiz.title}</td>
-                <td data-title="Questions">{attempt.quiz.questions.length}</td>
+                <td data-title="Questions">{attempt.quiz.questionCount}</td>
                 <td data-title="Type">{QUIZ_TYPE_NAMES[attempt.quiz.type]}</td>
                 <td data-title="Score">{attempt.completed ? formatScore(attempt.score) : 'n/a'}</td>
                 <td data-title="Predicted Score">

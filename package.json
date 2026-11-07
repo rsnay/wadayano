@@ -1,0 +1,11 @@
+{
+  "name": "wadayano",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix client run build",
+    "dev:worker": "npm --prefix server/worker run dev",
+    "demo:student": "npm --prefix server/worker run demo:student",
+    "test": "npm --prefix client test && npm --prefix server/worker test",
+    "test:worker": "npm --prefix server/worker test"
+  }
+}

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useHistory } from '../../navigation';
-import { useQuery, useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import ReactTooltip from 'react-tooltip';
+import { apiRequest } from '../../api';
+import useApiQuery from '../../useApiQuery';
 
 import { QUIZ_TYPE_NAMES } from '../../constants';
 
@@ -19,36 +19,6 @@ import { formatScore } from '../../utils';
 import CourseInstructors from './CourseInstructors';
 import useCourseScores from './useCourseScores';
 
-// Get course details
-const COURSE_QUERY = gql`
-  query courseDetailsQuery($id: ID!) {
-    course(id: $id) {
-      id
-      title
-      number
-      lmsUrl
-      consentFormUrl
-      ltiSecret
-      students {
-        id
-      }
-      quizzes {
-        id
-        title
-        type
-      }
-    }
-  }
-`;
-
-export const CREATE_QUIZ = gql`
-  mutation createQuizMutation($courseId: ID!) {
-    createQuiz(courseId: $courseId) {
-      id
-    }
-  }
-`;
-
 const CourseDetails = () => {
   const { courseId } = useParams();
   const history = useHistory();
@@ -57,19 +27,17 @@ const CourseDetails = () => {
   const [displayLtiSetupObjectId, setDisplayLtiSetupObjectId] = useState(null);
   const [displayCourseInfoForm, setDisplayCourseInfoForm] = useState(false);
 
-  const courseScores = useCourseScores(courseId);
+  const { courseScores, error: courseScoresError } = useCourseScores(courseId);
 
-  const { error, data, refetch } = useQuery(COURSE_QUERY, {
-    fetchPolicy: 'cache-and-network',
-    variables: { id: courseId },
-  });
-
-  const [createQuizMutation] = useMutation(CREATE_QUIZ);
+  const { error, data, refetch } = useApiQuery(`/api/courses/${encodeURIComponent(courseId)}`);
 
   const createQuiz = async () => {
     try {
-      const result = await createQuizMutation({ variables: { courseId } });
-      history.push(`/instructor/quiz/${result.data.createQuiz.id}`);
+      const quiz = await apiRequest(
+        `/api/courses/${encodeURIComponent(courseId)}/quizzes`,
+        { method: 'POST' },
+      );
+      history.push(`/instructor/quiz/${quiz.id}`);
     } catch (err) {
       ButterToast.raise({
         content: <ToastTemplate content="Error creating quiz." className="is-danger" />,
@@ -86,16 +54,16 @@ const CourseDetails = () => {
     setDisplayLtiSetupObjectId(objectId);
   };
 
-  if (!data || (data && !data.course)) {
-    return <Spinner />;
-  }
-
   if (error) {
     return (
       <ErrorBox>
         <p>Couldn’t load this course.</p>
       </ErrorBox>
     );
+  }
+
+  if (!data || !data.course) {
+    return <Spinner />;
   }
 
   const { course } = data;
@@ -145,7 +113,7 @@ const CourseDetails = () => {
                   courseScores.get(quiz.id).studentCount > 0 ? (
                     <>
                       <td>
-                        {courseScores.get(quiz.id).studentCount} / {course.students.length}
+                        {courseScores.get(quiz.id).studentCount} / {course.studentCount}
                       </td>
                       <td>{formatScore(courseScores.get(quiz.id).averageScore, 0)}</td>
                       <td>{formatScore(courseScores.get(quiz.id).averagePredictedScore, 0)}</td>
@@ -269,6 +237,11 @@ const CourseDetails = () => {
           </span>
           <span>New Quiz</span>
         </button>
+        {courseScoresError && (
+          <ErrorBox>
+            <p>Couldn’t load course scores.</p>
+          </ErrorBox>
+        )}
         {quizzesTable}
         {quizActionsTooltip}
 

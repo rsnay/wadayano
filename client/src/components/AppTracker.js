@@ -1,55 +1,32 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import track from 'react-tracking';
-import { client } from '../index';
+import { apiRequest } from '../api';
 
 /**
  * Wraps the App component with react-tracking and uses a custom dispatch
- * function to send tracking events via a GraphQL mutation
+ * function to send tracking events to the same-origin API
  * @param {App} ComposedComponent
  */
-export default function withGraphQLTracking(ComposedComponent) {
-  const WithGraphQLTracking = props => <ComposedComponent {...props} />;
+export default function withTracking(ComposedComponent) {
+  const WithTracking = props => <ComposedComponent {...props} />;
 
-  WithGraphQLTracking.displayName = `WithGraphQLTracking(${ComposedComponent.displayName ||
+  WithTracking.displayName = `WithTracking(${ComposedComponent.displayName ||
     ComposedComponent.name ||
     'Component'})`;
-
-  // Mutation to send a tracking event
-  const TRACK_MUTATION = gql`
-    mutation trackEvent($event: TrackingEventCreateInput!) {
-      trackEvent(event: $event) {
-        id
-      }
-    }
-  `;
 
   return track(
     {},
     {
       dispatch: data => {
-        console.table(data);
-
-        // Extract action from `data` and put rest in context
         const { action, ...context } = data;
 
-        client
-          .mutate({
-            variables: {
-              event: {
-                action,
-                context,
-              },
-            },
-            mutation: TRACK_MUTATION,
-          })
-          .then(result => {
-            console.table(result);
-          })
-          .catch(error => {
-            console.table(error);
+        return apiRequest('/api/tracking/events', {
+          method: 'POST',
+          body: { action, context },
+        }).catch(error => {
+          console.error('Tracking event request failed', error.status || 'network error');
           });
       },
     }
-  )(WithGraphQLTracking);
+  )(WithTracking);
 }

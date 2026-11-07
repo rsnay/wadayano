@@ -1,28 +1,4 @@
 {
-    "apollo-cache-inmemory": {
-        "licenses": "MIT",
-        "repository": "https://github.com/apollographql/apollo-client",
-        "licenseUrl": "https://github.com/apollographql/apollo-client/raw/master/LICENSE",
-        "parents": "wadayano-client"
-    },
-    "apollo-client": {
-        "licenses": "MIT",
-        "repository": "https://github.com/apollographql/apollo-client",
-        "licenseUrl": "https://github.com/apollographql/apollo-client/raw/master/LICENSE",
-        "parents": "wadayano-client"
-    },
-    "apollo-link-http": {
-        "licenses": "MIT",
-        "repository": "https://github.com/apollographql/apollo-link",
-        "licenseUrl": "https://github.com/apollographql/apollo-link/raw/master/LICENSE",
-        "parents": "wadayano-client"
-    },
-    "apollo-link": {
-        "licenses": "MIT",
-        "repository": "https://github.com/apollographql/apollo-link",
-        "licenseUrl": "https://github.com/apollographql/apollo-link/raw/master/LICENSE",
-        "parents": "wadayano-client"
-    },
     "bcryptjs": {
         "licenses": "MIT",
         "repository": "https://github.com/dcodeIO/bcrypt.js",
@@ -57,36 +33,6 @@
         "licenses": "MIT",
         "repository": "https://github.com/expressjs/express",
         "licenseUrl": "https://github.com/expressjs/express/raw/master/LICENSE",
-        "parents": "wadayano-server"
-    },
-    "graphql-cli": {
-        "licenses": "MIT",
-        "repository": "https://github.com/graphql-cli/graphql-cli",
-        "licenseUrl": "https://github.com/graphql-cli/graphql-cli/raw/master/LICENSE",
-        "parents": "wadayano-server"
-    },
-    "graphql-shield": {
-        "licenses": "MIT",
-        "repository": "https://github.com/maticzav/graphql-shield",
-        "licenseUrl": "https://github.com/maticzav/graphql-shield/raw/master/LICENSE",
-        "parents": "wadayano-server"
-    },
-    "graphql-tag": {
-        "licenses": "MIT",
-        "repository": "https://github.com/apollostack/graphql-tag",
-        "licenseUrl": "https://github.com/apollostack/graphql-tag/raw/master/LICENSE",
-        "parents": "wadayano-client"
-    },
-    "graphql-yoga": {
-        "licenses": "MIT",
-        "repository": "https://github.com/prisma/graphql-yoga",
-        "licenseUrl": "https://github.com/prisma/graphql-yoga/raw/master/LICENSE",
-        "parents": "wadayano-server"
-    },
-    "graphql": {
-        "licenses": "MIT",
-        "repository": "https://github.com/graphql/graphql-js",
-        "licenseUrl": "https://github.com/graphql/graphql-js/raw/master/LICENSE",
         "parents": "wadayano-server"
     },
     "immutability-helper": {
@@ -129,12 +75,6 @@
         "licenses": "MIT",
         "repository": "https://github.com/facebook/prop-types",
         "licenseUrl": "https://github.com/facebook/prop-types/raw/master/LICENSE",
-        "parents": "wadayano-client"
-    },
-    "react-apollo": {
-        "licenses": "MIT",
-        "repository": "https://github.com/apollographql/react-apollo",
-        "licenseUrl": "https://github.com/apollographql/react-apollo/raw/master/LICENSE",
         "parents": "wadayano-client"
     },
     "react-aria-modal": {

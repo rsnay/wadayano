@@ -1,35 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import { useLocation } from 'react-router';
 import { useHistory } from '../../navigation';
 import useForm from 'react-hook-form';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
+import { apiRequest } from '../../api';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
-import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR } from '../../constants';
-
-const SIGNUP_MUTATION = gql`
-  mutation SignupMutation($email: String!, $password: String!) {
-    instructorSignup(email: $email, password: $password) {
-      token
-    }
-  }
-`;
-
-const LOGIN_MUTATION = gql`
-  mutation LoginMutation($email: String!, $password: String!) {
-    instructorLogin(email: $email, password: $password) {
-      token
-    }
-  }
-`;
-
-const REQUEST_PASSWORD_RESET_MUTATION = gql`
-  mutation LoginMutation($email: String!) {
-    instructorRequestPasswordReset(email: $email)
-  }
-`;
+import {
+  AUTH_TOKEN,
+  AUTH_ROLE,
+  AUTH_ROLE_INSTRUCTOR,
+  AUTH_ROLE_STUDENT,
+} from '../../constants';
 
 /**
  * Page for instructors to log in and sign up
@@ -44,10 +26,6 @@ const Login = () => {
   const [signupMode, setSignupMode] = useState(location.pathname.match('signup'));
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const [instructorLoginMutation] = useMutation(LOGIN_MUTATION);
-  const [instructorSignupMutation] = useMutation(SIGNUP_MUTATION);
-  const [instructorRequestPasswordResetMutation] = useMutation(REQUEST_PASSWORD_RESET_MUTATION);
 
   const { register, handleSubmit } = useForm();
 
@@ -65,22 +43,21 @@ const Login = () => {
   async function logIn({ email, password }) {
     // Send login mutation
     try {
-      const result = await instructorLoginMutation({
-        variables: { email, password },
+      const { token } = await apiRequest('/api/auth/login', {
+        method: 'POST',
+        body: { email, password },
       });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       // Get token and save it
-      const { token } = result.data.instructorLogin;
       localStorage.setItem(AUTH_TOKEN, token);
       localStorage.setItem(AUTH_ROLE, AUTH_ROLE_INSTRUCTOR);
       // Continue
       redirect();
     } catch (e) {
       let message = 'Please try again later.';
-      if (e.errors && e.errors.length > 0) {
-        message = e.errors[0].message;
+      if (e.code === 'invalid_credentials') {
+        message = 'Invalid email and/or password.';
+      } else if (e.code === 'password_reset_required') {
+        message = 'Your password must be reset before you can sign in. Use “Forgot Your Password?” below.';
       }
       setError(`Error logging in: ${message}`);
       setIsLoading(false);
@@ -105,14 +82,11 @@ const Login = () => {
 
     // Send signup mutation
     try {
-      const result = await instructorSignupMutation({
-        variables: { email, password },
+      const { token } = await apiRequest('/api/auth/signup', {
+        method: 'POST',
+        body: { email, password },
       });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       // Get token and save it
-      const { token } = result.data.instructorSignup;
       localStorage.setItem(AUTH_TOKEN, token);
       localStorage.setItem(AUTH_ROLE, AUTH_ROLE_INSTRUCTOR);
       // Display a welcome toast
@@ -129,12 +103,10 @@ const Login = () => {
       redirect();
     } catch (e) {
       let message = 'Please try again later.';
-      if (e.errors && e.errors.length > 0) {
-        message = e.errors[0].message;
-        // Decode some error messages
-        if (message.indexOf('unique constraint would be violated') >= 0) {
-          message = 'An instructor with this email address already exists.';
-        }
+      if (e.code === 'email_already_exists') {
+        message = 'An instructor with this email address already exists.';
+      } else if (e.code === 'invalid_email') {
+        message = 'Invalid email address.';
       }
       setError(`Error signing up: ${message}`);
       setIsLoading(false);
@@ -166,34 +138,50 @@ const Login = () => {
     if (!emailInput || emailInput.trim() === '') {
       return;
     }
-    const result = await instructorRequestPasswordResetMutation({
-      variables: { email: emailInput.trim() },
-    });
-    if (result.errors && result.errors.length > 0) {
-      ButterToast.raise({
-        content: <ToastTemplate content={result.errors[0].message} className="is-danger" />,
-        timeout: 12000,
+    try {
+      await apiRequest('/api/auth/password-reset-requests', {
+        method: 'POST',
+        body: { email: emailInput.trim() },
       });
-    } else if (result.data.instructorRequestPasswordReset === true) {
       ButterToast.raise({
         content: (
           <ToastTemplate
-            content={`An email was sent to ${emailInput} with further instructions.`}
+            content="If an account exists for that address, a password reset email has been sent."
             className="is-success"
           />
         ),
         sticky: true,
       });
-    } else {
+    } catch {
       ButterToast.raise({
         content: (
           <ToastTemplate
-            content={`No account was found for ${emailInput}, or there was an unexpected error sending the password reset email.`}
+            content="Unable to request a password reset. Please try again later."
             className="is-danger"
           />
         ),
         timeout: 12000,
       });
+    }
+  }
+
+  async function logInDemoStudent() {
+    if (isLoading) {
+      return;
+    }
+    setError('');
+    setIsLoading(true);
+    try {
+      const { token, redirectTo } = await apiRequest('/api/demo/student-session', {
+        method: 'POST',
+      });
+      localStorage.setItem(AUTH_TOKEN, token);
+      localStorage.setItem(AUTH_ROLE, AUTH_ROLE_STUDENT);
+      history.push(redirectTo);
+    } catch (loginError) {
+      setError(`Error logging in as demo student: ${loginError.code || 'request_failed'}`);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -295,15 +283,9 @@ const Login = () => {
 
         <div className="field">
           <button
-            className="button is-text"
-            onClick={() => {
-              localStorage.setItem('authRole', 'student');
-              localStorage.setItem(
-                'authToken',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjamt2bGNqa3YwYW5xMDcyMndocXhqN3VzIiwiaXNJbnN0cnVjdG9yIjpmYWxzZSwiaWF0IjoxNTM0MzY1MjExfQ.WiREqvv4IbpyX-xtQrxNIxrL-tfWcrDvr9G1LwT2JBY'
-              );
-              history.push('/student/dashboard');
-            }}
+            className={`button is-text${isLoading ? ' is-loading' : ''}`}
+            onClick={logInDemoStudent}
+            disabled={isLoading}
             type="button"
           >
             <span className="icon">

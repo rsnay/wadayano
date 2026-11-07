@@ -27,7 +27,7 @@ const Header = () => {
     localStorage.removeItem(AUTH_ROLE);
     // Redirect to welcome page
     history.push('/');
-    // Reload page to clear apollo cache
+    // Reload to clear authenticated UI state.
     window.location.reload();
   }, [history]);
   const isLoggedIn = !!localStorage.getItem(AUTH_TOKEN);

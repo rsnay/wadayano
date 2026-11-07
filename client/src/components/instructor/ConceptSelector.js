@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
+import useApiQuery from '../../useApiQuery';
 
 const SUGGESTION_COUNT = 10;
-
-// Get the concepts from the whole course
-const CONCEPTS_QUERY = gql`
-  query courseConceptsQuery($id: ID!) {
-    courseConcepts(id: $id)
-  }
-`;
 
 /**
  * Component used in QuestionEditor to suggest concepts from the current
@@ -19,10 +11,7 @@ const CONCEPTS_QUERY = gql`
  * doesn’t do anything in the database.)
  */
 const ConceptSelector = ({ courseId, concept, onChange, autoFocus = false }) => {
-  const { data } = useQuery(CONCEPTS_QUERY, {
-    fetchPolicy: 'cache-and-network',
-    variables: { id: courseId },
-  });
+  const { data } = useApiQuery(`/api/courses/${encodeURIComponent(courseId)}/concepts`);
 
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -37,7 +26,7 @@ const ConceptSelector = ({ courseId, concept, onChange, autoFocus = false }) => 
   const filterText = concept.trim();
   const lowerCaseFilterText = filterText.toLowerCase();
   // Use course concepts, if loaded
-  const concepts = data && data.courseConcepts ? data.courseConcepts : [];
+  const concepts = data && data.concepts ? data.concepts : [];
   // Perform filtering
   const filteredConcepts = concepts.filter(c => c.toLowerCase().includes(lowerCaseFilterText));
 

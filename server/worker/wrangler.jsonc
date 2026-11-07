@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wadayano-local",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-30",
+  "assets": {
+    "directory": "../../client/build",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api", "/api/*", "/lti", "/lti/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "wadayano-local",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

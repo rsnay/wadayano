@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from '../../navigation';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import useForm from 'react-hook-form';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
+import { apiRequest } from '../../api';
 
 // List of course fields to edit
 /**
- * New fields to be edited need to be:
- * • added to the server’s datamodel.graphql (and server re-deployed)
- * • added below
- * • passed to this component as part of the `course` prop
- * • added to the CourseInfoUpdateInput input type in the server’s schema.graphql
+ * New fields need to be added to the Worker course update API and passed in
+ * through the `course` prop.
  */
 const fields = [
   {
@@ -55,22 +51,6 @@ const fields = [
   },
 ];
 
-const UPDATE_COURSE = gql`
-  mutation updateCourse($id: ID!, $info: CourseInfoUpdateInput!) {
-    updateCourse(id: $id, info: $info) {
-      id
-    }
-  }
-`;
-
-const DELETE_COURSE = gql`
-  mutation courseDelete($id: ID!) {
-    deleteCourse(id: $id) {
-      id
-    }
-  }
-`;
-
 /**
  * A form, intended for inclusion in a modal dialog on the course details page,
  * to edit various course information or delete the course.
@@ -83,8 +63,6 @@ const CourseInfoForm = ({ course, onCancel, onSave }) => {
   const { register, handleSubmit } = useForm();
   const history = useHistory();
 
-  const [deleteCourseMutation] = useMutation(DELETE_COURSE);
-  const [updateCourseMutation] = useMutation(UPDATE_COURSE);
   // Load default value for each field from props (if undefined, set to '' to keep the form fields as controlled components)
 
   // When the save button is pressed, or form is submitted via enter key
@@ -98,17 +76,10 @@ const CourseInfoForm = ({ course, onCancel, onSave }) => {
 
     try {
       // Send the mutation
-      const result = await updateCourseMutation({
-        variables: {
-          id: course.id,
-          // The “name” attributes of the form elements match the
-          // course property names.
-          info: formData,
-        },
+      await apiRequest(`/api/courses/${encodeURIComponent(course.id)}`, {
+        method: 'PATCH',
+        body: formData,
       });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       ButterToast.raise({
         content: <ToastTemplate content="Course info saved." className="is-success" />,
       });
@@ -146,19 +117,14 @@ const CourseInfoForm = ({ course, onCancel, onSave }) => {
     ) {
       try {
         setIsDeleting(true);
-        const result = await deleteCourseMutation({
-          variables: {
-            id: course.id,
-          },
+        await apiRequest(`/api/courses/${encodeURIComponent(course.id)}`, {
+          method: 'DELETE',
         });
-        if (result.errors && result.errors.length > 0) {
-          throw result;
-        }
         ButterToast.raise({
           content: <ToastTemplate content={`${course.title} was deleted.`} className="is-info" />,
         });
         history.push('/instructor/courses');
-      } catch (result) {
+      } catch {
         ButterToast.raise({
           content: (
             <ToastTemplate

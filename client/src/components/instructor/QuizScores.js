@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useQuery } from 'react-apollo';
+import useApiQuery from '../../useApiQuery';
 
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 import ErrorBox from '../shared/ErrorBox';
@@ -12,7 +12,7 @@ import { formatScore, predictedScore, wadayanoScore, confidenceAnalysis } from '
 import { QUIZ_TYPE_NAMES } from '../../constants';
 import QuizReview from '../student/QuizReview';
 
-import AggregatedQuizReview, { QUIZ_QUERY } from './AggregatedQuizReview';
+import AggregatedQuizReview from './AggregatedQuizReview';
 import { sortFunctions } from '../../sort-utils';
 
 // If new columns are added here, corresponding sort functions should be added in `../../sort-utils'
@@ -42,13 +42,9 @@ const QuizScores = () => {
   const [currentQuizAttempts, setCurrentQuizAttempts] = useState(null);
   const [chosenAttempt, setChosenAttempt] = useState(null);
 
-  // QUIZ_QUERY is imported from AggregatedQuizReview, since that query fetches everything
-  // (and more) that this component needs. If both use the same query, Apollo can cache the
-  // result for quicker initial display. This does lead to increased component coupling, though.
-  const { error, data } = useQuery(QUIZ_QUERY, {
-    fetchPolicy: 'cache-and-network',
-    variables: { id: quizId },
-  });
+  const { error, data, loading } = useApiQuery(
+    `/api/quizzes/${encodeURIComponent(quizId)}/report`,
+  );
 
   // Processes all the quiz attempt data. Wrapped in this function for easier error catching from query-triggered effect
   const processData = quiz => {
@@ -100,10 +96,7 @@ const QuizScores = () => {
 
   // When the query data gets updated, process it
   useEffect(() => {
-    // Rather than check if query is ‘loading,’ check if it doesn’t have data, since
-    // the cache-and-network fetch policy is used, which returns data from cache but
-    // still sets loading=true while it re-fetches
-    if (!error && data && data.quiz) {
+    if (!error && data?.quiz) {
       try {
         processData(data.quiz);
       } catch (err) {
@@ -160,7 +153,7 @@ const QuizScores = () => {
   }
 
   // If data not yet loaded or processed
-  if (!studentScores) {
+  if (loading || !data?.quiz || !studentScores) {
     return <Spinner />;
   }
 
@@ -268,7 +261,7 @@ const QuizScores = () => {
 
       <div className="content" style={{ margin: '0 5% 2rem 5%' }}>
         {/* Cards with score and confidence distributions, and aggregate concept scores */}
-        <AggregatedQuizReview quizId={quiz.id} />
+        <AggregatedQuizReview quiz={quiz} />
 
         {/* Table of all students’ individual first-attempt scores */}
         <h3 className="title">Students</h3>

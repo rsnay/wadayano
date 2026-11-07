@@ -1,20 +1,11 @@
 import React, { useState } from 'react';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import { useParams } from 'react-router';
 import { useHistory } from '../../navigation';
 import useForm from 'react-hook-form';
+import { apiRequest } from '../../api';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key
 import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR } from '../../constants';
-
-const RESET_PASSWORD_MUTATION = gql`
-  mutation ResetPasswordMutation($token: String!, $password: String!) {
-    instructorResetPassword(token: $token, password: $password) {
-      token
-    }
-  }
-`;
 
 /**
  * Page that allows an instructor to reset account password. Acessible
@@ -29,8 +20,6 @@ const ResetPassword = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-
-  const [instructorResetPasswordMutation] = useMutation(RESET_PASSWORD_MUTATION);
 
   const { register, handleSubmit } = useForm();
 
@@ -60,22 +49,19 @@ const ResetPassword = () => {
 
     // Send reset mutation
     try {
-      const result = await instructorResetPasswordMutation({
-        variables: { token, password },
+      const { token: newToken } = await apiRequest('/api/auth/password-resets', {
+        method: 'POST',
+        body: { token, password },
       });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       // Get token and save it
-      const newToken = result.data.instructorResetPassword.token;
       localStorage.setItem(AUTH_TOKEN, newToken);
       localStorage.setItem(AUTH_ROLE, AUTH_ROLE_INSTRUCTOR);
       // Show success message
       setIsComplete(true);
     } catch (e) {
       let message = 'Please try again later.';
-      if (e.errors && e.errors.length > 0) {
-        message = e.errors[0].message;
+      if (e.code === 'invalid_or_expired_reset_token') {
+        message = 'This password reset link is invalid or has expired. Request a new link and try again.';
       }
       setError(`Error resetting password: ${message}`);
       setIsLoading(false);

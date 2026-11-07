@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useMutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import useForm from 'react-hook-form';
-
-const SEND_FEEDBACK_MUTATION = gql`
-  mutation SendFeedbackMutation($anonymous: Boolean!, $message: String!) {
-    sendFeedback(anonymous: $anonymous, message: $message)
-  }
-`;
+import { apiRequest } from '../../api';
 
 /**
  * Page that lets logged-in instructors and students send us feedback.
@@ -20,8 +13,6 @@ const FeedbackForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
-  const [sendFeedbackMutation] = useMutation(SEND_FEEDBACK_MUTATION);
-
   const { register, handleSubmit } = useForm();
 
   // When the send button is pressed, or form is submitted via enter key
@@ -32,27 +23,22 @@ const FeedbackForm = () => {
     }
     // Clear existing error, and set loading
     setError('');
-    setIsLoading(false);
+    setIsLoading(true);
 
     const { anonymous } = formData;
     // Add user-agent to message
     const message = `${formData.message}\n\n${navigator.userAgent}`;
 
     try {
-      const result = await sendFeedbackMutation({
-        variables: { anonymous, message },
+      await apiRequest('/api/feedback', {
+        method: 'POST',
+        body: { anonymous: Boolean(anonymous), message },
       });
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       // Display success message
       setIsComplete(true);
     } catch (e) {
-      let errorMessage = 'Please try again later.';
-      if (e.errors && e.errors.length > 0) {
-        errorMessage = e.errors[0].message;
-      }
-      setError(`Error sending feedback: ${errorMessage}`);
+      setError(`Error sending feedback: ${e.code || 'Please try again later.'}`);
+    } finally {
       setIsLoading(false);
     }
   };

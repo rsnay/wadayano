@@ -1,42 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
 import ReactTooltip from 'react-tooltip';
 
-import ErrorBox from '../shared/ErrorBox';
 import ConfidenceSelector from '../student/ConfidenceSelector';
 import { ALPHABET, MULTIPLE_CHOICE } from '../../constants';
-import Spinner from '../shared/Spinner';
 import { formatScore } from '../../utils';
 
 const SHORT_ANSWERS_TO_DISPLAY = 5;
-
-// Get the students’ answers for this question from their first attempt for the parent quiz
-const COURSE_QUERY = gql`
-  query courseQuery($courseId: ID!, $quizId: ID!, $questionId: ID!) {
-    course(id: $courseId) {
-      id
-      students(where: { quizAttempts_some: { quiz: { id: $quizId } } }) {
-        name
-        quizAttempts(where: { quiz: { id: $quizId }, completed_not: null }, first: 1) {
-          id
-          score
-          questionAttempts(where: { question: { id: $questionId } }) {
-            id
-            option {
-              id
-            }
-            shortAnswer
-            isCorrect
-            correctShortAnswer
-            isConfident
-          }
-        }
-      }
-    }
-  }
-`;
 
 // Helper components
 const correctIcon = (
@@ -98,17 +68,8 @@ const optionListing = (
 };
 
 // Modified version of the QuestionReview component that displays aggregated stats, to be used in the instructor’s aggregated quiz review report
-const AggregatedQuestionReview = ({ courseId, quizId, question }) => {
+const AggregatedQuestionReview = ({ attempts, question }) => {
   const [showAllAnswers, setShowAllAnswers] = useState(false);
-
-  const { error, data } = useQuery(COURSE_QUERY, {
-    fetchPolicy: 'cache-and-network',
-    variables: {
-      courseId,
-      quizId,
-      questionId: question.id,
-    },
-  });
 
   const promptView = (
     <div
@@ -116,25 +77,6 @@ const AggregatedQuestionReview = ({ courseId, quizId, question }) => {
       dangerouslySetInnerHTML={{ __html: question.prompt }}
     />
   );
-
-  if (error) {
-    return (
-      <ErrorBox>
-        <p>Couldn’t load question report.</p>
-      </ErrorBox>
-    );
-  }
-
-  // Since we use cache-and-network, check for no data (rather than checking if loading)
-  if (!data || (data && !data.course)) {
-    return (
-      <>
-        {promptView}
-        <Spinner style={{ maxWidth: '100%' }} />
-        <hr />
-      </>
-    );
-  }
 
   const questionOptions = question.options.filter(option => option.text.trim() !== '');
   const { correctShortAnswers } = question;
@@ -163,7 +105,24 @@ const AggregatedQuestionReview = ({ courseId, quizId, question }) => {
     });
   }
 
-  data.course.students.forEach(student => {
+  const firstAttemptsByStudent = new Map();
+  attempts.forEach(attempt => {
+    if (attempt.completed && !firstAttemptsByStudent.has(attempt.student.id)) {
+      firstAttemptsByStudent.set(attempt.student.id, attempt);
+    }
+  });
+  const students = [...firstAttemptsByStudent.values()].map(attempt => ({
+    name: attempt.student.name,
+    quizAttempts: [{
+      id: attempt.id,
+      score: attempt.score,
+      questionAttempts: attempt.questionAttempts.filter(
+        questionAttempt => questionAttempt.question.id === question.id
+      ),
+    }],
+  }));
+
+  students.forEach(student => {
     try {
       // QuestionAttempts within the QuizAttempt are already filtered to only this question
       const questionAttempt = student.quizAttempts[0].questionAttempts[0];
@@ -278,9 +237,7 @@ const AggregatedQuestionReview = ({ courseId, quizId, question }) => {
 AggregatedQuestionReview.propTypes = {
   // Question must include id, prompt, and options[] with id, isCorrect, and text of each option
   question: PropTypes.object.isRequired,
-  // Needed to find relevant quiz attempts
-  courseId: PropTypes.string.isRequired,
-  quizId: PropTypes.string.isRequired,
+  attempts: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default AggregatedQuestionReview;

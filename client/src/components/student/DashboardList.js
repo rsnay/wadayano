@@ -1,39 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navigate } from 'react-router';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
+import useApiQuery from '../../useApiQuery';
 
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
-
-// Get the student’s current courses
-const STUDENT_QUERY = gql`
-  query studentQuery {
-    currentStudent {
-      id
-      name
-      courses {
-        id
-        title
-      }
-    }
-  }
-`;
 
 /**
  * This page displays cards for all of a students’s courses to navigate to
  * a specific course. If only one course is available, it redirects to that course.
  */
 const DashboardList = () => {
-  const { error, data } = useQuery(STUDENT_QUERY, {
-    options: { fetchPolicy: 'cache-and-network' },
-  });
-
-  if (!data || !data.currentStudent) {
-    return <Spinner />;
-  }
+  const { error, data, loading } = useApiQuery('/api/student');
 
   if (error) {
     return (
@@ -43,7 +22,11 @@ const DashboardList = () => {
     );
   }
 
-  const { courses, name: studentName } = data.currentStudent;
+  if (loading || !data) {
+    return <Spinner />;
+  }
+
+  const { courses, name: studentName } = data;
 
   // If there's only one course, redirect to that dashboard
   if (courses.length === 1) {

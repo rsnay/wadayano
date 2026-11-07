@@ -1,36 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
 
 import CreateCourseForm from './CreateCourseForm';
 
 import PageTitle from '../shared/PageTitle';
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
-
-// Get all courses for current instructor
-export const INSTRUCTOR_QUERY = gql`
-  query instructorQuery {
-    currentInstructor {
-      id
-      courses {
-        id
-        title
-        quizzes {
-          id
-        }
-        students {
-          id
-        }
-      }
-    }
-  }
-`;
+import useApiQuery from '../../useApiQuery';
 
 const CourseList = () => {
-  const { error, data } = useQuery(INSTRUCTOR_QUERY);
-  console.log(data);
+  const { error, data, loading } = useApiQuery('/api/instructor');
 
   if (error) {
     return (
@@ -40,11 +19,11 @@ const CourseList = () => {
     );
   }
 
-  if (!data || (data && !data.currentInstructor)) {
+  if (loading || !data) {
     return <Spinner />;
   }
 
-  const { courses } = data.currentInstructor;
+  const { courses } = data;
 
   return (
     <section className="section">
@@ -65,9 +44,9 @@ const CourseList = () => {
                     </span>
                     &nbsp;
                     <span style={{ marginBottom: '5px' }}>
-                      {course.students.length === 1
+                      {course.studentCount === 1
                         ? '1 Student'
-                        : `${course.students.length} Students`}
+                        : `${course.studentCount} Students`}
                     </span>
                   </span>
                   <br />
@@ -77,7 +56,7 @@ const CourseList = () => {
                     </span>
                     &nbsp;
                     <span style={{ marginBottom: '5px' }}>
-                      {course.quizzes.length === 1 ? '1 Quiz' : `${course.quizzes.length} Quizzes`}
+                      {course.quizCount === 1 ? '1 Quiz' : `${course.quizCount} Quizzes`}
                     </span>
                   </span>
                 </div>

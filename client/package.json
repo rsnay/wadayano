@@ -4,20 +4,13 @@
   "private": true,
   "dependencies": {
     "@tinymce/tinymce-react": "^3.3.2",
-    "apollo-cache-inmemory": "^1.6.2",
-    "apollo-client": "^2.6.3",
-    "apollo-link": "^1.2.12",
-    "apollo-link-http": "^1.5.15",
     "bulma": "^0.7.5",
     "butter-toast": "^3.1.0",
     "core-js": "3.2.1",
-    "graphql": "^14.7.0",
-    "graphql-tag": "^2.10.1",
     "immutability-helper": "^2.7.1",
     "json5": "^2.1.0",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
-    "react-apollo": "^3.1.1",
     "react-aria-modal": "^4.0.0",
     "react-dom": "^16.9.0",
     "react-hook-form": "^3.29.3",
@@ -45,7 +38,6 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@apollo/react-testing": "^3.1.2",
     "@testing-library/react": "^9.3.0",
     "@types/jest": "^24.0.18",
     "@vitejs/plugin-react": "5.0.4",

@@ -1,0 +1,283 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Instructor {
+  id          String                         @id @default(cuid())
+  email       String                         @unique
+  password    String
+  createdAt   DateTime                       @default(now())
+  updatedAt   DateTime                       @updatedAt
+  courses     CourseInstructor[]
+  resetTokens InstructorPasswordResetToken[]
+  events      TrackingEvent[]
+}
+
+model InstructorPasswordResetToken {
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  instructorId String
+  instructor   Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@index([instructorId])
+}
+
+model Student {
+  id            String          @id @default(cuid())
+  ltiUserId     String          @unique
+  email         String
+  name          String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  courses       CourseStudent[]
+  quizAttempts  QuizAttempt[]
+  surveyResults SurveyResult[]
+  consents      CourseConsent[]
+  events        TrackingEvent[]
+}
+
+model Course {
+  id             String                @id @default(cuid())
+  title          String
+  number         String?
+  lmsUrl         String?
+  consentFormUrl String?
+  ltiSecret      String
+  survey         Json?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  quizzes        Quiz[]
+  instructors    CourseInstructor[]
+  students       CourseStudent[]
+  surveyResults  SurveyResult[]
+  invites        PendingCourseInvite[]
+  consents       CourseConsent[]
+}
+
+model CourseInstructor {
+  courseId     String
+  instructorId String
+  course       Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  instructor   Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, instructorId])
+  @@index([instructorId, courseId])
+}
+
+model CourseStudent {
+  courseId  String
+  studentId String
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, studentId])
+  @@index([studentId, courseId])
+}
+
+model PendingCourseInvite {
+  id        String   @id @default(cuid())
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([email])
+  @@index([courseId])
+}
+
+model CourseConsent {
+  id        String   @id @default(cuid())
+  consent   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courseId  String
+  studentId String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, courseId])
+  @@index([courseId])
+}
+
+enum QuizType {
+  PRACTICE
+  GRADED
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  SHORT_ANSWER
+}
+
+enum TrackingEventAction {
+  STUDENT_REVIEW_QUIZ_ATTEMPT
+  STUDENT_REVIEW_CONCEPT
+}
+
+model Quiz {
+  id                 String         @id @default(cuid())
+  title              String
+  type               QuizType
+  orderedQuestionIds Json
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  courseId           String?
+  course             Course?        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions          QuizQuestion[]
+  attempts           QuizAttempt[]
+
+  @@index([courseId])
+}
+
+model Question {
+  id                  String            @id @default(cuid())
+  prompt              String
+  concept             String?
+  type                QuestionType
+  correctShortAnswers Json
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  quizzes             QuizQuestion[]
+  options             Option[]
+  attempts            QuestionAttempt[]
+}
+
+model QuizQuestion {
+  quizId     String
+  questionId String
+  quiz       Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@id([quizId, questionId])
+  @@index([questionId])
+}
+
+model Option {
+  id                       String            @id @default(cuid())
+  text                     String
+  isCorrect                Boolean?
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+  questionId               String?
+  question                 Question?         @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedQuestionAttempts QuestionAttempt[] @relation("SelectedOption")
+  correctQuestionAttempts  QuestionAttempt[] @relation("CorrectOption")
+
+  @@index([questionId])
+}
+
+model QuizAttempt {
+  id                 String                  @id @default(cuid())
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  ltiSessionInfo     Json?
+  completed          DateTime?
+  postSucceeded      Boolean?
+  score              Float?
+  studentId          String
+  quizId             String
+  student            Student                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  quiz               Quiz                    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  questionAttempts   QuizQuestionAttempt[]
+  conceptConfidences QuizConceptConfidence[]
+
+  @@index([studentId, quizId, completed])
+  @@index([quizId])
+}
+
+model QuestionAttempt {
+  id                 String                @id @default(cuid())
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  shortAnswer        String?
+  isCorrect          Boolean
+  correctShortAnswer String?
+  isConfident        Boolean
+  questionId         String
+  optionId           String?
+  correctOptionId    String?
+  question           Question              @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  option             Option?               @relation("SelectedOption", fields: [optionId], references: [id], onDelete: SetNull)
+  correctOption      Option?               @relation("CorrectOption", fields: [correctOptionId], references: [id], onDelete: SetNull)
+  attempts           QuizQuestionAttempt[]
+
+  @@index([questionId])
+  @@index([optionId])
+  @@index([correctOptionId])
+}
+
+model QuizQuestionAttempt {
+  quizAttemptId     String
+  questionAttemptId String
+  quizAttempt       QuizAttempt     @relation(fields: [quizAttemptId], references: [id], onDelete: Cascade)
+  questionAttempt   QuestionAttempt @relation(fields: [questionAttemptId], references: [id], onDelete: Cascade)
+
+  @@id([quizAttemptId, questionAttemptId])
+  @@index([questionAttemptId])
+}
+
+model ConceptConfidence {
+  id         String                  @id @default(cuid())
+  concept    String?
+  confidence Int?
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+  attempts   QuizConceptConfidence[]
+}
+
+model QuizConceptConfidence {
+  quizAttemptId       String
+  conceptConfidenceId String
+  quizAttempt         QuizAttempt       @relation(fields: [quizAttemptId], references: [id], onDelete: Cascade)
+  conceptConfidence   ConceptConfidence @relation(fields: [conceptConfidenceId], references: [id], onDelete: Cascade)
+
+  @@id([quizAttemptId, conceptConfidenceId])
+  @@index([conceptConfidenceId])
+}
+
+model SurveyResult {
+  id        String   @id @default(cuid())
+  answers   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courseId  String
+  studentId String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, courseId])
+  @@index([courseId])
+}
+
+model TrackingEvent {
+  id           String              @id @default(cuid())
+  action       TrackingEventAction
+  context      Json
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  studentId    String?
+  instructorId String?
+  student      Student?            @relation(fields: [studentId], references: [id], onDelete: SetNull)
+  instructor   Instructor?         @relation(fields: [instructorId], references: [id], onDelete: SetNull)
+
+  @@index([studentId, createdAt])
+  @@index([instructorId, createdAt])
+}
+
+model LtiNonce {
+  consumerKey  String
+  nonce        String
+  timestampSec Int
+  createdAt    DateTime @default(now())
+
+  @@id([consumerKey, nonce])
+  @@index([timestampSec])
+}

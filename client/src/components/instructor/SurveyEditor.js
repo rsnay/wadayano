@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useHistory } from '../../navigation';
 import { NavigationPrompt as Prompt } from '../shared/NavigationPrompt';
-import { useMutation, useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
+import useApiQuery from '../../useApiQuery';
+import { apiRequest } from '../../api';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
@@ -53,26 +53,6 @@ function stringifySurvey(survey) {
   return text.trim();
 }
 
-// Get the course information
-const COURSE_QUERY = gql`
-  query courseQuery($courseId: ID!) {
-    course(id: $courseId) {
-      id
-      title
-      survey
-    }
-  }
-`;
-
-const SAVE_SURVEY = gql`
-  mutation saveSurveyMutation($courseId: ID!, $survey: Json!) {
-    updateSurvey(courseId: $courseId, survey: $survey) {
-      id
-      survey
-    }
-  }
-`;
-
 const SurveyEditor = () => {
   const { courseId } = useParams();
   const history = useHistory();
@@ -81,14 +61,13 @@ const SurveyEditor = () => {
   const [isDirty, setIsDirty] = useState(false);
   const [formatModalVisible, setFormatModalVisible] = useState(false);
 
-  const { loading, error, data: course } = useQuery(COURSE_QUERY, { variables: { courseId } });
-  const [saveSurveyMutation] = useMutation(SAVE_SURVEY);
-
-  console.log(loading, error, course);
+  const { loading, error, data: course } = useApiQuery(
+    `/api/courses/${encodeURIComponent(courseId)}`,
+  );
 
   useEffect(() => {
     // Parse the survey text when it loads
-    if (!loading && !error && course.course && course.course.survey) {
+    if (!loading && !error && course?.course?.survey) {
       setNewSurveyText(stringifySurvey(course.course.survey));
     }
   }, [loading, error, course]);
@@ -137,16 +116,10 @@ const SurveyEditor = () => {
     setIsSaving(true);
     try {
       // Save the new survey
-      const result = await saveSurveyMutation({
-        variables: {
-          courseId,
-          survey: parseSurveyText(newSurveyText),
-        },
+      await apiRequest(`/api/courses/${encodeURIComponent(courseId)}/survey`, {
+        method: 'PUT',
+        body: { survey: parseSurveyText(newSurveyText) },
       });
-      // Handle errors
-      if (result.errors && result.errors.length > 0) {
-        throw result;
-      }
       setIsSaving(false);
       setIsDirty(false);
       ButterToast.raise({

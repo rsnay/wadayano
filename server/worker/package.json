@@ -1,0 +1,24 @@
+{
+  "name": "wadayano-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "prisma generate",
+    "schema:validate": "prisma validate",
+    "schema:diff": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script",
+    "test": "node --test test/*.test.mjs",
+    "migrate:local": "wrangler d1 migrations apply wadayano-local --local",
+    "demo:seed": "wrangler d1 execute wadayano-local --local --file=fixtures/demo_student.sql",
+    "demo:student": "npm run demo:seed && node scripts/demo-student-login.mjs",
+    "dev": "wrangler dev --local --port 8787"
+  },
+  "dependencies": {
+    "@prisma/adapter-d1": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "sanitize-html": "2.18.1"
+  },
+  "devDependencies": {
+    "prisma": "6.19.3",
+    "wrangler": "4.156.0"
+  }
+}

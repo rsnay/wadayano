@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'react-apollo';
 import { useParams } from 'react-router-dom';
-import gql from 'graphql-tag';
 import { Navigate } from 'react-router';
+import useApiQuery from '../../useApiQuery';
+import { apiRequest } from '../../api';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
@@ -11,28 +11,6 @@ import Spinner from '../shared/Spinner';
 import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_STUDENT } from '../../constants';
 import Modal from '../shared/Modal';
 import OptionSelector from '../shared/OptionSelector';
-
-const STUDENT_QUERY = courseId => gql`
-  query {
-    currentStudent {
-      id
-      courses(where: { id: "${courseId}" }) {
-        id
-        title
-        consentFormUrl
-      }
-      courseConsents(where: { course: { id: "${courseId}" } }) {
-        consent
-      }
-    }
-  }
-`;
-
-const SUBMIT_COURSE_CONSENT_MUTATION = gql`
-  mutation($courseId: ID!, $consent: String!) {
-    submitCourseConsent(courseId: $courseId, consent: $consent)
-  }
-`;
 
 // Consent preference is saved in the database as a string
 const consentOptions = [
@@ -60,40 +38,39 @@ const CourseConsentForm = () => {
   }
 
   // Fetch course and current consent
-  const student = useQuery(STUDENT_QUERY(courseId));
-  const [submitMutation] = useMutation(SUBMIT_COURSE_CONSENT_MUTATION, {
-    variables: { courseId, consent },
-  });
+  const { data, error: queryError, loading } = useApiQuery(
+    `/api/student/courses/${encodeURIComponent(courseId)}/consent`,
+  );
 
   // Set selected consent to previously-saved value
   useEffect(() => {
-    if (!student.loading && !student.error) {
-      const [existingConsent] = student.data.currentStudent.courseConsents;
-      if (student.data.currentStudent.courseConsents.length) {
-        setConsent(existingConsent.consent);
-      }
+    if (data?.consent) {
+      setConsent(data.consent);
     }
-  }, [student]);
+  }, [data]);
 
   const submitConsent = async () => {
     setSaving(true);
     try {
-      await submitMutation();
+      await apiRequest(
+        `/api/student/courses/${encodeURIComponent(courseId)}/consent`,
+        { method: 'POST', body: { consent } },
+      );
+      setRedirect(true);
     } catch (err) {
-      console.log(err);
       setError(
         'There was an error submitting your consent. Please launch this content again from your course’s learning management system.'
       );
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setRedirect(true);
   };
 
-  if (student.loading) {
+  if (loading) {
     return <Spinner />;
   }
 
-  if (error || student.error) {
+  if (error || queryError) {
     return (
       <ErrorBox>
         <p>{error || 'Error loading consent form. Please try again later.'}</p>
@@ -109,8 +86,7 @@ const CourseConsentForm = () => {
     return <Navigate to={`/student/dashboard/${courseId}`} />;
   }
 
-  // Get the first course and courseConsent objects (there will only be one of each)
-  const [course] = student.data.currentStudent.courses;
+  const { course } = data;
 
   return (
     <Modal

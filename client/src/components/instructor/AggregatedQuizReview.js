@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
 import { formatScore, confidenceAnalysis, predictedScore, wadayanoScore } from '../../utils';
@@ -16,57 +14,9 @@ import Modal from '../shared/Modal';
 import { CONFIDENCES } from '../../constants';
 import ConfidenceBarGraph from './ConfidenceBarGraph';
 import ScoresBarGraph from './ScoresBarGraph';
-import fragments from '../../fragments';
 
 import PageTitle from '../shared/PageTitle';
 import { sortFunctions } from '../../sort-utils';
-
-// Get the quiz and attempts
-export const QUIZ_QUERY = gql`
-  query quizQuery($id: ID!) {
-    quiz(id: $id) {
-      id
-      title
-      type
-      course {
-        id
-        title
-        students {
-          id
-          name
-        }
-      }
-      questions {
-        ...InstructorFullQuestion
-      }
-      quizAttempts(where: { completed_not: null }) {
-        id
-        student {
-          id
-          name
-        }
-        createdAt
-        completed
-        score
-        questionAttempts {
-          id
-          isCorrect
-          isConfident
-          question {
-            id
-            concept
-          }
-        }
-        conceptConfidences {
-          id
-          concept
-          confidence
-        }
-      }
-    }
-  }
-  ${fragments.instructorFullQuestion}
-`;
 
 // If new columns are added here, corresponding sort functions should be added in `../../sort-utils'
 const columns = [
@@ -77,7 +27,7 @@ const columns = [
   { title: 'View Questions', columnId: 'viewQuestions', sortable: false },
 ];
 
-const AggregatedQuizReview = ({ quizId }) => {
+const AggregatedQuizReview = ({ quiz }) => {
   const [error, setError] = useState(null);
   const [currentConceptModal, setCurrentConceptModel] = useState(null);
   const [sortColumn, setSortColumn] = useState('concept');
@@ -90,11 +40,6 @@ const AggregatedQuizReview = ({ quizId }) => {
   const [aggregatedScores, setAggregatedScores] = useState(null);
   // Will hold aggregated data for each concept
   const [conceptRows, setConceptRows] = useState([]);
-
-  const { error: queryError, data } = useQuery(QUIZ_QUERY, {
-    fetchPolicy: 'cache-and-network',
-    variables: { id: quizId },
-  });
 
   // Processes all the quiz attempt data. Wrapped in this function for easier error catching
   const processData = quiz => {
@@ -247,14 +192,11 @@ const AggregatedQuizReview = ({ quizId }) => {
     });
   };
 
-  // When the query data gets updated, process it
+  // Process the report data provided by the parent.
   useEffect(() => {
-    // Rather than check if query is ‘loading,’ check if it doesn’t have data, since
-    // the cache-and-network fetch policy is used, which returns data from cache but
-    // still sets loading=true while it re-fetches
-    if (!queryError && data && data.quiz) {
+    if (quiz) {
       try {
-        processData(data.quiz);
+        processData(quiz);
       } catch (err) {
         console.error(err);
         ButterToast.raise({
@@ -267,7 +209,7 @@ const AggregatedQuizReview = ({ quizId }) => {
         });
       }
     }
-  }, [queryError, data]);
+  }, [quiz]);
 
   const sortByColumn = e => {
     // Get data-column prop from header that was clicked
@@ -292,7 +234,7 @@ const AggregatedQuizReview = ({ quizId }) => {
     setConceptRows(newConceptRows);
   };
 
-  if (error || queryError) {
+  if (error) {
     return (
       <ErrorBox>
         <p>Couldn’t load quiz report. {error || ''}</p>
@@ -300,12 +242,9 @@ const AggregatedQuizReview = ({ quizId }) => {
     );
   }
 
-  if (!aggregatedScores || !data || !data.quiz) {
+  if (!aggregatedScores || !quiz) {
     return <Spinner />;
   }
-
-  // Quiz object from database
-  const { quiz } = data;
 
   const {
     scores,
@@ -456,8 +395,7 @@ const AggregatedQuizReview = ({ quizId }) => {
             <AggregatedQuestionReview
               key={conceptQuestion.id}
               question={conceptQuestion}
-              quizId={quiz.id}
-              courseId={quiz.course.id}
+              attempts={quiz.quizAttempts}
             />
           ))}
         <br />
@@ -467,7 +405,7 @@ const AggregatedQuizReview = ({ quizId }) => {
 };
 
 AggregatedQuizReview.propTypes = {
-  quizId: PropTypes.string.isRequired,
+  quiz: PropTypes.object.isRequired,
 };
 
 export default AggregatedQuizReview;

@@ -22,5 +22,11 @@ export default defineConfig({
   },
   resolve: { extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'] },
   build: { outDir: 'build' },
+  server: {
+    proxy: {
+      '/api': 'http://127.0.0.1:8787',
+      '/lti': 'http://127.0.0.1:8787',
+    },
+  },
   test: { environment: 'jsdom', globals: true, setupFiles: './src/setupTests.js' },
 });
