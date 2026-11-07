@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import { Link, NavLink, useHistory } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { useHistory } from '../../navigation';
 import ButterToast from './Toast';
 import Logo from '../../logo_title.svg';
 
@@ -56,17 +57,17 @@ const Header = () => {
       <div id="header-main-menu" className="navbar-menu">
         <div className="navbar-start">
           {isInstructor && (
-            <NavLink activeClassName="is-active" to="/instructor/courses" className="navbar-item">
+            <NavLink to="/instructor/courses" className={({ isActive }) => `navbar-item${isActive ? ' is-active' : ''}`}>
               Courses
             </NavLink>
           )}
           {isInstructor && (
-            <NavLink activeClassName="is-active" to="/instructor/profile" className="navbar-item">
+            <NavLink to="/instructor/profile" className={({ isActive }) => `navbar-item${isActive ? ' is-active' : ''}`}>
               Profile
             </NavLink>
           )}
           {isStudent && (
-            <NavLink activeClassName="is-active" to="/student/dashboard" className="navbar-item">
+            <NavLink to="/student/dashboard" className={({ isActive }) => `navbar-item${isActive ? ' is-active' : ''}`}>
               Dashboard
             </NavLink>
           )}
@@ -74,21 +75,20 @@ const Header = () => {
 
         <div className="navbar-end">
           {isInstructor && (
-            <NavLink activeClassName="is-active" to="/instructor/help" className="navbar-item">
+            <NavLink to="/instructor/help" className={({ isActive }) => `navbar-item${isActive ? ' is-active' : ''}`}>
               Help
             </NavLink>
           )}
           {isLoggedIn && (
             <NavLink
-              activeClassName="is-active is-pulled-right"
               to="/feedback"
-              className="navbar-item"
+              className={({ isActive }) => `navbar-item${isActive ? ' is-active is-pulled-right' : ''}`}
             >
               Send Feedback
             </NavLink>
           )}
           {!isLoggedIn && (
-            <NavLink activeClassName="is-active" to="/about" className="navbar-item">
+            <NavLink to="/about" className={({ isActive }) => `navbar-item${isActive ? ' is-active' : ''}`}>
               About
             </NavLink>
           )}

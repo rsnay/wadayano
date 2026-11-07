@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { useHistory } from '../../navigation';
 import { useQuery, useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import ReactTooltip from 'react-tooltip';

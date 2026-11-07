@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import { useParams, useHistory } from 'react-router';
+import { useParams } from 'react-router';
+import { useHistory } from '../../navigation';
 import useForm from 'react-hook-form';
 
 // This constant is simply used to make sure that the same name is always used for the localStorage key

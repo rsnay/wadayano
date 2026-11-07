@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useHistory } from '../../navigation';
 import { useQuery, useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import useForm from 'react-hook-form';

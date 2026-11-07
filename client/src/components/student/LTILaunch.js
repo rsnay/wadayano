@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useHistory } from '../../navigation';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';

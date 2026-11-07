@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useQuery, useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import ErrorBox from '../shared/ErrorBox';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
@@ -123,7 +123,7 @@ const CourseInstructors = ({ courseId }) => {
           <ToastTemplate content="You do not have access to this course." className="is-danger" />
         ),
       });
-      return <Redirect to="/instructor/courses" />;
+      return <Navigate to="/instructor/courses" replace />;
     }
     return (
       <ErrorBox>

@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Route, Redirect } from 'react-router';
+import { Navigate, useLocation } from 'react-router-dom';
 
 import { AUTH_TOKEN, AUTH_ROLE, AUTH_ROLE_INSTRUCTOR, AUTH_ROLE_STUDENT } from '../../constants';
 
@@ -31,21 +31,12 @@ function allowAccess(allowInstructor, allowStudent) {
 }
 
 /**
- * A <Route> component that wraps components and
- * provides an authentication check for the given roles.
- * Should be used in <App> in place of a regular <Route>.
+ * Wraps route content and checks the roles allowed to access it.
  */
-function AuthRoute({ children, instructor, student, ...rest }) {
+function AuthRoute({ children, instructor, student }) {
   const valid = allowAccess(instructor, student);
-
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        valid ? children : <Redirect to={{ pathname: '/login', state: { from: location } }} />
-      }
-    />
-  );
+  const location = useLocation();
+  return valid ? children : <Navigate to="/login" state={{ from: location }} replace />;
 }
 
 AuthRoute.propTypes = {

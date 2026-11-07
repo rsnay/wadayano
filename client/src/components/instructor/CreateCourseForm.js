@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory } from '../../navigation';
 import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import useForm from 'react-hook-form';

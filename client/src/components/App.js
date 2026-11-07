@@ -4,7 +4,7 @@ import '../styles/Instructor.css';
 import '../styles/Student.css';
 import '../styles/BulmaConfig.css';
 
-import { Switch, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import AuthRoute from './shared/AuthRoute';
 import Header from './shared/Header';
 import Footer from './shared/Footer';
@@ -45,104 +45,47 @@ const App = () => (
   <Suspense fallback={<Spinner />}>
     <div className="app-content">
       <Header />
-      <Switch>
-        <Route exact path="/">
-          <Welcome />
-        </Route>
-        <Route exact path="/login">
-          <Login />
-        </Route>
-        <Route exact path="/signup">
-          <Login />
-        </Route>
-        <Route path="/reset-password/:token">
-          <ResetPassword />
-        </Route>
-        <AuthRoute student instructor exact path="/feedback">
-          <FeedbackForm />
-        </AuthRoute>
+      <Routes>
+        <Route path="/" element={<Welcome />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Login />} />
+        <Route path="/reset-password/:token/*" element={<ResetPassword />} />
+        <Route path="/feedback" element={<AuthRoute student instructor><FeedbackForm /></AuthRoute>} />
 
-        <AuthRoute instructor exact path="/instructor">
-          <CourseList />
-        </AuthRoute>
-        <AuthRoute instructor exact path="/instructor/courses">
-          <CourseList />
-        </AuthRoute>
-        <AuthRoute instructor path="/instructor/course/:courseId">
-          <CourseDetails />
-        </AuthRoute>
-        <AuthRoute instructor path="/instructor/quiz/:quizId/import">
-          <QuestionImporter />
-        </AuthRoute>
-        <AuthRoute instructor path="/instructor/quiz/:quizId/scores">
-          <QuizScores />
-        </AuthRoute>
-        <AuthRoute instructor path="/instructor/quiz/:quizId">
-          <QuizEditor />
-        </AuthRoute>
-        <AuthRoute instructor path="/instructor/survey/edit/:courseId">
-          <SurveyEditor />
-        </AuthRoute>
-        <AuthRoute instructor path="/instructor/survey/results/:courseId">
-          <SurveyResults />
-        </AuthRoute>
-        <AuthRoute instructor exact path="/instructor/profile">
-          <ProfileEditor />
-        </AuthRoute>
-        <AuthRoute instructor exact path="/instructor/help">
-          <Help />
-        </AuthRoute>
+        <Route path="/instructor" element={<AuthRoute instructor><CourseList /></AuthRoute>} />
+        <Route path="/instructor/courses" element={<AuthRoute instructor><CourseList /></AuthRoute>} />
+        <Route path="/instructor/course/:courseId/*" element={<AuthRoute instructor><CourseDetails /></AuthRoute>} />
+        <Route path="/instructor/quiz/:quizId/import/*" element={<AuthRoute instructor><QuestionImporter /></AuthRoute>} />
+        <Route path="/instructor/quiz/:quizId/scores/*" element={<AuthRoute instructor><QuizScores /></AuthRoute>} />
+        <Route path="/instructor/quiz/:quizId/*" element={<AuthRoute instructor><QuizEditor /></AuthRoute>} />
+        <Route path="/instructor/survey/edit/:courseId/*" element={<AuthRoute instructor><SurveyEditor /></AuthRoute>} />
+        <Route path="/instructor/survey/results/:courseId/*" element={<AuthRoute instructor><SurveyResults /></AuthRoute>} />
+        <Route path="/instructor/profile" element={<AuthRoute instructor><ProfileEditor /></AuthRoute>} />
+        <Route path="/instructor/help" element={<AuthRoute instructor><Help /></AuthRoute>} />
 
         {/* When a student launches, the server will redirect to either /student/launch or /student/consent,
             both of which will redirect to the desired content */}
         {/* Allow flexibility in redirecting to another route when launching via LTI.
             The route `/student/launch/fakeToken/quiz/id1` would redirect to `/student/quiz/id1` */}
-        <Route path="/student/launch/:token/:action/:parameter1">
-          <LTILaunch />
-        </Route>
         {/* Presents the consent form and redirects to the given action/param as does LTILaunch.
             This is a separate route/component, as regular LTILaunch may not have the course ID */}
-        <Route path="/student/consent/:courseId/:token/:action/:parameter1">
-          <CourseConsentForm />
-        </Route>
         {/* Allow a student to review or change their consent
             (not protected, since it can be part of initial launch/auth process) */}
-        <Route path="/student/consent/:courseId">
-          <CourseConsentForm />
-        </Route>
+        <Route path="/student/launch/:token/:action/:parameter1/*" element={<LTILaunch />} />
+        <Route path="/student/consent/:courseId/:token/:action/:parameter1/*" element={<CourseConsentForm />} />
+        <Route path="/student/consent/:courseId/*" element={<CourseConsentForm />} />
+        <Route path="/student" element={<AuthRoute student><DashboardList /></AuthRoute>} />
+        <Route path="/student/dashboard" element={<AuthRoute student><DashboardList /></AuthRoute>} />
+        <Route path="/student/dashboard/:courseId" element={<AuthRoute student><Dashboard /></AuthRoute>} />
+        <Route path="/student/quiz/review/:quizAttemptId/*" element={<AuthRoute student instructor><QuizReviewPage /></AuthRoute>} />
+        <Route path="/student/quiz/:quizId/*" element={<AuthRoute student><QuizTaker /></AuthRoute>} />
+        <Route path="/student/survey/:courseId/*" element={<AuthRoute student><SurveyTaker /></AuthRoute>} />
 
-        <AuthRoute student exact path="/student">
-          <DashboardList />
-        </AuthRoute>
-        <AuthRoute student exact path="/student/dashboard">
-          <DashboardList />
-        </AuthRoute>
-        <AuthRoute student exact path="/student/dashboard/:courseId">
-          <Dashboard />
-        </AuthRoute>
-        <AuthRoute student instructor path="/student/quiz/review/:quizAttemptId">
-          <QuizReviewPage />
-        </AuthRoute>
-        <AuthRoute student path="/student/quiz/:quizId">
-          <QuizTaker />
-        </AuthRoute>
-        <AuthRoute student path="/student/survey/:courseId">
-          <SurveyTaker />
-        </AuthRoute>
-
-        <Route exact path="/terms">
-          <TermsOfUse />
-        </Route>
-        <Route exact path="/privacy">
-          <PrivacyPolicy />
-        </Route>
-        <Route exact path="/about">
-          <About />
-        </Route>
-        <Route>
-          <PageNotFound />
-        </Route>
-      </Switch>
+        <Route path="/terms" element={<TermsOfUse />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
     </div>
     <Footer />
   </Suspense>

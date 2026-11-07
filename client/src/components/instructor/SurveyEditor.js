@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
-import { Prompt } from 'react-router';
+import { Link, useParams } from 'react-router-dom';
+import { useHistory } from '../../navigation';
+import { NavigationPrompt as Prompt } from '../shared/NavigationPrompt';
 import { useMutation, useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 

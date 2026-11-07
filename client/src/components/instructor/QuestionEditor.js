@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Prompt } from 'react-router';
+import { NavigationPrompt as Prompt } from '../shared/NavigationPrompt';
 import { useLazyQuery, useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import update from 'immutability-helper';

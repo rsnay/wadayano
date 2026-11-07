@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 import { AUTH_ROLE, AUTH_ROLE_STUDENT, AUTH_ROLE_INSTRUCTOR } from '../../constants';
 
@@ -13,16 +13,12 @@ import InsightsImage from '../../img/welcome_insights.png';
  * Redirects to the student or instructor dashboard, or offers login/signup options and information about wadayano
  */
 const Welcome = () => {
-  const history = useHistory();
-
   const authRole = localStorage.getItem(AUTH_ROLE);
   if (authRole === AUTH_ROLE_STUDENT) {
-    history.replace('/student/dashboard');
-    return null;
+    return <Navigate to="/student/dashboard" replace />;
   }
   if (authRole === AUTH_ROLE_INSTRUCTOR) {
-    history.replace('/instructor/courses');
-    return null;
+    return <Navigate to="/instructor/courses" replace />;
   }
 
   const authButtons = (

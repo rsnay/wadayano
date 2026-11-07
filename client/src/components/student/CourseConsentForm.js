@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-apollo';
 import { useParams } from 'react-router-dom';
 import gql from 'graphql-tag';
-import { Redirect } from 'react-router';
+import { Navigate } from 'react-router';
 
 import ErrorBox from '../shared/ErrorBox';
 import Spinner from '../shared/Spinner';
@@ -104,9 +104,9 @@ const CourseConsentForm = () => {
   if (redirect) {
     // If there’s an action, it’s a first launch, and redirect should not push new history entry
     if (action) {
-      return <Redirect to={`/student/${action}/${parameter1}`} />;
+      return <Navigate to={`/student/${action}/${parameter1}`} replace />;
     }
-    return <Redirect push to={`/student/dashboard/${courseId}`} />;
+    return <Navigate to={`/student/dashboard/${courseId}`} />;
   }
 
   // Get the first course and courseConsent objects (there will only be one of each)

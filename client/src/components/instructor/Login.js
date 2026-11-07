@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import { useLocation, useHistory } from 'react-router';
+import { useLocation } from 'react-router';
+import { useHistory } from '../../navigation';
 import useForm from 'react-hook-form';
 import ButterToast, { ToastTemplate } from '../shared/Toast';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Redirect } from 'react-router';
+import { Navigate } from 'react-router';
 import { useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -47,7 +47,7 @@ const DashboardList = () => {
 
   // If there's only one course, redirect to that dashboard
   if (courses.length === 1) {
-    return <Redirect to={{ pathname: `/student/dashboard/${courses[0].id}` }} />;
+    return <Navigate to={`/student/dashboard/${courses[0].id}`} replace />;
   }
 
   return (

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Prompt, useParams, useHistory } from 'react-router';
+import { useParams } from 'react-router';
+import { useHistory } from '../../navigation';
+import { NavigationPrompt as Prompt } from '../shared/NavigationPrompt';
 
 import PageTitle from '../shared/PageTitle';
 import ConceptRater from './ConceptRater';

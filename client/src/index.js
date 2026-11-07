@@ -5,10 +5,10 @@ import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { BrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ApolloLink } from 'apollo-link';
-import { unregister } from './registerServiceWorker';
 import App from './components/App';
+import { NavigationPromptProvider } from './components/shared/NavigationPrompt';
 
 import { AUTH_TOKEN, GRAPHQL_ENDPOINT } from './constants';
 
@@ -55,14 +55,20 @@ export const client = new ApolloClient({
   defaultOptions,
 });
 
+const router = createBrowserRouter([
+  {
+    path: '*',
+    element: (
+      <NavigationPromptProvider>
+        <App />
+      </NavigationPromptProvider>
+    ),
+  },
+]);
+
 ReactDOM.render(
-  <BrowserRouter>
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>
-  </BrowserRouter>,
+  <ApolloProvider client={client}>
+    <RouterProvider router={router} />
+  </ApolloProvider>,
   document.getElementById('root')
 );
-
-// Don’t use service worker
-unregister();
