@@ -31,22 +31,14 @@ export default function CsvGenerator(dataArray, fileName, separator, addQuotes) 
     this.separator = separator || ',';
     this.addQuotes = !!addQuotes;
 
-    if (this.addQuotes) {
-        this.separator = '"' + this.separator + '"';
-    }
-
     this.getRawCsv = function() {
         var separator = this.separator;
         var addQuotes = this.addQuotes;
-
         var rows = this.dataArray.map(function (row) {
-            var rowData = row.join(separator);
-
-            if (rowData.length && addQuotes) {
-                return '"' + rowData + '"';
-            }
-
-            return rowData;
+            return row.map(function (value) {
+                var cell = value === null || value === undefined ? '' : String(value);
+                return addQuotes ? '"' + cell.replace(/"/g, '""') + '"' : cell;
+            }).join(separator);
         });
 
         return rows.join('\n');

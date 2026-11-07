@@ -118,7 +118,8 @@ Completed LTI attempts post grades to the configured HTTPS outcome service and
 record passback status. Feedback and instructor-invitation mail use AWS SES v2
 with Signature Version 4 signing.
 The client uses the Worker JSON API for its data and mutation workflows. Other
-`/api` paths return JSON 404 responses. Aggregate CSV/export behavior and
+`/api` paths return JSON 404 responses. Existing survey CSV exports quote each
+field and escape embedded quotes; aggregate quiz CSV/export behavior and
 production migration remain incomplete.
 
 For local email-route testing, add `AWS_SES_REGION`, `AWS_SES_KEY`,
