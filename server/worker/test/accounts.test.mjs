@@ -175,3 +175,48 @@ test('legacy bcrypt accounts must use the email reset flow before Worker login',
   );
   assert.equal(reusedReset.status, 400);
 });
+
+test('password reset rejects expired, invalid, and future token timestamps without changing account data', async () => {
+  const db = accountDatabase();
+  const createdAt = new Date().toISOString();
+  db.instructors.set('instructor-1', {
+    id: 'instructor-1',
+    email: 'teacher@example.test',
+    password: 'existing-hash',
+    createdAt,
+    updatedAt: createdAt,
+  });
+  db.resetTokens.set('invalid-date', {
+    id: 'invalid-date',
+    createdAt: 'not-a-date',
+    updatedAt: createdAt,
+    instructorId: 'instructor-1',
+  });
+  db.resetTokens.set('expired-date', {
+    id: 'expired-date',
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000 - 1).toISOString(),
+    updatedAt: createdAt,
+    instructorId: 'instructor-1',
+  });
+  db.resetTokens.set('future-date', {
+    id: 'future-date',
+    createdAt: new Date(Date.now() + 60_000).toISOString(),
+    updatedAt: createdAt,
+    instructorId: 'instructor-1',
+  });
+  const env = accountEnvironment(db);
+
+  for (const resetToken of ['expired-date', 'invalid-date', 'future-date']) {
+    const response = await worker.fetch(
+      jsonRequest('/api/auth/password-resets', {
+        token: resetToken,
+        password: 'new-secure-pass',
+      }),
+      env,
+    );
+    assert.equal(response.status, 400);
+    assert.deepEqual(await response.json(), { error: 'invalid_or_expired_reset_token' });
+    assert.equal(db.resetTokens.has(resetToken), true);
+    assert.equal(db.instructors.get('instructor-1').password, 'existing-hash');
+  }
+});

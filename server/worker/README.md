@@ -21,10 +21,12 @@ terminal, `npm run dev --prefix client` starts Vite on port 3000 and proxies
 `/api` and `/lti` requests to that Worker. `POST /api/auth/signup` and
 `POST /api/auth/login` create instructor accounts and sessions;
 `POST /api/auth/password-reset-requests` sends a reset link and
-`POST /api/auth/password-resets` consumes a single-use link. Passwords created
-or reset in the Worker use PBKDF2-HMAC-SHA-256; legacy bcrypt accounts must
-reset their password before Worker login. The PBKDF2 cost, SES delivery, and
-Free-plan CPU impact still require deployed verification.
+`POST /api/auth/password-resets` consumes a single-use link that expires after
+24 hours. Invalid and future-dated reset-token timestamps are rejected.
+Passwords created or reset in the Worker use PBKDF2-HMAC-SHA-256; legacy
+bcrypt accounts must reset their password before Worker login. The PBKDF2
+cost, SES delivery, and Free-plan CPU impact still require deployed
+verification.
 `GET /api/health` checks the D1 binding. `GET /api/instructor` returns the
 authenticated instructor and course
 counts; `GET /api/courses/:id` returns an owned course's details; `POST

@@ -207,8 +207,9 @@ export async function resetInstructorPassword(request, env) {
       FROM "InstructorPasswordResetToken"
       WHERE "id" = ?
     `).bind(body.token).first();
-    if (!resetToken
-      || Date.now() - new Date(resetToken.createdAt).getTime() > 24 * 60 * 60 * 1000) {
+    const createdAt = resetToken ? new Date(resetToken.createdAt).getTime() : NaN;
+    const age = Date.now() - createdAt;
+    if (!resetToken || !Number.isFinite(createdAt) || age < 0 || age > 24 * 60 * 60 * 1000) {
       throw new HttpError(400, 'invalid_or_expired_reset_token');
     }
 
