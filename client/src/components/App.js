@@ -21,7 +21,6 @@ import QuizScores from './instructor/QuizScores';
 import SurveyEditor from './instructor/SurveyEditor';
 import SurveyResults from './instructor/SurveyResults';
 import ProfileEditor from './instructor/ProfileEditor';
-import Help from './instructor/Help';
 
 import LTILaunch from './student/LTILaunch';
 import CourseConsentForm from './student/CourseConsentForm';
@@ -31,7 +30,6 @@ import QuizTaker from './student/QuizTaker';
 import SurveyTaker from './student/SurveyTaker';
 import QuizReviewPage from './student/QuizReviewPage';
 
-import TermsOfUse from './shared/TermsOfUse';
 import PrivacyPolicy from './shared/PrivacyPolicy';
 import About from './shared/About';
 import PageNotFound from './shared/PageNotFound';
@@ -61,7 +59,6 @@ const App = () => (
         <Route path="/instructor/survey/edit/:courseId/*" element={<AuthRoute instructor><SurveyEditor /></AuthRoute>} />
         <Route path="/instructor/survey/results/:courseId/*" element={<AuthRoute instructor><SurveyResults /></AuthRoute>} />
         <Route path="/instructor/profile" element={<AuthRoute instructor><ProfileEditor /></AuthRoute>} />
-        <Route path="/instructor/help" element={<AuthRoute instructor><Help /></AuthRoute>} />
 
         {/* When a student launches, the server will redirect to either /student/launch or /student/consent,
             both of which will redirect to the desired content */}
@@ -81,7 +78,6 @@ const App = () => (
         <Route path="/student/quiz/:quizId/*" element={<AuthRoute student><QuizTaker /></AuthRoute>} />
         <Route path="/student/survey/:courseId/*" element={<AuthRoute student><SurveyTaker /></AuthRoute>} />
 
-        <Route path="/terms" element={<TermsOfUse />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/about" element={<About />} />
         <Route path="*" element={<PageNotFound />} />

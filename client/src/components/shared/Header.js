@@ -74,11 +74,6 @@ const Header = () => {
         </div>
 
         <div className="navbar-end">
-          {isInstructor && (
-            <NavLink to="/instructor/help" className={({ isActive }) => `navbar-item${isActive ? ' is-active' : ''}`}>
-              Help
-            </NavLink>
-          )}
           {isLoggedIn && (
             <NavLink
               to="/feedback"
