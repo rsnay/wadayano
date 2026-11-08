@@ -1,14 +1,20 @@
 import { execFileSync } from 'node:child_process';
 import { DatabaseSync } from 'node:sqlite';
+import { readdir, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const prisma = fileURLToPath(new URL('../node_modules/prisma/build/index.js', import.meta.url));
+const migrationsDirectory = fileURLToPath(new URL('../migrations/', import.meta.url));
 const sql = execFileSync(process.execPath, [
   prisma, 'migrate', 'diff', '--from-empty', '--to-schema-datamodel', 'prisma/schema.prisma', '--script',
 ], { cwd: root, encoding: 'utf8' });
+const migrations = await Promise.all((await readdir(migrationsDirectory))
+  .filter(file => /^\d+_.+\.sql$/.test(file))
+  .sort()
+  .map(async file => readFile(`${migrationsDirectory}/${file}`, 'utf8')));
 
 function database() {
   const db = new DatabaseSync(':memory:');
@@ -16,6 +22,36 @@ function database() {
   db.exec(sql);
   return db;
 }
+
+function migratedDatabase() {
+  const db = new DatabaseSync(':memory:');
+  db.exec('PRAGMA foreign_keys = ON');
+  for (const migration of migrations) {
+    db.exec(migration);
+  }
+  return db;
+}
+
+function schemaObjects(db) {
+  return db.prepare(`
+    SELECT type, name, tbl_name
+    FROM sqlite_schema
+    WHERE name NOT LIKE 'sqlite_%'
+    ORDER BY type, name
+  `).all();
+}
+
+test('checked-in migration chain matches the Prisma schema and has valid foreign keys', () => {
+  const expected = database();
+  const migrated = migratedDatabase();
+  try {
+    assert.deepEqual(schemaObjects(migrated), schemaObjects(expected));
+    assert.deepEqual(migrated.prepare('PRAGMA foreign_key_check').all(), []);
+  } finally {
+    expected.close();
+    migrated.close();
+  }
+});
 
 test('draft migration preserves legacy entity IDs and relation records', () => {
   const db = database();

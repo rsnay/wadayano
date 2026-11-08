@@ -1,1 +1,12 @@
 APP_SECRET=wadayano-local-demo-only-secret
+
+# Local testing only. Replace these with credentials for a non-production SES account.
+AWS_SES_REGION=us-west-2
+AWS_SES_KEY=replace-with-test-access-key-id
+AWS_SES_SECRET=replace-with-test-secret-access-key
+AWS_SES_FROM_ADDRESS=no-reply@example.com
+PUBLIC_BASE_URL=https://example.com
+FEEDBACK_EMAIL_ADDRESS=feedback@example.com
+
+# Optional. Use only with temporary AWS credentials.
+# AWS_SES_SESSION_TOKEN=replace-with-test-session-token

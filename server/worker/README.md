@@ -329,4 +329,6 @@ Use Node.js 24 or later for the built-in SQLite test runner. Run
 `npm run schema:validate`, `npm run generate`, and `npm test` here.
 `npm run schema:diff` prints a draft initial SQLite migration; it is not an
 approved production migration. `npm run migrate:local` applies the checked-in
-draft through Wrangler to local D1 only.
+draft through Wrangler to local D1 only. The schema tests also apply every
+checked-in migration in order to an in-memory SQLite database, compare its
+tables and indexes with the Prisma schema, and check foreign-key integrity.
