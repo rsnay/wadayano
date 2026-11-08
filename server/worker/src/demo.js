@@ -5,15 +5,8 @@ const DEMO_STUDENT_ID = 'demo-student';
 const DEMO_COURSE_ID = 'demo-course';
 const DEMO_QUIZ_ID = 'demo-practice-quiz';
 const DEMO_TOKEN_LIFETIME_SECONDS = 12 * 60 * 60;
-const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
 
 export async function createDemoStudentSession(request, env) {
-  const url = new URL(request.url);
-  if (env.DEMO_STUDENT_ENABLED !== 'true'
-    || url.protocol !== 'http:'
-    || !LOCAL_HOSTS.has(url.hostname)) {
-    return jsonResponse({ error: 'not_found' }, 404);
-  }
   if (request.method !== 'POST') {
     return jsonResponse({ error: 'method_not_allowed' }, 405, { allow: 'POST' });
   }

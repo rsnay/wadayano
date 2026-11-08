@@ -151,10 +151,8 @@ demo uses the `APP_SECRET` from
 `server/worker/.dev.vars`; the example file contains a public, demo-only secret
 that must never be used outside local development. This is a fake LTI launch,
 not a student password login. It does not contact an LMS or use production
-records. The **Demo Student Login** button on `/login` uses the same fixture
-and is enabled only when `DEMO_STUDENT_ENABLED=true` and the Worker request
-uses an HTTP localhost origin. Seed the fixture first with `npm run demo:student`;
-restart Wrangler after adding the flag to `.dev.vars`.
+records. The **Demo Student Login** button on `/login` uses the same fixture.
+Seed the fixture first with `npm run demo:student`.
 
 The Wrangler configuration has a synthetic database ID for local use only.
 `migrations/0001_draft_init.sql` is generated from the current Prisma schema and
