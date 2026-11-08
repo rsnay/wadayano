@@ -132,6 +132,160 @@ calls use real SES unless the fetch function is mocked, so use a non-production
 SES account and verified test recipients. Never commit credentials or place
 production secrets in this file.
 
+## Cloudflare deployment
+
+**Production deployment is not ready yet.** The current
+`wrangler.jsonc` is local-only and points at a synthetic D1 database ID. The
+draft schema migration is not approved for production, and the source-data
+inventory, production importer, reconciliation, deployed Free-plan
+measurements, and cutover rehearsal are incomplete. Do not connect this
+configuration to Cloudflare, run a production D1 migration, or switch live
+traffic until the gates in the migration plan have passed. Keep the existing
+server authoritative until then.
+
+When those gates are satisfied:
+
+1. Create a dedicated production D1 database in the Cloudflare account and
+   region selected for the application. The checked-in
+   `wrangler.production.jsonc` is the production configuration template and
+   uses a placeholder rather than containing the database ID. Keep the current
+   synthetic local database and any preview D1 database separate. The
+   production Worker name must match the name in this configuration.
+2. Review and rehearse every production schema/data migration on an isolated
+   database first. The checked-in `migrations/0001_draft_init.sql` is not
+   approved for production. Take an authorized source backup, reconcile all
+   records and relationships, rehearse restore and rollback, and verify the
+   capacity and security gates before applying reviewed migrations to
+   production.
+3. In Cloudflare, open **Workers & Pages**, select the production Worker, then
+   **Settings > Builds > Connect**. Authorize GitHub and connect
+   `rsnay/wadayano`. Set the production branch to `main` and the root directory
+   to `server/worker`. Set the build command to:
+
+   ```sh
+   npm ci --include=dev && npm ci --prefix ../../client --include=dev && npm run build --prefix ../../client && npm run prepare:production-config
+   ```
+
+   Set the deploy command to:
+
+   ```sh
+   npx wrangler deploy --config wrangler.production.generated.jsonc
+   ```
+
+   Add `D1_DATABASE_ID` as a **Workers Builds build variable** (not a Worker
+   runtime variable); the build step inserts it into the generated config.
+   The generated file is ignored by Git and is not included in the repository.
+   This ID is deployment configuration, not a credential. It does not become
+   available to Worker code: the Worker receives the D1 binding as `env.DB`.
+   This builds `client/build/` before Wrangler publishes the Worker and assets.
+   Enable deployment for `main` only.
+   Disable branch previews until they have an isolated Wrangler config, D1
+   database, and runtime secrets; never let previews use production data.
+   Cloudflare uses the Wrangler version pinned in this project's
+   `server/worker/package-lock.json`. Check the build log and deployed Worker
+   name after the first push. The production Worker name can be changed in
+   `wrangler.production.jsonc` before connecting if a different name is
+   required.
+4. Configure runtime values in the Worker's **Settings > Variables & Secrets**,
+   not in Workers Builds' build variables. Add `AWS_SES_REGION`,
+   `AWS_SES_FROM_ADDRESS`, `PUBLIC_BASE_URL`, and `FEEDBACK_EMAIL_ADDRESS` as
+   non-secret variables. Add `APP_SECRET`, `AWS_SES_KEY`, and `AWS_SES_SECRET`
+   as encrypted secrets. `AWS_SES_SESSION_TOKEN` is an optional secret when
+   using temporary AWS credentials. Use a high-entropy `APP_SECRET` that
+   matches the existing JWT signing secret if legacy tokens must remain valid.
+   Set the canonical, public HTTPS application origin in `PUBLIC_BASE_URL`;
+   it is used to create invitation and password-reset links. Set these values
+   independently for every environment. Do not add `D1_DATABASE_ID` here; it
+   is used only while generating the deployment config in Workers Builds.
+5. After the reviewed schema is applied, configure the production hostname and
+   HTTPS route, and confirm the exact external URL/path used by existing LTI
+   integrations. Test signed LMS launches and grade passback against a
+   non-production LMS/course before making the production branch serve live
+   traffic. Do not redirect or canonicalize signed LTI requests without
+   verifying the signature behavior.
+
+Cloudflare's [Workers Builds guide](https://developers.cloudflare.com/workers/ci-cd/builds/)
+describes connecting an existing Worker; its
+[build configuration reference](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)
+covers branch, root directory, build, and deploy commands.
+
+## AWS SES setup
+
+The Worker sends through the SES v2 HTTPS API, not SMTP. In AWS, choose one SES
+region and in that region:
+
+1. Verify the sending domain (recommended) or exact sender email address in
+   **Amazon SES > Configuration > Identities**. Publish the DNS verification
+   and DKIM records SES provides, then wait for the identity to show verified.
+   Configure SPF and DMARC for the sending domain as appropriate for your mail
+   policy. `AWS_SES_FROM_ADDRESS` must be an address covered by that verified
+   identity.
+2. If the SES account is still in its sandbox, request production access before
+   sending to users. Sandbox recipients must also be verified (or use the SES
+   mailbox simulator). Production access is regional; keep test email limited
+   to addresses you control until sending access and delivery behavior are
+   confirmed.
+3. Create a dedicated IAM principal for this application with only the SES
+   send permission needed (`ses:SendEmail`), scoped to the sending identity and
+   region where supported. Create an access key for that principal. Store its
+   access key ID as `AWS_SES_KEY` and secret access key as `AWS_SES_SECRET`.
+   Do not use root credentials, SMTP credentials, or check either value into
+   Git. Rotate the key by updating the Worker secret and then retiring the old
+   key. The Worker supports an optional session token, but the access key
+   credentials above are the configured production path.
+4. Set `AWS_SES_REGION` to the region containing the verified identity and
+   `AWS_SES_FROM_ADDRESS` to the verified sender. Set
+   `FEEDBACK_EMAIL_ADDRESS` to an inbox controlled by the application team.
+   Store all three as Worker runtime variables. Keep AWS account region,
+   identity, sender, and Worker variables consistent.
+5. For local testing, use a separate SES identity/account and verified test
+   recipients in ignored `.dev.vars`. Never use production keys locally. The
+   SES implementation reports missing credentials as
+   `email_not_configured` and rejected delivery as `email_delivery_failed`;
+   investigate provider logs/status without logging message contents, tokens,
+   student data, or credentials.
+
+See AWS's [SES identity setup](https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html)
+and [production access / sandbox guide](https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html)
+for the current AWS-console steps and regional restrictions.
+
+## Post-deployment verification
+
+Use synthetic accounts and records first, and a non-production LMS and SES
+recipients until the migration and cutover are explicitly approved.
+
+1. In the Cloudflare Worker dashboard, confirm the `main` build succeeded, the
+   intended version is active, and the production D1 binding and runtime
+   variables/secrets are attached to the deployed Worker. Review logs and D1
+   metrics for errors, CPU, rows read/written, and storage; compare measured
+   usage with the migration plan's limits and 50% headroom gates.
+2. Request `GET /api/health` on the deployed hostname. It must return a
+   successful JSON response and confirm the production D1 binding is reachable.
+   Confirm an unknown `/api/...` path returns a JSON 404 rather than SPA HTML.
+   Open the app's welcome and login pages, refresh nested routes, and confirm
+   static assets and SPA fallback work without Worker/API errors.
+3. Exercise signup/login, protected-route redirects, password reset, and
+   logout with a test instructor. Exercise an owned course and quiz, question
+   editor/import, student quiz start/resume/answer/review, survey submission,
+   consent, and reports/exports with synthetic records. Confirm ownership
+   checks, answer-key suppression, complete exports, and expected error paths.
+4. Send a password-reset request to a controlled test account and verify the
+   email's sender, destination, HTTPS link, expiry, and one-time use. Exercise
+   an instructor invitation and feedback email using test users. Confirm
+   invalid/missing SES configuration and SES delivery failures surface as
+   failures rather than success. Do not include real student data in test
+   records or logs.
+5. Using a non-production LMS, verify valid and tampered LTI signatures,
+   timestamp/nonce replay rejection, student enrollment, consent, quiz
+   launch, completion, and grade passback, including LMS and email failures.
+   Confirm the actual LMS launch URL still has the expected host and path.
+6. Re-run the client and Worker tests and schema validation, inspect the
+   Cloudflare build/deployment logs, and rehearse D1 backup/restore and
+   application rollback. Monitor daily requests, CPU, D1 rows/size, SES bounces
+   and complaints, and errors after cutover. Stop and roll back using the
+   rehearsed data-safe procedure if data reconciliation, access control,
+   email, LTI, capacity, or integrity checks fail.
+
 ## Demo student
 
 With the local Worker running on port 8787, run this from the repository root
@@ -157,9 +311,9 @@ Seed the fixture first with `npm run demo:student`.
 The Wrangler configuration has a synthetic database ID for local use only.
 `migrations/0001_draft_init.sql` is generated from the current Prisma schema and
 has been applied to local D1, but is not an approved production migration.
-There is no production or preview binding, API implementation, data importer,
-or deploy command. Do not use this configuration to deploy or connect it to
-real data.
+Production and preview bindings, the production data importer, and a production
+deployment configuration are not yet available. Do not use this configuration
+to deploy or connect it to real data.
 
 The Prisma schema models the entities in `../database/datamodel.graphql` and
 uses explicit join tables for relationships that have no backlink in the

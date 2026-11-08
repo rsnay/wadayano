@@ -1,1 +1,2 @@
 /.wrangler/
+/server/worker/wrangler.production.generated.jsonc
