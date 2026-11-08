@@ -84,7 +84,9 @@ function accountError(error, operation) {
     || /unique constraint/i.test(error?.message || '')) {
     return jsonResponse({ error: 'email_already_exists' }, 409);
   }
-  console.error(`${operation} API failed`);
+  console.error(
+    `${operation} API failed: ${error instanceof Error ? `${error.name}: ${error.message}` : 'non-Error exception'}`,
+  );
   return jsonResponse({ error: 'request_failed' }, 503);
 }
 

@@ -129,6 +129,28 @@ test('Worker signup and login use PBKDF2 passwords and issue authenticated sessi
   assert.equal(invalidLogin.status, 401);
 });
 
+test('unexpected signup failures log a diagnostic while keeping the response generic', async () => {
+  const db = accountDatabase();
+  db.batch = async () => {
+    throw new Error('D1 mock failure');
+  };
+  const originalError = console.error;
+  const loggedErrors = [];
+  console.error = (...args) => loggedErrors.push(args);
+
+  try {
+    const response = await worker.fetch(
+      jsonRequest('/api/auth/signup', { email: 'Teacher@example.test', password: 'secure-pass' }),
+      accountEnvironment(db),
+    );
+    assert.equal(response.status, 503);
+    assert.deepEqual(await response.json(), { error: 'request_failed' });
+    assert.deepEqual(loggedErrors, [['signup API failed: Error: D1 mock failure']]);
+  } finally {
+    console.error = originalError;
+  }
+});
+
 test('legacy bcrypt accounts must use the email reset flow before Worker login', async () => {
   const db = accountDatabase();
   db.instructors.set('legacy-instructor', {
